@@ -25,6 +25,11 @@ def run(board_cfg):
 
     queue = mp.Queue()
 
+    guiLogPath = "/shared/{}/GUILogs/".format(os.getlogin())
+
+    if os.path.exists(guiLogPath):
+        os.makedirs(guiLogPath)
+
     # Turns creating the GUI and creating the SUBClient tasks into processes
     process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, queue, board_cfg))
     process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue,))

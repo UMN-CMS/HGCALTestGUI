@@ -7,7 +7,7 @@ FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 
 # Configures the logging. Set level to 'logging.INFO' to see relevant information. Set level to 'logging.DEBUG' if you wish to see every received message (only run this for a couple minutes on DEBUG, the file size is immmense.
 logging.basicConfig(
-    filename="{}/PythonFiles/logs/StressTest.log".format(WagonTestGUI.__path__[0]), 
+    filename="/shared/{}/GUILogs/gui.log".format(os.getlogin()), 
     filemode = 'w', 
     format=FORMAT, 
     level=logging.INFO

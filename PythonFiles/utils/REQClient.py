@@ -15,7 +15,7 @@ import PythonFiles
 
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 logging.basicConfig(
-    filename="{}/logs/StressTest.log".format(PythonFiles.__path__[0]), 
+    filename="/shared/{}/GUILogs/gui.log".format(os.getlogin()), 
     filemode = 'w', 
     format=FORMAT, 
     level=logging.INFO
