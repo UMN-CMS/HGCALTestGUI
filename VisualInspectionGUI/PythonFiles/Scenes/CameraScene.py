@@ -75,14 +75,14 @@ class CameraScene(tk.Frame):
         )
         self.btn_proses.pack(side="left", padx=10, pady=10)
 
-        self.btn_about=tk.Button(
-            btn_frame,
-            text="Submit", 
-            width=10, 
-            command= lambda: self.submit_button_action(), 
-            fg="white"
-        )
-        self.btn_about.pack(side="right", padx=10, pady=10)
+#        self.btn_about=tk.Button(
+#            btn_frame,
+#            text="Submit", 
+#            width=10, 
+#            command= lambda: self.submit_button_action(), 
+#            fg="white"
+#        )
+#        self.btn_about.pack(side="right", padx=10, pady=10) 
 
         self.long_desc_label_text = tk.StringVar()
         self.long_desc_label_text.set("Photo Description")
@@ -93,8 +93,6 @@ class CameraScene(tk.Frame):
             font = ('Arial', 10),
         )
         self.long_desc_label.pack(side="right", padx=(20, 90), pady=10)
-        
-
 
         self.desc_label_text = tk.StringVar()
         self.desc_label_text.set("Photo Type")
@@ -153,9 +151,13 @@ class CameraScene(tk.Frame):
     def set_text(self, index):
         self.current_index = index
 
-        updated_title = self.data_holder.get_photo_list()[index]["name"]        
-        updated_description = self.data_holder.get_photo_list()[index]["desc_short"]
-        print("updated_title: ", updated_title)
+        if self.data_holder.photos == 'Top and Bottom':
+            updated_title = self.data_holder.get_photo_list()[index]["name"]        
+            updated_description = self.data_holder.get_photo_list()[index]["desc_short"]
+            print("updated_title: ", updated_title)
+        else:
+            updated_title = 'Connector ' + str(index+1)
+            updated_description = ''
 
         self.desc_label_text.set(updated_title)
         self.long_desc_label_text.set(updated_description)
@@ -170,17 +172,23 @@ class CameraScene(tk.Frame):
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
         print("self.photo_name: ", self.photo_name)
 
-        
         # Cannot be called unless camera is already started        
-        image = camera.switch_mode_and_capture_image(shortened_pn)
+        self.image = camera.switch_mode_and_capture_image(shortened_pn)
 
-        # Saves the image to a file
-        image.save(self.photo_name)
+        try:
+            camera.stop_preview()
+            camera.stop()
+            self.camera_created = False
+        except:
+            print("CameraScene: Unable to stop preview")
+            logging.debug("CameraScene: Unable to stop preview")
 
         # Displays the image
         # Ensure that the camera aspect ratio matches the aspect ratio here
         # This may require some fine-tuning
-        self.Engine_image = PIL.Image.open(self.photo_name)
+        #self.Engine_image = PIL.Image.open(self.photo_name)
+        self.data_holder.image_holder[self.photo_name] = self.image
+        self.Engine_image = self.image
         self.Engine_image = self.Engine_image.resize((1067, 600), PIL.Image.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
@@ -200,6 +208,7 @@ class CameraScene(tk.Frame):
         self.data_holder.image_data.append(self.photo_name)
         self.parent.set_image_name(shortened_pn)
 
+        self.submit_button_action()
 
     # Submits the photo and goes to the next screen
     def submit_button_action(self):
@@ -210,7 +219,11 @@ class CameraScene(tk.Frame):
         except:
             print("CameraScene: Unable to stop preview")
             logging.debug("CameraScene: Unable to stop preview")
-        self.parent.set_frame_photo_frame()
+        if self.parent.retake == True:
+            self.parent.retaken = True
+
+        self.parent.next_frame_camera_frame()
+        #self.parent.set_frame_photo_frame()
 
 
     # Closes the video camera with the "release()" command

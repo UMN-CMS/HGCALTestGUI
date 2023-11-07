@@ -60,39 +60,39 @@ class ScanScene(tk.Frame):
 
         self.ent_snum.config(state = 'normal')
 
-       # print("\nScanScene: Beginning scan...\n")
-       # logging.info("ScanScene: Beginning scan...")
-       # self.scanner = scan()
-       # self.listener = mp.Process(target=listen, args=(serial, self.scanner))
+        print("\nScanScene: Beginning scan...\n")
+        logging.info("ScanScene: Beginning scan...")
+        self.scanner = scan()
+        self.listener = mp.Process(target=listen, args=(serial, self.scanner))
 
-       # self.listener.start()
-       #        
-       # while 1 > 0:
+        self.listener.start()
+   
+        while 1 > 0:
 
-       #     try:
-       #         self.master_window.update()
-       #     except:
-       #         pass
-       #     if not len(serial) == 0:
-       #         self.data_holder.set_serial_ID( parse_xml(serial[0]))
+            try:
+                self.master_window.update()
+            except:
+                pass
+            if not len(serial) == 0:
+                self.data_holder.set_serial_ID( parse_xml(serial[0]))
 
-       #         self.listener.terminate()
-       #         self.scanner.terminate()
-       #        
-       #         self.ent_snum.delete(0,END)
-       #         self.ent_snum.insert(0, str(self.data_holder.get_serial_ID()))
-       #         self.ent_snum.config(state = 'disabled')
-       #         self.show_rescan_button()
-       #         break
+                self.listener.terminate()
+                self.scanner.terminate()
+               
+                self.ent_snum.delete(0,END)
+                self.ent_snum.insert(0, str(self.data_holder.get_serial_ID()))
+                self.ent_snum.config(state = 'disabled')
+                self.show_rescan_button()
+                break
 
-       #     elif self.EXIT_CODE:
-       #         logging.info("ScanScene: Exit code received. Terminating processes.")
-       #         self.listener.terminate()
-       #         self.scanner.terminate()
-       #         logging.info("ScanScene: Processes terminated successfully.")
-       #         break
-       #     else:
-       #         time.sleep(.01)
+            elif self.EXIT_CODE:
+                logging.info("ScanScene: Exit code received. Terminating processes.")
+                self.listener.terminate()
+                self.scanner.terminate()
+                logging.info("ScanScene: Processes terminated successfully.")
+                break
+            else:
+                time.sleep(.01)
             
         logging.info("ScanScene: Scan complete.")
 

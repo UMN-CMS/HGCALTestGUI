@@ -250,14 +250,22 @@ class PostScanScene(tk.Frame):
         #frm_logout.grid(column = 4, row = starting_row, sticky= 'se')
         
 
-        # Creating the proceed button
-        proceed_button = tk.Button(
+        # Creating the proceed buttons
+        tb_button = tk.Button(
             self.frame,
             relief = tk.RAISED,
-            text = "Proceed",
-            command = lambda: self.btn_proceed_action(parent)
+            text = "Top and Bottom",
+            command = lambda: self.btn_tb_action(parent)
         )
-        proceed_button.grid(row=1, column=3, padx = 10, pady = 10)
+        tb_button.grid(row=1, column=3, padx = 10, pady = 10)
+
+        conn_button = tk.Button(
+            self.frame,
+            relief = tk.RAISED,
+            text = "Connectors",
+            command = lambda: self.btn_conn_action(parent)
+        )
+        conn_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
         next_board_button = tk.Button(
@@ -266,7 +274,7 @@ class PostScanScene(tk.Frame):
             text = "Back to Scan",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=2, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
  
 
         # Creating the logout button
@@ -276,14 +284,19 @@ class PostScanScene(tk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=3, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
  
     
 
 
     #################################################
 
-    def btn_proceed_action(self, parent):
+    def btn_tb_action(self, parent):
+        self.data_holder.photos = 'Top and Bottom'
+        parent.first_frame_camera_frame()
+
+    def btn_conn_action(self, parent):
+        self.data_holder.photos = 'Connectors'
         parent.first_frame_camera_frame()
 
     def btn_NextBoard_action(self, parent):

@@ -16,7 +16,7 @@ from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PhotoScene import PhotoScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.update_config import update_config
-#from PythonFiles.Scenes.CameraScene import CameraScene
+from PythonFiles.Scenes.CameraScene import CameraScene
 import logging
 import os
 import PythonFiles
@@ -57,8 +57,10 @@ class GUIWindow():
         # master_window.wm_attributes('-toolwindow', 'True')
 
         # Creates and packs a frame that exists on top of the master_frame
-        master_frame = tk.Frame(master_window, width = 1105, height = 850)
+        master_frame = tk.Frame(master_window, width = 1350, height = 850)
         master_frame.grid(column = 0, row = 0, columnspan = 4)
+
+        self.master_frame = master_frame
 
         # Object for taking care of instantiation of different test types
         self.gui_cfg = GUIConfig(board_cfg)
@@ -100,12 +102,14 @@ class GUIWindow():
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0)
 
-#        self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
-#        self.camera_frame.grid(row=0, column=0)
+        self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
+        self.camera_frame.grid(row=0, column=0)
         
 
         self.camera_index = 0
         self.photo_index = 0
+        self.retake = False
+        self.retaken = False
 
         #################################################
         #              End Frame Creation               #
@@ -119,8 +123,7 @@ class GUIWindow():
 
         master_frame.after(500, self.set_frame_login_frame)
 
-        master_window.mainloop()
-        
+        master_window.mainloop() 
 
 
     #################################################
@@ -132,7 +135,23 @@ class GUIWindow():
 
     #################################################
 
+    def retake_photo(self, photo_index):
+        self.camera_index = photo_index-1
+        self.photo_index = photo_index-1
+        self.retake = True
+        self.retaken = False
+        self.next_frame_camera_frame()
+
+
+    #################################################
+
     def set_frame_login_frame(self):  
+        self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)
+        self.scan_frame.grid(row=0, column=0)
+
+        self.retake = False
+        self.retaken = False
+
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)    
         
@@ -149,23 +168,36 @@ class GUIWindow():
    
     def first_frame_camera_frame(self):
 
-        self.camera_index = 0
+        self.camera_index = -1
         
         # Trick for bypassing the increment in "next_frame_camera_frame"        
         self.photo_index = -1
+
+        print(self.data_holder.photos)
 
         self.next_frame_camera_frame()
  
 
     def next_frame_camera_frame(self):
+        self.camera_index += 1
         self.photo_index += 1
         logging.debug("GUIWindow: Trying to go to the next camera_frame.")
         photo_list = self.data_holder.get_photo_list()
 
-        if (self.camera_index < len(photo_list)):
-            self.set_frame_camera_frame(self.camera_index)
+        if self.retake == True and self.retaken == True:
+            self.set_frame_test_summary()
         else:
-            self.set_frame_inspection_frame()
+            if self.data_holder.photos == 'Top and Bottom':
+                if (self.camera_index < len(photo_list)):
+                    self.set_frame_camera_frame(self.camera_index)
+                else:
+                    self.set_frame_inspection_frame()
+            else:
+                if (self.camera_index < int(self.data_holder.num_modules)):
+                    self.set_frame_camera_frame(self.camera_index)
+                else:
+                    self.set_frame_inspection_frame()
+            
         
         logging.debug("GUIWindow: Frame has been set to the next camera_frame.")
      
