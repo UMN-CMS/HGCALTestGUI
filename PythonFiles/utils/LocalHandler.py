@@ -144,8 +144,8 @@ class LocalHandler:
             logger.critical("PUBServer has crashed.")
 
         # Closes the server once the loop is broken so that there is no hang-up in the code
-        #print("PUBServer Closing")    
-        #pub_socket.close()
+        print("PUBServer Closing")    
+        pub_socket.close()
 
 
     def task_test(self, conn_test, gui_cfg, desired_test, test_info):   

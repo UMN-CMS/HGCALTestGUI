@@ -287,10 +287,7 @@ class GUIWindow():
         logging.debug("GUIWindow: The frame has been set to test_in_progress_frame.")
         #self.sidebar.disable_all_btns()
         passed = self.test_in_progress_frame.begin_update(self.master_window, queue, self)
-        if passed:
-            self.go_to_next_test()   
-        else:
-            return
+        self.go_to_next_test()   
 
     #################################################
 
