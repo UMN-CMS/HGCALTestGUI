@@ -13,9 +13,9 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestSummaryScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Frame that shows all of the final test results
 # @param parent -> References a GUIWindow object
@@ -36,7 +36,7 @@ class TestSummaryScene(tk.Frame):
 
         self.sn_text = tk.StringVar()
 
-        logging.info("TestSummaryScene: Frame has been created.")
+        logger.info("TestSummaryScene: Frame has been created.")
 
         self.data_holder = data_holder
 
@@ -77,12 +77,16 @@ class TestSummaryScene(tk.Frame):
     
     def create_updated_table(self, parent):
 
-        logging.debug("TestSummaryScene: Table is being updated.")        
+        logger.debug("TestSummaryScene: Table is being updated.")        
         
-        self.list_of_tests = self.data_holder.getTestNames()
+        self.list_of_tests = self.data_holder.getTestNames() + self.data_holder.getPhysicalNames()
         self.list_of_table_labels = ["Test Name", "Test Status", "Pass/Fail"]
-        self.list_of_completed_tests = self.data_holder.data_lists['test_completion']
-        self.list_of_pass_fail = self.data_holder.data_lists['test_results']
+        self.list_of_completed_tests = self.data_holder.data_lists['test_completion'] + self.data_holder.data_lists['physical_completion']
+        self.list_of_pass_fail = self.data_holder.data_lists['test_results'] + self.data_holder.data_lists['physical_results']
+
+
+        print(self.list_of_completed_tests)
+        print(self.list_of_pass_fail)
 
         self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
 
@@ -230,7 +234,7 @@ class TestSummaryScene(tk.Frame):
  
         #self.scrollerFrame.grid_propagate(0)
 
-        logging.debug("TestSummaryScene: Table finished update.")     
+        logger.debug("TestSummaryScene: Table finished update.")     
 
     #################################################
     #################################################
@@ -275,7 +279,7 @@ class TestSummaryScene(tk.Frame):
         retests = []
         more_infos = []
 
-        for i in range(self.data_holder.getNumTest()):
+        for i in range(self.data_holder.getNumTest() + self.data_holder.getNumPhysicalTest()):
             rows.append(tk.Frame(self.viewingFrame))
             rows[i].grid(column = 3, row = i + 1)
 
@@ -306,7 +310,7 @@ class TestSummaryScene(tk.Frame):
                 )
         btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 3)
 
-        logging.debug("TestSummaryScene: Buttons finshed being created.")
+        logger.debug("TestSummaryScene: Buttons finshed being created.")
 
     #################################################
 
@@ -351,8 +355,8 @@ class TestSummaryScene(tk.Frame):
             
             current_JSON_file.close()   
         except Exception as e:
-            logging.debug(e)
-            logging.warning("TestSummaryScene: More Info popup has failed to be created.")
+            logger.debug(e)
+            logger.warning("TestSummaryScene: More Info popup has failed to be created.")
 
             
 
@@ -399,7 +403,7 @@ class TestSummaryScene(tk.Frame):
         self.data_holder.data_holder_new_test()
         self.lbl_snum.destroy()
         _parent.reset_board()
-        logging.info("TestSummaryScene: Starting a new test.")
+        logger.info("TestSummaryScene: Starting a new test.")
         
     #################################################
 

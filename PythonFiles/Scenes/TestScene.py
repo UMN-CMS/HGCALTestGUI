@@ -14,18 +14,22 @@ from PythonFiles.utils.REQClient import REQClient
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating class for the window
 class TestScene(tk.Frame):
 
     #################################################
 
-    def __init__(self, parent, master_frame, data_holder, test_name, queue, test_idx):
+    def __init__(self, parent, master_frame, data_holder, test_name, test_description_short, test_description_long, queue, conn_trigger, test_idx):
         super().__init__(master_frame, width=870, height=500, padx = 5, pady = 5)
         self.queue = queue
+        self.conn_trigger = conn_trigger
         self.test_name = test_name
+        self.test_description_short = test_description_short
+        self.test_description_long = test_description_long
         self.data_holder = data_holder
         self.test_idx = test_idx
         #print("Making test scene with index".format(self.test_idx))
@@ -35,7 +39,7 @@ class TestScene(tk.Frame):
     #################################################
 
     def update_frame(self, parent):
-        logging.debug("ParentTestClass: A test frame has been updated.")
+        logger.debug("ParentTestClass: A test frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
 
@@ -102,6 +106,26 @@ class TestScene(tk.Frame):
             font = font_scene
             )
         lbl_confirm.pack(side = 'top')
+
+        self.lbl_desc_short = tk.Label(
+            frm_window,
+            text = self.test_description_short,
+            wraplength = 500,
+            justify="left",
+            font = font_scene
+            )
+
+        self.lbl_desc_short.pack(side = 'top')
+
+        self.lbl_desc = tk.Label(
+            frm_window,
+            text = self.test_description_long,
+            wraplength = 500,
+            justify="left",
+            font = font_scene
+            )
+
+        self.lbl_desc.pack(side = 'top')
 
         # Create a button for confirming test
         btn_confirm = tk.Button(
@@ -185,12 +209,14 @@ class TestScene(tk.Frame):
 
     # Confirm button action takes the user to the test in progress scene
     def btn_confirm_action(self, _parent):
-        try:
-            test_client = REQClient('test{}'.format(self.test_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
-        except Exception as e:
-            messagebox.showerror('Exception', e)
+        self.gui_cfg = self.data_holder.getGUIcfg()
+      
+        #try:
+        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #except Exception as e:
+        #    messagebox.showerror('Exception', e)
 
-        print("Confirm button sending test{}".format(self.test_idx))
+        #print("Confirm button sending test{}".format(self.test_idx))
         _parent.set_frame_test_in_progress(self.queue)
         
 
@@ -199,7 +225,7 @@ class TestScene(tk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logging.info("TestScene: Successfully logged out from the TestScene.")
+        logger.info("TestScene: Successfully logged out from the TestScene.")
         _parent.set_frame_login_frame()
 
     #################################################
@@ -210,7 +236,7 @@ class TestScene(tk.Frame):
 
 class Test1Scene(TestScene):
     
-    logging.info("Test1Scene: Frame has successfully been created.")
+    logger.info("Test1Scene: Frame has successfully been created.")
 
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
@@ -225,7 +251,7 @@ class Test1Scene(TestScene):
 
 class Test2Scene(TestScene):
 
-    logging.info("Test2Scene: Frame has successfully been created.")
+    logger.info("Test2Scene: Frame has successfully been created.")
 
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
@@ -241,7 +267,7 @@ class Test2Scene(TestScene):
 
 class Test3Scene(TestScene):
 
-    logging.info("Test3Scene: Frame has successfully been created.")
+    logger.info("Test3Scene: Frame has successfully been created.")
 
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
@@ -257,7 +283,7 @@ class Test3Scene(TestScene):
 
 class Test4Scene(TestScene):
 
-    logging.info("Test4Scene: Frame has successfully been created.")
+    logger.info("Test4Scene: Frame has successfully been created.")
 
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):

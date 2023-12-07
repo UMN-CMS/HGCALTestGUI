@@ -1,3 +1,5 @@
+from dumpToYaml import dump_to_yaml
+
 masterCfg = { 
 
         "GUIType": "Wagon",
@@ -80,3 +82,4 @@ masterCfg = {
             }
         }
 
+dump_to_yaml(masterCfg)

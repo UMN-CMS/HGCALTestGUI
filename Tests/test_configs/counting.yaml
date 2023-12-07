@@ -1,0 +1,9 @@
+---
+# Path to where your test lives
+test_path: demo_count.py
+# Class to instantiate to run the test
+test_class: counting
+
+# Optional arguments needed to run your test go below
+max_range: 10
+...

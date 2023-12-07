@@ -17,9 +17,9 @@ import datetime
 logging.getLogger('PIL').setLevel(logging.WARNING)
 
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Frame that shows all of the final test results
 # @param parent -> References a GUIWindow object
@@ -40,7 +40,7 @@ class PostScanScene(tk.Frame):
 
         super().__init__(self.master_frame, width = 870, height = 500)
 
-        logging.info("PostScanScene: Frame has been created.")
+        logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
         # Setting weights of columns so the column 4 is half the size of columns 0-3
@@ -60,16 +60,16 @@ class PostScanScene(tk.Frame):
     #################################################
     
     def create_frame(self, parent):
-        logging.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
+        logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
         print("PostScanScene: Destroying old widgets on the SummaryScene.")
         
         try:
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logging.warning("PostScanScene:Widgets could not be found and/or destroyed (making room for new widgets.")
+            logger.warning("PostScanScene:Widgets could not be found and/or destroyed (making room for new widgets.")
         else:
-            logging.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
+            logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
         self.canvas = tk.Canvas(self, width=800, height=500)
         self.frame = tk.Frame(self.canvas, width=800, height=500)

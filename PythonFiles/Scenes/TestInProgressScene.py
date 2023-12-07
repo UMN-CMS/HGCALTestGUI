@@ -12,14 +12,14 @@ import PythonFiles
 import os
 
 #################################################################################
-
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestInProgressScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating the frame itself
 class TestInProgressScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
-        logging.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
+        logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
         super().__init__(master_frame, width=870, height = 500)
 
@@ -58,7 +58,7 @@ class TestInProgressScene(tk.Frame):
     # next_frame is used to progress to the next scene and is passed in from GUIWindow
     def initialize_scene(self, parent, master_frame):
         
-        logging.info("TestInProgressScene: The frame has been initialized.")
+        logger.info("TestInProgressScene: The frame has been initialized.")
         scrollbar = tk.Scrollbar(self)
         scrollbar.pack(side = "right", fill = 'y')
 
@@ -132,7 +132,7 @@ class TestInProgressScene(tk.Frame):
     #################################################
 
     def begin_update(self, master_window, queue, parent):
-        logging.info("TestInProgressScene: Started console update loop.")
+        logger.info("TestInProgressScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
         # units of seconds
@@ -149,7 +149,7 @@ class TestInProgressScene(tk.Frame):
         MAX_TIMEOUT = Timeout_after / 2.5
         try:
             print("\n\nTestInProgressScene: Beginning the while loop\n\n") 
-            logging.info("TestInProgressScene: While-loop - Beginning try catch for receiving data through the pipeline.")
+            logger.info("TestInProgressScene: While-loop - Beginning try catch for receiving data through the pipeline.")
             
             information_received = False
             while 1>0:
@@ -161,7 +161,7 @@ class TestInProgressScene(tk.Frame):
                 if not queue.empty():    
                     #print("\n\nTestInProgressScene: the queue is not empty") 
                     information_received = True
-                    logging.info("TestInProgressScene: Waiting for queue objects...")
+                    logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
                     print(text)
                     ent_console.insert(tk.END, text)
@@ -174,7 +174,7 @@ class TestInProgressScene(tk.Frame):
                         print(message)   
                         self.data_holder.update_from_json_string(message) 
                         
-                        logging.info("TestInProgressScene: JSON Received.")
+                        logger.info("TestInProgressScene: JSON Received.")
                         try:
                             master_window.update()
                         except Exception as e:
@@ -200,7 +200,7 @@ class TestInProgressScene(tk.Frame):
                 #    # If beyond the MAX_TIMEOUT range -> raise an exception
                 #    if (counter > MAX_TIMEOUT/refresh_break) and not information_received:
                 #        print("\n\nTestInProcessScene: Raising an exception now\n")
-                #        logging.info("TestInProgressScene: Raising Exception -> Timeout Reached - 10 seconds")
+                #        logger.info("TestInProgressScene: Raising Exception -> Timeout Reached - 10 seconds")
                 #        raise ValueError("Process timed out after 10 seconds")
                 #        time.sleep(1)
                 #        break
@@ -211,23 +211,23 @@ class TestInProgressScene(tk.Frame):
             # Throw a message box that shows the error message
             # Logs the message
             time_sec = counter*refresh_break
-            logging.info('TestInProgressScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
+            logger.info('TestInProgressScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
 
             messagebox.showwarning('Timeout Error', "TestInProgressScene: Process timed out after 10 seconds")
-            logging.info("TestInProgressScene: Trying to go back to the login frame.")
+            logger.info("TestInProgressScene: Trying to go back to the login frame.")
             parent.set_frame_login_frame()
             return False
         
-        except Exception as e:
+        #except Exception as e:
             
-            print("\n\nException:  ", e, "\n\n")
+        #    print("\n\nException:  ", e, "\n\n")
 
         return True    
 
 
 
     def close_prgbar(self):
-        #logging.debug("TestInProgressScene: Closing the progressbar.")
+        #logger.debug("TestInProgressScene: Closing the progressbar.")
         #self.prgbar_progress.stop()
         #self.prgbar_progress.destroy()
-        logging.debug("TestInProgressScene: Progressbar succesfully closed.")
+        logger.debug("TestInProgressScene: Progressbar succesfully closed.")

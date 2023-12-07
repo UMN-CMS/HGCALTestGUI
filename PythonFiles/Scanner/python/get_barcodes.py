@@ -2,6 +2,7 @@ import subprocess
 import time
 import signal
 import ctypes
+from pathlib import Path
 #import PythonFiles
 libc = ctypes.CDLL("libc.so.6")
 
@@ -27,7 +28,7 @@ def set_pdeathsig(sig = signal.SIGTERM):
     return callable
 
 def scan():
-    proc = subprocess.Popen('./PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
+    proc = subprocess.Popen(Path(__file__).parent.parent / 'bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
     print("Starting scanner")
     return proc
     #for line in proc.stdout:

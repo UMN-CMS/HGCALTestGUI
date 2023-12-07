@@ -1,5 +1,7 @@
 base_path = "/home/HGCAL_dev/test_scripts"
 
+from dumpToYaml import dump_to_yaml
+
 masterCfg = {
 
     "GUIType": "Engine",
@@ -217,3 +219,5 @@ masterCfg = {
 }
 
 masterCfg["Test"] = [dict(**x, TestPath=base_path, TestScript= "engine_test_suite.py") for x in masterCfg["Test"] if "TestClass" in x]
+
+dump_to_yaml(masterCfg)

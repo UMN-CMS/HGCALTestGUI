@@ -4,8 +4,10 @@ import requests
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
+
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 class DataHolder():
 
@@ -117,7 +119,7 @@ class DataHolder():
         for item in self.get_all_users():
             if self.data_dict['user_ID'] == item:
                 is_new_user_ID = False
-        print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
+        #print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
@@ -129,19 +131,19 @@ class DataHolder():
 
 
     def check_if_new_board(self):
-        logging.info("DataHolder: Checking if serial is a new board")
-        print("testing if new board")
+        logger.info("DataHolder: Checking if serial is a new board")
+        #print("testing if new board")
 
         sn = self.get_serial_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during general testing'
         is_new_board = self.data_sender.is_new_board(sn)
-        print(is_new_board)
+        #print(is_new_board)
         
         if is_new_board == True:
             in_id = self.data_sender.add_new_board(sn, user, comments)
             if in_id:
-                print('Board added to Database')
+                #print('Board added to Database')
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
 
@@ -189,7 +191,7 @@ class DataHolder():
         print("\n\n\n\n\nuser_ID", user_ID)
  
         self.data_dict['user_ID'] = user_ID 
-        logging.debug("DataHolder: User ID has been set.")
+        logger.debug("DataHolder: User ID has been set.")
 
     ##################################################
 
@@ -199,14 +201,15 @@ class DataHolder():
         #self.dbclient.send_request(message)
                     
         self.data_dict['current_serial_ID'] = sn
-        new_cfg = update_config(sn)
-        self.gui_cfg = new_cfg
+        if self.gui_cfg.getSerialCheckSafe():
+            new_cfg = update_config(sn)
+            self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
-        logging.info("DataHolder: Serial Number has been set.")
+        logger.info("DataHolder: Serial Number has been set.")
 
     def test_new_board(self, sn):
-        logging.info("DataHolder: Checking if serial is a new board")
+        logger.info("DataHolder: Checking if serial is a new board")
         return self.data_sender.is_new_board(sn)
         #message = "is_new_board;{'sn': {}}".format(sn)
         #return self.dbclient.send_request(message)
@@ -239,7 +242,7 @@ class DataHolder():
                 json.dump(info_dict, outfile)
             self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]))
             #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
-        logging.info("DataHolder: All results sent to database.")
+        logger.info("DataHolder: All results sent to database.")
     #################################################
 
     def send_to_DB(self, test_run):
@@ -266,7 +269,7 @@ class DataHolder():
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         #message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         #self.dbclient.send_request(message)
-        logging.info("DataHolder: Test results sent to database.")
+        logger.info("DataHolder: Test results sent to database.")
 
     #################################################
    
@@ -293,7 +296,7 @@ class DataHolder():
 
         test_names = self.gui_cfg.getTestNames()
 
-        current_test_idx = self.gui_cfg.getTestIndex()
+        current_test_idx = self.gui_cfg.getTestIndex() -1
         print("current_test_idx: {}".format(current_test_idx))
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
@@ -307,10 +310,11 @@ class DataHolder():
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i+1)]
             self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i+1)]
+        
+        if self.gui_cfg.get_if_use_DB():
+            self.send_to_DB(current_test_idx)
 
-        self.send_to_DB(current_test_idx)
-
-        logging.info("DataHolder: Test results have been saved")
+        logger.info("DataHolder: Test results have been saved")
 
     ################################################
 
@@ -355,6 +359,11 @@ class DataHolder():
 
     def getPhysicalNames(self):
         return self.gui_cfg.getPhysicalNames()
+
+    ################################################
+
+    def getGUIcfg(self):
+        return self.gui_cfg
 
     ################################################
 
@@ -413,17 +422,15 @@ class DataHolder():
             self.ptest_criteria.update(temp_dict)
 
             self.total_test_num = self.total_test_num + 1
-
-        print('\nptest_criteria: {}'.format(self.ptest_criteria))
         
-        print(self.data_dict)
+        #print(self.data_dict)
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
 
             self.total_test_num = self.total_test_num + 1
 
-        logging.info("DataHolder: DataHolder Information has been reset for a new test.")        
+        logger.info("DataHolder: DataHolder Information has been reset for a new test.")        
 
         self.gui_cfg.setTestIndex(1)
 

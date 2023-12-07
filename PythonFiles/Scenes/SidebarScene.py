@@ -15,9 +15,9 @@ import platform
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SidebarScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 class SidebarScene(tk.Frame):
 
@@ -74,7 +74,7 @@ class SidebarScene(tk.Frame):
     #################################################
     def update_sidebar(self, _parent):
         
-        logging.info("SidebarScene: The sidebar has been updated.")
+        logger.info("SidebarScene: The sidebar has been updated.")
 
                 # Variables for easy button editing
         btn_height = 3

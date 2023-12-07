@@ -9,8 +9,10 @@ import os
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('spam_application')
+
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 
 # Creates a class that is called by the GUIWindow. 
@@ -26,7 +28,7 @@ class AddUserScene(tk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
         super().__init__(master_frame, width=870, height=500)
-        logging.info("AddUserScene: Frame has been created.")
+        logger.info("AddUserScene: Frame has been created.")
         self.data_holder = data_holder
         self.update_frame(parent)
 
@@ -137,7 +139,7 @@ class ConfirmPopup():
         self.data_holder = data_holder
         self.new_user_name = new_user_name
         self.password = password
-        logging.info("ConfirmPopup: Confirming that the user wants to add {}".format(self.new_user_name))
+        logger.info("ConfirmPopup: Confirming that the user wants to add {}".format(self.new_user_name))
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("New User Name") 
@@ -193,7 +195,7 @@ class ConfirmPopup():
         self.popup.destroy()
             
         # Adding a new user name to data_holder/DB 
-        logging.info("AddUserScene: Going to DataHolder to try to add {} as a username".format(self.new_user_name))
+        logger.info("AddUserScene: Going to DataHolder to try to add {} as a username".format(self.new_user_name))
         self.data_holder.add_new_user_name(self.new_user_name, self.password)
         # Changes frame to scan_frame
         _parent.set_frame_login_frame()

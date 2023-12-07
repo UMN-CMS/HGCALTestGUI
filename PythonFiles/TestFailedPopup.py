@@ -7,8 +7,9 @@ import os
     
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'w', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.TestFailedPopup')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'w', format=FORMAT, level=logging.DEBUG)
 
 
 class TestFailedPopup():
@@ -23,7 +24,7 @@ class TestFailedPopup():
     # Function to make retry or continue window if the test fails
     def test_failed_popup(self, parent, previous_frame, data_holder):
         self.data_holder = data_holder
-        logging.info("TestFailedPopup: A test has been failed. Prompting user for 'retry' or 'continue'.")
+        logger.info("TestFailedPopup: A test has been failed. Prompting user for 'retry' or 'continue'.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Test Failed") 

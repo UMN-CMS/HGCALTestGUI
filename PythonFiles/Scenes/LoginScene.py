@@ -8,8 +8,9 @@ import os
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.LoginScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 
 # Creates a class that is called by the GUIWindow. 
@@ -35,7 +36,7 @@ class LoginScene(tk.Frame):
             widget.destroy()
 
 
-        logging.info("LoginScene: Frame has been created.")
+        logger.info("LoginScene: Frame has been created.")
 
 
         # Creating a list of users for dropdown menu
@@ -133,7 +134,7 @@ class LoginScene(tk.Frame):
         self.data_holder.set_user_ID(self.user_selected.get())
         # Changes frame to scan_frame
         _parent.set_frame_scan_frame()
-        logging.info("LoginScene: Submit button was selected. End of method")
+        logger.info("LoginScene: Submit button was selected. End of method")
 
         # self.data_holder.print()
 
@@ -147,7 +148,7 @@ class LoginScene(tk.Frame):
 
     # A function to pack the submit button
     def show_submit_button(self):
-        logging.info("LoginScene: User has been selected.")
+        logger.info("LoginScene: User has been selected.")
         self.btn_submit.config(state = 'active')
     
     #################################################

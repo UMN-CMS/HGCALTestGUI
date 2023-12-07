@@ -1,4 +1,0 @@
-^XA
-^FO50,50^ADN,36,20^FDHello World!
-^FS
-^XZ

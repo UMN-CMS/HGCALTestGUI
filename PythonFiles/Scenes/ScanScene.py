@@ -15,9 +15,9 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -66,7 +66,7 @@ class ScanScene(tk.Frame):
 
             self.ent_snum.config(state = 'normal')
 
-            logging.info("ScanScene: Beginning scan...")
+            logger.info("ScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(serial, self.scanner))
 
@@ -91,15 +91,15 @@ class ScanScene(tk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logging.info("ScanScene: Exit code received. Terminating processes.")
+                    logger.info("ScanScene: Exit code received. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logging.info("ScanScene: Processes terminated successfully.")
+                    logger.info("ScanScene: Processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
                 
-            logging.info("ScanScene: Scan complete.")
+            logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -108,7 +108,7 @@ class ScanScene(tk.Frame):
         
         super().__init__(self.master_frame, width=870, height = 500)
 
-        logging.info("ScanScene: Frame has been created.")
+        logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
@@ -230,7 +230,8 @@ class ScanScene(tk.Frame):
 #            self.scanner.terminate()
 
         self.data_holder.set_serial_ID(self.ent_snum.get())
-        self.data_holder.check_if_new_board() 
+        if self.data_holder.getGUIcfg().get_if_use_DB():
+            self.data_holder.check_if_new_board() 
         _parent.update_config()
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
@@ -277,11 +278,11 @@ class ScanScene(tk.Frame):
     #################################################
         
     def kill_processes(self):
-        logging.info("ScanScene: Terminating scanner proceses.")
+        logger.info("ScanScene: Terminating scanner proceses.")
         try:
             if self.use_scanner:
                 self.scanner.kill()
                 self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ScanScene: Processes could not be terminated.")
+            logger.info("ScanScene: Processes could not be terminated.")

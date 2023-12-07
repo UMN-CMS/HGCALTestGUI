@@ -3,7 +3,6 @@
 # Importing all neccessary modules
 from pickle import NONE
 import tkinter as tk
-print(tk.TkVersion)
 #from turtle import bgcolor
 import multiprocessing as mp
 import logging
@@ -32,9 +31,10 @@ import webbrowser
 #################################################################################
 
 
-
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+module_logger = logging.getLogger(__name__)
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename=guiLogPath, filemode = 'a', format=FORMAT, level=logging.DEBUG)
+module_logger.info("Test Logging from GUIWindow")
     
 
 # Create a class for creating the basic GUI Window to be called by the main function to
@@ -43,9 +43,10 @@ class GUIWindow():
 
     #################################################
 
-    def __init__(self, conn, queue, board_cfg):
+    def __init__(self, conn, conn_trigger, queue, board_cfg):
         
         self.conn = conn
+        self.conn_trigger = conn_trigger
         self.queue = queue
         self.retry_attempt = False
         self.completed_window_alive = False
@@ -133,7 +134,7 @@ class GUIWindow():
         # Sets the current frame to the splash frame
         self.set_frame_splash_frame()
         self.master_frame.update() 
-        self.master_frame.after(50, self.set_frame_login_frame)
+        self.master_frame.after(100, self.set_frame_login_frame)
 
         self.master_window.mainloop()
         
@@ -160,7 +161,7 @@ class GUIWindow():
         # For the digital tests
         for test_idx,test in enumerate(test_list):
 
-            self.test_frames.append(TestScene(self, self.master_frame, self.data_holder, test["name"], queue, test_idx))
+            self.test_frames.append(TestScene(self, self.master_frame, self.data_holder, test["name"], test["desc_short"], test["desc_long"], queue, self.conn_trigger, test_idx))
             self.test_frames[test_idx + offset].grid(row=0, column=0)
 
         print("\ntest_frames len: ", len(self.test_frames))
@@ -170,6 +171,8 @@ class GUIWindow():
 
     def update_config(self):
         sn = self.data_holder.get_serial_ID()
+        if not self.gui_cfg.getSerialCheckSafe():
+            return
         new_cfg = update_config(sn)
         self.gui_cfg = new_cfg
 
@@ -181,7 +184,8 @@ class GUIWindow():
         self.run_all_tests_bool = True
 
         try:
-            test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+            test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+            #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
             self.set_frame_test_in_progress(self.queue)
         except Exception as e:
             messagebox.showerror('Exception', e)
@@ -311,11 +315,7 @@ class GUIWindow():
         #num_physical = self.data_holder.getNumPhysicalTest()
         
 
-        print("Total num of tests: {}, Digital: {}\n".format(total_num_tests, num_digital))
-
         if not self.run_all_tests_bool:        
-
-            print("self.current_test_index: ", self.current_test_index)
 
             if (self.current_test_index < total_num_tests):
                 print(self.current_test_index)
@@ -333,7 +333,8 @@ class GUIWindow():
                 self.current_test_index += 1
                 
                 try:
-                    test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+                    gui_cfg = self.data_holder.getGUIcfg()
+                    test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], conn_trigger)
                     self.set_frame_test_in_progress(self.queue)
                 except Exception as e:
                     messagebox.showerror('Exception', e)
@@ -699,7 +700,6 @@ class GUIWindow():
             logging.error("GUIWindow: The application has failed to close.")
             if self.retry_attempt == False:    
                 logging.info("GUIWindow: Retrying...")
-                #self.destroy_function()
                 self.retry_attempt = True
 
 

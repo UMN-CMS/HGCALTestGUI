@@ -23,6 +23,11 @@ class GUIConfig():
         print("Instance of {} GUI created.".format(self.getGUIType()))
 
 
+    # Get serial check safe attribute
+    def getSerialCheckSafe(self):
+        return self.board_cfg["SerialCheckSafe"]
+
+
     # Get number of tests to define order of scenes and sidebar
     def getNumTest(self):
         return len(self.board_cfg["Test"])
@@ -66,8 +71,11 @@ class GUIConfig():
         return self.board_cfg['DBInfo']['use_database']
 
     def getGUIType(self):
-        #print(self.board_cfg)
+        print(self.board_cfg)
         return self.board_cfg["GUIType"]
+
+    def getTestHandler(self):
+        return self.board_cfg["TestHandler"]
 
     ################################
     
