@@ -40,7 +40,7 @@ Test:
   TestClass: counting
   TestPath: Tests
   TestScript: demo_count.py
-- name: Counting
+- name: Counting1
   required: true 
   desc_short: Count to ten
   desc_long: Simple for loop with waits to simulate a tests running locally
