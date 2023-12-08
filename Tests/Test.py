@@ -54,12 +54,12 @@ class Test():
     # Save JSON file under <serial_number>_<test_name>.json
     def save_results(self):
         save_dir = "./jsons"
-        self.send("\nSaving results to {}\n".format("./jsons/{0}/{0}_{1}.json".format(self.current_idx, self.name.replace(" ",""), self.board_sn)))
+        self.send("\nSaving results to {}\n".format("./jsons/{0}/{0}_{1}.json".format(self.name.replace(" ",""), self.board_sn)))
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         if not os.path.exists("{}/{}".format(save_dir, self.name.replace(" ",""))):
             os.makedirs("{}/{}".format(save_dir, self.name.replace(" ","")))
-        with open("./jsons/{0}/{0}_{1}.json".format(self.current_idx, self.name.replace(" ",""), self.board_sn), "w") as f:
+        with open("./jsons/{0}/{0}_{1}.json".format(self.name.replace(" ",""), self.board_sn), "w") as f:
             f.write(self.dump_results())
 
         f.close()
