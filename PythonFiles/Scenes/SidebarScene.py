@@ -129,12 +129,12 @@ class SidebarScene(tk.Frame):
                 font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i)
                 ))
-            self.test_btns[i+physical_offset].grid(column = 0, row = i + original_offset)
+            self.test_btns[i].grid(column = 0, row = i + original_offset)
 
             #print(self.data_holder.data_dict)
 
-            if self.data_holder.data_dict['physical{}_pass'.format(i+1+physical_offset)] == True:
-                self.test_btns[i+physical_offset].config(state = 'disabled')
+            if self.data_holder.data_dict['physical{}_pass'.format(i+1)] == True:
+                self.test_btns[i].config(state = 'disabled')
             
             physical_offset = physical_offset + 1
 
