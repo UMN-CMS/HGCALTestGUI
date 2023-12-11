@@ -19,8 +19,8 @@ DBInfo:
   use_database: true
 
 
-SerialCheckSafe: true
-UsingScanner: true
+SerialCheckSafe: false
+UsingScanner: false
 
 # TestHandler: {name: Local, remoteip: localhost}
 # TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
@@ -33,47 +33,83 @@ PhysicalTest:
     desc_long: Check that the power and grounds are not shorted at the terminal, or
       between the inputs.
     desc_short: Measure resistance between power and ground
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
     required: 1
 
   - name: 1.5V Input Check
     desc_long: Check that resistance between across C906 or C908 is non-zero.
     desc_short: Check that the 1.5V input is not shorted.
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: 10V Input Check
     desc_long: Check that resistance between across C907 or C909 is non-zero.
     desc_short: Check that the 10V input is not shorted.
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
     
   - name: 1.2V Output Check
     desc_long: Check that resistance between across C904 or C904 or TP901 is non-zero.
     desc_short: Check that the 1.2V output is not shorted.
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: RX 2.5V Output Check 
     desc_long: Check that resistance across C902 is non-zero.
     desc_short: Check that the RX 2.5V output is not shorted.
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: TX 2.5V Output Check
     desc_long: Check that resistance across either C903 or TP902 is non-zero.
     desc_short: Check that the TX 2.5V output is not shorted.
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: LDO Output
     desc_long: Measure the votlage across either R911 or TP901 and verify that it is appropriate.
     desc_short: Check that the LDO output voltage is around 1.2V
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: LinPol RX Check
     desc_long: Check that voltages across either R905 or R902 is 2.5V.
     desc_short: Check that the RX voltage from the linppol is operating correctly
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
   - name: LinPol TX Check
     desc_long: Measure the voltage across either TP902 or R906 or C903 is 2.5V.
     desc_short: Check that the TX voltage from the linppol is operating correctly
     required: 1
+    data_fields: 
+        - name: Acceptable Value
+          critical: true
+          type: bool
 
 Test:
   - TestClass: TestXPWR
@@ -99,7 +135,7 @@ Test:
     TestScript: test_startup.py
     desc_long: Read lpgbt ids
     desc_short: Check ids
-    name: lpGBT ids
+    name: LPGBT ID
     required: 1
 
   - TestClass: TestlpGBTcom
