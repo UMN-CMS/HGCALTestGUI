@@ -13,6 +13,7 @@ import platform
 
 
 
+
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SidebarScene')
@@ -27,6 +28,13 @@ class SidebarScene(tk.Frame):
 
 
         super().__init__( sidebar_frame, width=213, height = 650, bg = '#808080', padx = 10, pady=10)
+
+        self.Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        self.Green_Check_Image = self.Green_Check_Image.resize((50,50), Image.LANCZOS)
+        self.Green_Check_PhotoImage = iTK.PhotoImage(self.Green_Check_Image)
+        self.Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
+        self.Red_X_Image = self.Red_X_Image.resize((50,50), Image.LANCZOS)
+        self.Red_X_PhotoImage = iTK.PhotoImage(self.Red_X_Image)
         
 
         ############        
@@ -41,6 +49,7 @@ class SidebarScene(tk.Frame):
 
 
         self.canvas_window = self.mycanvas.create_window((4,4), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
+
 
 
 
@@ -198,22 +207,14 @@ class SidebarScene(tk.Frame):
             #print("Pass fail:", self.list_of_pass_fail)
             if(self.list_of_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
-                Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
-                GreenCheck_Label.image = Green_Check_PhotoImage
-
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label.image = self.Green_Check_PhotoImage
                 GreenCheck_Label.grid(row=index + original_offset + physical_offset, column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
-                Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50, bg = '#808080')
-                RedX_Label.image = Red_X_PhotoImage
-
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label.image = self.Red_X_PhotoImage
                 RedX_Label.grid(row=index + original_offset + physical_offset, column=1)
 
         self.physical_pass_fail = self.data_holder.data_lists['physical_results']
@@ -223,21 +224,15 @@ class SidebarScene(tk.Frame):
             #print("Pass fail:", self.physical_pass_fail)
             if(self.physical_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
-                Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
-                GreenCheck_Label.image = Green_Check_PhotoImage
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label.image = self.Green_Check_PhotoImage
 
                 GreenCheck_Label.grid(row=index + original_offset, column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
-                Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50, bg = '#808080')
-                RedX_Label.image = Red_X_PhotoImage
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label.image = self.Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + original_offset, column=1)
 
