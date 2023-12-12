@@ -28,8 +28,9 @@ TestHandler: {name: ZMQ, localip: <localip>, remoteip: <remoteip>, username: <us
   serverpath: <serverpath>, serverscript: <serverscript>}
 
 
-PhysicalTest: 
+Tests: 
   - name: Power-Ground Resistance
+    type: physical
     desc_long: Check that the power and grounds are not shorted at the terminal, or
       between the inputs.
     desc_short: Measure resistance between power and ground
@@ -40,6 +41,7 @@ PhysicalTest:
     required: 1
 
   - name: 1.5V Input Check
+    type: physical
     desc_long: Check that resistance between across C906 or C908 is non-zero.
     desc_short: Check that the 1.5V input is not shorted.
     required: 1
@@ -49,6 +51,7 @@ PhysicalTest:
           type: bool
 
   - name: 10V Input Check
+    type: physical
     desc_long: Check that resistance between across C907 or C909 is non-zero.
     desc_short: Check that the 10V input is not shorted.
     required: 1
@@ -58,6 +61,7 @@ PhysicalTest:
           type: bool
     
   - name: 1.2V Output Check
+    type: physical
     desc_long: Check that resistance between across C904 or C904 or TP901 is non-zero.
     desc_short: Check that the 1.2V output is not shorted.
     required: 1
@@ -67,6 +71,7 @@ PhysicalTest:
           type: bool
 
   - name: RX 2.5V Output Check 
+    type: physical
     desc_long: Check that resistance across C902 is non-zero.
     desc_short: Check that the RX 2.5V output is not shorted.
     required: 1
@@ -76,6 +81,7 @@ PhysicalTest:
           type: bool
 
   - name: TX 2.5V Output Check
+    type: physical
     desc_long: Check that resistance across either C903 or TP902 is non-zero.
     desc_short: Check that the TX 2.5V output is not shorted.
     required: 1
@@ -85,6 +91,7 @@ PhysicalTest:
           type: bool
 
   - name: LDO Output
+    type: physical
     desc_long: Measure the votlage across either R911 or TP901 and verify that it is appropriate.
     desc_short: Check that the LDO output voltage is around 1.2V
     required: 1
@@ -94,6 +101,7 @@ PhysicalTest:
           type: bool
 
   - name: LinPol RX Check
+    type: physical
     desc_long: Check that voltages across either R905 or R902 is 2.5V.
     desc_short: Check that the RX voltage from the linppol is operating correctly
     required: 1
@@ -103,6 +111,7 @@ PhysicalTest:
           type: bool
 
   - name: LinPol TX Check
+    type: physical
     desc_long: Measure the voltage across either TP902 or R906 or C903 is 2.5V.
     desc_short: Check that the TX voltage from the linppol is operating correctly
     required: 1
@@ -111,8 +120,8 @@ PhysicalTest:
           critical: true
           type: bool
 
-Test:
   - TestClass: TestXPWR
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_startup.py
     desc_long: Measure using the tester, and should find approximately 1.2V.
@@ -121,6 +130,7 @@ Test:
     required: 1
 
   - TestClass: TestSetupLpgbt
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_startup.py
     desc_long: Perform nominal setup from BE. Do setup, link trick, setup. Check PUSMStatus
@@ -131,6 +141,7 @@ Test:
     required: 1
 
   - TestClass: TestLpgbtId
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_startup.py
     desc_long: Read lpgbt ids
@@ -139,6 +150,7 @@ Test:
     required: 1
 
   - TestClass: TestlpGBTcom
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_startup.py
     desc_long: 'Read and write to lpBGT registers via ICEC. Check DAQ lpGBT read of
@@ -149,6 +161,7 @@ Test:
     required: 1
 
   - TestClass: TestI2C
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: engine_i2c.py
     desc_long: Check that engine can communicate as an I2C master
@@ -157,6 +170,7 @@ Test:
     required: 1
 
   - TestClass: TestGpio
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_gpio.py
     desc_long: Read and write to all GPIO channels and verify levels. Write nominal
@@ -167,6 +181,7 @@ Test:
     required: 1
 
   - TestClass: TestAdc
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_adc.py
     desc_long: Measure known voltages/resistances. Check measured values for all 4
@@ -176,6 +191,7 @@ Test:
     required: 1
 
   - TestClass: TestUplink
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
     desc_long: PRBS validation from lpGBTs. Check bit error rate below threshold.
@@ -184,6 +200,7 @@ Test:
     required: 1
 
   - TestClass: TestDownlink
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
     desc_long: Eye opening test. Check eye opening width and height below threshold.
@@ -192,6 +209,7 @@ Test:
     required: 1
 
   - TestClass: TestFC
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
     desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
@@ -200,6 +218,7 @@ Test:
     required: 1
 
   - TestClass: TestElinkUp
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
     desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
@@ -208,6 +227,7 @@ Test:
     required: 1
 
   - TestClass: TestEClockRates
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
     desc_long: Check that all EClocks are running at 320MHz.
@@ -216,6 +236,7 @@ Test:
     required: 1
 
   - TestClass: TestCrossover
+    type: script
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: engine_test_suite.py
     desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.

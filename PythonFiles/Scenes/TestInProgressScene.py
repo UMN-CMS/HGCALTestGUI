@@ -1,6 +1,3 @@
-################################################################################
-
-# Imports all the necessary modules
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -11,16 +8,11 @@ logging.getLogger('PIL').setLevel(logging.WARNING)
 import PythonFiles
 import os
 
-#################################################################################
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestInProgressScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-# Creating the frame itself
 class TestInProgressScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
-        logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
-        
+        logger.info("Beginning the initialization of the TestInProgressScene.")
         super().__init__(master_frame, width=870, height = 500)
 
         self.queue = queue
@@ -29,7 +21,6 @@ class TestInProgressScene(tk.Frame):
         self.initialize_scene(parent, master_frame)
         self.conn = _conn
 
-    ##################################################
 
     # A function for the stop button
     def btn_stop_action(self, _parent):
@@ -57,8 +48,7 @@ class TestInProgressScene(tk.Frame):
     # Used to initialize the frame that is on the main window
     # next_frame is used to progress to the next scene and is passed in from GUIWindow
     def initialize_scene(self, parent, master_frame):
-        
-        logger.info("TestInProgressScene: The frame has been initialized.")
+        logger.info("The frame has been initialized.")
         scrollbar = tk.Scrollbar(self)
         scrollbar.pack(side = "right", fill = 'y')
 
