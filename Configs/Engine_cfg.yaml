@@ -27,7 +27,6 @@ UsingScanner: false
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: <remoteip>, username: <username>,
   serverpath: <serverpath>, serverscript: <serverscript>}
 
-
 Tests: 
   - name: Power-Ground Resistance
     type: physical

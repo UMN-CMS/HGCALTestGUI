@@ -1,6 +1,3 @@
-#################################################################################
-
-# Importing Necessary Modules
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as font
@@ -10,20 +7,13 @@ logging.getLogger("PIL").setLevel(logging.WARNING)
 import PythonFiles
 import os
 
-# Importing Necessary Files
 from PythonFiles.utils.REQClient import REQClient
 
-#################################################################################
 
-logger = logging.getLogger("HGCALTestGUI.PythonFiles.Scenes.TestScene")
-# FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-# logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-# Creating class for the window
+
 class TestScene(tk.Frame):
-
-    #################################################
-
     def __init__(
         self,
         parent,
@@ -45,9 +35,7 @@ class TestScene(tk.Frame):
         self.test_description_short = self.test_config["desc_short"]
         self.test_description_long = self.test_config["desc_long"]
 
-        self.update_frame(parent)
-
-    #################################################
+        #self.update_frame(parent)
 
     def update_frame(self, parent):
         logger.debug("ParentTestClass: A test frame has been updated.")
@@ -124,7 +112,7 @@ class TestScene(tk.Frame):
         btn_confirm.pack(side="top")
         btn_confirm["font"] = font.Font(family="Arial", size=13)
 
-        #if self.test_idx == 0:
+        # if self.test_idx == 0:
 
         #    # Create a button for confirming test
         #    run_all_btn = tk.Button(
@@ -173,22 +161,15 @@ class TestScene(tk.Frame):
 
         self.grid_propagate(0)
 
-    #################################################
-
     def help_action(self, _parent):
         _parent.help_popup(self)
 
     def run_all_action(self, _parent):
-
         _parent.run_all_tests(self.test_id)
-
-    #################################################
 
     # Rescan button takes the user back to scanning in a new board
     def btn_rescan_action(self, _parent):
         _parent.reset_board()
-
-    #################################################
 
     # Confirm button action takes the user to the test in progress scene
     def btn_confirm_action(self, _parent):
@@ -207,93 +188,7 @@ class TestScene(tk.Frame):
 
         _parent.set_frame_test_in_progress(self.queue)
 
-    #################################################
-
     # functionality for the logout button
     def btn_logout_action(self, _parent):
         logger.info("TestScene: Successfully logged out from the TestScene.")
         _parent.set_frame_login_frame()
-
-    #################################################
-
-
-#################################################################################
-
-
-class Test1Scene(TestScene):
-
-    logger.info("Test1Scene: Frame has successfully been created.")
-
-    # Override to add specific functionality
-    def btn_confirm_action(self, _parent):
-
-        self.data_holder.print()
-        super().btn_confirm_action(_parent)
-        test_1_client = REQClient(
-            "test1",
-            self.data_holder.data_dict["current_serial_ID"],
-            self.data_holder.data_dict["user_ID"],
-        )
-        _parent.set_frame_test_in_progress(self.queue)
-
-
-#################################################################################
-
-
-class Test2Scene(TestScene):
-
-    logger.info("Test2Scene: Frame has successfully been created.")
-
-    # Override to add specific functionality
-    def btn_confirm_action(self, _parent):
-        self.data_holder.print()
-        super().btn_confirm_action(_parent)
-        test_2_client = REQClient(
-            "test2",
-            self.data_holder.data_dict["current_serial_ID"],
-            self.data_holder.data_dict["user_ID"],
-        )
-        _parent.set_frame_test_in_progress(self.queue)
-
-
-#################################################################################
-
-
-class Test3Scene(TestScene):
-
-    logger.info("Test3Scene: Frame has successfully been created.")
-
-    # Override to add specific functionality
-    def btn_confirm_action(self, _parent):
-
-        self.data_holder.print()
-        super().btn_confirm_action(_parent)
-        test_3_client = REQClient(
-            "test3",
-            self.data_holder.data_dict["current_serial_ID"],
-            self.data_holder.data_dict["user_ID"],
-        )
-        _parent.set_frame_test_in_progress(self.queue)
-
-
-#################################################################################
-
-
-class Test4Scene(TestScene):
-
-    logger.info("Test4Scene: Frame has successfully been created.")
-
-    # Override to add specific functionality
-    def btn_confirm_action(self, _parent):
-
-        self.data_holder.print()
-        super().btn_confirm_action(_parent)
-        test_4_client = REQClient(
-            "test4",
-            self.data_holder.data_dict["current_serial_ID"],
-            self.data_holder.data_dict["user_ID"],
-        )
-        _parent.set_frame_test_in_progress(self.queue)
-
-
-#################################################################################

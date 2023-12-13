@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 class TestSummaryScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder):
+        # Call to the super class's constructor
+        # Super class is the tk.Frame class
+        super().__init__(master_frame, width=870, height=500)
+
         Green_Check_Image = Image.open(
             "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
         )
@@ -25,9 +29,6 @@ class TestSummaryScene(tk.Frame):
 
         self.parent = parent
 
-        # Call to the super class's constructor
-        # Super class is the tk.Frame class
-        super().__init__(master_frame, width=870, height=500)
 
         self.sn_text = tk.StringVar()
 

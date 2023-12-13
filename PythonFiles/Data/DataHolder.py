@@ -49,10 +49,14 @@ class DataHolder:
     def getTest(self, tid):
         return self.tests[tid]
 
+    def getTestIdx(self, tid):
+        return self.tests[tid]["idx"]
+
     def getTestState(self, tid):
         return self.test_states[tid]
 
     def updateTest(self, tid, passed=None, result=None, comment=None):
+        logger.info(f"Updating state for test {tid}")
         for k, v in [
             ("passed", passed),
             ("result", result),
@@ -62,6 +66,7 @@ class DataHolder:
                 if tid not in self.test_states:
                     self.test_states[tid] = {}
                 self.test_states[tid][k] = v
+                logger.info(f"Updated {tid}[{}] = {v}")
 
     def getActiveTest(self):
         return self.tests[self.current_active_test]
@@ -104,7 +109,7 @@ class DataHolder:
 
     def set_user_ID(self, user_ID):
         self.current_user_id = user_ID
-        logger.debug(f"User ID has been set to {self.current_user_id}.")
+        logger.info(f"User ID has been set to {self.current_user_id}.")
 
     def set_serial_ID(self, sn):
         self.current_serial = sn

@@ -1,5 +1,3 @@
-#################################################################################
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Canvas
@@ -10,31 +8,18 @@ import logging
 import PythonFiles
 import os
 import platform
+import itertools as it
 
 
-#################################################################################
-
-logger = logging.getLogger("HGCALTestGUI.PythonFiles.Scenes.SidebarScene")
+logger = logging.getLogger(__name__)
 
 
 class SidebarScene(tk.Frame):
-    def __init__(self, parent, sidebar_frame, data_holder):
+    def __init__(self, parent, sidebar_frame):
+        self.parent = parent
         super().__init__(
             sidebar_frame, width=213, height=650, bg="#808080", padx=10, pady=10
         )
-
-        self.Green_Check_Image = Image.open(
-            "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
-        )
-        self.Green_Check_Image = self.Green_Check_Image.resize((50, 50), Image.LANCZOS)
-        self.Green_Check_PhotoImage = iTK.PhotoImage(self.Green_Check_Image)
-        self.Red_X_Image = Image.open(
-            "{}/Images/RedX.png".format(PythonFiles.__path__[0])
-        )
-        self.Red_X_Image = self.Red_X_Image.resize((50, 50), Image.LANCZOS)
-        self.Red_X_PhotoImage = iTK.PhotoImage(self.Red_X_Image)
-
-        ############
 
         self.mycanvas = tk.Canvas(self, background="#808080", width=213, height=650)
         self.viewingFrame = tk.Frame(
@@ -60,11 +45,10 @@ class SidebarScene(tk.Frame):
 
         self.onFrameConfigure(None)
 
-        self.data_holder = data_holder
-
-        self.update_sidebar(parent)
-
-    #################################################
+    def setScenes(self, scenes, sidebar_groups):
+        self.scenes = scenes
+        self.groups = sidebar_groups
+        self.createSidebar()
 
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner frame"""
@@ -78,103 +62,47 @@ class SidebarScene(tk.Frame):
         # canvas_width = event.width
         # self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
 
-    #################################################
-    def update_sidebar(self, _parent):
-        logger.info("SidebarScene: The sidebar has been updated.")
-
+    def createSidebar(self):
+        logger.info("Creating sidebar")
         # Variables for easy button editing
         btn_height = 3
         btn_width = 18
         btn_font = ("Arial", 10)
         btn_pady = 5
 
-        self.btn_login = tk.Button(
-            self.viewingFrame,
-            pady=btn_pady,
-            text="LOGIN PAGE",
-            height=btn_height,
-            width=btn_width,
-            font=btn_font,
-        )
-        self.btn_login.grid(column=0, row=0)
-
-        self.btn_scan = tk.Button(
-            self.viewingFrame,
-            pady=btn_pady,
-            text="SCAN PAGE",
-            height=btn_height,
-            width=btn_width,
-            font=btn_font,
-        )
-        self.btn_scan.grid(column=0, row=1)
-
-        tests = self.data_holder.getTests()
-        self.test_btns = {}
-        original_offset = 2
-
-        for test in tests:
-            tname = test["test_data"]["name"]
-            test_state = self.data_holder.getTestState(test['id'])
-            self.test_btns[tname] = tk.Button(
+        self.btns = {}
+        for i, scene in enumerate(self.scenes):
+            name = scene.scene_name
+            sid = scene.scene_id
+            btn = tk.Button(
                 self.viewingFrame,
                 pady=btn_pady,
-                text=tname,
+                text=name,
                 height=btn_height,
                 width=btn_width,
                 font=btn_font,
-                command=lambda x=tname: self.btn_test_action(_parent, x),
+                command=lambda x=sid: self.parent.gotoScene(x),
             )
-            self.test_btns[tname].grid(column=0, row=test["idx"] + original_offset)
-
-            if test_state["passed"]:
-                self.test_btns[tname].config(state="disabled")
-                GreenCheck_Label = tk.Label(
-                    self.viewingFrame,
-                    image=self.Green_Check_PhotoImage,
-                    width=50,
-                    height=50,
-                    bg="#808080",
-                )
-                GreenCheck_Label.grid(row=test["idx"], column=1)
-            elif test_state["completed"]:
-                RedX_Label = tk.Label(
-                    self.viewingFrame,
-                    image=self.Red_X_PhotoImage,
-                    width=50,
-                    heighttest=50,
-                    bg="#808080",
-                )
-                RedX_Label.grid(row=test["idx"], column=1)
-
-        self.btn_summary = tk.Button(
-            self.viewingFrame,
-            pady=btn_pady,
-            text="TEST SUMMARY",
-            height=btn_height,
-            width=btn_width,
-            font=btn_font,
-            command=lambda: self.btn_summary_action(_parent),
-        )
-        self.btn_summary.grid(
-            column=0, row=original_offset + self.data_holder.total_tests
-        )
-
-        self.report_btn = tk.Button(
-            self.viewingFrame,
-            pady=btn_pady,
-            text="Report Bug",
-            height=btn_height,
-            width=btn_width,
-            font=("Kozuka Gothic Pr6N L", 8),
-            command=lambda: self.report_bug(_parent),
-        )
-        self.report_btn.grid(
-            column=0, row=original_offset + self.data_holder.total_tests + 1
-        )
-
+            btn.grid(row=i, column=0)
+            btn.orig_color = btn.cget("background")
+            self.btns[scene.scene_id] = btn
         self.grid_propagate(0)
 
-    #################################################
+    def update_sidebar(self, parent):
+        logger.info("SidebarScene: The sidebar has been updated.")
+        scenes = self.scenes
+        for i, scene in enumerate(scenes):
+            logger.info(f"Updating button in sidebar for scene {scene.scene_id}")
+            self.btns[scene.scene_id].config(
+                bg="#98e5ed"
+                if parent.current_scene_id == scene.scene_id
+                else self.btns[scene.scene_id].orig_color
+            )
+            if scene.sidebar_annotation is not None:
+                annot = scene.sidebar_annotation(self.viewingFrame)
+                if annot:
+                    annot.grid(row=i, column=1)
+        self.grid_propagate(0)
 
     def onMouseWheel(self, event):  # cross platform scroll wheel event
         if event.num == 4:
@@ -190,8 +118,6 @@ class SidebarScene(tk.Frame):
         self.mycanvas.unbind_all("<Button-4>")
         self.mycanvas.unbind_all("<Button-5>")
 
-    #################################################
-
     def report_bug(self, _parent):
         _parent.report_bug(self)
 
@@ -201,56 +127,21 @@ class SidebarScene(tk.Frame):
     def btn_summary_action(self, _parent):
         _parent.set_frame_test_summary()
 
-    #################################################
-
     def disable_all_btns(self):
-        self.btn_login.config(state="disabled")
-        self.btn_scan.config(state="disabled")
-        for btn in self.test_btns.values():
+        logger.debug("Disabling all buttons")
+
+        for btn in self.btns.values():
             btn.config(state="disabled")
-        self.btn_summary.config(state="disabled")
 
-    #################################################
+    def enable_all_btns(self):
+        logger.debug("Enabling all buttons")
+        for btn in self.btns.values():
+            btn.config(state="normal")
 
-    def disable_all_but_log_scan(self):
-        for btn in self.test_btns.values():
-            btn.config(state="disabled")
-        self.btn_summary.config(state="disabled")
+    def enable_btn(self, scene_id):
+        logger.debug(f"Enabling button {scene_id}")
+        self.btns[scene_id].config(state="normal")
 
-    #################################################
-
-    def disable_all_btns_but_scan(self):
-        self.btn_login.config(state="disabled")
-        for btn in self.test_btns.values():
-            btn.config(state="disabled")
-        self.btn_summary.config(state="disabled")
-
-    #################################################
-
-    def disable_all_btns_but_login(self):
-        self.btn_login.config(state="normal")
-        self.btn_scan.config(state="disabled")
-        for btn in self.test_btns.values():
-            btn.config(state="disabled")
-        self.btn_summary.config(state="disabled")
-
-    #################################################
-
-    def disable_log_scan(self):
-        self.btn_login.config(state="disabled")
-        self.btn_scan.config(state="disabled")
-
-    #################################################
-
-    def disable_login_button(self):
-        self.btn_login.config(state="disabled")
-
-    #################################################
-
-    def disable_scan_button(self):
-        self.btn_scan.config(state="disabled")
-
-    #################################################
-
-
-#################################################################################
+    def disable_btn(self, scene_id):
+        logger.debug(f"Disabling button {scene_id}")
+        self.btns[scene_id].config(state="disabled")

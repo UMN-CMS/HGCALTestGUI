@@ -43,3 +43,6 @@ class SplashScene(tk.Frame):
         lbl_names.grid(row = 1, column = 1)
 
         self.grid_propagate(0)
+
+    def update_frame(self, parent):
+        pass

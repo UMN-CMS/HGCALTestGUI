@@ -17,7 +17,6 @@ class GenericPhysicalScene(tk.Frame):
         self.update_frame(parent)
 
     def create_btn_from_cfg(self, data_field):
-
         font_scene = ("Arial", 12)
         font_scene_14 = ("Arial", 14)
 
@@ -39,7 +38,6 @@ class GenericPhysicalScene(tk.Frame):
             ent_tester.grid(row=current_row, column=2, pady=15)
 
         elif data_field["type"] == "bool":
-
             self.values[data_field["name"]] = tk.BooleanVar()
 
             c1 = tk.Checkbutton(
@@ -54,7 +52,6 @@ class GenericPhysicalScene(tk.Frame):
             c1.grid(row=current_row, column=1, pady=15)
 
     def update_frame(self, parent):
-
         # Creates a font to be more easily referenced later in the code
         font_scene = ("Arial", 12)
         font_scene_14 = ("Arial", 14)
@@ -64,7 +61,11 @@ class GenericPhysicalScene(tk.Frame):
         self.frm_window.grid(column=0, row=0)
 
         # Create a label for the tester's name
-        lbl_tester = tk.Label(self.frm_window, text="Tester: ", font=font_scene)
+        lbl_tester = tk.Label(
+            self.frm_window,
+            text=f"Tester: ",
+            font=font_scene,
+        )
         lbl_tester.grid(row=0, column=0, pady=15)
 
         # Create an entry for the tester's name
@@ -74,11 +75,16 @@ class GenericPhysicalScene(tk.Frame):
         ent_tester.config(state="disabled")
 
         # Create a label for the serial number box
-        lbl_snum = tk.Label(self.frm_window, text="Serial Number: ", font=font_scene)
+        lbl_snum = tk.Label(
+            self.frm_window,
+            text=f"Serial Number: ",
+            font=font_scene,
+        )
         lbl_snum.grid(row=0, column=2, pady=15)
 
         # Create a entry for the serial number box
         ent_snum = tk.Entry(self.frm_window, font=font_scene)
+        print(self.data_holder.getActiveSerial())
         ent_snum.insert(0, self.data_holder.getActiveSerial())
         ent_snum.grid(row=0, column=3, pady=15)
         ent_snum.config(state="disabled")
@@ -141,7 +147,6 @@ class GenericPhysicalScene(tk.Frame):
         pass
 
     def update_data_holder(self):
-
         values = {}
         passed = True
         for data_field in [x for x in self.fields if x["critical"]]:
@@ -164,9 +169,8 @@ class GenericPhysicalScene(tk.Frame):
 
     # Confirm button action takes the user to the test in progress scene
     def btn_confirm_action(self, _parent):
-
         if self.update_data_holder():
-            _parent.go_to_next_test()
+            _parent.gotoNext()
         else:
             _parent.critical_failure_popup()
 
@@ -185,7 +189,7 @@ class GenericPhysicalScene(tk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        _parent.set_frame_login_frame()
+        _parent.gotoScene("login")
 
     #################################################
 

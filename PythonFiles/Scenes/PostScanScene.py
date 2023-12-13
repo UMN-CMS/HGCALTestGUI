@@ -1,5 +1,3 @@
-#################################################################################
-
 import PythonFiles
 import json, logging
 import tkinter as tk
@@ -12,24 +10,14 @@ import PythonFiles
 import os
 import datetime
 
-#################################################################################
 
 logging.getLogger("PIL").setLevel(logging.WARNING)
 
 
-logger = logging.getLogger("HGCALTestGUI.PythonFiles.Scenes.PostScanScene")
-# FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-# logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
-# Frame that shows all of the final test results
-# @param parent -> References a GUIWindow object
-# @param master_frame -> Tkinter object that the frame is going to be placed on
-# @param data_holder -> DataHolder object that stores all relevant data
-
+logger = logging.getLogger(__name__)
 
 class PostScanScene(tk.Frame):
 
-    #################################################
 
     def __init__(self, parent, master_frame, data_holder):
 
@@ -50,13 +38,21 @@ class PostScanScene(tk.Frame):
         # self.columnconfigure(self.data_holder.getNumTest(), weight = 1)
         # Instantiates an updated table with the current data
         # self.create_updated_table(parent)
+        green_check = Image.open(
+            "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
+        )
+        green_check = green_check.resize((75, 75), Image.LANCZOS)
+        self.green_check = iTK.PhotoImage(green_check)
+
+        redx = Image.open("{}//Images/RedX.png".format(PythonFiles.__path__[0]))
+        redx = redx.resize((75, 75), Image.LANCZOS)
+        self.redx = iTK.PhotoImage(redx)
 
         self.create_frame(parent)
 
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
 
-    #################################################
 
     def create_frame(self, parent):
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
@@ -107,15 +103,6 @@ class PostScanScene(tk.Frame):
         )
         self.id.grid(row=1, column=1, pady=20)
 
-        green_check = Image.open(
-            "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
-        )
-        green_check = green_check.resize((75, 75), Image.LANCZOS)
-        green_check = iTK.PhotoImage(green_check)
-
-        redx = Image.open("{}//Images/RedX.png".format(PythonFiles.__path__[0]))
-        redx = redx.resize((75, 75), Image.LANCZOS)
-        redx = iTK.PhotoImage(redx)
         try:
             tests = self.data_holder.getTests()
             for test in tests:
@@ -126,7 +113,7 @@ class PostScanScene(tk.Frame):
                 if test["passed"]:
                     self.lbl_img = tk.Label(
                         self.frame,
-                        image=green_check,
+                        image=self.green_check,
                         width=75,
                         height=75,
                         font=("Arial", 14),
@@ -136,7 +123,7 @@ class PostScanScene(tk.Frame):
                 else:
                     self.lbl_img = tk.Label(
                         self.frame,
-                        image=redx,
+                        image=self.redx,
                         width=75,
                         height=75,
                         font=("Arial", 14),
@@ -189,20 +176,17 @@ class PostScanScene(tk.Frame):
         btn_logout.grid(row=3, column=3, padx=10, pady=20)
 
     def btn_proceed_action(self, _parent):
-        _parent.scan_frame_progress()
+        _parent.gotoGroup("tests")
 
     def btn_NextBoard_action(self, parent):
-        parent.set_frame_scan_frame()
+        parent.gotoScene("scan")
 
     def btn_logout_action(self, parent):
-        parent.set_frame_login_frame()
-
-    #################################################
+        parent.gotoScene("login")
 
     def update_frame(self):
         self.create_frame(self.parent)
 
-    #################################################
 
     def onFrameConfigure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -222,4 +206,3 @@ class PostScanScene(tk.Frame):
         self.canvas.unbind_all("<Button-5>")
 
 
-#################################################################################
