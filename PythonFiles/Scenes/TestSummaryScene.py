@@ -1,5 +1,3 @@
-#################################################################################
-
 import PythonFiles
 import json, logging
 import tkinter as tk
@@ -16,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 class TestSummaryScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder):
+        Green_Check_Image = Image.open(
+            "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
+        )
+        Green_Check_Image = Green_Check_Image.resize((75, 75), Image.LANCZOS)
+        Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
+        Red_X_Image = Red_X_Image.resize((75, 75), Image.LANCZOS)
+        self.Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
+        self.Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
+
         self.parent = parent
 
         # Call to the super class's constructor
@@ -41,9 +48,7 @@ class TestSummaryScene(tk.Frame):
         )
         self.title.grid(row=0, column=1, pady=20)
 
-        self.sn_text.set(
-            "Serial Number: " + str(self.data_holder.data_dict["current_serial_ID"])
-        )
+        self.sn_text.set(f"Serial Number: {self.data_holder.getActiveSerial()}")
 
         # Adds Board Serial Number to the TestSummaryFrame
         self.lbl_snum = tk.Label(self, textvariable=self.sn_text, font=("Arial", 14))
@@ -51,27 +56,15 @@ class TestSummaryScene(tk.Frame):
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
 
-        Green_Check_Image = Image.open(
-            "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
-        )
-        Green_Check_Image = Green_Check_Image.resize((75, 75), Image.LANCZOS)
-        Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-        Red_X_Image = Red_X_Image.resize((75, 75), Image.LANCZOS)
-
-        self.Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-        self.Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-
     # Creates the table with the updated information from the data_holder
     def create_updated_table(self, parent):
         logger.debug("TestSummaryScene: Table is being updated.")
 
         self.tests = self.data_holder.getTests()
-        self.sn_text.set(
-            "Serial Number: " + str(self.data_holder.data_dict["current_serial_ID"])
-        )
+        self.sn_text.set(f"Serial Number: {self.data_holder.getActiveSerial()}")
         self.lbl_tester = tk.Label(
             self,
-            text="Tester: " + self.data_holder.data_dict["user_ID"],
+            text=f"Tester: {self.data_holder.getActiveUser()}",
             font=("Arial", 14),
         )
         self.lbl_tester.grid(column=3, row=0, pady=20, padx=5)
@@ -99,21 +92,24 @@ class TestSummaryScene(tk.Frame):
         # Setting weights of columns so the column 4 is half the size of columns 0-3
         for i in range(self.data_holder.getNumTests()):
             self.viewingFrame.columnconfigure(i, weight=2)
-        self.viewingFrame.columnconfigure(self.data_holder.getNumTest(), weight=1)
+        self.viewingFrame.columnconfigure(self.data_holder.getNumTests(), weight=1)
 
-        for index in range(len(self.list_of_table_labels)):
+        table_labels = ["l1", "l2", "l3"]
+        for i, l in enumerate(table_labels):
             _label = tk.Label(
                 self.viewingFrame,
-                text=self.list_of_table_labels[index],
+                text=l,
                 relief="ridge",
                 width=25,
                 height=1,
                 font=("Arial", 11, "bold"),
             )
-            _label.grid(row=0, column=index)
+            _label.grid(row=0, column=i)
 
         # Adds the test names to the first column
+        tests = self.data_holder.getTests()
         for test in tests:
+            test_state = self.data_holder.getTestState(test['id'])
             idx = test["idx"] + 1
             _label = tk.Label(
                 self.viewingFrame,
@@ -131,12 +127,12 @@ class TestSummaryScene(tk.Frame):
                 height=3,
                 font=("Arial", 11),
             )
-            if test["completed"]:
+            if test_state["completed"]:
                 _label.config(text="COMPLETED")
             else:
                 _label.config(text="UNFINISHED")
             _label.grid(row=idx, column=1)
-            if test["passed"]:
+            if test_state["passed"]:
                 GreenCheck_Label = tk.Label(
                     self.viewingFrame,
                     image=self.Green_Check_PhotoImage,
@@ -147,7 +143,7 @@ class TestSummaryScene(tk.Frame):
 
             else:
                 RedX_Label = tk.Label(
-                    self.viewingFrame, image=Red_X_PhotoImage, width=75, height=75
+                    self.viewingFrame, image=self.Red_X_PhotoImage, width=75, height=75
                 )
             RedX_Label.grid(row=idx, column=2)
 
@@ -192,6 +188,7 @@ class TestSummaryScene(tk.Frame):
         tests = self.data_holder.getTests()
         for test in tests:
             idx = test["idx"]
+            tid = test["id"]
             vf = tk.Frame(self.viewingFrame)
             vf.grid(column=3, row=idx + 1)
             rt = tk.Button(
@@ -199,7 +196,7 @@ class TestSummaryScene(tk.Frame):
                 text="RETEST",
                 padx=5,
                 pady=3,
-                command=lambda i=i: self.btn_retest_action(parent, i),
+                command=lambda i=tid: self.btn_retest_action(parent, i),
             )
             rt.grid(column=1, row=0, padx=5, pady=5)
             mf = tk.Button(
@@ -207,7 +204,7 @@ class TestSummaryScene(tk.Frame):
                 text="MORE INFO",
                 padx=5,
                 pady=3,
-                command=lambda i=i: self.btn_more_info_action(parent, i),
+                command=lambda i=tid: self.btn_more_info_action(parent, i),
             )
             mf.grid(column=0, row=0)
 

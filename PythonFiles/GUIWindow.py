@@ -19,7 +19,7 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestInProgressScene import *
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
-from PythonFiles.Scenes.PhysicalScenes.GenericPhysicalScene import GenericPhysicalScene
+from PythonFiles.Scenes.GenericPhysicalScene import GenericPhysicalScene
 from PythonFiles.update_config import update_config
 import webbrowser
 
@@ -29,6 +29,15 @@ logger = logging.getLogger(__name__)
 # FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 # logging.basicConfig(filename=guiLogPath, filemode = 'a', format=FORMAT, level=logging.DEBUG)
 logger.info("Test Logging from GUIWindow")
+
+
+
+class GuiFrame:
+    def __init__(self, frame, pre_enter=None, pre_exit=None):
+        self.frame = frame
+        self.pre_enter = pre_enter
+        self.pre_exit = pre_exit
+    
 
 
 # Create a class for creating the basic GUI Window to be called by the main function to
@@ -43,6 +52,9 @@ class GUIWindow:
         self.current_test_index = 0
         self.gui_cfg = GUIConfig(board_cfg)
         self.data_holder = DataHolder(self.gui_cfg)
+
+
+        self.test_frames = {}
 
         # Create the window named "self.master_window"
         # global makes self.master_window global and therefore accessible outside the function
@@ -96,7 +108,7 @@ class GUIWindow:
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)
         self.scan_frame.grid(row=0, column=0)
 
-        # self.create_test_frames(queue)
+        self.create_test_frames(queue)
 
         self.test_in_progress_frame = TestInProgressScene(
             self, self.master_frame, self.data_holder, queue, conn
@@ -128,17 +140,20 @@ class GUIWindow:
 
     #################################################
 
-    def frameFactory(self, test_type, test, queue):
+    def addScene(scene_class, scene_id, pre_enter, pre_exit, *args,**kwargs):
+        scene = scene_class(*args, **kwargs)
+        self.test_frames[scene_id] = GuiFrame(scene)
+
+    def testFrameFactory(self, test_type, test, queue):
         if test_type == "physical":
-            ret = GenericPhysicalScene(self, self.master_frame, self.data_holder, test)
+            ret = GenericPhysicalScene(self, self.master_frame, self.data_holder, test["id"], test["test_data"])
         elif test_type:
             ret = TestScene(
                 self,
                 self.master_frame,
                 self.data_holder,
-                test["test_data"]["name"],
-                test["test_data"]["desc_short"],
-                test["test_data"]["desc_long"],
+                test["id"],
+                test["test_data"],
                 queue,
                 self.conn_trigger,
             )
@@ -146,11 +161,10 @@ class GUIWindow:
         return ret
 
     def create_test_frames(self, queue):
-        self.test_frames = {}
         test_list = self.data_holder.getTests()
         offset = 0
         for test in test_list:
-            self.test_frames[test["id"]] = self.frameFactory(test["type"], test, queue)
+            self.test_frames[test["id"]] = self.testFrameFactory(test["type"], test, queue)
 
     #################################################
 
@@ -251,7 +265,7 @@ class GUIWindow:
         selected_test_frame = self.test_frames[test_id]
         logger.info("Setting frame to test {}".format(test_id))
         self.set_frame(selected_test_frame)
-        logging.debug("The frame has been set to test {}.".format(test_idx))
+        logging.debug("The frame has been set to test {}.".format(test_id))
 
     #################################################
 
@@ -290,10 +304,10 @@ class GUIWindow:
 
         if not self.run_all_tests_bool:
             if current_test_idx < total_num_tests:
-                next_test = self.data_holder.getByIndex(current_test_id + 1)
-                self.data_holder.current_active_test = next_test["name"]
+                next_test = self.data_holder.getByIndex(current_test_idx + 1)
                 logger.info(f"Next test is {next_test}")
-                self.set_frame_test(self.test_frames[next_test])
+                self.data_holder.current_active_test = next_test["id"]
+                self.set_frame_test(next_test["id"])
             else:
                 self.set_frame_test_summary()
 

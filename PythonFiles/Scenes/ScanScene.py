@@ -15,30 +15,13 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
-
-# creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
-# instantiated as scan_frame by GUIWindow
-# @param parent -> passes in GUIWindow as the parent.
-# @param master_frame -> passes master_frame as the container for everything in the class.
-# @param data_holder -> passes data_holder into the class so the data_holder functions can
-#       be accessed within the class.
+logger = logging.getLogger(__name__)
 class ScanScene(tk.Frame):
-    
-    #################################################
-
     # Runs upon creation
     def __init__(self, parent, master_frame, data_holder):
-        
         self.data_holder = data_holder
-
         self.use_scanner = self.data_holder.get_use_scanner()
-
         self.is_current_scene = False
-        
         self.EXIT_CODE = 0
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
@@ -234,7 +217,6 @@ class ScanScene(tk.Frame):
         if self.data_holder.getGUIcfg().get_if_use_DB():
             self.data_holder.check_if_new_board() 
         _parent.update_config()
-        _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
 
 

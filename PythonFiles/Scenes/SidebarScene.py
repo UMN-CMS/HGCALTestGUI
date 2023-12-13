@@ -114,6 +114,7 @@ class SidebarScene(tk.Frame):
 
         for test in tests:
             tname = test["test_data"]["name"]
+            test_state = self.data_holder.getTestState(test['id'])
             self.test_btns[tname] = tk.Button(
                 self.viewingFrame,
                 pady=btn_pady,
@@ -125,7 +126,7 @@ class SidebarScene(tk.Frame):
             )
             self.test_btns[tname].grid(column=0, row=test["idx"] + original_offset)
 
-            if test["passed"]:
+            if test_state["passed"]:
                 self.test_btns[tname].config(state="disabled")
                 GreenCheck_Label = tk.Label(
                     self.viewingFrame,
@@ -135,12 +136,12 @@ class SidebarScene(tk.Frame):
                     bg="#808080",
                 )
                 GreenCheck_Label.grid(row=test["idx"], column=1)
-            elif test["completed"]:
+            elif test_state["completed"]:
                 RedX_Label = tk.Label(
                     self.viewingFrame,
                     image=self.Red_X_PhotoImage,
                     width=50,
-                    height=50,
+                    heighttest=50,
                     bg="#808080",
                 )
                 RedX_Label.grid(row=test["idx"], column=1)
@@ -205,14 +206,14 @@ class SidebarScene(tk.Frame):
     def disable_all_btns(self):
         self.btn_login.config(state="disabled")
         self.btn_scan.config(state="disabled")
-        for btn in self.test_btns:
+        for btn in self.test_btns.values():
             btn.config(state="disabled")
         self.btn_summary.config(state="disabled")
 
     #################################################
 
     def disable_all_but_log_scan(self):
-        for btn in self.test_btns:
+        for btn in self.test_btns.values():
             btn.config(state="disabled")
         self.btn_summary.config(state="disabled")
 
@@ -220,7 +221,7 @@ class SidebarScene(tk.Frame):
 
     def disable_all_btns_but_scan(self):
         self.btn_login.config(state="disabled")
-        for btn in self.test_btns:
+        for btn in self.test_btns.values():
             btn.config(state="disabled")
         self.btn_summary.config(state="disabled")
 
@@ -229,7 +230,7 @@ class SidebarScene(tk.Frame):
     def disable_all_btns_but_login(self):
         self.btn_login.config(state="normal")
         self.btn_scan.config(state="disabled")
-        for btn in self.test_btns:
+        for btn in self.test_btns.values():
             btn.config(state="disabled")
         self.btn_summary.config(state="disabled")
 

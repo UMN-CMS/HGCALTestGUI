@@ -16,7 +16,7 @@ DBInfo:
   inserter: EngineDBInserter
   name: EngineDB
   reader: EngineDBReadUser
-  use_database: true
+  use_database: false
 
 
 SerialCheckSafe: false

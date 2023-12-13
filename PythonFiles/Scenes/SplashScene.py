@@ -1,6 +1,3 @@
-################################################################################
-
-# Importing necessary modules
 import tkinter as tk
 from PIL import ImageTk as iTK
 from PIL import Image
@@ -9,20 +6,11 @@ logging.getLogger('PIL').setLevel(logging.WARNING)
 import PythonFiles
 import os
 
-#################################################################################
-
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SplashScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class SplashScene(tk.Frame):
-
-    #################################################
-
     def __init__(self, parent, master_frame):
         self.initialize_GUI(parent, master_frame)
-
-    #################################################
     
     def initialize_GUI(self, parent, master_frame):
         super().__init__(master_frame, width=870, height = 500)
@@ -55,8 +43,3 @@ class SplashScene(tk.Frame):
         lbl_names.grid(row = 1, column = 1)
 
         self.grid_propagate(0)
-
-    #################################################
-
-
-#################################################################################
