@@ -32,7 +32,7 @@ class DataHolder:
 
         self.total_tests = len(self.tests)
 
-    def getNumTests(self, idx):
+    def getNumTests(self):
         return self.total_tests
 
     def getByIndex(self, idx):

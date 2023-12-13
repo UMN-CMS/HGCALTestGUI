@@ -11,21 +11,10 @@ from pyparsing import col
 import PythonFiles
 import os
 
-#################################################################################
-
-logger = logging.getLogger("HGCALTestGUI.PythonFiles.Scenes.TestSummaryScene")
-# FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-# logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
-# Frame that shows all of the final test results
-# @param parent -> References a GUIWindow object
-# @param master_frame -> Tkinter object that the frame is going to be placed on
-# @param data_holder -> DataHolder object that stores all relevant data
+logger = logging.getLogger(__name__)
 
 
 class TestSummaryScene(tk.Frame):
-    #################################################
-
     def __init__(self, parent, master_frame, data_holder):
         self.parent = parent
 
@@ -40,9 +29,9 @@ class TestSummaryScene(tk.Frame):
         self.data_holder = data_holder
 
         # Setting weights of columns so the column 4 is half the size of columns 0-3
-        for i in range(self.data_holder.getNumTest()):
+        for i in range(self.data_holder.getNumTests()):
             self.columnconfigure(i, weight=2)
-        self.columnconfigure(self.data_holder.getNumTest(), weight=1)
+        self.columnconfigure(self.data_holder.getNumTests(), weight=1)
         # Instantiates an updated table with the current data
         self.create_updated_table(parent)
 
@@ -66,16 +55,13 @@ class TestSummaryScene(tk.Frame):
             "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
         )
         Green_Check_Image = Green_Check_Image.resize((75, 75), Image.LANCZOS)
-        self.Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
         Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
         Red_X_Image = Red_X_Image.resize((75, 75), Image.LANCZOS)
-        self.Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
 
-    #################################################
+        self.Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
+        self.Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
 
     # Creates the table with the updated information from the data_holder
-    # @param parent -> References the GUIWindow object that creates the class
-
     def create_updated_table(self, parent):
         logger.debug("TestSummaryScene: Table is being updated.")
 
@@ -150,7 +136,7 @@ class TestSummaryScene(tk.Frame):
             else:
                 _label.config(text="UNFINISHED")
             _label.grid(row=idx, column=1)
-            if 
+            if test["passed"]:
                 GreenCheck_Label = tk.Label(
                     self.viewingFrame,
                     image=self.Green_Check_PhotoImage,
@@ -167,24 +153,11 @@ class TestSummaryScene(tk.Frame):
 
         self.create_retest_more_info_btns(parent)
 
-        # self.viewingFrame.update_idletasks()
-        # self.mycanvas.update_idletasks()
-
         new_width = self.viewingFrame.winfo_reqwidth()
         new_height = self.viewingFrame.winfo_reqheight()
 
-        print("\nnew_width: {}, new_height: {}\n".format(new_width, new_height))
-
         self.mycanvas.configure(width=new_width, height=new_height)
-
-        # self.scrollerFrame.grid(row = 2, column = 1, columnspan = 4)
-
-        # self.scrollerFrame.grid_propagate(0)
-
-        logger.debug("TestSummaryScene: Table finished update.")
-
-    #################################################
-    #################################################
+        logger.debug("Table finished update.")
 
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner frame"""
@@ -213,45 +186,30 @@ class TestSummaryScene(tk.Frame):
         self.mycanvas.unbind_all("<Button-4>")
         self.mycanvas.unbind_all("<Button-5>")
 
-    #################################################
-
-    #################################################
-
     # Creates all of the retest button
     def create_retest_more_info_btns(self, parent):
-        logging.debug("TestSummaryScene: Buttons are being created.")
-
-        rows = []
-        retests = []
-        more_infos = []
-
-        for i in range(
-            self.data_holder.getNumTest() + self.data_holder.getNumPhysicalTest()
-        ):
-            rows.append(tk.Frame(self.viewingFrame))
-            rows[i].grid(column=3, row=i + 1)
-
-            retests.append(
-                tk.Button(
-                    rows[i],
-                    text="RETEST",
-                    padx=5,
-                    pady=3,
-                    command=lambda i=i: self.btn_retest_action(parent, i),
-                )
+        logging.debug("Buttons are being created.")
+        tests = self.data_holder.getTests()
+        for test in tests:
+            idx = test["idx"]
+            vf = tk.Frame(self.viewingFrame)
+            vf.grid(column=3, row=idx + 1)
+            rt = tk.Button(
+                vf,
+                text="RETEST",
+                padx=5,
+                pady=3,
+                command=lambda i=i: self.btn_retest_action(parent, i),
             )
-            retests[i].grid(column=1, row=0, padx=5, pady=5)
-
-            more_infos.append(
-                tk.Button(
-                    rows[i],
-                    text="MORE INFO",
-                    padx=5,
-                    pady=3,
-                    command=lambda i=i: self.btn_more_info_action(parent, i),
-                )
+            rt.grid(column=1, row=0, padx=5, pady=5)
+            mf = tk.Button(
+                vf,
+                text="MORE INFO",
+                padx=5,
+                pady=3,
+                command=lambda i=i: self.btn_more_info_action(parent, i),
             )
-            more_infos[i].grid(column=0, row=0)
+            mf.grid(column=0, row=0)
 
         btn_next_test = tk.Button(
             self.viewingFrame,
@@ -259,9 +217,9 @@ class TestSummaryScene(tk.Frame):
             font=("Arial", 15),
             command=lambda: self.btn_next_test_action(parent),
         )
-        btn_next_test.grid(column=3, row=self.data_holder.getNumTest() + 3)
+        btn_next_test.grid(column=3, row=self.data_holder.getNumTests() + 3)
 
-        logger.debug("TestSummaryScene: Buttons finshed being created.")
+        logger.debug("Buttons finshed being created.")
 
     #################################################
 
@@ -312,20 +270,6 @@ class TestSummaryScene(tk.Frame):
     def btn_retest_action(self, _parent, test_idx):
         _parent.set_frame_test(test_idx)
 
-    def btn_retest1_action(self, _parent):
-        _parent.set_frame(_parent.test1_frame)
-
-    def btn_retest2_action(self, _parent):
-        _parent.set_frame(_parent.test2_frame)
-
-    def btn_retest3_action(self, _parent):
-        _parent.set_frame(_parent.test3_frame)
-
-    def btn_retest4_action(self, _parent):
-        _parent.set_frame(_parent.test4_frame)
-
-    #################################################
-
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
         self.create_JSON_popup(
@@ -335,49 +279,15 @@ class TestSummaryScene(tk.Frame):
             )
         )
 
-    def btn_more_info1_action(self, _parent):
-        self.create_JSON_popup(
-            "{}/JSONFiles/Current_GenRes_JSON.json".format(PythonFiles.__path__[0])
-        )
-
-    def btn_more_info2_action(self, _parent):
-        self.create_JSON_popup(
-            "{}/JSONFiles/Current_IDRes_JSON.json".format(PythonFiles.__path__[0])
-        )
-
-    def btn_more_info3_action(self, _parent):
-        self.create_JSON_popup(
-            "{}/JSONFiles/Current_IIC_JSON.json".format(PythonFiles.__path__[0])
-        )
-
-    def btn_more_info4_action(self, _parent):
-        self.create_JSON_popup(
-            "{}/JSONFiles/Current_BERT_JSON.json".format(PythonFiles.__path__[0])
-        )
-
-    #################################################
-
-    # Next test button action
     def btn_next_test_action(self, _parent):
         self.data_holder.data_holder_new_test()
         self.lbl_snum.destroy()
         _parent.reset_board()
-        logger.info("TestSummaryScene: Starting a new test.")
+        logger.info("Starting a new test.")
 
-    #################################################
-
-    # Updates the frame to show current data
     def update_frame(self):
         self.create_updated_table(self.parent)
 
-    #################################################
-
-    # TODO Check what this is used for
     def add_new_test(self, _list_of_completed_tests, _list_of_pass_fail):
         self.list_of_completed_tests = _list_of_completed_tests
         self.list_of_pass_fail = _list_of_pass_fail
-
-    #################################################
-
-
-#################################################################################
