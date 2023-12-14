@@ -132,6 +132,8 @@ class GUIWindow:
         self.master_window.title("HGCAL Test Window")
         # Creates the size of the window and disables resizing
         self.master_window.geometry("1300x700+25+100")
+        self.master_window.columnconfigure(0, weight=1)
+        self.master_window.rowconfigure(0, weight=1)
 
         # Variables necessary for the help popup
         self.all_text = "No help available for this scene."
@@ -148,13 +150,16 @@ class GUIWindow:
 
         # Creates and packs a frame that exists on top of the master_frame
         self.master_frame = tk.Frame(self.master_window, width=870, height=650)
-        self.master_frame.grid(column=1, row=0, columnspan=4)
-
-        # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width=213, height=650)
-        sidebar_frame.grid(column=0, row=0)
+        self.master_frame.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.master_frame.columnconfigure(0,weight=1)
+        self.master_frame.columnconfigure(1,weight=2)
+        self.master_frame.rowconfigure(0,weight=1)
+        sidebar_frame = tk.Frame(self.master_window)
+        sidebar_frame.rowconfigure(0,weight=1)
+        sidebar_frame.columnconfigure(0,weight=1)
+        sidebar_frame.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.sidebar = SidebarScene(self, sidebar_frame)
-        self.sidebar.pack()
+        self.sidebar.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         #   Creates all the different frames in layers  #
 
@@ -280,7 +285,7 @@ class GUIWindow:
                 queue,
                 self.conn_trigger,
             )
-        ret.grid(row=0, column=0)
+        ret.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         return GuiScene(
             ret,
             test["id"],

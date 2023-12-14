@@ -18,20 +18,26 @@ class SidebarScene(tk.Frame):
     def __init__(self, parent, sidebar_frame):
         self.parent = parent
         super().__init__(
-            sidebar_frame, width=213, height=650, bg="#808080", padx=10, pady=10
+            #sidebar_frame, width=213, height=650, bg="#808080", padx=10, pady=10
+            sidebar_frame, bg="#808080", padx=10, pady=10
         )
 
-        self.mycanvas = tk.Canvas(self, background="#808080", width=213, height=650)
+        self.mycanvas = tk.Canvas(self, background="#808080")#, width=213, height=650)
+        self.mycanvas.columnconfigure(0,weight=0)
+        self.mycanvas.columnconfigure(1,weight=1)
+        self.mycanvas.rowconfigure(0,weight=0)
+
         self.viewingFrame = tk.Frame(
-            self.mycanvas, background="#808080", width=213, height=650
+            self.mycanvas, background="#808080", #width=213, height=650
         )
         self.scroller = ttk.Scrollbar(
             self, orient="vertical", command=self.mycanvas.yview
         )
+        self.scroller.grid(row=0,column=0, sticky='nsew')
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
-        self.mycanvas.pack(side="right")
-        self.scroller.pack(side="left", fill="both", expand=True)
+        #self.mycanvas.pack(side="right")
+        #self.scroller.pack(side="left", fill="both", expand=True)
 
         self.canvas_window = self.mycanvas.create_window(
             (4, 4), window=self.viewingFrame, anchor="nw", tags="self.viewingFrame"

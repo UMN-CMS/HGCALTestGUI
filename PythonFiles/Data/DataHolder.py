@@ -66,7 +66,7 @@ class DataHolder:
                 if tid not in self.test_states:
                     self.test_states[tid] = {}
                 self.test_states[tid][k] = v
-                logger.info(f"Updated {tid}[{}] = {v}")
+                logger.info(f"Updated {tid}[{k}] = {v}")
 
     def getActiveTest(self):
         return self.tests[self.current_active_test]
