@@ -131,8 +131,9 @@ class GUIWindow:
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
         # Creates the size of the window and disables resizing
-        self.master_window.geometry("1300x700+25+100")
+        self.master_window.geometry("800x400+25+100")
         self.master_window.columnconfigure(0, weight=1)
+        self.master_window.columnconfigure(1, weight=2)
         self.master_window.rowconfigure(0, weight=1)
 
         # Variables necessary for the help popup
@@ -149,15 +150,17 @@ class GUIWindow:
         # self.master_window.wm_attributes('-toolwindow', 'True')
 
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=870, height=650)
+        self.master_frame = tk.Frame(self.master_window)
         self.master_frame.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
         self.master_frame.columnconfigure(0,weight=1)
-        self.master_frame.columnconfigure(1,weight=2)
         self.master_frame.rowconfigure(0,weight=1)
+
         sidebar_frame = tk.Frame(self.master_window)
+        sidebar_frame.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
         sidebar_frame.rowconfigure(0,weight=1)
         sidebar_frame.columnconfigure(0,weight=1)
-        sidebar_frame.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.sidebar = SidebarScene(self, sidebar_frame)
         self.sidebar.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
@@ -306,8 +309,7 @@ class GUIWindow:
         post_enter=None,
         post_exit=None,
     ):
-        frame.grid(column=0, row=0)
-        self.scenes[scene_id] = GuiScene(
+        s = GuiScene(
             frame,
             scene_id,
             scene_name=scene_name,
@@ -318,6 +320,9 @@ class GUIWindow:
             sidebar_group=sidebar_group,
             sidebar_idx=sidebar_idx,
         )
+        self.scenes[scene_id] = s
+        frame.grid(row=0,column=0,sticky="nsew")
+
 
     def create_test_scenes(self, queue):
         test_list = self.data_holder.getTests()
@@ -381,7 +386,7 @@ class GUIWindow:
         else:
             self.set_help_text("No help available for this frame")
         self.sidebar.update_sidebar(self)
-        self.master_frame.update()
+        self.master_window.update()
         self.master_window.update_idletasks()
         logger.info(f"Updated master frame.")
 

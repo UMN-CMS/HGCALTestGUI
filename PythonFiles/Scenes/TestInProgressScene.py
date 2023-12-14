@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class TestInProgressScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("Beginning the initialization of the TestInProgressScene.")
-        super().__init__(master_frame, width=870, height = 500)
+        super().__init__(master_frame)
 
         self.queue = queue
         self.data_holder = data_holder

@@ -16,7 +16,7 @@ class TestSummaryScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder):
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width=870, height=500)
+        super().__init__(master_frame)
 
         Green_Check_Image = Image.open(
             "{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0])
@@ -70,7 +70,7 @@ class TestSummaryScene(tk.Frame):
         )
         self.lbl_tester.grid(column=3, row=0, pady=20, padx=5)
         self.mycanvas = tk.Canvas(self)
-        self.viewingFrame = tk.Frame(self.mycanvas, width=802, height=400)
+        self.viewingFrame = tk.Frame(self.mycanvas)
         self.scroller = ttk.Scrollbar(
             self, orient="vertical", command=self.mycanvas.yview
         )
@@ -165,9 +165,6 @@ class TestSummaryScene(tk.Frame):
     def onCanvasConfigure(self, event):
         """Reset the canvas window to encompass inner frame when required"""
         canvas_width = event.width
-        self.mycanvas.itemconfig(
-            self, width=canvas_width
-        )  # whenever the size of the canvas changes alter the window region respectively.
 
     def onMouseWheel(self, event):  # cross platform scroll wheel event
         if event.num == 4:

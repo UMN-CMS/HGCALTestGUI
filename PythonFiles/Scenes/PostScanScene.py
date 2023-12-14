@@ -27,7 +27,7 @@ class PostScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width=870, height=500)
+        super().__init__(self.master_frame)
 
         logger.info("PostScanScene: Frame has been created.")
 
@@ -70,8 +70,8 @@ class PostScanScene(tk.Frame):
                 "PostScanScene: Widgets destroyed successfully (making room for new widgets)."
             )
 
-        self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = tk.Frame(self.canvas, width=800, height=500)
+        self.canvas = tk.Canvas(self)
+        self.frame = tk.Frame(self.canvas)
         self.scroller = ttk.Scrollbar(
             self, orient="vertical", command=self.canvas.yview
         )

@@ -13,7 +13,7 @@ class SplashScene(tk.Frame):
         self.initialize_GUI(parent, master_frame)
     
     def initialize_GUI(self, parent, master_frame):
-        super().__init__(master_frame, width=870, height = 500)
+        super().__init__(master_frame)
 
         logger.info("SplashScene: Frame has been initialized.")
         # Creating Bethel Logo

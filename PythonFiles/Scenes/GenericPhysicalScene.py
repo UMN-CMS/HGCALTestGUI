@@ -4,7 +4,7 @@ import tkinter.font as font
 
 class GenericPhysicalScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder, test_id, test_config):
-        super().__init__(master_frame, width=870, height=500)
+        super().__init__(master_frame)
 
         self.data_holder = data_holder
 

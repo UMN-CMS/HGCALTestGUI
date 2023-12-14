@@ -12,7 +12,6 @@ import os
 
 logger = logging.getLogger(__name__)
 
-
 class ScanScene(tk.Frame):
     # Runs upon creation
     def __init__(self, parent, master_frame, data_holder):
@@ -81,7 +80,7 @@ class ScanScene(tk.Frame):
     def initialize_GUI(self, parent, master_frame):
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width=870, height=500)
+        super().__init__(self.master_frame)
 
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code

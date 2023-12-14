@@ -24,7 +24,7 @@ class TestScene(tk.Frame):
         queue,
         conn_trigger,
     ):
-        super().__init__(master_frame, width=870, height=500, padx=5, pady=5)
+        super().__init__(master_frame, padx=5, pady=5)
         self.data_holder = data_holder
         self.queue = queue
         self.conn_trigger = conn_trigger
@@ -43,7 +43,7 @@ class TestScene(tk.Frame):
         font_scene = ("Arial", 15)
 
         # Create a centralized window for information
-        frm_window = tk.Frame(self, width=870, height=480)
+        frm_window = tk.Frame(self)
         frm_window.grid(column=1, row=0, padx=223, pady=100)
 
         # Create a label for the tester's name

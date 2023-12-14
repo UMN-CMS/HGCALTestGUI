@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class LoginScene(tk.Frame):
     def __init__(self, parent, master_frame, data_holder):
-        super().__init__(master_frame, width=870, height=500)
+        super().__init__(master_frame)
         self.data_holder = data_holder
         self.update_frame(parent)
 

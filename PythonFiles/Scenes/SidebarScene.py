@@ -18,26 +18,36 @@ class SidebarScene(tk.Frame):
     def __init__(self, parent, sidebar_frame):
         self.parent = parent
         super().__init__(
-            #sidebar_frame, width=213, height=650, bg="#808080", padx=10, pady=10
-            sidebar_frame, bg="#808080", padx=10, pady=10
+            # sidebar_frame, width=213, height=650, bg="#808080", padx=10, pady=10
+            sidebar_frame,
+            bg="#808080",
+            padx=10,
+            pady=10,
         )
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=0)
+        self.columnconfigure(1, weight=1)
 
-        self.mycanvas = tk.Canvas(self, background="#808080")#, width=213, height=650)
-        self.mycanvas.columnconfigure(0,weight=0)
-        self.mycanvas.columnconfigure(1,weight=1)
-        self.mycanvas.rowconfigure(0,weight=0)
+        self.mycanvas = tk.Canvas(
+            self, background="#808080"
+        )  # , width=213, height=650)
+        self.mycanvas.columnconfigure(0, weight=3)
+        self.mycanvas.columnconfigure(1, weight=1)
+        self.mycanvas.rowconfigure(0, weight=0)
 
-        self.viewingFrame = tk.Frame(
-            self.mycanvas, background="#808080", #width=213, height=650
-        )
+        self.viewingFrame = ttk.Frame(self.mycanvas)
         self.scroller = ttk.Scrollbar(
             self, orient="vertical", command=self.mycanvas.yview
         )
-        self.scroller.grid(row=0,column=0, sticky='nsew')
+        self.scroller.grid(row=0, column=0, sticky="nsew")
+        self.mycanvas.grid(row=0, column=1, sticky="nsew")
+        self.viewingFrame.grid(row=0, column=0, sticky="nsew")
+        self.viewingFrame.columnconfigure(0, weight=1)
+
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
-        #self.mycanvas.pack(side="right")
-        #self.scroller.pack(side="left", fill="both", expand=True)
+        # self.mycanvas.pack(side="right")
+        # self.scroller.pack(side="left", fill="both", expand=True)
 
         self.canvas_window = self.mycanvas.create_window(
             (4, 4), window=self.viewingFrame, anchor="nw", tags="self.viewingFrame"
@@ -72,7 +82,6 @@ class SidebarScene(tk.Frame):
         logger.info("Creating sidebar")
         # Variables for easy button editing
         btn_height = 3
-        btn_width = 18
         btn_font = ("Arial", 10)
         btn_pady = 5
 
@@ -85,11 +94,10 @@ class SidebarScene(tk.Frame):
                 pady=btn_pady,
                 text=name,
                 height=btn_height,
-                width=btn_width,
                 font=btn_font,
                 command=lambda x=sid: self.parent.gotoScene(x),
             )
-            btn.grid(row=i, column=0)
+            btn.grid(row=i, column=0, sticky="nsew")
             btn.orig_color = btn.cget("background")
             self.btns[scene.scene_id] = btn
         self.grid_propagate(0)
