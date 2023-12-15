@@ -3,6 +3,7 @@ import json, logging, socket, PythonFiles, copy, os
 import requests
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +11,7 @@ logger = logging.getLogger(__name__)
 class DataHolder:
     def __init__(self, gui_cfg):
         self.gui_cfg = gui_cfg
+        self.data_storage_path = Path(__file__).parent.parent / "data_storage"
         self.data_sender = DBSender(gui_cfg)
 
         self.current_active_test = gui_cfg.getTests()[0]["name"]
@@ -22,12 +24,20 @@ class DataHolder:
                 "idx": i,
                 "test_data": test,
                 "type": test["type"],
+                "database_id": None,
+                "data_storage_file": None,
             }
             for i, test in enumerate(self.gui_cfg.getTests())
         }
         self.total_tests = len(self.tests)
         self.test_states = None
         self.resetTestStates()
+
+    def __getDatabaseIds(self):
+        db_tests = dict(self.data_sender.get_test_list())
+        for test in self.tests.values():
+            tid = test["id"]
+            test["database_id"] = db_tests[tid]
 
     def resetTestStates(self):
         self.test_states = {
@@ -106,7 +116,6 @@ class DataHolder:
             prev_results, test_names = self.data_sender.get_previous_test_results(sn)
             mapping = dict(zip(test_names, prev_results))
 
-
     def set_user_ID(self, user_ID):
         self.current_user_id = user_ID
         logger.info(f"User ID has been set to {self.current_user_id}.")
@@ -130,6 +139,7 @@ class DataHolder:
     def send_all_to_DB(self):
         person_ID = self.getActiveUser()
         serial_number = self.getActiveSerial()
+
         for i in range(len(self.data_dict["tests_run"])):
             print("Iteration:", i)
             temp = 0
@@ -155,10 +165,9 @@ class DataHolder:
 
     #################################################
 
-    def send_to_DB(self, test_id):
+    def uploadTestState(self, test_id):
         index = test_run
         test_names = list(self.tests)
-
         file_path_list = []
 
         for name in test_names:
@@ -190,54 +199,23 @@ class DataHolder:
             "{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]),
             file_path_list[index],
         )
-        # message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        # self.dbclient.send_request(message)
         logger.info("DataHolder: Test results sent to database.")
 
-    #################################################
 
     def get_all_users(self):
         users_list = self.data_sender.get_usernames()
         return users_list
 
-    #################################################
 
-    def update_from_json_string(self, imported_json_string):
-        json_dict = json.loads(imported_json_string)
-
-        test_type = json_dict["name"]
-
-        test_names = list(self.tests)
-
-        current_test_idx = self.gui_cfg.getTestIndex() - 1
-        print("current_test_idx: {}".format(current_test_idx))
-
-        with open(
-            "{}/JSONFiles/Current_{}_JSON.json".format(
-                PythonFiles.__path__[0],
-                test_names[current_test_idx].replace(" ", "").replace("/", ""),
-            ),
-            "w",
-        ) as file:
-            json.dump(json_dict["data"], file)
-        self.data_dict["user_ID"] = json_dict["tester"]
-        self.data_dict["current_serial_ID"] = json_dict["board_sn"]
-        self.data_dict["test{}_completed".format(current_test_idx + 1)] = True
-        self.data_dict["test{}_pass".format(current_test_idx + 1)] = json_dict["pass"]
-
-        # Updates the lists
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists["test_results"][i] = self.data_dict[
-                "test{}_pass".format(i + 1)
-            ]
-            self.data_lists["test_completion"][i] = self.data_dict[
-                "test{}_completed".format(i + 1)
-            ]
-
+    def updateStateFromJson(self, json_data):
+        data = json.loads(imported_json_string)
+        tid = data["name"]
+        logger.info(f"Updating state of test '{tid}'")
+        data_path = self.data_storage / "test_results" / tset_id / "data.json" 
+        with open(data_path, "w") as f:
+            logger.info(f"Writing test data to '{data_path}'")
+            json.dump(json_dict["data"], f)
+        self.test_states[tid]["completed"] = True
+        self.test_states[tid]["passed"] = data["passed"]
         if self.gui_cfg.get_if_use_DB():
             self.send_to_DB(current_test_idx)
-
-        logger.info("DataHolder: Test results have been saved")
-
-    def getGUIcfg(self):
-        return self.gui_cfg

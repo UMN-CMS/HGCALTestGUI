@@ -172,6 +172,9 @@ class DBSender():
         return in_id
 
     def is_new_board(self, sn):
+        if not self.gui_cfg.get_if_use_DB():
+            return True
+            
         print(sn[3])
         if sn[3] == 'W':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
