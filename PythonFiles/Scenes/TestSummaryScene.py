@@ -84,7 +84,17 @@ class TestSummaryScene(tk.Frame):
         self.list_of_completed_tests = self.data_holder.data_lists['test_completion'] + self.data_holder.data_lists['physical_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['test_results'] + self.data_holder.data_lists['physical_results']
 
+        
+        #Checks for duplicate test names, which cause problems with saving the json files
+        prev_names = set()
 
+        for name in self.list_of_tests:
+            if name in prev_names:
+                logger.debug(f'Warning, Duplicate test name found: {name}')
+            else:
+                prev_names.add(name)
+            
+        
         print(self.list_of_completed_tests)
         print(self.list_of_pass_fail)
 
