@@ -57,10 +57,10 @@ class TestSummaryScene(tk.Frame):
 
         logger.debug("TestSummaryScene: Table is being updated.")        
         
-        self.list_of_tests = self.data_holder.getTestNames() + self.data_holder.getPhysicalNames()
+        self.list_of_tests =self.data_holder.getPhysicalNames() + self.data_holder.getTestNames()
         self.list_of_table_labels = ["Test Name", "Test Status", "Pass/Fail", "Actions"]
-        self.list_of_completed_tests = self.data_holder.data_lists['test_completion'] + self.data_holder.data_lists['physical_completion']
-        self.list_of_pass_fail = self.data_holder.data_lists['test_results'] + self.data_holder.data_lists['physical_results']
+        self.list_of_completed_tests = self.data_holder.data_lists['physical_completion'] +  self.data_holder.data_lists['test_completion']
+        self.list_of_pass_fail = self.data_holder.data_lists['physical_results'] + self.data_holder.data_lists['test_results']
 
         
         #Checks for duplicate test names, which cause problems with saving the json files
