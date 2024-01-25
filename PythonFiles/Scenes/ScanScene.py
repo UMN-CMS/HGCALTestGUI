@@ -43,7 +43,7 @@ class ScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width=870, height = 500, bg='green')
+        super().__init__(self.master_frame, width=870, height = 500)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -117,22 +117,30 @@ class ScanScene(tk.Frame):
 
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = tk.Label(self, image=QR_PhotoImage, bg='blue')
+        QR_label = tk.Label(self, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 0, sticky='nsew')
+        QR_label.grid(column=1, row = 1, sticky='new')
 
-        Scan_Board_Prompt_Frame = Frame(self, width = 1105, height = 650, bg='red')
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
+        Scan_Board_Prompt_Frame = Frame(self, width = 1105, height = 650)
+        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
         
+        Button_Frame1 = Frame(self)
+        Button_Frame1.grid(column=1, row=0, sticky='ew')
+
+        Button_Frame2 = Frame(self)
+        Button_Frame2.grid(column=1, row=2, sticky='ew')
+
         #resizing
         Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
         Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
         QR_label.grid_columnconfigure(0, weight=1)
+        Button_Frame1.grid_columnconfigure(0, weight=1)
+        Button_Frame2.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
 
         # creates a Label Variable, different customization options
@@ -142,7 +150,7 @@ class ScanScene(tk.Frame):
             pady = 25,
             font = ('Arial', 18)
         )
-        lbl_scan.grid(column=0, row=0, columnspan=2, sticky='we')
+        lbl_scan.grid(column=0, row=0, sticky='we')
 
         # Create a label to label the entry box
         lbl_snum = tk.Label(
@@ -151,7 +159,7 @@ class ScanScene(tk.Frame):
             pady = 10,
             font = ('Arial', 16)
         )
-        lbl_snum.grid(column=0, row=2, columnspan=2, sticky='we')
+        lbl_snum.grid(column=0, row=2, sticky='we')
 
         # Entry for the serial number to be displayed. Upon Scan, update and disable?
         global ent_snum
@@ -163,9 +171,9 @@ class ScanScene(tk.Frame):
         self.ent_snum = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
-            textvariable= user_text, 
+            textvariable= user_text,
             )
-        self.ent_snum.grid(column=0, row=3, columnspan=2, sticky='we')
+        self.ent_snum.grid(column=0, row=3)
 
         # Traces an input to show the submit button once text is inside the entry box
         user_text.trace(
@@ -185,7 +193,7 @@ class ScanScene(tk.Frame):
             relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
-        self.btn_rescan.grid(column=0, row=5, columnspan=1)
+        self.btn_rescan.grid(column=0, row=5, padx=10, pady=5)
 
         # Submit button creation
         self.btn_submit = tk.Button(
@@ -196,29 +204,29 @@ class ScanScene(tk.Frame):
             relief = tk.RAISED,
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.grid(column=1, row=5, columnspan=1)
+        self.btn_submit.grid(column=0, row=6, padx=10, pady=5)
 
         # Creating the logout button
         btn_logout = tk.Button(
-            Scan_Board_Prompt_Frame,
+            Button_Frame2,
             relief = tk.RAISED,
             padx = 20,
             pady =10,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(column=0, row=6, columnspan=1)
+        btn_logout.grid(column=0, row=1, sticky='ne', padx=10, pady=10)
 
         # Creating the help button
         btn_help = tk.Button(
-            Scan_Board_Prompt_Frame,
+            Button_Frame1,
             relief = tk.RAISED,
             padx = 20,
             pady =10,
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.grid(column=1, row=6, columnspan=1)
+        btn_help.grid(column=0, row=0, sticky='ne', padx=10, pady=10)
 
 
         
