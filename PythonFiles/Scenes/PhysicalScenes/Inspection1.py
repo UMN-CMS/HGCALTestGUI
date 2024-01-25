@@ -15,6 +15,9 @@ class Inspection1(tk.Frame):
 
     def __init__(self, parent, master_frame, data_holder, test_idx):
         super().__init__(master_frame, width=870, height=500)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         self.test_name = "SOMETHING STRING"
         self.data_holder = data_holder
@@ -33,7 +36,10 @@ class Inspection1(tk.Frame):
 
         # Create a centralized window for information
         frm_window = tk.Frame(self, width = 1105, height = 650)
-        frm_window.grid(column=0, row=0)
+        frm_window.grid(column=0, row=0, sticky='new')
+        
+        frm_window.grid_rowconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(0, weight=1)
 
         # Create a label for the tester's name
         lbl_tester = tk.Label(
@@ -41,7 +47,7 @@ class Inspection1(tk.Frame):
             text = "Tester: ", 
             font = font_scene
             )
-        lbl_tester.grid(row=0, column=0, pady=15 )
+        lbl_tester.grid(row=0, column=0, pady=15, sticky='we')
 
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
@@ -49,7 +55,7 @@ class Inspection1(tk.Frame):
             font = font_scene
             )
         ent_tester.insert(0, self.data_holder.data_dict['user_ID'])
-        ent_tester.grid(row=0, column=1, pady=15 )
+        ent_tester.grid(row=0, column=1, pady=15, sticky='we')
         ent_tester.config(state = "disabled")
 
         # Create a label for the serial number box
@@ -58,7 +64,7 @@ class Inspection1(tk.Frame):
             text = "Serial Number: ", 
             font = font_scene
             )
-        lbl_snum.grid(row=0, column=2, pady=15 )
+        lbl_snum.grid(row=0, column=2, pady=15, sticky='we')
 
         # Create a entry for the serial number box
         ent_snum = tk.Entry(
@@ -66,7 +72,7 @@ class Inspection1(tk.Frame):
             font = font_scene
             )
         ent_snum.insert(0, self.data_holder.data_dict['current_serial_ID'])
-        ent_snum.grid(row=0, column=3, pady=15)
+        ent_snum.grid(row=0, column=3, pady=15, sticky='we')
         ent_snum.config(state = "disabled")
 
 
@@ -128,8 +134,6 @@ class Inspection1(tk.Frame):
         c4.grid(row = 4, column= 1, sticky='w', columnspan=2)
 
 
-
-
         
 
         # Create a label for the serial number box
@@ -138,7 +142,7 @@ class Inspection1(tk.Frame):
             text = "Comments:", 
             font = font_scene
             )
-        lbl_snum.grid(row=5, column=1, pady=(25, 0) )
+        lbl_snum.grid(row=5, column=0, pady=10, sticky='w')
 
         # Comment Box
         self.comment_box = tk.Entry(
@@ -147,7 +151,7 @@ class Inspection1(tk.Frame):
             state= 'normal',
             width= 75,
         )
-        self.comment_box.grid(row = 6, column =1, sticky='w', columnspan=5)
+        self.comment_box.grid(row = 6, column =0, sticky='we', columnspan=5, padx=10)
 
 
 
@@ -160,54 +164,52 @@ class Inspection1(tk.Frame):
             relief = tk.RAISED, 
             command = lambda:self.btn_confirm_action(parent)
             )
-        btn_confirm.grid(row = 9, column= 1, pady= 50)
-        btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
-
-
-
-        # Create frame for logout button
-        nav_frame = tk.Frame(self)
-        nav_frame.grid(column = 1, row = 0, sticky = 'ne', padx =5)
+        btn_confirm.grid(row = 9, column= 0, pady= 20, padx=10)
 
 
         # Create a rescan button
         btn_rescan = tk.Button(
-            nav_frame, 
+            frm_window, 
             text = "Change Boards", 
             relief = tk.RAISED, 
             command = lambda: self.btn_rescan_action(parent))
-        btn_rescan.pack(anchor = 'ne', pady=15)
+        btn_rescan.grid(row = 9, column= 1, pady= 20, padx=10)
+
 
         # Create a logout button
         btn_logout = tk.Button(
-            nav_frame, 
+            frm_window,
             text = "Logout", 
             relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
-        btn_logout.pack(anchor = 'se')
+        btn_logout.grid(row = 9, column= 2, pady= 20, padx=10)
+
 
         # Creating the help button
         btn_help = tk.Button(
-            nav_frame,
+            frm_window,
             relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.pack(anchor = 's', padx = 10, pady = 10)
-
-
-
+        btn_help.grid(row = 9, column= 3, pady= 20, padx=10)
 
 
         # # # # # # # # # 
 
         
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(3, weight=1)
         self.grid_columnconfigure(4, weight=1)
-        self.grid_rowconfigure(0, weight=1)
 
-        
-        frm_window.grid_propagate(0)
-        self.grid_propagate(0)
+        frm_window.grid_columnconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(1, weight=1)
+        frm_window.grid_columnconfigure(2, weight=1)
+        frm_window.grid_columnconfigure(3, weight=1)
+
+
         
     #################################################
 

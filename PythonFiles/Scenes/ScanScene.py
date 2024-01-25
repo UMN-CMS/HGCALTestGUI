@@ -40,11 +40,20 @@ class ScanScene(tk.Frame):
         self.is_current_scene = False
         
         self.EXIT_CODE = 0
+
+        self.master_frame = master_frame
+
+        super().__init__(self.master_frame, width=870, height = 500, bg='green')
+
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
+
+
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
         
-
+    
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
     def scan_QR_code(self, master_window):
@@ -55,7 +64,6 @@ class ScanScene(tk.Frame):
             self.ent_snum.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
-
             sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
             from ..Scanner.python.get_barcodes import scan, listen, parse_xml
@@ -103,39 +111,47 @@ class ScanScene(tk.Frame):
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
-        
-        self.master_frame = master_frame
-        
-        super().__init__(self.master_frame, width=870, height = 500)
 
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
+
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = tk.Label(self, image=QR_PhotoImage)
+        QR_label = tk.Label(self, image=QR_PhotoImage, bg='blue')
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 0)
+        QR_label.grid(column=1, row = 0, sticky='nsew')
 
-        Scan_Board_Prompt_Frame = Frame(self,)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0)
+        Scan_Board_Prompt_Frame = Frame(self, width = 1105, height = 650, bg='red')
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
+        
+        #resizing
+        Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
+        Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
+        QR_label.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
 
         # creates a Label Variable, different customization options
         lbl_scan = tk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
+            pady = 25,
             font = ('Arial', 18)
         )
-        lbl_scan.pack(padx = 50, pady = 50)
+        lbl_scan.grid(column=0, row=0, columnspan=2, sticky='we')
 
         # Create a label to label the entry box
         lbl_snum = tk.Label(
             Scan_Board_Prompt_Frame,
             text = "Serial Number:",
+            pady = 10,
             font = ('Arial', 16)
         )
-        lbl_snum.pack(padx = 20)
+        lbl_snum.grid(column=0, row=2, columnspan=2, sticky='we')
 
         # Entry for the serial number to be displayed. Upon Scan, update and disable?
         global ent_snum
@@ -149,7 +165,7 @@ class ScanScene(tk.Frame):
             font = ('Arial', 16),
             textvariable= user_text, 
             )
-        self.ent_snum.pack(padx = 50)
+        self.ent_snum.grid(column=0, row=3, columnspan=2, sticky='we')
 
         # Traces an input to show the submit button once text is inside the entry box
         user_text.trace(
@@ -169,7 +185,7 @@ class ScanScene(tk.Frame):
             relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
-        self.btn_rescan.pack(pady=30)
+        self.btn_rescan.grid(column=0, row=5, columnspan=1)
 
         # Submit button creation
         self.btn_submit = tk.Button(
@@ -180,36 +196,36 @@ class ScanScene(tk.Frame):
             relief = tk.RAISED,
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.pack()
-
-        # Creating frame for logout button
-        frm_logout = tk.Frame(self)
-        frm_logout.grid(column = 1, row = 1, sticky= 'se')
+        self.btn_submit.grid(column=1, row=5, columnspan=1)
 
         # Creating the logout button
         btn_logout = tk.Button(
-            frm_logout,
+            Scan_Board_Prompt_Frame,
             relief = tk.RAISED,
+            padx = 20,
+            pady =10,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
+        btn_logout.grid(column=0, row=6, columnspan=1)
 
         # Creating the help button
         btn_help = tk.Button(
-            frm_logout,
+            Scan_Board_Prompt_Frame,
             relief = tk.RAISED,
+            padx = 20,
+            pady =10,
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.pack(anchor = 's', padx = 10, pady = 20)
+        btn_help.grid(column=1, row=6, columnspan=1)
 
 
         
 
 
         # Locks frame size to the master_frame size
-        self.grid_propagate(0)
+        #self.grid_propagate(0)
 
     #################################################
 

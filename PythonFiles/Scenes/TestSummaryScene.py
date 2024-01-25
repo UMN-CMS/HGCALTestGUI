@@ -33,6 +33,9 @@ class TestSummaryScene(tk.Frame):
         # Call to the super class's constructor
         # Super class is the tk.Frame class
         super().__init__(master_frame, width=870, height=500)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         self.sn_text = tk.StringVar()
 
@@ -40,34 +43,9 @@ class TestSummaryScene(tk.Frame):
 
         self.data_holder = data_holder
 
-        # Setting weights of columns so the column 4 is half the size of columns 0-3
-        for i in range(self.data_holder.getNumTest()):
-            self.columnconfigure(i, weight = 2)
-        self.columnconfigure(self.data_holder.getNumTest(), weight = 1)
         # Instantiates an updated table with the current data
         self.create_updated_table(parent)
-
-        # Adds the title to the TestSummary Frame
-        self.title = tk.Label(
-                self, 
-                fg='#0d0d0d', 
-                text = "Testing Finished!",
-                font=('Arial',18,'bold')
-                )
-        self.title.grid(row= 0, column= 1, pady = 20)
-
-
-        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
-
-        # Adds Board Serial Number to the TestSummaryFrame
-        self.lbl_snum = tk.Label(
-                self, 
-                textvariable = self.sn_text,
-                font=('Arial', 14)
-                )
-        self.lbl_snum.grid(column = 2, row = 0, pady = 20, padx = 5)
-        # Fits the frame to set size rather than interior widgets
-        self.grid_propagate(0)
+        
 
     #################################################
 
@@ -80,7 +58,7 @@ class TestSummaryScene(tk.Frame):
         logger.debug("TestSummaryScene: Table is being updated.")        
         
         self.list_of_tests = self.data_holder.getTestNames() + self.data_holder.getPhysicalNames()
-        self.list_of_table_labels = ["Test Name", "Test Status", "Pass/Fail"]
+        self.list_of_table_labels = ["Test Name", "Test Status", "Pass/Fail", "Actions"]
         self.list_of_completed_tests = self.data_holder.data_lists['test_completion'] + self.data_holder.data_lists['physical_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['test_results'] + self.data_holder.data_lists['physical_results']
 
@@ -99,20 +77,41 @@ class TestSummaryScene(tk.Frame):
         print(self.list_of_pass_fail)
 
         self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
+        ##########    
 
+        # Adds the title to the TestSummary Frame
+        self.title = tk.Label(
+            self,
+            fg='#0d0d0d',
+            text="Testing Finished!",
+            font=('Arial', 14)
+        )
+        self.title.grid(row=0, column=0, pady=5, sticky='ew')
+
+        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))
+
+        # Adds Board Serial Number to the TestSummaryFrame
+        self.lbl_snum = tk.Label(
+            self,
+            textvariable=self.sn_text,
+            font=('Arial', 14)
+        )
+        self.lbl_snum.grid(column=1, row=0, pady=5, padx=5, sticky='ew')
 
         # Adds Tester Name to the TestSummary Frame
         self.lbl_tester = tk.Label(
-                self, 
-                text = "Tester: " + self.data_holder.data_dict['user_ID'],
-                font=('Arial', 14)
-                )
-        self.lbl_tester.grid(column = 3, row = 0, pady = 20, padx = 5)
-       
+            self,
+            text="Tester: " + self.data_holder.data_dict['user_ID'],
+            font=('Arial', 14)
+        )
+        self.lbl_tester.grid(column=2, row=0, pady=5, padx=5, sticky='ew')
+        
+        self.columnconfigure(0, weight = 1)
+        self.columnconfigure(1, weight = 1)
+        self.columnconfigure(2, weight = 1)
+        self.columnconfigure(3, weight = 1)
 
 
-        #self.scrollerFrame = tk.Frame(self, background = "White", width = 900, height = 900)
-    
 
 
         ##########
@@ -122,14 +121,19 @@ class TestSummaryScene(tk.Frame):
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
-        self.mycanvas.grid(row = 3, column = 1, columnspan = 4)
-        self.scroller.grid(row = 3, column = 0, sticky='NS')
+        self.mycanvas.grid(row = 3, column = 0, columnspan = 4, sticky="nsew")
+        self.scroller.grid(row = 3, column = 4, sticky = 'nsw')
+    
+
+        self.canvas_window = self.mycanvas.create_window((0,0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
+        self.viewingFrame.pack(fill='both', expand=True)
 
 
-        self.canvas_window = self.mycanvas.create_window((4,4), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
-
-
-
+        self.viewingFrame.columnconfigure(0, weight = 1)
+        self.viewingFrame.columnconfigure(1, weight = 1)
+        self.viewingFrame.columnconfigure(2, weight = 1)
+        self.viewingFrame.columnconfigure(3, weight = 1)
+        self.rowconfigure(3, weight = 1)
 
         self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
         self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
@@ -137,16 +141,8 @@ class TestSummaryScene(tk.Frame):
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
-        self.onFrameConfigure(None)
-
-
-
-    
-        # Setting weights of columns so the column 4 is half the size of columns 0-3
-        for i in range(self.data_holder.getNumTest()):
-            self.viewingFrame.columnconfigure(i, weight = 2)
-        self.viewingFrame.columnconfigure(self.data_holder.getNumTest(), weight = 1)
-        
+        #self.onFrameConfigure(None)
+ 
 
         
         # Adds the labels to the top of the table
@@ -154,12 +150,12 @@ class TestSummaryScene(tk.Frame):
             _label = tk.Label(
                     self.viewingFrame, 
                     text = self.list_of_table_labels[index], 
-                    relief = 'ridge', 
-                    width=25, 
-                    height=1, 
-                    font=('Arial', 11, "bold")
+                    relief = 'ridge',  
+                    font=('Arial', 11, "bold"),
+                    padx=5,   # Horizontal padding
+                    pady=5    # Vertical padding
                     )
-            _label.grid(row= 0, column=index)
+            _label.grid(row= 0, column=index, sticky='nsew')
             
 
         # Adds the test names to the first column
@@ -167,13 +163,12 @@ class TestSummaryScene(tk.Frame):
             _label= tk.Label(
                     self.viewingFrame, 
                     text = self.list_of_tests[index], 
-                    relief = 'ridge', 
-                    width=25, 
-                    height=3, 
-                    font=('Arial', 11)
+                    font=('Arial', 11),
+                    padx=5,   
+                    pady=5    
                     )
-            _label.grid(row=index + 1, column=0)
-            
+            _label.grid(row=index + 1, column=0, sticky='nsew')
+        
 
 
         # Create Labels that tell whether or not a test was completed
@@ -182,10 +177,9 @@ class TestSummaryScene(tk.Frame):
             # Instantiates a Label
             _label = tk.Label(
                         self.viewingFrame,
-                        relief = 'ridge', 
-                        width=25, 
-                        height=3, 
-                        font=('Arial',11)
+                        font=('Arial',11),
+                        padx=5, 
+                        pady=5    
                         )
 
             # if the test is completed, set the label to "Complete"
@@ -200,7 +194,7 @@ class TestSummaryScene(tk.Frame):
                         )
 
             # Puts the completed/unfinished label into the table       
-            _label.grid(row=index + 1, column=1)
+            _label.grid(row=index + 1, column=1, sticky="ew")
 
 
         # Adds the Image as to whether the test was completed or not
@@ -208,9 +202,9 @@ class TestSummaryScene(tk.Frame):
             if(self.list_of_pass_fail[index]):
                 # Create a photoimage object of the QR Code
                 Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((75,75), Image.LANCZOS)
+                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
                 Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=75, height=75)
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50)
                 GreenCheck_Label.image = Green_Check_PhotoImage
 
                 GreenCheck_Label.grid(row=index + 1, column=2)
@@ -218,9 +212,9 @@ class TestSummaryScene(tk.Frame):
             else:
                 # Create a photoimage object of the QR Code
                 Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((75,75), Image.LANCZOS)
+                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
                 Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=75, height=75)
+                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50)
                 RedX_Label.image = Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + 1, column=2)
@@ -241,8 +235,6 @@ class TestSummaryScene(tk.Frame):
         self.mycanvas.configure(width = new_width, height = new_height)      
 
         #self.scrollerFrame.grid(row = 2, column = 1, columnspan = 4)
- 
-        #self.scrollerFrame.grid_propagate(0)
 
         logger.debug("TestSummaryScene: Table finished update.")     
 
@@ -300,7 +292,7 @@ class TestSummaryScene(tk.Frame):
                     pady=3,  
                     command = lambda i=i: self.btn_retest_action(parent, i)
                     ))
-            retests[i].grid(column = 1, row = 0, padx=5, pady=5)
+            retests[i].grid(column = 0, row = 0)
 
             more_infos.append(tk.Button(
                     rows[i], 
@@ -309,8 +301,10 @@ class TestSummaryScene(tk.Frame):
                     pady=3, 
                     command = lambda i=i: self.btn_more_info_action(parent, i)
                     ))
-            more_infos[i].grid(column=0, row = 0)
-
+            more_infos[i].grid(column=1, row = 0)
+        
+            rows[i].columnconfigure(0, weight=1)
+            rows[i].columnconfigure(1, weight=1)
 
         btn_next_test = tk.Button(
                 self.viewingFrame, 
@@ -318,10 +312,12 @@ class TestSummaryScene(tk.Frame):
                 font = ('Arial', 15), 
                 command = lambda: self.btn_next_test_action(parent)
                 )
-        btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 3)
+        btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 3, sticky='se', padx=20, pady=50)
+        
 
         logger.debug("TestSummaryScene: Buttons finshed being created.")
-
+    
+        
     #################################################
 
     # A function to be called within GUIWindow to create the console output

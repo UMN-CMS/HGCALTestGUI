@@ -38,7 +38,10 @@ class PostScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 870, height = 500)
+        super().__init__(self.master_frame, width = 870, height = 500, bg="green")
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         logger.info("PostScanScene: Frame has been created.")
 
@@ -54,9 +57,6 @@ class PostScanScene(tk.Frame):
        
         self.create_frame(parent)        
 
-        # Fits the frame to set size rather than interior widgets
-        self.grid_propagate(0)
-
     #################################################
     
     def create_frame(self, parent):
@@ -71,19 +71,28 @@ class PostScanScene(tk.Frame):
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
-        self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = tk.Frame(self.canvas, width=800, height=500)
+        self.canvas = tk.Canvas(self)
+        self.frame = tk.Frame(self.canvas, width=800, height=500, bg='blue')
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
-        self.canvas.grid(row = 0, column = 0)
-        self.scroller.grid(row=0, column=1, sticky='NSEW')
-        self.window = self.canvas.create_window((4,4), window=self.frame, anchor='n', tags='self.frame')
+
+        self.canvas.grid(row = 0, column = 0, sticky='nsew')
+        self.scroller.grid(row=0, column=1, sticky='nsw')
+        self.window = self.canvas.create_window((0,0), window=self.frame, anchor='nw', tags='self.frame')
+        
+        #resizing
+        self.frame.pack(fill='both', expand=True)
 
         self.frame.bind('<Configure>', self.onFrameConfigure)
         self.frame.bind('<Enter>', self.onEnter)
         self.frame.bind('<Leave>', self.onLeave)
 
         self.onFrameConfigure(None)
+        
+        self.frame.grid_columnconfigure(0, weight = 1)
+        self.frame.grid_columnconfigure(1, weight = 1)
+        self.frame.grid_columnconfigure(2, weight = 1)
+        self.frame.grid_columnconfigure(3, weight = 1)
 
         # Adds the title to the Summary Frame
         self.title = tk.Label(
