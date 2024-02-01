@@ -48,14 +48,16 @@ class SidebarScene(tk.Frame):
 
         self.mycanvas.pack(side="right", fill='both', expand=True)
         self.scroller.pack(side='left', fill='both', expand=True)
-
+        
+        """
         self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
         self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
+        """
 
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
-        self.onFrameConfigure(None)
+        #self.onFrameConfigure(None)
 
         self.data_holder = data_holder
 
@@ -65,12 +67,12 @@ class SidebarScene(tk.Frame):
     def onFrameConfigure(self, event):
         '''Reset the scroll region to encompass the inner frame'''
         self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
-
+    """
     def onCanvasConfigure(self, event):
         '''Reset the canvas window to encompass inner frame when required'''
         canvas_width = event.width
         self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
-
+    """
 
     #################################################
     def update_sidebar(self, _parent):
