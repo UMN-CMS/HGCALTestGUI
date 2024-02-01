@@ -38,7 +38,7 @@ class PostScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 870, height = 500, bg="green")
+        super().__init__(self.master_frame, width = 870, height = 500)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -72,7 +72,7 @@ class PostScanScene(tk.Frame):
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
         self.canvas = tk.Canvas(self)
-        self.frame = tk.Frame(self.canvas, width=800, height=500, bg='blue')
+        self.frame = tk.Frame(self.canvas, width=800, height=500)
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
 
@@ -89,10 +89,10 @@ class PostScanScene(tk.Frame):
 
         self.onFrameConfigure(None)
         
-        self.frame.grid_columnconfigure(0, weight = 1)
         self.frame.grid_columnconfigure(1, weight = 1)
         self.frame.grid_columnconfigure(2, weight = 1)
-        self.frame.grid_columnconfigure(3, weight = 1)
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_rowconfigure(0, weight = 1)
 
         # Adds the title to the Summary Frame
         self.title = tk.Label(
@@ -101,7 +101,7 @@ class PostScanScene(tk.Frame):
                 text = "Board Scanned!",
                 font=('Arial',18,'bold')
                 )
-        self.title.grid(row= 0, column= 1, pady = 20)
+        self.title.grid(row= 0, column= 1,  pady = 20)
 
         # Adds Board Serial Number to the SummaryFrame
         self.id = tk.Label(
@@ -269,7 +269,7 @@ class PostScanScene(tk.Frame):
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
-        proceed_button.grid(row=1, column=3, padx = 10, pady = 10)
+        proceed_button.grid(row=1, column=2, padx = 10, pady = 10)
 
         #creating the next board buttom
         next_board_button = tk.Button(
@@ -278,7 +278,7 @@ class PostScanScene(tk.Frame):
             text = "Back to Scan",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=2, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=2, column=2, padx = 10, pady = 10)
  
 
         # Creating the logout button
@@ -288,7 +288,7 @@ class PostScanScene(tk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=3, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=3, column=2, padx = 10, pady = 20)
  
     
 
