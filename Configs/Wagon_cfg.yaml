@@ -40,12 +40,5 @@ Test:
   desc_short: Determine quality of data transmission
   name: Bit Error Rate Test
   required: 1
-- TestClass: calibration_test
-  TestPath: /home/HGCAL_dev/sw
-  TestScript: calibration_test.py
-  desc_long: Tests ADC calibration on all engine lpGBTs, and measures the supply voltage for verification. 
-  desc_short: Perform and verify ADC calibration
-  name: ADC Calibration
-  required: 1
 UsingScanner: true
 ...

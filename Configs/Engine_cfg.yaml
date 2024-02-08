@@ -187,3 +187,10 @@ Test:
     name: Crossover link quality
     required: 1
 
+  - TestClass: calibration_test
+    TestPath: /home/test_server/test_code/
+    TestScript: calibration_test.py
+    desc_long: Tests ADC calibration on all engine lpGBTs, and measures the supply voltage for verification.
+    desc_short: Perform and verify ADC calibration
+    name: ADC Calibration
+    required: 1
