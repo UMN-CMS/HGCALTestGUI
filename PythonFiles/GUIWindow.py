@@ -25,6 +25,7 @@ from PythonFiles.Scenes.TestInProgressScene import *
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.Scenes.PhysicalScenes.Inspection1 import Inspection1
+from PythonFiles.Scenes.PhysicalScenes.GenericPhysicalScene import GenericPhysicalScene
 from PythonFiles.update_config import update_config
 import webbrowser
 
@@ -154,7 +155,7 @@ class GUIWindow():
         
         # For the physical tests
         for test_idx,test in enumerate(physical_list):
-            self.test_frames.append(Inspection1(self, self.master_frame, self.data_holder, test_idx))
+            self.test_frames.append(GenericPhysicalScene(self, self.master_frame, self.data_holder, test_idx, test))
             self.test_frames[test_idx].grid(row=0, column=0)
             offset = offset + 1
 
@@ -411,6 +412,43 @@ class GUIWindow():
 
     #################################################
 
+    def critical_failure_popup(self):
+        
+        logging.debug("GUIWindow: Critical test failed. Cannot proceed with testing")
+
+        self.popup = tk.Toplevel()
+        self.popup.title("Critical Failure") 
+        self.popup.geometry("300x150+500+300")
+        self.popup.grab_set()
+       
+
+        frm_popup = tk.Frame(self.popup)
+        frm_popup.pack()
+
+        lbl_popup = tk.Label(
+            frm_popup, 
+            text = " This board has failed to pass\n a physical test. Cannot proceed.",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25)
+
+        def action():
+            self.destroy_popup()
+            self.reset_board()
+
+        btn_ok = tk.Button(
+            frm_popup,
+            width = 12,
+            height = 2,
+            text = "Exit",
+            font = ('Arial', 12),
+            relief = tk.RAISED,
+            command = lambda: action()
+        )
+        btn_ok.grid(column = 0, row = 1, columnspan=2)
+
+
+    #################################################
 
     def unable_to_exit(self):
         

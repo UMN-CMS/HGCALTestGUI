@@ -149,6 +149,7 @@ class ScanScene(tk.Frame):
             font = ('Arial', 16),
             textvariable= user_text, 
             )
+        self.ent_snum.insert(0,"320EL0300000032")
         self.ent_snum.pack(padx = 50)
 
         # Traces an input to show the submit button once text is inside the entry box

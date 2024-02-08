@@ -39,8 +39,7 @@ class GUIConfig():
     # Returns the information necessary for physical test
     # Formatted as a dictionary
     def getPhysicalTestRequirements(self, num):
-        index = 0
-        for ptest in self.board_cfg["PhysicalTest"]:
+        for index, ptest in enumerate(self.board_cfg["PhysicalTest"]):
             if index == num:
                 return ptest
 
