@@ -177,9 +177,8 @@ class GUIWindow():
    
     def first_frame_camera_frame(self):
 
-        self.camera_index = -1
-        
         # Trick for bypassing the increment in "next_frame_camera_frame"        
+        self.camera_index = -1
         self.photo_index = -1
 
         print(self.data_holder.photos)

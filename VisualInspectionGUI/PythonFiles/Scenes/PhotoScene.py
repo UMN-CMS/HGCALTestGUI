@@ -25,7 +25,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogi
 
 
 # creating the Photo Frame's class (called PhotoScene) to be instantiated in the GUIWindow
-# instantiated as scan_frame by GUIWindow
+# this scene is now defunkt and has been skipped over in the interest of speeding up the photo taking process
 # @param parent -> passes in GUIWindow as the parent.
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
