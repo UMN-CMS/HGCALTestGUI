@@ -111,7 +111,7 @@ class DBSender():
 
 
 
-    # Returns a list of booleans
+    # Returns a dictionary of booleans
     # Whether or not DB has passing results 
     def get_previous_test_results(self, serial_number):
    
@@ -149,8 +149,8 @@ class DBSender():
         return tests_passed, poss_tests
     
     
-    # #TODO Verify if a board has already been instantiated with SN
     # Posts a new board with passed in serial number
+    # this is only called if the sn isn't recognized by is_new_board
     def add_new_board(self, sn, user_id, comments):
         if sn[3] == 'W':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"serial_number": str(sn)})

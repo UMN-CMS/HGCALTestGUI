@@ -167,7 +167,6 @@ class CameraScene(tk.Frame):
     # Saves a picture of the currently shown camera
     def snapshot(self):
         # Writes the image to a file with a name that includes the date
-        # TODO Change this to be a more readable file name later
         shortened_pn = "captured_image{}.png".format(self.current_index)
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
         print("self.photo_name: ", self.photo_name)
@@ -211,6 +210,8 @@ class CameraScene(tk.Frame):
         self.submit_button_action()
 
     # Submits the photo and goes to the next screen
+    # doesn't save the photo to disk initially for increased speed
+    # photo is stored in a dictionary and all photos are saved at the end
     def submit_button_action(self):
         try:
             camera.stop_preview()

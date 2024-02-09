@@ -105,9 +105,11 @@ class GUIWindow():
         self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
         self.camera_frame.grid(row=0, column=0)
         
-
+        # indices to denote photo number and camera number to know when to finish
         self.camera_index = 0
         self.photo_index = 0
+        # two bools, one indicates that a photo is to be retaken
+        # the other indicates whether the photo has been retaken or not
         self.retake = False
         self.retaken = False
 
@@ -128,6 +130,8 @@ class GUIWindow():
 
     #################################################
 
+    # is called after a serial number is entered
+    # sets the config to either Wagon or Engine depending on the SN entered
     def update_config(self):
         sn = self.data_holder.get_serial_ID()
         new_cfg = update_config(sn)
@@ -135,9 +139,14 @@ class GUIWindow():
 
     #################################################
 
+    # function for retaking the photo at the end, takes in index of desired photo
     def retake_photo(self, photo_index):
+        # need to decrease the index by 1 since next frame will increment
         self.camera_index = photo_index-1
         self.photo_index = photo_index-1
+        
+        # two bools, one indicates that a photo is to be retaken
+        # the other indicates whether the photo has been retaken or not
         self.retake = True
         self.retaken = False
         self.next_frame_camera_frame()
@@ -187,6 +196,9 @@ class GUIWindow():
         if self.retake == True and self.retaken == True:
             self.set_frame_test_summary()
         else:
+            # number of photos is determined in the data holder
+            # if top and bottom is seleted, 2 photos are taken
+            # if connectors is selected, then it sets the number of connectors based on the serial number
             if self.data_holder.photos == 'Top and Bottom':
                 if (self.camera_index < len(photo_list)):
                     self.set_frame_camera_frame(self.camera_index)
