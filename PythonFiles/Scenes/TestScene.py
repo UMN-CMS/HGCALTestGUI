@@ -32,6 +32,7 @@ class TestScene(tk.Frame):
         self.test_description_long = test_description_long
         self.data_holder = data_holder
         self.test_idx = test_idx
+        self.parent = parent
         #print("Making test scene with index".format(self.test_idx))
         
         self.update_frame(parent)
@@ -224,7 +225,11 @@ class TestScene(tk.Frame):
         #print("Confirm button sending test{}".format(self.test_idx))
         _parent.set_frame_test_in_progress(self.queue)
         
+    def get_submit_action(self):
+        return self.btn_confirm_action
 
+    def get_parent(self):
+        return self.parent
     
     #################################################
 

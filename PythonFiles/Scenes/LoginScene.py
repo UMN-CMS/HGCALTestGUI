@@ -28,7 +28,8 @@ class LoginScene(tk.Frame):
         super().__init__(master_frame, width=870, height=500)
         self.data_holder = data_holder
         self.update_frame(parent)
-
+        
+        self.parent = parent
 
     def update_frame(self, parent):
 
@@ -85,7 +86,6 @@ class LoginScene(tk.Frame):
         self.btn_submit.pack()
         self.btn_submit.config(state = 'disabled')
 
-
         # Creating the add user button
         self.btn_add_user = tk.Button(
             self, 
@@ -113,8 +113,6 @@ class LoginScene(tk.Frame):
         # rather than adjusting to the size of the widgets
         self.pack_propagate(0)
 
-    
-
 
     #################################################
 
@@ -137,6 +135,12 @@ class LoginScene(tk.Frame):
         logger.info("LoginScene: Submit button was selected. End of method")
 
         # self.data_holder.print()
+    
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

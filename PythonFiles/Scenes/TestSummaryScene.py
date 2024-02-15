@@ -46,6 +46,7 @@ class TestSummaryScene(tk.Frame):
         # Instantiates an updated table with the current data
         self.create_updated_table(parent)
         
+        self.parent = parent
 
     #################################################
 
@@ -410,6 +411,12 @@ class TestSummaryScene(tk.Frame):
         self.lbl_snum.destroy()
         _parent.reset_board()
         logger.info("TestSummaryScene: Starting a new test.")
+
+    def get_submit_action(self):
+        return self.btn_next_test_action
+
+    def get_parent(self):
+        return self.parent
         
     #################################################
 

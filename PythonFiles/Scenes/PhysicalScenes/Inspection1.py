@@ -23,7 +23,7 @@ class Inspection1(tk.Frame):
         self.data_holder = data_holder
         
         self.test_idx = test_idx
-
+        self.parent = parent
         self.update_frame(parent)
 
     #################################################
@@ -249,7 +249,7 @@ class Inspection1(tk.Frame):
         _parent.go_to_next_test()
         
         
-
+    
         # # # # # # # # # # # # # # # # # # # # # # # # # # #
         #   ++ GOAL CODE ++                                 #
         # def confirm():                                    #
@@ -260,7 +260,13 @@ class Inspection1(tk.Frame):
         #       Go_To_Next_Test()                           #
         # # # # # # # # # # # # # # # # # # # # # # # # # # # 
         pass
+    def get_submit_action(self):
+        return self.btn_confirm_action
 
+    def get_parent(self):
+        return self.parent
+
+        
     #################################################
 
     # functionality for the logout button

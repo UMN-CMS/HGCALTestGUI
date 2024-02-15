@@ -52,6 +52,8 @@ class ScanScene(tk.Frame):
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
+
+        self.parent = parent
         
     
     # Creates a thread for the scanning of a barcode
@@ -260,6 +262,11 @@ class ScanScene(tk.Frame):
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
 
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

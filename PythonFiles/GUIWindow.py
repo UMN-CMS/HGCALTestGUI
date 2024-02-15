@@ -225,6 +225,7 @@ class GUIWindow():
         self.scan_frame.scan_QR_code(self.master_window)
         
         logging.debug("GUIWindow: The frame has been set to scan_frame.")
+        self.unbind_all("<space>")
 
     #################################################
 
@@ -357,7 +358,15 @@ class GUIWindow():
 
     # Called to change the frame to the argument _frame
     def set_frame(self, _frame):
-        
+
+        #Binding space button to next frame
+        try: 
+            bind_func = _frame.get_submit_action()
+            _frame.bind_all("<space>", lambda event: bind_func(_frame.get_parent()))
+        except: 
+            print("no bind function")
+ 
+
         # Updates the sidebar every time the frame is set
         self.sidebar.update_sidebar(self)
 
