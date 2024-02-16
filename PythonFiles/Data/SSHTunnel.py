@@ -3,6 +3,7 @@ import sshtunnel
 import sys
 from sshtunnel import SSHTunnelForwarder
 
+# creates an SSH tunnel to the server machine
 class Tunnel:
 
     def __init__(self):

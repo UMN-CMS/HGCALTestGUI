@@ -21,7 +21,7 @@ class counting(Test):
         # message passing between tests and GUI
         # Note that tests are run on initialization of the Test object
         Test.__init__(self, self.run_count, self.info_dict, conn, config_path)
-
+        
         self.run()
 
     def initialization(self):
@@ -43,7 +43,7 @@ class counting(Test):
                 time.sleep(1)
 
                 # Simulating a failure case to show how that is handled by the Test API 
-                if random.random() < 0.1:
+                if random.random() < 0.03:
                     raise Exception("This is a simulated random failure case")
         except:
             self.send("Something went wrong while counting to {}... Don't worry, this is a simulated test failure to illustrate failure handling :)".format(max_range-1))
@@ -58,3 +58,4 @@ class counting(Test):
         self.send("Done.")
 
         return test_passed, result, data
+

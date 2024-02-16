@@ -6,6 +6,7 @@
 #-----------------------------------------------
 
 # Specify which board you want to test here
+# this doesn't actually matter much, the GUI type will update based on the board type entered in scan scene
 GUIType: Demo
 
 # Specify if a scanner is used for barcodes
@@ -15,8 +16,7 @@ UsingScanner: false
 # Uncomment the test handler which you would like to use
 #
 # Note that for SSH, the username and hostname must be specified.
-# It is assumed that you have set up SSH key access for this username
-# On the specified host.
+# It is assumed that you have set up SSH key access for this username on the specified host.
 #
 # ZMQ will use the built-in request server and client.
 # The IP address of the GUI node and testing node must be specified separately
@@ -24,9 +24,8 @@ UsingScanner: false
 # on the tester by hand. Path and server file name needed for remote
 # server start up
 #TestHandler: {name: Local, remoteip: localhost}
-TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
+TestHandler: {name: SSH, username: bovar008, hostname: cmsfactory2, remoteip: <remoteip>}
 #TestHandler: {name: ZMQ, localip: <localip>, remoteip: <remoteip>, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
-
 
 # Let the GUI know if you want to check serial numbers for multiple board types at a single testing location
 SerialCheckSafe: false
@@ -34,7 +33,8 @@ SerialCheckSafe: false
 # Order of tests matters here
 # This should be the same order that you want the tests to be run in
 # Number of test will also be decided by this list so don't miss any 
-# TestClass, TestScript, and TestPath fields will be used to write the REPserver script
+# TestPath and TestScript aren't used in SSH
+# TestCommand field is the command run in SSH, -u is needed for realtime output from a python script
 # TestPath should be in reference to the testing home directory
 Test: 
 - name: Counting
@@ -44,6 +44,8 @@ Test:
   TestClass: counting
   TestPath: Tests
   TestScript: demo_count.py
+  TestCommand: python3 -u HGCALTestGUI/Tests/demo_count.py
+  TestConfig: HGCALTestGUI/Tests/test_configs/counting.yaml
 
 # Tests which require a physical measurement
 # The pass fail criteria for these tests are specified here

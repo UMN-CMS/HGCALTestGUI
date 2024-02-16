@@ -3,7 +3,7 @@ import json
 import socket
 # from read_barcode import read_barcode
 
-
+# python scripts run from here are on the machine that contains the server and database
 class DBSender():
 
     def __init__(self, gui_cfg):
@@ -145,7 +145,6 @@ class DBSender():
         return tests_passed, poss_tests
     
     
-    # #TODO Verify if a board has already been instantiated with SN
     # Posts a new board with passed in serial number
     def add_new_board(self, sn, user_id, comments):
         if sn[3] == 'W':

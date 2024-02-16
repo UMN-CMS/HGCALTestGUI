@@ -55,12 +55,10 @@ class REQClient():
         # Run tests on another machine via SHH (key required)
         elif test_handler_name == "SSH":
 
-            self.SSHClient(gui_cfg, desired_test, serial, tester)
+            self.SSHClient(conn_trigger, desired_test, serial, tester)
 
 
     # Handling tests run on the local machine
-    # A separate ZMQ server is used to send information to terminal
-    # within GUI
     def LocalClient(self, conn_trigger, desired_test, serial, tester):
 
         desired_test = int(desired_test[4:])
@@ -70,9 +68,15 @@ class REQClient():
 
         conn_trigger.send(trigger_message)
 
-    def SSHClient(self, gui_cfg, desired_test, serial, tester):
+    # Handling tests run via SSH
+    def SSHClient(self, conn_trigger, desired_test, serial, tester):
 
-        pass
+        desired_test = int(desired_test[4:])
+
+        trigger_dict = {"desired_test": desired_test, "serial": serial, "tester": tester}
+        trigger_message = json.dumps(trigger_dict)
+
+        conn_trigger.send(trigger_message)
 
     def ZMQClient(self, gui_cfg, desired_test, serial, tester):
         sending_msg = desired_test + ";" + serial + ";" + tester

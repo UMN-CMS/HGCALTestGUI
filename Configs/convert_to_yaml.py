@@ -1,4 +1,5 @@
 #This script will convert any python dictionaries you want into yaml
+#visit dumptoyaml.py for doing this within another python script 
 
 import yaml
 

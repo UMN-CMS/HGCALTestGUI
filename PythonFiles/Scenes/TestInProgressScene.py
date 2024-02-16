@@ -88,15 +88,11 @@ class TestInProgressScene(tk.Frame):
         lbl_title.pack(padx = 0, pady = 50)
 
         # Create a progress bar that does not track progress but adds motion to the window
-        '''self.prgbar_progress = ttk.Progressbar(
+        self.progressbar = ttk.Progressbar(
             self, 
             orient = 'horizontal',
             mode = 'indeterminate', length = 350)
-        self.prgbar_progress.pack(padx = 50)
-        self.prgbar_progress.start()
-
-        print("\n\n\n\n\n\n\n\n Starting Progress Bar \n\n\n\n\n\n\n")
-        '''
+        self.progressbar.pack(padx = 50)
         # A Button To Stop the Progress Bar and Progress Forward (Temporary until we link to actual progress)
         btn_stop = ttk.Button(
             self, 
@@ -113,8 +109,9 @@ class TestInProgressScene(tk.Frame):
 
     # A function for the stop button
     def btn_stop_action(self, _parent):
-
         _parent.return_to_current_test()
+        self.progressbar.stop()
+        #self.queue.put('Stop')
 
 
 
@@ -142,6 +139,8 @@ class TestInProgressScene(tk.Frame):
         # Time waiting (sec) = counter * refresh_break
         counter = 0
 
+        self.progressbar.start(10)
+
         self.window_closed = False
 
         # Maximum timeout in seconds
@@ -163,10 +162,13 @@ class TestInProgressScene(tk.Frame):
                     information_received = True
                     logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
-                    print(text)
                     ent_console.insert(tk.END, text)
                     ent_console.insert(tk.END, "\n")
                     ent_console.see('end')
+
+                    if "Done." in text:
+                        print('Stopping Progress Bar')
+                        self.progressbar.stop()
 
                     if text == "Results received successfully.":
                     
@@ -185,6 +187,7 @@ class TestInProgressScene(tk.Frame):
                         break
 
                 if self.window_closed == True:
+                    self.progressbar.destroy()
                     break
                     
                 #else:
@@ -224,10 +227,3 @@ class TestInProgressScene(tk.Frame):
 
         return True    
 
-
-
-    def close_prgbar(self):
-        #logger.debug("TestInProgressScene: Closing the progressbar.")
-        #self.prgbar_progress.stop()
-        #self.prgbar_progress.destroy()
-        logger.debug("TestInProgressScene: Progressbar succesfully closed.")

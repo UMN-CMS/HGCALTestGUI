@@ -54,10 +54,9 @@ class GUIWindow():
         self.gui_cfg = GUIConfig(board_cfg)
                              
         # Create the window named "self.master_window"
-        # global makes self.master_window global and therefore accessible outside the function
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
-        # Creates the size of the window and disables resizing
+        # Creates the size of the window
         self.master_window.geometry("1300x700+25+100")
 
         
@@ -66,9 +65,10 @@ class GUIWindow():
         self.label_text = tk.StringVar()
         
         # Running all tests in succession?
+        # TODO add this to config file
         self.run_all_tests_bool = False
         
-        # Should be resizable with following code commented out
+        # resizable with following code commented out
         #self.master_window.resizable(0,0)
 
         # Removes the tkinter logo from the window
@@ -108,16 +108,12 @@ class GUIWindow():
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
         self.scan_frame.grid(row=0, column=0)
 
-        #self.create_test_frames(queue)
-            
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0)
 
-        
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
         self.add_user_frame.grid(row=0, column=0)
 
-        # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, self.master_frame)
         self.splash_frame.grid(row=0, column=0)
 
@@ -170,6 +166,7 @@ class GUIWindow():
     #################################################
 
     def update_config(self):
+        #switch between Wagon and Engine config depending on the serial number entered
         sn = self.data_holder.get_serial_ID()
         if not self.gui_cfg.getSerialCheckSafe():
             return

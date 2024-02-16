@@ -23,6 +23,7 @@ class DataHolder():
         self.data_sender = DBSender(gui_cfg)
         #self.dbclient = DBSendClient()
         
+        #dictionary of info to be held
         self.data_dict = {
                 'user_ID': "_",
                 'test_stand': str(socket.gethostname()),
@@ -34,6 +35,7 @@ class DataHolder():
                 'checkin_id': None,
                 'tests_run': [str(i + 1) for i in range(self.getNumTest())],
                 }
+        # adds tests to dictionary to be marked as complete
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict["test{}_completed".format(i+1)] = False
             self.data_dict["test{}_pass".format(i+1)] = False
@@ -42,6 +44,7 @@ class DataHolder():
             self.data_dict['physical{}_completed'.format(i+1)] = False
             self.data_dict['physical{}_pass'.format(i+1)] = False
 
+        # dictionary of visual inspection results, not used except for in visual inspection gui
         self.inspection_data = {
                 'board_chipped_bent': False,
                 'wagon_connection_pin_bent': False,
@@ -68,7 +71,8 @@ class DataHolder():
         # All of the comments logic
         # Dictionaries stored by inspection index
         self.all_comments = []
-        
+       
+        # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
             self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i+1)])
             self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i+1)])
@@ -129,7 +133,7 @@ class DataHolder():
     def get_physical_criteria(self, num):
         return self.ptest_criteria[num]
 
-
+    # when a serial number gets entered, this function checks if it's new
     def check_if_new_board(self):
         logger.info("DataHolder: Checking if serial is a new board")
         #print("testing if new board")
@@ -137,10 +141,12 @@ class DataHolder():
         sn = self.get_serial_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during general testing'
+        #returns true if the board is new, false if not
         is_new_board = self.data_sender.is_new_board(sn)
         #print(is_new_board)
         
         if is_new_board == True:
+            # data sender's add new board function returns the check in id
             in_id = self.data_sender.add_new_board(sn, user, comments)
             if in_id:
                 #print('Board added to Database')
@@ -148,6 +154,7 @@ class DataHolder():
                 self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
 
         else:
+            # if the board is not new, this returns the previous testing information on the board
             prev_results, test_names = self.data_sender.get_previous_test_results(sn)
             if prev_results:
                 self.data_dict['test_names'] = test_names
@@ -367,7 +374,8 @@ class DataHolder():
 
     ################################################
 
-    # Keeps the login information stored
+    # resets the data holder when a new board is scanned
+    # Keeps the login information stored, serial number has already been changed
     def data_holder_new_test(self): 
 
         self.data_dict = {
