@@ -167,23 +167,23 @@ class ScanScene(tk.Frame):
         global ent_snum
         
         # Creating intial value in entry box
-        user_text = tk.StringVar(self)
+        self.user_text = tk.StringVar(self)
         
         # Creates an entry box
         self.ent_snum = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
-            textvariable= user_text,
+            textvariable= self.user_text,
             )
         self.ent_snum.grid(column=0, row=3)
 
         # Traces an input to show the submit button once text is inside the entry box
-        user_text.trace(
+        self.user_text.trace(
             "w", 
             lambda name, 
             index, 
             mode, 
-            sv=user_text: self.show_submit_button()
+            sv=self.user_text: self.show_submit_button()
             )
 
         # Rescan button creation
@@ -204,7 +204,7 @@ class ScanScene(tk.Frame):
             padx = 20,
             pady = 10,
             relief = tk.RAISED,
-            command= lambda:  self.btn_submit_action(parent)
+            command= lambda:  self.btn_submit_action(self, parent, self.user_text)
             )
         self.btn_submit.grid(column=0, row=6, padx=10, pady=5)
 
@@ -248,19 +248,21 @@ class ScanScene(tk.Frame):
 
     # Function for the submit button
     def btn_submit_action(self, _parent):
-        
-        self.EXIT_CODE = 1 
+        if (self.user_text.get() != "") :
+            self.EXIT_CODE = 1 
 
-#        if self.use_scanner:
-#            self.listener.terminate()
-#            self.scanner.terminate()
+    #        if self.use_scanner:
+    #            self.listener.terminate()
+    #            self.scanner.terminate()
 
-        self.data_holder.set_serial_ID(self.ent_snum.get())
-        if self.data_holder.getGUIcfg().get_if_use_DB():
-            self.data_holder.check_if_new_board() 
-        _parent.update_config()
-        _parent.create_test_frames(self.data_holder.data_dict['queue'])
-        _parent.set_frame_postscan()
+            self.data_holder.set_serial_ID(self.ent_snum.get())
+            if self.data_holder.getGUIcfg().get_if_use_DB():
+                self.data_holder.check_if_new_board() 
+            _parent.update_config()
+            _parent.create_test_frames(self.data_holder.data_dict['queue'])
+            _parent.set_frame_postscan()
+        else:
+            pass
 
     def get_submit_action(self):
         return self.btn_submit_action
