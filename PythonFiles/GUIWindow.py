@@ -225,7 +225,7 @@ class GUIWindow():
         self.scan_frame.scan_QR_code(self.master_window)
         
         logging.debug("GUIWindow: The frame has been set to scan_frame.")
-        self.unbind_all("<space>")
+
 
     #################################################
 
@@ -362,7 +362,7 @@ class GUIWindow():
         #Binding space button to next frame
         try: 
             bind_func = _frame.get_submit_action()
-            _frame.bind_all("<space>", lambda event: bind_func(_frame.get_parent()))
+            _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
             print("no bind function")
  
