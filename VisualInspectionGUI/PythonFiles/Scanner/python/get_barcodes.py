@@ -27,7 +27,7 @@ def set_pdeathsig(sig = signal.SIGTERM):
     return callable
 
 def scan():
-    proc = subprocess.Popen('/opt/HGCALTestGUI/HGCALTestGUI/PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
+    proc = subprocess.Popen('/home/hgcal/VisualInspectionGUI/PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
     print("Starting scanner")
     return proc
     #for line in proc.stdout:

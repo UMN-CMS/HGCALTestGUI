@@ -32,7 +32,7 @@ class TestSummaryScene(tk.Frame):
     
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width = 1105, height = 850)
+        super().__init__(master_frame, width = 1350, height = 850)
 
         logging.info("TestSummaryScene: Frame has been created.")
 
@@ -82,29 +82,120 @@ class TestSummaryScene(tk.Frame):
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
 
+        row_offset = 0
+
 
         # Tries to add all of the images to the final screen
-        # TODO This is not scalable as it just appends the images horizontally
-        for i, photo in enumerate(self.data_holder.get_photo_list()):
-            
-            try:
-                # Create a photoimage object of the Board
-                Board_image = Image.open("{}/Images/captured_image{}.png".format(PythonFiles.__path__[0], i))
-                Board_image = Board_image.resize((222, 125), Image.LANCZOS)
-                Board_PhotoImage = iTK.PhotoImage(Board_image)
-                Board_label = tk.Label(self, image=Board_PhotoImage)
-                Board_label.image = Board_PhotoImage
 
-                # the .grid() adds it to the Frame
-                Board_label.grid(column=0 + i, row = 1)
+        for i, photo in enumerate(self.data_holder.image_holder):
+            try:
+                if len(self.data_holder.image_holder) == 1:
+                    Board_image = self.data_holder.image_holder[photo]
+                    Board_image = Board_image.resize((450, 250), Image.LANCZOS)
+                    Board_PhotoImage = iTK.PhotoImage(Board_image)
+                    if i == 0:
+                        retake_1 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 0)
+                                )
+                        retake_1.image = Board_PhotoImage
+                        retake_1.grid(column = i, row = 1)
+                if len(self.data_holder.image_holder) == 2:
+                    Board_image = self.data_holder.image_holder[photo]
+                    Board_image = Board_image.resize((450, 250), Image.LANCZOS)
+                    Board_PhotoImage = iTK.PhotoImage(Board_image)
+                    if i == 0:
+                        retake_1 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 0)
+                                )
+                        retake_1.image = Board_PhotoImage
+                        retake_1.grid(column = i, row = 1)
+                    if i == 1:
+                        retake_2 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 1)
+                                )
+                        retake_2.image = Board_PhotoImage
+                        retake_2.grid(column = i, row = 1)
+                if len(self.data_holder.image_holder) == 3:
+                    Board_image = self.data_holder.image_holder[photo]
+                    Board_image = Board_image.resize((333, 187), Image.LANCZOS)
+                    Board_PhotoImage = iTK.PhotoImage(Board_image)
+                    if i == 0:
+                        retake_1 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 0)
+                                )
+                        retake_1.image = Board_PhotoImage
+                        retake_1.grid(column = i, row = 1)
+                    if i == 1:
+                        retake_2 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 1)
+                                )
+                        retake_2.image = Board_PhotoImage
+                        retake_2.grid(column = i, row = 1)
+                    if i == 2:
+                        retake_3 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 2)
+                                )
+                        retake_3.image = Board_PhotoImage
+                        retake_3.grid(column = i, row = 1)
+
+                if len(self.data_holder.image_holder) == 4:
+                    row_offset = 1
+                    Board_image = self.data_holder.image_holder[photo]
+                    Board_image = Board_image.resize((333, 187), Image.LANCZOS)
+                    Board_PhotoImage = iTK.PhotoImage(Board_image)
+                    
+                    if i == 0:
+                        retake_1 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 0)
+                                )
+                        retake_1.image = Board_PhotoImage
+                        retake_1.grid(column = 0, row = 1)
+                    if i == 1:
+                        retake_2 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 1)
+                                )
+                        retake_2.image = Board_PhotoImage
+                        retake_2.grid(column = 1, row = 1)
+                    if i == 2:
+                        retake_3 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 2)
+                                )
+                        retake_3.image = Board_PhotoImage
+                        retake_3.grid(column = 0, row = 2)
+                    if i == 3:
+                        retake_4 = tk.Button(
+                                self,
+                                image = Board_PhotoImage,
+                                command = lambda: self.btn_retake_action(parent, 3)
+                                )
+                        retake_4.image = Board_PhotoImage
+                        retake_4.grid(column = 1, row = 2)
+
 
             except Exception as e:
                 print("TestSummaryScene: Could not find captured_image.")
+                print(e)
                 logging.debug("TestSummaryScene: Could not find captured_image.")
                 logging.debug("Exception: {}".format(e))
                 next
-
-
         
         logging.debug("TestSummaryScene: Creating the board image.")
         
@@ -116,7 +207,7 @@ class TestSummaryScene(tk.Frame):
                 text = "Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']),
                 font=('Arial', 14) 
                 )
-        self.lbl_snum.grid(column = 1, row = 2, pady = 10) 
+        self.lbl_snum.grid(column = 1, row = 2 + row_offset, pady = 10) 
 
         # Adds Tester Name to the TestSummary Frame
         self.lbl_tester = tk.Label(
@@ -124,12 +215,12 @@ class TestSummaryScene(tk.Frame):
                 text = "Tester: " + self.data_holder.data_dict['user_ID'],
                 font=('Arial', 14) 
                 )
-        self.lbl_tester.grid(column = 1, row = 3, pady = 10)
+        self.lbl_tester.grid(column = 1, row = 3 + row_offset, pady = 10)
 
 
         # Creates the "table" as a frame object
         self.frm_table = tk.Frame(self)
-        self.frm_table.grid(row = 4, column= 1) 
+        self.frm_table.grid(row = 4 + row_offset, column= 1) 
 
         # Where to start putting the JSON information
         starting_row = 4
@@ -199,14 +290,14 @@ class TestSummaryScene(tk.Frame):
  
         # Creating frame for logout button
         frm_logout = tk.Frame(self)
-        frm_logout.grid(column = 4, row = starting_row, sticky= 'se')
+        frm_logout.grid(column = 1, row = 5 + row_offset, sticky= 'se')
         
 
         # Creating the next board button
         next_board_button = tk.Button(
             frm_logout,
             relief = tk.RAISED,
-            text = "Next Board",
+            text = "Submit and Go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
         next_board_button.pack(anchor = 'ne', padx = 10, pady = 10)
@@ -227,10 +318,14 @@ class TestSummaryScene(tk.Frame):
     #################################################
 
     def btn_NextBoard_action(self, parent):
+        self.data_holder.send_image()
         parent.set_frame_scan_frame()
 
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
+
+    def btn_retake_action(self, parent, photo_index):
+        parent.retake_photo(photo_index)
 
         
     

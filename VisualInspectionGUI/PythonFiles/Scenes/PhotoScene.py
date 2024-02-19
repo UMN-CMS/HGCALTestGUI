@@ -60,7 +60,11 @@ class PhotoScene(tk.Frame):
 
         logging.info("PhotoScene: Frame has been created.")
         # Create a photoimage object of the Engine
-        self.Engine_image = Image.open("{}/Images/{}".format(PythonFiles.__path__[0], self.parent.image_name))
+        try:
+            self.Engine_image = self.data_holder.image_holder[self.parent.image_name]
+        except:
+            self.Engine_image = Image.open("{}/Images/{}".format(PythonFiles.__path__[0], self.parent.image_name))
+            
         self.Engine_image = self.Engine_image.resize((400, 300), Image.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
         self.Engine_label = tk.Label(self)
@@ -75,7 +79,7 @@ class PhotoScene(tk.Frame):
 
         Blank_Frame = Frame(self)
         Blank_Frame.grid(column = 0, row = 1, padx = 100, pady = 10)
-
+        
         self.photo_title = tk.StringVar()
         self.photo_title.set("Photo Title")
 
@@ -173,8 +177,10 @@ class PhotoScene(tk.Frame):
     def btn_submit_action(self, _parent):
         
         #TODO Do something with the dataholder here with the photo
-        self.data_holder.send_image(img_idx=0)
         _parent.next_frame_camera_frame()
+
+    def btn_last_action(self, _parent):
+        _parent.set_frame_inspection_frame()
 
 
     #################################################
@@ -214,10 +220,13 @@ class PhotoScene(tk.Frame):
     def set_text(self, index):
         self.image_index = index
 
-        title = self.data_holder.get_photo_list()[index]["name"]
-        descr = self.data_holder.get_photo_list()[index]["desc_short"]
+        if self.data_holder.photos == 'Top and Bottom':
+            title = self.data_holder.get_photo_list()[index]["name"]
+            descr = self.data_holder.get_photo_list()[index]["desc_short"]
 
-        updated_title = title + "\n--------------------\n" + descr
+            updated_title = title + "\n--------------------\n" + descr
+        else:
+            updated_title = 'Connector ' + str(index+1)
 
         self.photo_title.set(updated_title)
 
@@ -242,7 +251,10 @@ class PhotoScene(tk.Frame):
             widget.destroy()
 
     def update(self):
-        self.Engine_image = Image.open("{}/Images/{}".format(PythonFiles.__path__[0], self.parent.image_name))
+        try:
+            self.Engine_image = self.data_holder.image_holder[self.parent.image_name]
+        except:
+            self.Engine_image = Image.open("{}/Images/{}".format(PythonFiles.__path__[0], self.parent.image_name))
         
 
         print("\nIn PhotoScene 'update()' method\n")

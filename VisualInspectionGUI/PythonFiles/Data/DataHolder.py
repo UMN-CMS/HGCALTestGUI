@@ -35,7 +35,7 @@ class DataHolder():
             self.data_dict["test{}_completed".format(i+1)] = False
             self.data_dict["test{}_pass".format(i+1)] = False
 
-
+        self.image_holder = {}
 
         # For the visual inspection component
         self.inspection_data = {
@@ -47,6 +47,8 @@ class DataHolder():
                 }
 
         self.image_data = []
+
+        self.photos = 'Top and Bottom'
 
         # All of the checkbox logic
         # Dictionaries stored by inspection index
@@ -187,10 +189,30 @@ class DataHolder():
         self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
+        self.num_modules = int(sn[5]) + 1
         logging.info("DataHolder: Serial Number has been set.")
 
-    def send_image(self, img_idx=0):
-        self.data_sender.add_board_image(self.data_dict["current_serial_ID"], open(self.image_data[img_idx], "rb"))
+    def save_image(self):
+        for i in self.image_holder:
+            image = self.image_holder[i]
+            # Saves the image to a file
+            image.save(i)
+
+
+    def send_image(self):
+        if self.photos == 'Top and Bottom':
+            for i in self.image_holder:
+                idx = i[14]
+                if idx == 0:
+                    view = 'Top'
+                else:
+                    view = 'Bottom'
+                self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], view)
+
+        if self.photos == 'Connectors':
+            for i in self.image_holder:
+                idx = i[14]
+                self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], 'Connector ' + (idx+1))
 
     def test_new_board(self, sn):
         logging.info("DataHolder: Checking if serial is a new board")
@@ -356,6 +378,9 @@ class DataHolder():
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict["test{}_completed".format(i+1)] = False
             self.data_dict["test{}_pass".format(i+1)] = False
+
+
+        self.image_holder = {}
 
         self.inspection_data = {
                 'board_chipped_bent': False,

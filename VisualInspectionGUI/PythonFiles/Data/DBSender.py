@@ -71,8 +71,12 @@ class DBSender():
             return ['User1', 'User2', 'User3']
 
 
-    def add_board_image(self, serial, image):
-        pass
+    def add_board_image(self, serial, image, view):
+        image_file = image
+        encodedImage = base64.b64encode(image_file.read())
+        r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"serial_num": serial, "image": encodedImage, "view": view})
+        
+        print(r.text)
         
 
     # Returns a list of booleans
