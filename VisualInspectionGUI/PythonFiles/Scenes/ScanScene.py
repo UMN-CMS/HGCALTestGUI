@@ -74,6 +74,8 @@ class ScanScene(tk.Frame):
             except:
                 pass
             if not len(serial) == 0:
+                # takes in the serial number scanned, parses the hexadecimal in ASCII 
+                # and sends it to the data holder
                 self.data_holder.set_serial_ID( parse_xml(serial[0]))
 
                 self.listener.terminate()
@@ -222,10 +224,6 @@ class ScanScene(tk.Frame):
     def btn_submit_action(self, _parent):
         
         self.EXIT_CODE = 1 
-        
-        # TODO Remove comments
-        #self.listener.terminate()
-        #self.scanner.terminate()
 
         self.data_holder.set_serial_ID(self.ent_snum.get())
         self.data_holder.check_if_new_board()

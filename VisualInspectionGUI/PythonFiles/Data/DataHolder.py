@@ -19,7 +19,6 @@ class DataHolder():
 
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
-        #self.dbclient = DBSendClient()
         
         self.data_dict = {
                 'user_ID': "_",
@@ -109,8 +108,6 @@ class DataHolder():
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
-            #message = "add_new_user_ID;{'user_ID': {}, 'passwd': {}}".format(self.data_dict['user_ID'], passwd)
-            #self.dbclient.send_request(message)
 
 
 
@@ -140,31 +137,6 @@ class DataHolder():
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
             
-            
-
-#        # Send request for query
-#        self.data_dict['is_new_board'] = self.test_new_board(self.get_serial_ID())        
-#        print("result received:", self.data_dict['is_new_board'])
-#        if self.data_dict['is_new_board'] == False:
-#            prev_results = self.data_sender.get_previous_test_results(self.get_serial_ID())
-#            #message = "get_previous_test_results;{'serial_number': {}}".format(self.get_serial_ID())
-#            #prev_results = self.dbclient.send_request(message)
-#            for result in prev_results:
-#                test_id = result[0]
-#                pass_fail = result[1]
-#                if pass_fail == 0:
-#                    pass_fail = False
-#                elif pass_fail == 1:
-#                    pass_fail = True
-#                for index, test in enumerate(self.data_dict['tests_run']):
-#                    if test_id == test:
-#                        for i in range(self.gui_cfg.getNumTest()):
-#                            if index == i: 
-#                                self.data_dict['test{}_pass'.format(i+1)] = pass_fail
-#                                self.data_dict['test{}_completed'.format(i+1)] = pass_fail
-#                        
-#        else:
-#            pass
 
 
     #################################################
@@ -179,11 +151,8 @@ class DataHolder():
 
     ##################################################
 
+    # sets the serial number and updates the config
     def set_serial_ID(self, sn):
-        #self.data_sender.add_new_board(sn)
-        #message = "add_new_board;{'sn': {}}".format(sn)
-        #self.dbclient.send_request(message)
-                    
         self.data_dict['current_serial_ID'] = sn
         new_cfg = update_config(sn)
         self.gui_cfg = new_cfg
