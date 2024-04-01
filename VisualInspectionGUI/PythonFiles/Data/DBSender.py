@@ -197,9 +197,9 @@ class DBSender():
 
         for i in range(begin, end):
 
-            if lines[i] == "True":
+            if "True" in lines[i]:
                 return True
-            elif lines[i] == "False":
+            elif "False" in lines[i]:
                 return False
 
 

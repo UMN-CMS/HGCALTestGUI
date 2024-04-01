@@ -202,11 +202,12 @@ class DataHolder():
     def send_image(self):
         if self.photos == 'Top and Bottom':
             for i in self.image_holder:
-                idx = i[14]
+                idx = int(i[-5])
                 if idx == 0:
                     view = 'Top'
                 else:
                     view = 'Bottom'
+                print(view)
                 self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], view)
 
         if self.photos == 'Connectors':
