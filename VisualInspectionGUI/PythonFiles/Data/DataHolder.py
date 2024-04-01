@@ -13,13 +13,13 @@ class DataHolder():
 
     # List of the variables being held by data holder
     def __init__(self, gui_cfg):
-        
+
         # Object for taking care of instantiation for different test types
         self.gui_cfg = gui_cfg
 
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
-        
+
         self.data_dict = {
                 'user_ID': "_",
                 'test_stand': str(socket.gethostname()),
@@ -52,26 +52,26 @@ class DataHolder():
         # All of the checkbox logic
         # Dictionaries stored by inspection index
         self.all_checkboxes = []
-        
+
         for index in range(self.gui_cfg.getNumInspections()):
             self.all_checkboxes.append(self.gui_cfg.getCheckDict(index))
-        
+
         # All of the comments logic
         # Dictionaries stored by inspection index
         self.all_comments = []
-        
+
         for index in range(self.gui_cfg.getNumInspections()):
             self.all_comments.append(self.gui_cfg.getCommentDict(index))
-        
+
         self.data_lists = {
                 'test_results': [],
-                'test_completion': [] 
+                'test_completion': []
                 }
 
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
-    
+
         self.gui_cfg.setTestIndex(1)
 
         self.current_test_idx = self.gui_cfg.getTestIndex()
@@ -94,11 +94,11 @@ class DataHolder():
         return self.all_comments[idx]
 
     def set_comment_dict(self, idx, val):
-        self.all_comments[idx] = val 
+        self.all_comments[idx] = val
 
     def add_new_user_name(self, user_ID, passwd):
         self.data_dict['user_ID'] = user_ID
-        
+
         is_new_user_ID = True
 
         for item in self.get_all_users():
@@ -107,7 +107,7 @@ class DataHolder():
         print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
-            self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
+            self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)
 
 
 
@@ -120,7 +120,7 @@ class DataHolder():
         comments = 'Checked in during Visual Inspection'
         is_new_board = self.data_sender.is_new_board(sn)
         print(is_new_board)
-        
+
         if is_new_board == True:
             in_id = self.data_sender.add_new_board(sn, user, comments)
             if in_id:
@@ -136,7 +136,6 @@ class DataHolder():
             else:
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
-            
 
 
     #################################################
@@ -145,8 +144,8 @@ class DataHolder():
     def set_user_ID(self, user_ID):
 
         print("\n\n\n\n\nuser_ID", user_ID)
- 
-        self.data_dict['user_ID'] = user_ID 
+
+        self.data_dict['user_ID'] = user_ID
         logging.debug("DataHolder: User ID has been set.")
 
     ##################################################
@@ -171,11 +170,12 @@ class DataHolder():
     def send_image(self):
         if self.photos == 'Top and Bottom':
             for i in self.image_holder:
-                idx = i[14]
+                idx = int(i[-5])
                 if idx == 0:
                     view = 'Top'
                 else:
                     view = 'Bottom'
+                print(view)
                 self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], view)
 
         if self.photos == 'Connectors':
@@ -200,18 +200,18 @@ class DataHolder():
 
     # Future method to send data to the database
     def send_all_to_DB(self):
-          
+
         person_ID = self.data_dict['user_ID']
         comments = self.data_dict['comments']
         serial_number = self.get_serial_ID()
-        
-         
+
+
         for i in range(len(self.data_dict['tests_run'])):
             print("Iteration:", i)
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
-            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments} 
+            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments}
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
                 print(info_dict)
                 json.dump(info_dict, outfile)
@@ -222,22 +222,22 @@ class DataHolder():
 
     def send_to_DB(self, test_run):
         index = test_run
-        
+
         test_names = self.gui_cfg.getTestNames()
 
         file_path_list = []
 
         for name in test_names:
             file_path_list.append("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], name.replace(" ", "").replace("/", "")))
-            
-        # Converts self.test_results[index] into 1/0 instead of bool       
+
+        # Converts self.test_results[index] into 1/0 instead of bool
         temp = 0
         if self.data_lists['test_results'][index]:
-            temp = 1 
+            temp = 1
 
 
         info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.data_dict['tests_run'][index], "successful": temp, "comments": self.data_dict['comments']}
-        
+
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
             json.dump(info_dict, outfile)
@@ -247,9 +247,9 @@ class DataHolder():
         logging.info("DataHolder: Test results sent to database.")
 
     #################################################
-   
+
     def get_all_users(self):
-        users_list = self.data_sender.get_usernames() 
+        users_list = self.data_sender.get_usernames()
         #users_list = self.dbclient.send_request("get_usernames")
         #print ("\n users_list:", users_list)
         return users_list
@@ -257,16 +257,16 @@ class DataHolder():
     #################################################
 
     # Prints all the variable values inside data_holder
-    def print(self):    
+    def print(self):
         print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data, "\nimage_data:\n", self.image_data, "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
-           
 
- 
+
+
     #################################################
-    
+
     def update_from_json_string(self, imported_json_string):
         json_dict = json.loads(imported_json_string)
- 
+
         test_type = json_dict["name"]
 
         test_names = self.gui_cfg.getTestNames()
@@ -277,7 +277,7 @@ class DataHolder():
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
         self.data_dict['user_ID'] = json_dict["tester"]
-        self.data_dict['current_serial_ID'] = json_dict["board_sn"] 
+        self.data_dict['current_serial_ID'] = json_dict["board_sn"]
         self.data_dict['test{}_completed'.format(current_test_idx+1)] = True
         self.data_dict['test{}_pass'.format(current_test_idx+1)] = json_dict["pass"]
 
@@ -305,20 +305,20 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " Engine connection pin is bent."
-        if self.inspection_data['visual_scratches']: 
+        if self.inspection_data['visual_scratches']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " There are visual scratches on the board."
-        if self.inspection_data['inspection_comments'] != "_": 
+        if self.inspection_data['inspection_comments'] != "_":
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
-   
+
     ################################################
 
     # Tracking the test index in another place and propagating to the config
     def setTestIdx(self, test_idx):
-        
+
         self.current_test_idx = test_idx
         self.gui_cfg.setTestIndex(self.current_test_idx)
 
@@ -331,7 +331,7 @@ class DataHolder():
     ################################################
 
     # Keeps the login information stored
-    def data_holder_new_test(self): 
+    def data_holder_new_test(self):
 
         self.data_dict = {
                 'user_ID': self.data_dict['user_ID'],
@@ -361,14 +361,14 @@ class DataHolder():
 
         self.data_lists = {
                 'test_results': [],
-                'test_completion': [] 
+                'test_completion': []
                 }
 
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
 
-        logging.info("DataHolder: DataHolder Information has been reset for a new test.")        
+        logging.info("DataHolder: DataHolder Information has been reset for a new test.")
 
         self.gui_cfg.setTestIndex(1)
 

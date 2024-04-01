@@ -35,7 +35,7 @@ class GUIWindow():
 
     #################################################
 
-    def __init__(self, board_cfg):                     
+    def __init__(self, board_cfg):
         # Create the window named "master_window"
         # global makes master_window global and therefore accessible outside the function
         global master_window
@@ -49,7 +49,7 @@ class GUIWindow():
         self.all_text = "No help available for this scene."
         self.label_text = tk.StringVar()
 
-        
+
         # Following line prevents the window from being resizable
         # master_window.resizable(0,0)
 
@@ -85,7 +85,7 @@ class GUIWindow():
 
         self.login_frame = LoginScene(self, master_frame, self.data_holder)
         self.login_frame.grid(row=0, column=0)
-    
+
         self.scan_frame = ScanScene(self, master_frame, self.data_holder)
         self.scan_frame.grid(row=0, column=0)
 
@@ -104,7 +104,7 @@ class GUIWindow():
 
         self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
         self.camera_frame.grid(row=0, column=0)
-        
+
         # indices to denote photo number and camera number to know when to finish
         self.camera_index = 0
         self.photo_index = 0
@@ -116,7 +116,7 @@ class GUIWindow():
         #################################################
         #              End Frame Creation               #
         #################################################
-        
+
         # Tells the master window that its exit window button is being given a new function
         master_window.protocol('WM_DELETE_WINDOW', self.exit_function)
 
@@ -125,7 +125,7 @@ class GUIWindow():
 
         master_frame.after(500, self.set_frame_login_frame)
 
-        master_window.mainloop() 
+        master_window.mainloop()
 
 
     #################################################
@@ -144,7 +144,7 @@ class GUIWindow():
         # need to decrease the index by 1 since next frame will increment
         self.camera_index = photo_index-1
         self.photo_index = photo_index-1
-        
+
         # two bools, one indicates that a photo is to be retaken
         # the other indicates whether the photo has been retaken or not
         self.retake = True
@@ -154,7 +154,7 @@ class GUIWindow():
 
     #################################################
 
-    def set_frame_login_frame(self):  
+    def set_frame_login_frame(self):
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)
         self.scan_frame.grid(row=0, column=0)
 
@@ -162,29 +162,29 @@ class GUIWindow():
         self.retaken = False
 
         self.login_frame.update_frame(self)
-        self.set_frame(self.login_frame)    
-        
+        self.set_frame(self.login_frame)
+
         logging.debug("GUIWindow: The frame has been set to login_frame.")
         logging.debug("GUIWindow: Conclusion of the 'set_frame_login_frame(self)' method")
 
     #################################################
 
-    def set_frame_inspection_frame(self):  
+    def set_frame_inspection_frame(self):
         self.inspection_frame.update_frame(self)
-        self.set_frame(self.inspection_frame)    
+        self.set_frame(self.inspection_frame)
 
     #################################################
-   
+
     def first_frame_camera_frame(self):
 
-        # Trick for bypassing the increment in "next_frame_camera_frame"        
+        # Trick for bypassing the increment in "next_frame_camera_frame"
         self.camera_index = -1
         self.photo_index = -1
 
         print(self.data_holder.photos)
 
         self.next_frame_camera_frame()
- 
+
 
     def next_frame_camera_frame(self):
         self.camera_index += 1
@@ -208,10 +208,10 @@ class GUIWindow():
                     self.set_frame_camera_frame(self.camera_index)
                 else:
                     self.set_frame_inspection_frame()
-            
-        
+
+
         logging.debug("GUIWindow: Frame has been set to the next camera_frame.")
-     
+
 
     def return_frame_camera_frame(self):
         self.camera_index -= 1
@@ -239,14 +239,14 @@ class GUIWindow():
         self.photo_frame.update()
 
     #################################################
-    
+
     def set_frame_scan_frame(self):
         self.camera_index = 0
         self.photo_index = 0
         self.scan_frame.is_current_scene = True
         self.set_frame(self.scan_frame)
         self.scan_frame.scan_QR_code(master_window)
-   
+
      #################################################
     def set_frame_postscan(self):
 
@@ -272,18 +272,18 @@ class GUIWindow():
 
     # Called to change the frame to the argument _frame
     def set_frame(self, _frame):
- 
+
         #############################################################################
         #  The Following Code Determines What Buttons Are Visible On The Side Bar   #
         #############################################################################
 
-            
+
 
         # Hides the submit button on scan frame until an entry is given to the computer
         if (_frame is not self.scan_frame):
             self.scan_frame.is_current_scene = False
             self.scan_frame.hide_submit_button()
-            
+
         self.set_help_text(_frame)
         #############################################################################
         #                        End Button Visibility Code                         #
@@ -301,10 +301,10 @@ class GUIWindow():
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
         # popup.wm_attributes('-toolwindow', 'True')
-        self.popup.title("Exit Window") 
+        self.popup.title("Exit Window")
         self.popup.geometry("300x150+500+300")
         self.popup.grab_set()
-    
+
 
         # Creates frame in the new window
         frm_popup = tk.Frame(self.popup)
@@ -312,27 +312,27 @@ class GUIWindow():
 
         # Creates label in the frame
         lbl_popup = tk.Label(
-            frm_popup, 
+            frm_popup,
             text = "Are you sure you would like to exit?",
-            font = ('Arial', 13) 
+            font = ('Arial', 13)
             )
-        lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25) 
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25)
 
         # Creates yes and no buttons for exiting
         btn_yes = tk.Button(
-            frm_popup,    
-            width = 12, 
+            frm_popup,
+            width = 12,
             height = 2,
-            text = "Yes", 
+            text = "Yes",
             relief = tk.RAISED,
-            font = ('Arial', 12), 
+            font = ('Arial', 12),
             command = lambda: self.destroy_function()
             )
         btn_yes.grid(column = 0, row = 1)
 
         btn_no = tk.Button(
             frm_popup,
-            width = 12, 
+            width = 12,
             height = 2,
             text = "No",
             relief = tk.RAISED,
@@ -366,13 +366,13 @@ class GUIWindow():
     def set_image_name(self, new_name):
         self.image_name = new_name
 
-    
+
 
     #################################################
 
 
     def help_popup(self, current_window):
-    
+
         logging.debug("GUIWindow: The user has requested a help window")
         logging.debug("Opening a help menu for {}".format(type(current_window)))
         print("\n\nOpening a help menu for {}".format(type(current_window)))
@@ -380,10 +380,10 @@ class GUIWindow():
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
         # popup.wm_attributes('-toolwindow', 'True')
-        self.popup.title("Help Window") 
+        self.popup.title("Help Window")
         self.popup.geometry("650x650+500+300")
         #self.popup.grab_set()
-    
+
         self.mycanvas = tk.Canvas(self.popup, background="#808080", width=630, height =650)
         self.viewingFrame = tk.Frame(self.mycanvas, width = 200, height = 200)
         self.scroller = ttk.Scrollbar(self.popup, orient="vertical", command=self.mycanvas.yview)
@@ -404,7 +404,7 @@ class GUIWindow():
 
 
         self.set_help_text(current_window)
-    
+
         # Creates frame in the new window
         #frm_popup = tk.Frame(self.mycanvas)
         #frm_popup.pack()
@@ -439,7 +439,7 @@ class GUIWindow():
 
     def set_help_text(self, current_window):
 
-        # Help text from file 
+        # Help text from file
         file = open("{}/HGCAL_Help/{}_help.txt".format(PythonFiles.__path__[0], type(current_window).__name__))
         self.all_text = file.read()
 
@@ -480,8 +480,8 @@ class GUIWindow():
         self.mycanvas.unbind_all("<Button-4>")
         self.mycanvas.unbind_all("<Button-5>")
 
-    
-    
+
+
     #################################################
 
     # Called when the yes button is pressed to destroy both windows
@@ -489,7 +489,7 @@ class GUIWindow():
         try:
             self.camera_frame.remove_widgets(self)
             self.photo_frame.remove_widgets(self)
-            
+
             logging.info("GUIWindow: Exiting the GUI.")
 
             master_window.update()
@@ -509,7 +509,7 @@ class GUIWindow():
             logging.info("GUIWindow: Trying to destroy master_window")
             print("Destroying master window\n")
             master_window.quit()
-            
+
 
             logging.info("GUIWindow: The application has exited successfully.")
         except Exception as e:
@@ -517,7 +517,7 @@ class GUIWindow():
             logging.debug("GUIWindow: " + repr(e))
             logging.error("GUIWindow: The application has failed to close.")
 
-        exit() 
+        exit()
 
 
 
@@ -525,5 +525,5 @@ class GUIWindow():
 
     ################################################
 
-    
+
 #################################################################################

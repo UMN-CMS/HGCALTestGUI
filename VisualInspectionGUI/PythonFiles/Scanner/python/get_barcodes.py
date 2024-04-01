@@ -2,6 +2,8 @@ import subprocess
 import time
 import signal
 import ctypes
+import os
+#import PythonFiles
 libc = ctypes.CDLL("libc.so.6")
 
 from multiprocessing import Process, Manager, Pipe
@@ -30,7 +32,7 @@ def set_pdeathsig(sig = signal.SIGTERM):
     return callable
 
 def scan():
-    proc = subprocess.Popen('/home/hgcal/VisualInspectionGUI/PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
+    proc = subprocess.Popen('./PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
     print("Starting scanner")
     return proc
 
