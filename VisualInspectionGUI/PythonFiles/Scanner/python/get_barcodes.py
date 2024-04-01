@@ -2,7 +2,6 @@ import subprocess
 import time
 import signal
 import ctypes
-<<<<<<< HEAD
 import os
 #import PythonFiles
 libc = ctypes.CDLL("libc.so.6")
