@@ -39,14 +39,6 @@ class TestSummaryScene(tk.Frame):
         self.data_holder = data_holder
 
         self.parent = parent
-        # Setting weights of columns so the column 4 is half the size of columns 0-3
-        #for i in range(self.data_holder.getNumTest()):
-        #    self.columnconfigure(i, weight = 2)
-        #self.columnconfigure(self.data_holder.getNumTest(), weight = 1)
-        # Instantiates an updated table with the current data
-        #self.create_updated_table(parent)
-
-
 
         self.create_frame(parent)
 
@@ -86,7 +78,8 @@ class TestSummaryScene(tk.Frame):
 
 
         # Tries to add all of the images to the final screen
-
+        # different formatting depending on the number of photos taken
+        # images can be clicked to retake that photo
         for i, photo in enumerate(self.data_holder.image_holder):
             try:
                 if len(self.data_holder.image_holder) == 1:
@@ -318,6 +311,7 @@ class TestSummaryScene(tk.Frame):
     #################################################
 
     def btn_NextBoard_action(self, parent):
+        # this function saves the images
         self.data_holder.send_image()
         parent.set_frame_scan_frame()
 
