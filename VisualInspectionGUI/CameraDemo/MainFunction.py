@@ -4,7 +4,7 @@
 Instructions:
 1. Ensure a version of python has been installed (created on Python 3.11.4)
 2. Run the command "pip install Pillow"
-3. Run the command "pip install opencv-python" 
+3. Run the command "pip install opencv-python"
 4. Run the command "pip install tkinter"
 5. Run the GUI; "python ./MainFunction.py"
 ------------------
@@ -16,12 +16,14 @@ import cv2
 import PIL.Image, PIL.ImageTk
 import time
 
+from picamera2 import Picamera2
+
 # GUI class for basic webcam functionality
 # Sample class instantiation: App(tkinter.Tk(),"tkinter ad OpenCV")
 class App:
 
     def __init__(self, window, window_title, video_source=0):
-		
+
         # Sets up the tkinter window
         self.window=window
         self.window.title=(window_title)
@@ -63,7 +65,7 @@ class App:
         self.window.mainloop()
 
     # Takes a snapshot of the video
-    # Saves in the same directory as the 
+    # Saves in the same directory as the
     def snapshot(self):
         ret, frame=self.vid.get_frame()
 
@@ -98,7 +100,7 @@ class  MyVideoCapture:
     def __init__(self, video_source=0):
         # Instantiating a VideoCapture device from cv2 library
         self.vid = cv2.VideoCapture(video_source)
-        
+
         # Throw an exception if the video source cannot be opened.
         if not self.vid.isOpened():
             raise ValueError("VideoCapture: Unable to open the video source. Check camera.", video_source)
@@ -118,13 +120,12 @@ class  MyVideoCapture:
             else:
                 return (ret, None)
         else:
-            return (ret,None)		
-    
+            return (ret,None)
+
     # Closes the video camera with the "release()" command
     # Important for closing gracefully
     def __del__(self):
         if self.vid.isOpened():
             self.vid.release()
 
-# How to instantiate this GUI
 App(tkinter.Tk(),"tkinter ad OpenCV")

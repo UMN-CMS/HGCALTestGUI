@@ -11,7 +11,7 @@ from PIL import ImageTk as iTK
 from PIL import Image
 import PythonFiles
 import os
- 
+
 
 #################################################################################
 
@@ -27,24 +27,24 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
 class ScanScene(tk.Frame):
-    
+
     #################################################
 
     # Runs upon creation
     def __init__(self, parent, master_frame, data_holder):
         self.data_holder = data_holder
         self.is_current_scene = False
-        
+
         self.EXIT_CODE = 0
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
-        
+
 
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
     def scan_QR_code(self, master_window):
-        
+
         self.ent_snum.config(state = 'normal')
         self.ent_snum.delete(0,END)
         self.master_window = master_window
@@ -66,7 +66,7 @@ class ScanScene(tk.Frame):
         self.listener = mp.Process(target=listen, args=(serial, self.scanner))
 
         self.listener.start()
-   
+
         while 1 > 0:
 
             try:
@@ -74,11 +74,13 @@ class ScanScene(tk.Frame):
             except:
                 pass
             if not len(serial) == 0:
+                # takes in the serial number scanned, parses the hexadecimal in ASCII
+                # and sends it to the data holder
                 self.data_holder.set_serial_ID( parse_xml(serial[0]))
 
                 self.listener.terminate()
                 self.scanner.terminate()
-               
+
                 self.ent_snum.delete(0,END)
                 self.ent_snum.insert(0, str(self.data_holder.get_serial_ID()))
                 self.ent_snum.config(state = 'disabled')
@@ -93,14 +95,14 @@ class ScanScene(tk.Frame):
                 break
             else:
                 time.sleep(.01)
-            
+
         logging.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
-        
+
         self.master_frame = master_frame
-        
+
         super().__init__(self.master_frame, width = 1105, height = 850)
 
         logging.info("ScanScene: Frame has been created.")
@@ -134,24 +136,26 @@ class ScanScene(tk.Frame):
 
         # Entry for the serial number to be displayed. Upon Scan, update and disable?
         global ent_snum
-        
+
         # Creating intial value in entry box
         user_text = tk.StringVar(self)
-        
+
         # Creates an entry box
         self.ent_snum = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
-            textvariable= user_text, 
+            textvariable= user_text,
             )
         self.ent_snum.pack(padx = 50)
 
+        #self.ent_snum.mark_set("insert", "%d.%d" % (1, 1))
+
         # Traces an input to show the submit button once text is inside the entry box
         user_text.trace(
-            "w", 
-            lambda name, 
-            index, 
-            mode, 
+            "w",
+            lambda name,
+            index,
+            mode,
             sv=user_text: self.show_submit_button()
             )
 
@@ -181,7 +185,7 @@ class ScanScene(tk.Frame):
         frm_logout = tk.Frame(self)
         frm_logout.grid(column = 1, row = 1, sticky= 'se')
 
-       
+
         # Creating the logout button
         btn_logout = tk.Button(
             frm_logout,
@@ -207,25 +211,21 @@ class ScanScene(tk.Frame):
         self.grid_propagate(0)
 
 
-    
+
     #################################################
 
     def help_action(self, _parent):
         _parent.help_popup(self)
 
 
-    ################################################# 
+    #################################################
 
     #################################################
 
     # Function for the submit button
     def btn_submit_action(self, _parent):
-        
-        self.EXIT_CODE = 1 
-        
-        # TODO Remove comments
-        #self.listener.terminate()
-        #self.scanner.terminate()
+
+        self.EXIT_CODE = 1
 
         self.data_holder.set_serial_ID(self.ent_snum.get())
         self.data_holder.check_if_new_board()
@@ -236,15 +236,15 @@ class ScanScene(tk.Frame):
 
     # Function for the log out button
     def btn_logout_action(self, _parent):
-        
+
         logging.debug("ScanScene: Closing the scanner from the logout button action.")
-        self.EXIT_CODE = 1 
+        self.EXIT_CODE = 1
         self.listener.terminate()
         self.scanner.terminate()
 
 
          # Send user back to login frame
-        _parent.set_frame_login_frame() 
+        _parent.set_frame_login_frame()
         master_frame.after(500, self.set_frame_login_frame)
 
     #################################################
@@ -272,7 +272,7 @@ class ScanScene(tk.Frame):
         self.btn_rescan["state"] = "disabled"
 
     #################################################
-        
+
     def kill_processes(self):
         logging.info("ScanScene: Terminating scanner proceses.")
         try:

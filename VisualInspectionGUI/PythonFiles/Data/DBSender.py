@@ -1,6 +1,9 @@
 import requests
 import json
 import socket
+import base64
+
+from io import BytesIO
 # from read_barcode import read_barcode
 
 
@@ -24,7 +27,7 @@ class DBSender():
         if (self.use_database):
             if "umncmslab" in socket.gethostname():
                 return None
-            
+
             return {"http": "http://127.0.0.1:8080"}
 
         # If not using the database, then...
@@ -32,7 +35,7 @@ class DBSender():
             pass
 
     def add_new_user_ID(self, user_ID, passwd):
-        
+
         if (self.use_database):
 
             try:
@@ -43,8 +46,8 @@ class DBSender():
 
         # If not using the database, use this...
         else:
-            pass    
-     
+            pass
+
 
     # Returns an acceptable list of usernames from the database
     def get_usernames(self):
@@ -65,31 +68,32 @@ class DBSender():
 
             return usernames
 
-        # If not using database...        
+        # If not using database...
         else:
-            
+
             return ['User1', 'User2', 'User3']
 
 
     def add_board_image(self, serial, image, view):
-        image_file = image
-        encodedImage = base64.b64encode(image_file.read())
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"serial_num": serial, "image": encodedImage, "view": view})
-        
+
         print(r.text)
-        
+
 
     # Returns a list of booleans
     # Whether test (by index) has been completed or not
     def get_test_completion_staus(self, serial_number):
-        
+
         if (self.use_database):
             r = requests.post('{}/get_test_completion_status.py'.format(self.db_url), data= serial_number)
-            
+
             lines = r.text.split('\n')
-            begin = lines.index("Begin") + 1 
+            begin = lines.index("Begin") + 1
             end = lines.index("End")
-            
+
             tests_completed = []
             for i in range(begin, end):
                 temp = lines[i][1:-1].split(",")
@@ -111,16 +115,16 @@ class DBSender():
 
 
 
-    # Returns a list of booleans
-    # Whether or not DB has passing results 
+    # Returns a dictionary of booleans
+    # Whether or not DB has passing results
     def get_previous_test_results(self, serial_number):
-   
+
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'serial_number': str(serial_number)})
         if serial_number[3] == 'W':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
         if serial_number[3] == 'E':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
-        
+
         print(r.text)
         lines = r.text.split('\n')
 
@@ -147,15 +151,15 @@ class DBSender():
             tests_passed.append([tests_run[i], outcomes[i]])
 
         return tests_passed, poss_tests
-    
-    
-    # #TODO Verify if a board has already been instantiated with SN
+
+
     # Posts a new board with passed in serial number
+    # this is only called if the sn isn't recognized by is_new_board
     def add_new_board(self, sn, user_id, comments):
         if sn[3] == 'W':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"serial_number": str(sn)})
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"serial_number": str(sn), 'person_id': str(user_id), 'comments': str(comments)})
-            
+
         if sn[3] == 'E':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"serial_number": str(sn)})
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"serial_number": str(sn), 'person_id': str(user_id), 'comments': str(comments)})
@@ -183,19 +187,19 @@ class DBSender():
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
         else:
             print('error')
-        
+
         print(r.text)
         lines = r.text.split('\n')
-   
+
         begin = lines.index("Begin") + 1
         end = lines.index("End")
 
 
-        for i in range(begin, end): 
-            
-            if lines[i] == "True":
+        for i in range(begin, end):
+
+            if "True" in lines[i]:
                 return True
-            elif lines[i] == "False":
+            elif "False" in lines[i]:
                 return False
 
 
@@ -203,25 +207,25 @@ class DBSender():
     # Posts information via the "info" dictionary
     # Serial number is within the info dictionary
     def add_board_info(self, info):
-        
+
         if (self.use_database):
 
             r = requests.post('{}/add_board_info2.py'.format(self.db_url), data = info)
-        
+
         else:
-            pass    
+            pass
 
     def add_initial_tests(self, results):
         if (self.use_database):
-    
+
             r = requests.post('{}/add_init_test.py'.format(self.db_url), data = results)
-        
+
         else:
-            pass        
+            pass
 
     def add_general_test(self, results, files):
         if (self.use_database):
-    
+
             r = requests.post('{}/add_test2.py'.format(self.db_url), data = results, files=files)
 
         else:
@@ -229,10 +233,10 @@ class DBSender():
 
     def add_test_json(self, json_file, datafile_name):
         load_file = open(json_file)
-        results = json.load(load_file)        
+        results = json.load(load_file)
         load_file.close()
 
-        datafile = open(datafile_name, "rb")        
+        datafile = open(datafile_name, "rb")
 
         attach_data = {'attach1': datafile}
         #print("Read from json file:", results)
@@ -264,7 +268,7 @@ class DBSender():
             return tests
 
         else:
-            
+
             blank_tests = []
             for i in enumerate(self.gui_cfg.getNumTest()):
                 blank_tests.append("Test{}".format(i))
