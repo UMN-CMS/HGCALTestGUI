@@ -41,11 +41,6 @@ class REQClient():
         self.message = ""
 
         test_handler_name = gui_cfg.getTestHandler()["name"]
-        print("#"*20)
-        print("#"*20)
-        print(test_handler_name)
-        print("#"*20)
-        print("#"*20)
 
         # Run the ZMQ server on test stand and make requests via ZMQ client
         if test_handler_name == "ZMQ":
