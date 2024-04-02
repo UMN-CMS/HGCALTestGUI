@@ -232,7 +232,6 @@ class DBSender():
 
         if (self.use_database):
             r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-
         else:
             pass
 
