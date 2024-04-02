@@ -24,7 +24,6 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestInProgressScene import *
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
-from PythonFiles.Scenes.PhysicalScenes.Inspection1 import Inspection1
 from PythonFiles.update_config import update_config
 import webbrowser
 
@@ -149,10 +148,6 @@ class GUIWindow():
         offset = 0
         
         # For the physical tests
-        for test_idx,test in enumerate(physical_list):
-            self.test_frames.append(Inspection1(self, self.master_frame, self.data_holder, test_idx))
-            self.test_frames[test_idx].grid(row=0, column=0)
-            offset = offset + 1
 
         # For the digital tests
         for test_idx,test in enumerate(test_list):
