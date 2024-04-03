@@ -77,6 +77,9 @@ class GUIConfig():
     def getTestHandler(self):
         return self.board_cfg["TestHandler"]
 
+    def getUsers(self):
+        return self.board_cfg["People"]
+
     ################################
     
     # Necessary to be stored for the current test
