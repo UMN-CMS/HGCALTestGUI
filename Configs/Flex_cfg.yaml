@@ -27,4 +27,6 @@ Test:
   name: Bit Error Rate Test
   required: 1
 UsingScanner: true
+
+People: [Lauren, Billy]
 ...

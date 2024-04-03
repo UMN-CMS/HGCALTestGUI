@@ -67,9 +67,9 @@ class DBSender():
 
         # If not using database...        
         else:
-            
-            return ['User1', 'User2', 'User3']
 
+            #return ['User1', 'User2', 'User3']
+            return self.gui_cfg.getUsers()
 
     def add_board_image(self, serial, image):
         pass
