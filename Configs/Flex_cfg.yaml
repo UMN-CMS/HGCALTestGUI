@@ -6,7 +6,7 @@ DBInfo:
   reader: WagonDBReadUser
   use_database: False
 GUIType: FlexCable
-SerialCheckSafe: false
+SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: cmstester8, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
