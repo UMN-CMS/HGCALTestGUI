@@ -673,8 +673,8 @@ class GUIWindow():
             self.master_window.update()
             self.popup.update()
 
-            if self.scan_frame.is_current_scene == True:
-                self.test_in_progress_frame.close_prgbar()
+            #if self.scan_frame.is_current_scene == True:
+                #self.test_in_progress_frame.close_prgbar()
             self.scan_frame.kill_processes()
 
             # Destroys the popup and master window
