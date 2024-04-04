@@ -56,7 +56,6 @@ class ScanScene(tk.Frame):
 
         manager = mp.Manager()
         serial = manager.list()
-        print(serial)
 
         self.ent_snum.config(state = 'normal')
 
@@ -133,9 +132,6 @@ class ScanScene(tk.Frame):
             font = ('Arial', 16)
         )
         lbl_snum.pack(padx = 20)
-
-        # Entry for the serial number to be displayed. Upon Scan, update and disable?
-        global ent_snum
 
         # Creating intial value in entry box
         user_text = tk.StringVar(self)
@@ -225,7 +221,7 @@ class ScanScene(tk.Frame):
     # Function for the submit button
     def btn_submit_action(self, _parent):
 
-        self.EXIT_CODE = 1
+        self.EXIT_CODE = 0
 
         self.data_holder.set_serial_ID(self.ent_snum.get())
         self.data_holder.check_if_new_board()
