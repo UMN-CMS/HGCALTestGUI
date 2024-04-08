@@ -243,6 +243,8 @@ class ScanScene(tk.Frame):
         _parent.set_frame_login_frame()
         master_frame.after(500, self.set_frame_login_frame)
 
+        self.EXIT_CODE = 0
+
     #################################################
 
     # Function to activate the submit button
