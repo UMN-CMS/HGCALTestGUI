@@ -236,6 +236,8 @@ class ScanScene(tk.Frame):
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
 
+        self.EXIT_CODE = 0
+
 
     #################################################
 
@@ -250,6 +252,8 @@ class ScanScene(tk.Frame):
 
          # Send user back to login frame
         _parent.set_frame_login_frame() 
+
+        self.EXIT_CODE = 0
 
     #################################################
 
