@@ -267,6 +267,8 @@ class Inspection1(tk.Frame):
         self.data_holder.add_inspection_to_comments()
         self.data_holder.print()
 
+        self.data_holder.update_from_json_string()
+
 
     #################################################
 
@@ -276,16 +278,6 @@ class Inspection1(tk.Frame):
         self.update_data_holder()
         _parent.set_frame_test_summary()
 
-        # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        #   ++ GOAL CODE ++                                 #
-        # def confirm():                                    #
-        #       set_frame_TIPS()                            #
-        #       Runs_Test()   # Might include multithread   #
-        #       Get_Results()                               #
-        #       Update_Dataholder()                         #
-        #       Go_To_Next_Test()                           #
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-        pass
 
     #################################################
 

@@ -176,17 +176,22 @@ masterCfg = {
                 {
                     "text": "Is the board bent?",
                     "value": False,
-                    "requirement": True,
+                    "requirement": False,
                 },
                 {
-                    "text": "Are all components present?",
+                    "text": "Is the board visibly broken?",
                     "value": False,
-                    "requirement": True,
+                    "requirement": False,
                 },
                 {
-                    "text": "Are there any chips on the board?",
+                    "text": "Are any components missing?",
                     "value": False,
-                    "requirement": True,
+                    "requirement": False,
+                },
+                {
+                    "text": "Are any components visibly broken?",
+                    "value": False,
+                    "requirement": False,
                 },
                 
 
