@@ -22,11 +22,16 @@ class DataHolder():
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
         #self.dbclient = DBSendClient()
-        
-        self.test_list = self.data_sender.get_test_list()
-        gui_tests = self.gui_cfg.getTests()
-        db_test_names = dict(self.test_list)
-        self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
+        use_db = self.gui_cfg.get_if_use_DB()
+
+        if use_db:
+            self.test_list = self.data_sender.get_test_list()
+            gui_tests = self.gui_cfg.getTests()
+            db_test_names = dict(self.test_list)
+            self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
+
+        else:
+            self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
 
         #dictionary of info to be held
         self.data_dict = {
