@@ -30,18 +30,17 @@ class DataHolder():
                 'checkin_id': None,
                 'tests_run': [str(i + 1) for i in range(self.getNumTest())],
                 }
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
+        self.data_dict["inspection_completed"] = False
+        self.data_dict["inspection_pass"] = False
 
         self.image_holder = {}
 
         # For the visual inspection component
         self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
+                'board_bent': False,
+                'board_broken': False,
+                'component_missing': False,
+                'component_broken': False,
                 'inspection_comments': "_"
                 }
 
@@ -62,15 +61,6 @@ class DataHolder():
 
         for index in range(self.gui_cfg.getNumInspections()):
             self.all_comments.append(self.gui_cfg.getCommentDict(index))
-
-        self.data_lists = {
-                'test_results': [],
-                'test_completion': []
-                }
-
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
 
         self.gui_cfg.setTestIndex(1)
 
@@ -220,29 +210,21 @@ class DataHolder():
         logging.info("DataHolder: All results sent to database.")
     #################################################
 
-    def send_to_DB(self, test_run):
-        index = test_run
+    def send_to_DB(self):
+        test_names = "Visual Inspection"
+        test_type_id = 0
 
-        test_names = self.gui_cfg.getTestNames()
-
-        file_path_list = []
-
-        for name in test_names:
-            file_path_list.append("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], name.replace(" ", "").replace("/", "")))
-
-        # Converts self.test_results[index] into 1/0 instead of bool
-        temp = 0
-        if self.data_lists['test_results'][index]:
-            temp = 1
-
-
-        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.data_dict['tests_run'][index], "successful": temp, "comments": self.data_dict['comments']}
+        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": test_type_id, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
             json.dump(info_dict, outfile)
-        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        #message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
+
+        with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:
+            json.dump(self.inspection_data, outfile)
+
+        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]))
+
         #self.dbclient.send_request(message)
         logging.info("DataHolder: Test results sent to database.")
 
@@ -264,48 +246,39 @@ class DataHolder():
 
     #################################################
 
-    def update_from_json_string(self, imported_json_string):
-        json_dict = json.loads(imported_json_string)
+    def update_from_json_string(self):
 
-        test_type = json_dict["name"]
+        test_type = "Visual Inspection"
+        test_type_id = 0
 
-        test_names = self.gui_cfg.getTestNames()
+        passed = not any([x for x in self.inspection_data.values()][:-1])
 
-        current_test_idx = self.gui_cfg.getTestIndex()
-        print("current_test_idx: {}".format(current_test_idx))
+        #self.data_dict['user_ID'] = 
+        #self.data_dict['current_serial_ID'] = json_dict["board_sn"]
+        self.data_dict['inspection_completed'] = True
+        self.data_dict['inspection_pass'] = int(passed)
+        self.data_dict['data'] = self.inspection_data
 
-        with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
-            json.dump(json_dict['data'], file)
-        self.data_dict['user_ID'] = json_dict["tester"]
-        self.data_dict['current_serial_ID'] = json_dict["board_sn"]
-        self.data_dict['test{}_completed'.format(current_test_idx+1)] = True
-        self.data_dict['test{}_pass'.format(current_test_idx+1)] = json_dict["pass"]
-
-        # Updates the lists
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i+1)]
-            self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i+1)]
-
-        self.send_to_DB(current_test_idx)
+        self.send_to_DB()
 
         logging.info("DataHolder: Test results have been saved")
 
     ################################################
 
     def add_inspection_to_comments(self):
-        if self.inspection_data['board_chipped_bent']:
+        if self.inspection_data['board_bent']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " Board is chipped or bent."
-        if self.inspection_data['wagon_connection_pin_bent']:
+        if self.inspection_data['board_broken']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " Wagon connnection pin is bent."
-        if self.inspection_data['engine_connection_pin_bent']:
+        if self.inspection_data['component_missing']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " Engine connection pin is bent."
-        if self.inspection_data['visual_scratches']:
+        if self.inspection_data['component_broken']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " There are visual scratches on the board."
@@ -344,29 +317,19 @@ class DataHolder():
                 'checkin_id': None,
                 'tests_run': [str(i + 1) for i in range(self.getNumTest())],
                 }
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
+        self.data_dict["inspection_completed"] = False
+        self.data_dict["inspection_pass"] = False
 
 
         self.image_holder = {}
 
         self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
+                'board_bent': False,
+                'board_broken': False,
+                'component_missing': False,
+                'component_broken': False,
                 'inspection_comments': "_"
                 }
-
-        self.data_lists = {
-                'test_results': [],
-                'test_completion': []
-                }
-
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
 
         logging.info("DataHolder: DataHolder Information has been reset for a new test.")
 
