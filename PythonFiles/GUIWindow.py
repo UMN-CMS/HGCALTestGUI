@@ -602,6 +602,42 @@ class GUIWindow():
             )
         btn_okay.grid(column = 0, row = 1)
     
+    def test_error_popup(self, message):
+        
+        self.completed_window_alive = True
+       
+        # Creates a popup to inform user about the passing of a test
+        self.popup = tk.Toplevel()
+        # popup.wm_attributes('-toolwindow', 'True')
+        self.popup.title("Error Window") 
+        self.popup.geometry("300x150+500+300")
+        self.popup.grab_set()
+       
+
+        # Creates frame in the new window
+        frm_popup = tk.Frame(self.popup)
+        frm_popup.pack()
+
+        # Creates label in the frame
+        lbl_popup = tk.Label(
+            frm_popup, 
+            text = message,
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, pady = 25)
+
+        # Creates yes and no buttons for exiting
+        btn_okay = tk.Button(
+            frm_popup,     
+            width = 12,
+            height = 2,
+            text = "OK", 
+            relief = tk.RAISED,
+            font = ('Arial', 12), 
+            command = lambda: self.destroy_popup()
+            )
+        btn_okay.grid(column = 0, row = 1)
+    
 
 
     # Called when the no button is pressed to destroy popup and return you to the main window

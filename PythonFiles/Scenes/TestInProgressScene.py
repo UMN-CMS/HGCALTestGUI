@@ -129,6 +129,7 @@ class TestInProgressScene(tk.Frame):
     #################################################
 
     def begin_update(self, master_window, queue, parent):
+
         logger.info("TestInProgressScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
@@ -162,6 +163,7 @@ class TestInProgressScene(tk.Frame):
                     information_received = True
                     logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
+                    print(text)
                     ent_console.insert(tk.END, text)
                     ent_console.insert(tk.END, "\n")
                     ent_console.see('end')
@@ -169,6 +171,12 @@ class TestInProgressScene(tk.Frame):
                     if "Done." in text:
                         print('Stopping Progress Bar')
                         self.progressbar.stop()
+
+                    if "Exit." in text:
+                        self.progressbar.stop()
+                        time.sleep(1)
+                        parent.test_error_popup("Unable to run test")
+                        break
 
                     if text == "Results received successfully.":
                     
