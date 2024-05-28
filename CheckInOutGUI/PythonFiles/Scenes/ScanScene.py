@@ -253,6 +253,7 @@ class ScanScene(tk.Frame):
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
 
         self.data_holder.check_if_new_board()
+        self.data_holder.update_location(self.ent_snum.get())
         #user_id = self.data_holder.data_dict['user_ID']
         #comments = self.data_holder.data_dict['comments']
         #check_id = self.data_holder.data_dict['check_ID']

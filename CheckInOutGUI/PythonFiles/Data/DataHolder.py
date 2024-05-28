@@ -131,6 +131,11 @@ class DataHolder():
         #return self.dbclient.send_request(message)
 
 
+    def update_location(self, sn):
+        text = self.data_sender.update_location(sn, self.data_dict['test_stand'])
+        print(text)
+
+
 
     ##################################################
 
