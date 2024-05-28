@@ -43,6 +43,7 @@ class ScanScene(tk.Frame):
 
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
+    # can see more scanner documentation in the Visual Inspection GUI
     def scan_QR_code(self, master_window):
         
         self.ent_snum.config(state = 'normal')
@@ -248,18 +249,16 @@ class ScanScene(tk.Frame):
         
         self.EXIT_CODE = 1 
         
-        # TODO Remove comments
-        #self.listener.terminate()
-        #self.scanner.terminate()
-
         self.data_holder.set_serial_ID(self.ent_snum.get())
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
-        user_id = self.data_holder.data_dict['user_ID']
-        comments = self.data_holder.data_dict['comments']
-        check_id = self.data_holder.data_dict['check_ID']
-        in_id = self.data_holder.data_sender.add_new_board(self.data_holder.data_dict['current_serial_ID'], user_id, comments, check_id)
 
-        self.data_holder.data_dict['in_id'] = in_id
+        self.data_holder.check_if_new_board()
+        #user_id = self.data_holder.data_dict['user_ID']
+        #comments = self.data_holder.data_dict['comments']
+        #check_id = self.data_holder.data_dict['check_ID']
+        #in_id = self.data_holder.data_sender.add_new_board(self.data_holder.data_dict['current_serial_ID'], user_id, comments, check_id)
+
+        #self.data_holder.data_dict['in_id'] = in_id
         _parent.set_frame_summary()
         
 

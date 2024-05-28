@@ -2,8 +2,10 @@
 import json, logging, socket, PythonFiles, copy, os
 from PythonFiles.Data.DBSender import DBSender
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
+
+#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
+#logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 class DataHolder():
 
@@ -17,7 +19,6 @@ class DataHolder():
 
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
-        #self.dbclient = DBSendClient()
         
         self.data_dict = {
                 'user_ID': "_",
@@ -28,52 +29,9 @@ class DataHolder():
                 'in_id': '',
                 'is_new_board': False,
                 'tests_run': [str(i + 1) for i in range(self.getNumTest())],
+                'test_names': '',
+                'prev_results': '',
                 }
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
-
-
-
-        # For the visual inspection component
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
-                }
-
-        self.image_data = []
-
-        # All of the checkbox logic
-        # Dictionaries stored by inspection index
-        self.all_checkboxes = []
-        
-        for index in range(self.gui_cfg.getNumInspections()):
-            self.all_checkboxes.append(self.gui_cfg.getCheckDict(index))
-        
-        # All of the comments logic
-        # Dictionaries stored by inspection index
-        self.all_comments = []
-        
-        for index in range(self.gui_cfg.getNumInspections()):
-            self.all_comments.append(self.gui_cfg.getCommentDict(index))
-        
-        self.data_lists = {
-                'test_results': [],
-                'test_completion': [] 
-                }
-
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
-    
-        self.gui_cfg.setTestIndex(1)
-
-        self.current_test_idx = self.gui_cfg.getTestIndex()
-
-        self.photo_list = self.gui_cfg.getPhotoList()
 
 
     #################################################
@@ -105,36 +63,33 @@ class DataHolder():
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
-            #message = "add_new_user_ID;{'user_ID': {}, 'passwd': {}}".format(self.data_dict['user_ID'], passwd)
-            #self.dbclient.send_request(message)
 
 
 
+    # when a serial number gets entered, this function checks if it's new
     def check_if_new_board(self):
-        # Send request for query
-        print("testing if new board")
-        self.data_dict['is_new_board'] = self.test_new_board(self.get_serial_ID())        
-        print("result received:", self.data_dict['is_new_board'])
-        if self.data_dict['is_new_board'] == False: 
-            prev_results = self.data_sender.get_previous_test_results(self.get_serial_ID())
-            #message = "get_previous_test_results;{'serial_number': {}}".format(self.get_serial_ID())
-            #prev_results = self.dbclient.send_request(message)
-            for result in prev_results:
-                test_id = result[0]
-                pass_fail = result[1]
-                if pass_fail == 0:
-                    pass_fail = False
-                elif pass_fail == 1:
-                    pass_fail = True
-                for index, test in enumerate(self.data_dict['tests_run']):
-                    if test_id == test:
-                        for i in range(self.gui_cfg.getNumTest()):
-                            if index == i: 
-                                self.data_dict['test{}_pass'.format(i+1)] = pass_fail
-                                self.data_dict['test{}_completed'.format(i+1)] = pass_fail
-                        
+        logger.info("DataHolder: Checking if serial is a new board")
+
+        sn = self.get_serial_ID()
+        user = self.data_dict['user_ID']
+        #returns true if the board is new, false if not
+        is_new_board = self.data_sender.is_new_board(sn)
+        check_ID = self.data_dict['check_ID']
+        comments = self.data_dict['comments']
+        
+        if is_new_board == True:
+            # data sender's add new board function returns the check in id
+            self.data_dict['in_id'] = self.data_sender.add_new_board(sn, user, comments, check_ID)
+
         else:
-            pass
+            # if the board is not new, this returns the previous testing information on the board
+            prev_results, test_names = self.data_sender.get_previous_test_results(sn)
+            if prev_results:
+                self.data_dict['test_names'] = test_names
+                self.data_dict['prev_results'] = prev_results
+            else:
+                self.data_dict['test_names'] = None
+                self.data_dict['prev_results'] = 'No tests have been run on this board.'
 
     #################################################
 
@@ -163,10 +118,6 @@ class DataHolder():
     ##################################################
 
     def set_serial_ID(self, sn):
-        #self.data_sender.add_new_board(sn)
-        #message = "add_new_board;{'sn': {}}".format(sn)
-        #self.dbclient.send_request(message)
-                    
         self.data_dict['current_serial_ID'] = sn
         logging.info("DataHolder: Serial Number has been set.")
 
@@ -248,7 +199,7 @@ class DataHolder():
 
     # Prints all the variable values inside data_holder
     def print(self):    
-        print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data, "\nimage_data:\n", self.image_data, "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
+        print("data_dict: \n", self.data_dict)
            
 
  
@@ -330,27 +281,9 @@ class DataHolder():
                 'comments': "_",
                 'is_new_board': False,
                 'tests_run': [str(i + 1) for i in range(self.getNumTest())],
+                'test_names': '',
+                'prev_results': '',
                 }
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
-
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
-                }
-
-        self.data_lists = {
-                'test_results': [],
-                'test_completion': [] 
-                }
-
-        for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
 
         logging.info("DataHolder: DataHolder Information has been reset for a new test.")        
 

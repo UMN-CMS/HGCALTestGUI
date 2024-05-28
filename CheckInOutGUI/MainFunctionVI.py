@@ -1,5 +1,3 @@
-# Imports the GUIWindow
-
 # Need to make the log file path before any imports
 import os
 guiLogPath = "/home/{}/GUILogs/".format(os.getlogin())
@@ -10,6 +8,7 @@ if not os.path.exists(guiLogPath):
 import sys
 sys.path.append("..")
 
+# Imports the GUIWindow
 from PythonFiles.GUIWindow import GUIWindow
 import socket
 import logging

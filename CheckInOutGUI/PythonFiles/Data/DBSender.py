@@ -110,39 +110,42 @@ class DBSender():
     # Returns a list of booleans
     # Whether or not DB has passing results 
     def get_previous_test_results(self, serial_number):
-        
-        if (self.use_database):
    
-            r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'serial_number': str(serial_number)})
-            
-            lines = r.text.split('\n')
-
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
-
-            tests_passed= []
-
-
-            for i in range(begin, end):
-                temp = lines[i][1:-1].split(",")
-                temp[0] = str(temp[0])
-                temp[1] = int(temp[1])
-                tests_passed.append(temp)
-
-            return tests_passed
+        r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'serial_number': str(serial_number)})
+        if serial_number[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
+        if serial_number[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
         
-        # If not using database...
-        else:
-            
-            blank_results = []
-            for i in enumerate(self.gui_cfg.getNumTest()):
-                blank_results.append('False')
+        print(r.text)
+        lines = r.text.split('\n')
 
-            return blank_results
+        begin1 = lines.index("Begin1") + 1
+        end1 = lines.index("End1")
+        begin2 = lines.index("Begin2") + 1
+        end2 = lines.index("End2")
+        begin3 = lines.index("Begin3") + 1
+        end3 = lines.index("End3")
+
+        tests_run = []
+        outcomes = []
+        poss_tests = []
+
+        for i in range(begin1, end1):
+            tests_run.append(lines[i])
+        for i in range(begin2, end2):
+            outcomes.append(lines[i])
+        for i in range(begin3, end3):
+            poss_tests.append(lines[i])
+
+        tests_passed = []
+        for i in range(len(tests_run)):
+            tests_passed.append([tests_run[i], outcomes[i]])
+
+        return tests_passed, poss_tests
 
     
     
-    # #TODO Verify if a board has already been instantiated with SN
     # Posts a new board with passed in serial number
     def add_new_board(self, sn, user_id, comments, check_id):
         if check_id == 'Check In':
@@ -183,27 +186,25 @@ class DBSender():
 
 
     def is_new_board(self, sn):
+        print(sn[3])
+        if sn[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
+        if sn[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
         
-        if (self.use_database):
+        print(r.text)
+        lines = r.text.split('\n')
+   
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
 
-            r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
-            print(r.text)
+
+        for i in range(begin, end): 
             
-            lines = r.text.split('\n')
-       
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
-
-    
-            for i in range(begin, end): 
-                
-                if lines[i] == "True":
-                    return True
-                elif lines[i] == "False":
-                    return False
-
-        else:
-            return True
+            if lines[i] == "True":
+                return True
+            elif lines[i] == "False":
+                return False
 
 
 

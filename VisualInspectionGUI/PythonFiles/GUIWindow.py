@@ -16,7 +16,7 @@ from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PhotoScene import PhotoScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.update_config import update_config
-#from PythonFiles.Scenes.CameraScene import CameraScene
+from PythonFiles.Scenes.CameraScene import CameraScene
 import logging
 import os
 import PythonFiles
@@ -100,8 +100,8 @@ class GUIWindow():
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0)
 
-#        self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
-#        self.camera_frame.grid(row=0, column=0)
+        self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
+        self.camera_frame.grid(row=0, column=0)
         
 
         self.camera_index = 0
@@ -125,6 +125,8 @@ class GUIWindow():
 
     #################################################
 
+    # called after the serial number is entered
+    # sets the config to Wagon or Engine depending on the Board SN
     def update_config(self):
         sn = self.data_holder.get_serial_ID()
         new_cfg = update_config(sn)

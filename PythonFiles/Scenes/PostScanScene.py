@@ -43,14 +43,6 @@ class PostScanScene(tk.Frame):
         logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
-        # Setting weights of columns so the column 4 is half the size of columns 0-3
-        #for i in range(self.data_holder.getNumTest()):
-        #    self.columnconfigure(i, weight = 2)
-        #self.columnconfigure(self.data_holder.getNumTest(), weight = 1)
-        # Instantiates an updated table with the current data
-        #self.create_updated_table(parent)
-
-
        
         self.create_frame(parent)        
 
@@ -154,20 +146,6 @@ class PostScanScene(tk.Frame):
                         )
                 self.lbl_res.grid(row=2, column=1)
 
-
-
-            #self.res_list = tk.Listbox(
-            #        self, 
-            #        width=30, 
-            #        height=30, 
-            #        yscrollcommand = self.scroll_bar.set,
-            #        font = ('Arial',14)
-            #        )
-            #for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
-             #   self.res_list.insert(idx+1, str(el))
-
-            #self.res_list.grid(row=2, column=1)
-            #self.scroll_bar.config(command=self.res_list.yview)
         except Exception as e:
             print(e)
             self.lbl_snum = tk.Label(
@@ -176,10 +154,6 @@ class PostScanScene(tk.Frame):
                     font=('Arial', 14) 
                     )
             self.lbl_snum.grid(row = 2, column =1, pady = 10) 
-
-        # Creates the "table" as a frame object
-        #self.frm_table = tk.Frame(self)
-        #self.frm_table.grid(row = 4, column= 1) 
 
         # Creating the proceed button
         proceed_button = tk.Button(

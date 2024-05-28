@@ -136,14 +136,12 @@ class DataHolder():
     # when a serial number gets entered, this function checks if it's new
     def check_if_new_board(self):
         logger.info("DataHolder: Checking if serial is a new board")
-        #print("testing if new board")
 
         sn = self.get_serial_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during general testing'
         #returns true if the board is new, false if not
         is_new_board = self.data_sender.is_new_board(sn)
-        #print(is_new_board)
         
         if is_new_board == True:
             # data sender's add new board function returns the check in id
@@ -162,32 +160,6 @@ class DataHolder():
             else:
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
-            
-            
-
-#        # Send request for query
-#        self.data_dict['is_new_board'] = self.test_new_board(self.get_serial_ID())        
-#        print("result received:", self.data_dict['is_new_board'])
-#        if self.data_dict['is_new_board'] == False:
-#            prev_results = self.data_sender.get_previous_test_results(self.get_serial_ID())
-#            #message = "get_previous_test_results;{'serial_number': {}}".format(self.get_serial_ID())
-#            #prev_results = self.dbclient.send_request(message)
-#            for result in prev_results:
-#                test_id = result[0]
-#                pass_fail = result[1]
-#                if pass_fail == 0:
-#                    pass_fail = False
-#                elif pass_fail == 1:
-#                    pass_fail = True
-#                for index, test in enumerate(self.data_dict['tests_run']):
-#                    if test_id == test:
-#                        for i in range(self.gui_cfg.getNumTest()):
-#                            if index == i: 
-#                                self.data_dict['test{}_pass'.format(i+1)] = pass_fail
-#                                self.data_dict['test{}_completed'.format(i+1)] = pass_fail
-#                        
-#        else:
-#            pass
 
 
     #################################################
