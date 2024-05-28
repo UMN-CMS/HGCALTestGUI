@@ -22,7 +22,17 @@ class DataHolder():
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
         #self.dbclient = DBSendClient()
-        
+        use_db = self.gui_cfg.get_if_use_DB()
+
+        if use_db:
+            self.test_list = self.data_sender.get_test_list()
+            gui_tests = self.gui_cfg.getTests()
+            db_test_names = dict(self.test_list)
+            self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
+
+        else:
+            self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
+
         #dictionary of info to be held
         self.data_dict = {
                 'user_ID': "_",
@@ -33,16 +43,16 @@ class DataHolder():
                 'prev_results': None,
                 'test_names': None,
                 'checkin_id': None,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
+                'tests_run': [i  for i in range(self.getNumTest())],
                 }
         # adds tests to dictionary to be marked as complete
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
+            self.data_dict["test{}_completed".format(i)] = False
+            self.data_dict["test{}_pass".format(i)] = False
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_dict['physical{}_completed'.format(i+1)] = False
-            self.data_dict['physical{}_pass'.format(i+1)] = False
+            self.data_dict['physical{}_completed'.format(i)] = False
+            self.data_dict['physical{}_pass'.format(i)] = False
 
         # dictionary of visual inspection results, not used except for in visual inspection gui
         self.inspection_data = {
@@ -74,11 +84,11 @@ class DataHolder():
        
         # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i+1)])
-            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i+1)])
+            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i)])
+            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i)])
 
             temp_dict = {
-                '{}'.format(i+1) : self.gui_cfg.getPhysicalTestRequirements(i),
+                '{}'.format(i) : self.gui_cfg.getPhysicalTestRequirements(i),
             }
 
             self.ptest_criteria.update(temp_dict)
@@ -88,8 +98,8 @@ class DataHolder():
         print('\nptest_criteria: {}'.format(self.ptest_criteria))
 
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
+            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
+            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
 
             self.total_test_num = self.total_test_num + 1
     
@@ -215,7 +225,7 @@ class DataHolder():
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
-            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments} 
+            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
                 print(info_dict)
                 json.dump(info_dict, outfile)
@@ -240,11 +250,12 @@ class DataHolder():
             temp = 1 
 
 
-        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.data_dict['tests_run'][index], "successful": temp, "comments": self.data_dict['comments']}
+        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
             json.dump(info_dict, outfile)
+
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         #message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         #self.dbclient.send_request(message)
@@ -275,20 +286,20 @@ class DataHolder():
 
         test_names = self.gui_cfg.getTestNames()
 
-        current_test_idx = self.gui_cfg.getTestIndex() -1
+        current_test_idx = self.gui_cfg.getTestIndex()
         print("current_test_idx: {}".format(current_test_idx))
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
         self.data_dict['user_ID'] = json_dict["tester"]
         self.data_dict['current_serial_ID'] = json_dict["board_sn"] 
-        self.data_dict['test{}_completed'.format(current_test_idx+1)] = True
-        self.data_dict['test{}_pass'.format(current_test_idx+1)] = json_dict["pass"]
+        self.data_dict['test{}_completed'.format(current_test_idx)] = True
+        self.data_dict['test{}_pass'.format(current_test_idx)] = json_dict["pass"]
 
         # Updates the lists
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i+1)]
-            self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i+1)]
+            self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i)]
+            self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i)]
         
         if self.gui_cfg.get_if_use_DB():
             self.send_to_DB(current_test_idx)
@@ -359,7 +370,7 @@ class DataHolder():
                 'prev_results': None,
                 'test_names': None,
                 'checkin_id': None,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
+                'tests_run': [i for i in range(self.getNumTest())],
                 }
 
         self.inspection_data = {
@@ -380,23 +391,23 @@ class DataHolder():
         self.total_test_num = 0
 
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict['test{}_completed'.format(i+1)] = False
-            self.data_dict['test{}_pass'.format(i+1)] = False
+            self.data_dict['test{}_completed'.format(i)] = False
+            self.data_dict['test{}_pass'.format(i)] = False
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_dict['physical{}_completed'.format(i+1)] = False
-            self.data_dict['physical{}_pass'.format(i+1)] = False
+            self.data_dict['physical{}_completed'.format(i)] = False
+            self.data_dict['physical{}_pass'.format(i)] = False
 
 
         self.ptest_criteria = {}
         self.ptest_names = self.gui_cfg.getPhysicalNames()
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i+1)])
-            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i+1)])
+            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i)])
+            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i)])
 
             temp_dict = {
-                '{}'.format(i+1) : self.gui_cfg.getPhysicalTestRequirements(i),
+                '{}'.format(i) : self.gui_cfg.getPhysicalTestRequirements(i),
             }
 
             self.ptest_criteria.update(temp_dict)
@@ -405,8 +416,8 @@ class DataHolder():
         
         #print(self.data_dict)
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
+            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
+            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
 
             self.total_test_num = self.total_test_num + 1
 

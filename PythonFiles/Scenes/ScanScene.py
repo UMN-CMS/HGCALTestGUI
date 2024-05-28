@@ -43,7 +43,7 @@ class ScanScene(tk.Frame):
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
-        
+       
 
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
@@ -237,6 +237,8 @@ class ScanScene(tk.Frame):
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
 
+        self.EXIT_CODE = 0
+
 
     #################################################
 
@@ -251,6 +253,8 @@ class ScanScene(tk.Frame):
 
          # Send user back to login frame
         _parent.set_frame_login_frame() 
+
+        self.EXIT_CODE = 0
 
     #################################################
 

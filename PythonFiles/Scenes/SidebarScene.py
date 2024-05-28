@@ -123,7 +123,6 @@ class SidebarScene(tk.Frame):
         original_offset = 2
         
         # How much offset from the physical board tests
-        physical_offset = 0
 
         print("\nThere are {} physical tests\n".format(self.data_holder.getNumPhysicalTest()))
 
@@ -138,14 +137,13 @@ class SidebarScene(tk.Frame):
                 font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i)
                 ))
-            self.test_btns[i+physical_offset].grid(column = 0, row = i + original_offset)
+            self.test_btns[i].grid(column = 0, row = i + original_offset)
 
             #print(self.data_holder.data_dict)
 
-            if self.data_holder.data_dict['physical{}_pass'.format(i+1+physical_offset)] == True:
-                self.test_btns[i+physical_offset].config(state = 'disabled')
+            if self.data_holder.data_dict['physical{}_pass'.format(i)] == True:
+                self.test_btns[i].config(state = 'disabled')
             
-            physical_offset = physical_offset + 1
 
 
         #
@@ -163,12 +161,12 @@ class SidebarScene(tk.Frame):
                 height = btn_height,
                 width = btn_width,
                 font = btn_font,
-                command = lambda i=i: self.btn_test_action(_parent, i + physical_offset)
+                command = lambda i=i: self.btn_test_action(_parent, i )
                 ))
-            self.test_btns[i+physical_offset].grid(column = 0, row = physical_offset + original_offset + i)
+            self.test_btns[i].grid(column = 0, row = original_offset + i)
 
-            if self.data_holder.data_dict['test{}_pass'.format(i+1)] == True:
-                self.test_btns[i+physical_offset].config(state = 'disabled')
+            if self.data_holder.data_dict['test{}_pass'.format(i)] == True:
+                self.test_btns[i].config(state = 'disabled')
             
             digital_offset = digital_offset + 1
         
@@ -181,7 +179,7 @@ class SidebarScene(tk.Frame):
             font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row = physical_offset + original_offset + digital_offset)
+        self.btn_summary.grid(column = 0, row =  original_offset + digital_offset)
 
         
         self.report_btn = tk.Button(
@@ -193,7 +191,7 @@ class SidebarScene(tk.Frame):
             font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = physical_offset + original_offset + digital_offset + 1)
+        self.report_btn.grid(column = 0, row =  original_offset + digital_offset + 1)
         
 
 
@@ -209,13 +207,13 @@ class SidebarScene(tk.Frame):
                 # Create a photoimage object of the QR Code
                 GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
                 GreenCheck_Label.image = self.Green_Check_PhotoImage
-                GreenCheck_Label.grid(row=index + original_offset + physical_offset, column=1)
+                GreenCheck_Label.grid(row=index + original_offset , column=1)
 
             else:
                 # Create a photoimage object of the QR Code
                 RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
                 RedX_Label.image = self.Red_X_PhotoImage
-                RedX_Label.grid(row=index + original_offset + physical_offset, column=1)
+                RedX_Label.grid(row=index + original_offset , column=1)
 
         self.physical_pass_fail = self.data_holder.data_lists['physical_results']
         

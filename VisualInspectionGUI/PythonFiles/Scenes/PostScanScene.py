@@ -21,10 +21,7 @@ logger = logging.getLogger('HGCAL_GUI')
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-# Frame that shows all of the final test results
-# @param parent -> References a GUIWindow object
-# @param master_frame -> Tkinter object that the frame is going to be placed on
-# @param data_holder -> DataHolder object that stores all relevant data
+# Frame that shows the results of any previous tests and asks the operator how they want to proceed
 
 class PostScanScene(tk.Frame):
 
@@ -41,14 +38,6 @@ class PostScanScene(tk.Frame):
         self.data_holder = data_holder
 
         self.parent = parent
-        # Setting weights of columns so the column 4 is half the size of columns 0-3
-        #for i in range(self.data_holder.getNumTest()):
-        #    self.columnconfigure(i, weight = 2)
-        #self.columnconfigure(self.data_holder.getNumTest(), weight = 1)
-        # Instantiates an updated table with the current data
-        #self.create_updated_table(parent)
-
-
        
         self.create_frame(parent)        
 
@@ -107,6 +96,7 @@ class PostScanScene(tk.Frame):
         redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
         redx = redx.resize((75, 75), Image.LANCZOS)
         redx = iTK.PhotoImage(redx)
+        # creates the table with the previous result data
         try:
             if self.data_holder.data_dict['test_names']:
                 res_dict = {}
@@ -150,20 +140,6 @@ class PostScanScene(tk.Frame):
                         )
                 self.lbl_res.grid(row=2, column=1)
 
-
-
-            #self.res_list = tk.Listbox(
-            #        self, 
-            #        width=30, 
-            #        height=30, 
-            #        yscrollcommand = self.scroll_bar.set,
-            #        font = ('Arial',14)
-            #        )
-            #for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
-             #   self.res_list.insert(idx+1, str(el))
-
-            #self.res_list.grid(row=2, column=1)
-            #self.scroll_bar.config(command=self.res_list.yview)
         except Exception as e:
             print(e)
             self.lbl_snum = tk.Label(
@@ -173,91 +149,24 @@ class PostScanScene(tk.Frame):
                     )
             self.lbl_snum.grid(row = 2, column =1, pady = 10) 
 
-
-
-        # Creates the "table" as a frame object
-        self.frm_table = tk.Frame(self)
-        self.frm_table.grid(row = 4, column= 1) 
-
-        # Where to start putting the JSON information
-        starting_row = 4
-#        # Number of keys the data_holder.inspection_data dictionary
-#        key_count = 0
-#        
-#        # Loop through all of the keys in the data_holder.inspection_data dictionary
-#        for index,box in enumerate(self.data_holder.all_checkboxes[0]):
-#            key_count = key_count + 1
-#            print("\nIndex: {}, Box: {}".format(index, box))
-#        
-#            key_label = tk.Label(
-#                    self.frm_table, 
-#                    text = box['text'], 
-#                    relief = 'ridge', 
-#                    width=40, 
-#                    height=1, 
-#                    font=('Arial', 11, "bold")
-#                    )
-#            key_label.grid(row=key_count , column=0, padx = 2)
-#             
-#
-#            # Correctly displays the booleans
-#            # If not a string, show as a boolean true/false
-#            l_text = "UNDEFINED"
-#            if not isinstance(box['value'], str):
-#                if (box['value']):
-#                    l_text = "True"
-#                else:
-#                    l_text = "False"
-#            else:
-#                l_text = value['value']    
-#
-#            result_label = tk.Label(
-#                    self.frm_table, 
-#                    text = l_text, 
-#                    relief = 'ridge', 
-#                    width=40, 
-#                    height=1, 
-#                    font=('Arial', 11, "bold")
-#                    )
-#            result_label.grid(row=key_count, column=1)
-#                    
-#        comment_index = 0
-#        comment_title_text = "Comments:"
-#        comment_title = tk.Label(
-#               self.frm_table, 
-#               text = comment_title_text, 
-#               relief = 'ridge', 
-#               width=40, 
-#               height=2, 
-#               font=('Arial', 11, "bold")
-#               )
-#        comment_title.grid(row=key_count + 1, column=0)
-#
-#        comment_text = str(self.data_holder.get_comment_dict(comment_index))
-#        comment_label = tk.Label(
-#               self.frm_table, 
-#               text = comment_text, 
-#               relief = 'ridge', 
-#               width=40, 
-#               height=2, 
-#               font=('Arial', 11, "bold")
-#               )
-#        comment_label.grid(row=key_count + 1, column=1)
-
- 
-        # Creating frame for logout button
-        #frm_logout = tk.Frame(self)
-        #frm_logout.grid(column = 4, row = starting_row, sticky= 'se')
         
 
-        # Creating the proceed button
-        proceed_button = tk.Button(
+        # Creating the proceed buttons
+        tb_button = tk.Button(
             self.frame,
             relief = tk.RAISED,
-            text = "Proceed",
-            command = lambda: self.btn_proceed_action(parent)
+            text = "Top and Bottom",
+            command = lambda: self.btn_tb_action(parent)
         )
-        proceed_button.grid(row=1, column=3, padx = 10, pady = 10)
+        tb_button.grid(row=1, column=3, padx = 10, pady = 10)
+
+        conn_button = tk.Button(
+            self.frame,
+            relief = tk.RAISED,
+            text = "Connectors",
+            command = lambda: self.btn_conn_action(parent)
+        )
+        conn_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
         next_board_button = tk.Button(
@@ -266,7 +175,7 @@ class PostScanScene(tk.Frame):
             text = "Back to Scan",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=2, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
  
 
         # Creating the logout button
@@ -276,14 +185,19 @@ class PostScanScene(tk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=3, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
  
     
 
 
     #################################################
 
-    def btn_proceed_action(self, parent):
+    def btn_tb_action(self, parent):
+        self.data_holder.photos = 'Top and Bottom'
+        parent.first_frame_camera_frame()
+
+    def btn_conn_action(self, parent):
+        self.data_holder.photos = 'Connectors'
         parent.first_frame_camera_frame()
 
     def btn_NextBoard_action(self, parent):

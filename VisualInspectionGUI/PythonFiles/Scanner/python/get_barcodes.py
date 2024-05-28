@@ -2,11 +2,15 @@ import subprocess
 import time
 import signal
 import ctypes
+import os
 #import PythonFiles
 libc = ctypes.CDLL("libc.so.6")
 
 from multiprocessing import Process, Manager, Pipe
 
+# these functions are run individually in ScanScene
+
+# decodes hexadecimal into the serial number
 def decode(hex_str):
     serial = ""
     for h in hex_str.split(" "):
@@ -14,6 +18,7 @@ def decode(hex_str):
 
     return serial
 
+# parses the hexadecimal value grabbed
 def parse_xml(inXML):
     if "<" not in inXML:
         return
@@ -27,13 +32,9 @@ def set_pdeathsig(sig = signal.SIGTERM):
     return callable
 
 def scan():
-    proc = subprocess.Popen('/opt/HGCALTestGUI/HGCALTestGUI/PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
+    proc = subprocess.Popen('/home/hgcal/HGCALTestGUI/VisualInspectionGUI/PythonFiles/Scanner/bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
     print("Starting scanner")
     return proc
-    #for line in proc.stdout:
-    #    if line is not None:
-    #        conn.send(line.strip().decode('utf-8'))
-    #        return
 
 def listen(serial, proc):
     for line in proc.stdout:
@@ -42,13 +43,6 @@ def listen(serial, proc):
             serial.append(line.strip().decode('utf-8'))
             return
 
-    #while not output_found:
-    #    output = conn.recv()
-    #    if output is not None:
-    #        serial.append(output)
-    #        output_found = True
-    #    else:
-    #        print('Still waiting')
 
 def run_scanner():
     manager = Manager()
@@ -59,6 +53,7 @@ def run_scanner():
 
     listener.start()
 
+    # holds until something is scanned
     listener.join()
 
     print(parse_xml(serial[0]))

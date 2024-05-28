@@ -67,9 +67,9 @@ class DBSender():
 
         # If not using database...        
         else:
-            
-            return ['User1', 'User2', 'User3']
 
+            #return ['User1', 'User2', 'User3']
+            return self.gui_cfg.getUsers()
 
     def add_board_image(self, serial, image):
         pass
@@ -232,7 +232,6 @@ class DBSender():
 
         if (self.use_database):
             r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-
         else:
             pass
 

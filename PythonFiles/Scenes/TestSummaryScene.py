@@ -346,8 +346,9 @@ class TestSummaryScene(tk.Frame):
 
 
             temp = ""
-            for key, value in current_JSON_data.items():
-                temp = temp + "{} : {}".format(key, value) + "\n"
+            temp = json.dumps(current_JSON_data, indent=2)
+            #for key, value in current_JSON_data.items():
+            #    temp = temp + "{} : {}".format(key, value) + "\n"
 
 
             self.JSON_entry_box.delete(1.0,"end")

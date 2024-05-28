@@ -16,7 +16,8 @@ sys.path.append("{}/Tests".format(os.getcwd()))
 # is used to trigger a new test via REQClient
 
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
 
 class SSHHandler:
 

@@ -24,57 +24,11 @@ UsingScanner: true
 
 # TestHandler: {name: Local, remoteip: localhost}
 # TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
-TestHandler: {name: ZMQ, localip: <localip>, remoteip: <remoteip>, username: <username>,
+TestHandler: {name: ZMQ, localip: "localhost", remoteip: "umn-zcu102-b", username: "test_server",
   serverpath: <serverpath>, serverscript: <serverscript>}
 
 
-PhysicalTest: 
-  - name: Power-Ground Resistance
-    desc_long: Check that the power and grounds are not shorted at the terminal, or
-      between the inputs.
-    desc_short: Measure resistance between power and ground
-    required: 1
-
-  - name: 1.5V Input Check
-    desc_long: Check that resistance between across C906 or C908 is non-zero.
-    desc_short: Check that the 1.5V input is not shorted.
-    required: 1
-
-  - name: 10V Input Check
-    desc_long: Check that resistance between across C907 or C909 is non-zero.
-    desc_short: Check that the 10V input is not shorted.
-    required: 1
-    
-  - name: 1.2V Output Check
-    desc_long: Check that resistance between across C904 or C904 or TP901 is non-zero.
-    desc_short: Check that the 1.2V output is not shorted.
-    required: 1
-
-  - name: RX 2.5V Output Check 
-    desc_long: Check that resistance across C902 is non-zero.
-    desc_short: Check that the RX 2.5V output is not shorted.
-    required: 1
-
-  - name: TX 2.5V Output Check
-    desc_long: Check that resistance across either C903 or TP902 is non-zero.
-    desc_short: Check that the TX 2.5V output is not shorted.
-    required: 1
-
-  - name: LDO Output
-    desc_long: Measure the votlage across either R911 or TP901 and verify that it is appropriate.
-    desc_short: Check that the LDO output voltage is around 1.2V
-    required: 1
-
-  - name: LinPol RX Check
-    desc_long: Check that voltages across either R905 or R902 is 2.5V.
-    desc_short: Check that the RX voltage from the linppol is operating correctly
-    required: 1
-
-  - name: LinPol TX Check
-    desc_long: Measure the voltage across either TP902 or R906 or C903 is 2.5V.
-    desc_short: Check that the TX voltage from the linppol is operating correctly
-    required: 1
-
+PhysicalTest: []
 Test:
   - TestClass: TestXPWR
     TestPath: /home/test_server/test_code/engine_tests
@@ -99,22 +53,13 @@ Test:
     TestScript: test_startup.py
     desc_long: Read lpgbt ids
     desc_short: Check ids
-    name: lpGBT ids
+    name: LPGBT ID
     required: 1
 
-  - TestClass: TestlpGBTcom
-    TestPath: /home/test_server/test_code/engine_tests
-    TestScript: test_startup.py
-    desc_long: 'Read and write to lpBGT registers via ICEC. Check DAQ lpGBT read of
-      registers via IC. Check Trigger lpGBTs: successful read registers via EC. Ensure
-      write and readback to user ID registers (0x004 - 0x007)'
-    desc_short: Check operability of lpGBT IC/EC communication
-    name: lpGBT IC/EC communication
-    required: 1
 
   - TestClass: TestI2C
     TestPath: /home/test_server/test_code/engine_tests
-    TestScript: engine_i2c.py
+    TestScript: test_i2c.py
     desc_long: Check that engine can communicate as an I2C master
     desc_short: Engine can use I2C master
     name: I2C
@@ -147,13 +92,6 @@ Test:
     name: Uplink quality
     required: 1
 
-  - TestClass: TestDownlink
-    TestPath: /home/test_server/test_code/engine_tests
-    TestScript: test_links.py
-    desc_long: Eye opening test. Check eye opening width and height below threshold.
-    desc_short: Check the quality of the downlinks
-    name: Downlink quality
-    required: 1
 
   - TestClass: TestFC
     TestPath: /home/test_server/test_code/engine_tests
@@ -179,11 +117,4 @@ Test:
     name: EClock Rates
     required: 1
 
-  - TestClass: TestCrossover
-    TestPath: /home/test_server/test_code/engine_tests
-    TestScript: engine_test_suite.py
-    desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
-    desc_short: Check the quality of the crossover links
-    name: Crossover link quality
-    required: 1
 
