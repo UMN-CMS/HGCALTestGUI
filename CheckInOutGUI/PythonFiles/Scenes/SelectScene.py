@@ -49,6 +49,8 @@ class SelectScene(tk.Frame):
                 self,
                 relief = tk.RAISED,
                 text = 'Check In',
+                height = 10,
+                width = 40,
                 command = lambda: self.btn_submit_action(parent, 'Check In')
         )
         self.btn_in.pack()
@@ -56,6 +58,8 @@ class SelectScene(tk.Frame):
                 self,
                 relief = tk.RAISED,
                 text = 'Check Out',
+                height = 10,
+                width = 40,
                 command = lambda: self.btn_submit_action(parent, 'Check Out')
         )
         self.btn_out.pack()

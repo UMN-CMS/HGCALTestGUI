@@ -225,6 +225,7 @@ class ScanScene(tk.Frame):
 
         self.data_holder.set_serial_ID(self.ent_snum.get())
         self.data_holder.check_if_new_board()
+        self.data_holder.update_location(self.ent_snum.get())
         _parent.update_config()
         _parent.set_frame_postscan()
 

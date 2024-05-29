@@ -47,6 +47,7 @@ class ScanScene(tk.Frame):
 
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
+    # can see more scanner documentation in the Visual Inspection GUI
     def scan_QR_code(self, master_window):
         
         if self.use_scanner:
@@ -232,6 +233,8 @@ class ScanScene(tk.Frame):
         self.data_holder.set_serial_ID(self.ent_snum.get())
         if self.data_holder.getGUIcfg().get_if_use_DB():
             self.data_holder.check_if_new_board() 
+
+        self.data_holder.update_location(self.ent_snum.get())
         _parent.update_config()
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
