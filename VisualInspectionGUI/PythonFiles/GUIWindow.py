@@ -24,8 +24,6 @@ import PythonFiles
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-
-
 #################################################################################
 
 
@@ -40,6 +38,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
+
         master_window.title("Visual Inspection Window")
 
         # Creates the size of the window and disables resizing
