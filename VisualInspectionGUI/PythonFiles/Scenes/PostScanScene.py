@@ -122,7 +122,7 @@ class PostScanScene(tk.Frame):
                                 )
                         self.lbl_img.image=green_check
                         self.lbl_img.grid(row=idx+2, column=2)
-                    else:
+                    elif res_dict[el] == 'Failed':
                         self.lbl_img = tk.Label(
                                 self.frame,
                                 image = redx,
@@ -132,6 +132,13 @@ class PostScanScene(tk.Frame):
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
+                    else:
+                        self.lbl_res = tk.Label(
+                                self.frame,
+                                text = 'This test has not been run.',
+                                font=('Arial',14)
+                                )
+                        self.lbl_res.grid(row=idx+2, column=2)
             else:
                 self.lbl_res = tk.Label(
                         self.frame,

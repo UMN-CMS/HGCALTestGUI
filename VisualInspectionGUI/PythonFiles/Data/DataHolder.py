@@ -182,7 +182,7 @@ class DataHolder():
 
 
     def update_location(self, sn):
-        text = self.data_sender.update_location(sn, self.data_dict['test_stand'])
+        text = self.data_sender.update_location(sn, 'Visual Inspection')
         print(text)
 
 

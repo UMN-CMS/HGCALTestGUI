@@ -254,12 +254,7 @@ class ScanScene(tk.Frame):
 
         self.data_holder.check_if_new_board()
         self.data_holder.update_location(self.ent_snum.get())
-        #user_id = self.data_holder.data_dict['user_ID']
-        #comments = self.data_holder.data_dict['comments']
-        #check_id = self.data_holder.data_dict['check_ID']
-        #in_id = self.data_holder.data_sender.add_new_board(self.data_holder.data_dict['current_serial_ID'], user_id, comments, check_id)
 
-        #self.data_holder.data_dict['in_id'] = in_id
         _parent.set_frame_summary()
         
 
