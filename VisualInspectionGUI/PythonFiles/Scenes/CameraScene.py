@@ -14,8 +14,10 @@ import tkinter as tk
 import cv2
 import PIL.Image, PIL.ImageTk
 from PIL import ImageTk as iTK
+from PIL import ImageChops
 import time
 import os
+import numpy as np
 
 from libcamera import controls
 
@@ -189,9 +191,24 @@ class CameraScene(tk.Frame):
         # Ensure that the camera aspect ratio matches the aspect ratio here
         # This may require some fine-tuning
         #self.Engine_image = PIL.Image.open(self.photo_name)
+
+        bg = PIL.Image.new(self.image.mode, self.image.size, self.image.getpixel((0,0)))
+        diff = ImageChops.difference(self.image, bg)
+        diff = ImageChops.add(diff, diff, 2.0, -60)
+        imageBox = diff.getbbox()
+        # adds padding to the image, scuffed but it works
+        # can't work directly with a tuple, need to make list and then go back to tuple
+        imageBox = list(imageBox)
+        imageBox[0] += -50
+        imageBox[1] += -50
+        imageBox[2] += 50
+        imageBox[3] += 50
+        imageBox = tuple(imageBox)
+        self.image = self.image.crop(imageBox)
+
         self.data_holder.image_holder[self.photo_name] = self.image
-        self.Engine_image = self.image
-        self.Engine_image = self.Engine_image.resize((1067, 600), PIL.Image.LANCZOS)
+        height = int(self.image.size[1]*(1000/self.image.size[0]))
+        self.Engine_image = self.image.resize((1000, height), PIL.Image.Resampling.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
         # Check to see if it should just replace the old image
