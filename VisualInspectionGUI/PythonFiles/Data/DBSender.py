@@ -179,6 +179,22 @@ class DBSender():
 
         return in_id
 
+    def update_location(self, sn, loc):
+        if sn[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
+        if sn[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
+        
+        print(r.text)
+        lines = r.text.split('\n')
+   
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
+
+
+        for i in range(begin, end): 
+            return lines[i]
+
     def is_new_board(self, sn):
         print(sn)
         if sn[3] == 'W':

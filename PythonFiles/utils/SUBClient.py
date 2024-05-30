@@ -115,6 +115,7 @@ class SUBClient():
 
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
+                    print(self.message)
                     queue.put(self.message)
                     logger.debug("SUBClient: The print message has been placed into the queue.")
 

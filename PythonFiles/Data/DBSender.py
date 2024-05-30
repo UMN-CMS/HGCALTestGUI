@@ -67,9 +67,9 @@ class DBSender():
 
         # If not using database...        
         else:
-            
-            return ['User1', 'User2', 'User3']
 
+            #return ['User1', 'User2', 'User3']
+            return self.gui_cfg.getUsers()
 
     def add_board_image(self, serial, image):
         pass
@@ -170,6 +170,22 @@ class DBSender():
 
         return in_id
 
+    def update_location(self, sn, loc):
+        if sn[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
+        if sn[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
+        
+        print(r.text)
+        lines = r.text.split('\n')
+   
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
+
+
+        for i in range(begin, end): 
+            return lines[i]
+
     def is_new_board(self, sn):
         print(sn[3])
         if sn[3] == 'W':
@@ -232,7 +248,6 @@ class DBSender():
 
         if (self.use_database):
             r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-
         else:
             pass
 

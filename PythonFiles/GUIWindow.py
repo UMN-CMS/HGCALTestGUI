@@ -180,12 +180,9 @@ class GUIWindow():
         self.running_all_idx = test_idx
         self.run_all_tests_bool = True
 
-        try:
-            test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-            #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
-            self.set_frame_test_in_progress(self.queue)
-        except Exception as e:
-            messagebox.showerror('Exception', e)
+        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        self.set_frame_test_in_progress(self.queue)
 
         print("Confirm button sending test{}".format(self.running_all_idx))
 
@@ -329,12 +326,9 @@ class GUIWindow():
                 self.data_holder.setTestIdx(self.current_test_index)
                 self.current_test_index += 1
                 
-                try:
-                    gui_cfg = self.data_holder.getGUIcfg()
-                    test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], conn_trigger)
-                    self.set_frame_test_in_progress(self.queue)
-                except Exception as e:
-                    messagebox.showerror('Exception', e)
+                gui_cfg = self.data_holder.getGUIcfg()
+                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+                self.set_frame_test_in_progress(self.queue)
 
                 print("Confirm button sending test{}".format(self.running_all_idx))
             
@@ -608,6 +602,42 @@ class GUIWindow():
             )
         btn_okay.grid(column = 0, row = 1)
     
+    def test_error_popup(self, message):
+        
+        self.completed_window_alive = True
+       
+        # Creates a popup to inform user about the passing of a test
+        self.popup = tk.Toplevel()
+        # popup.wm_attributes('-toolwindow', 'True')
+        self.popup.title("Error Window") 
+        self.popup.geometry("300x150+500+300")
+        self.popup.grab_set()
+       
+
+        # Creates frame in the new window
+        frm_popup = tk.Frame(self.popup)
+        frm_popup.pack()
+
+        # Creates label in the frame
+        lbl_popup = tk.Label(
+            frm_popup, 
+            text = message,
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, pady = 25)
+
+        # Creates yes and no buttons for exiting
+        btn_okay = tk.Button(
+            frm_popup,     
+            width = 12,
+            height = 2,
+            text = "OK", 
+            relief = tk.RAISED,
+            font = ('Arial', 12), 
+            command = lambda: self.destroy_popup()
+            )
+        btn_okay.grid(column = 0, row = 1)
+    
 
 
     # Called when the no button is pressed to destroy popup and return you to the main window
@@ -679,8 +709,8 @@ class GUIWindow():
             self.master_window.update()
             self.popup.update()
 
-            if self.scan_frame.is_current_scene == True:
-                self.test_in_progress_frame.close_prgbar()
+            #if self.scan_frame.is_current_scene == True:
+                #self.test_in_progress_frame.close_prgbar()
             self.scan_frame.kill_processes()
 
             # Destroys the popup and master window

@@ -58,6 +58,8 @@ class GUIWindow():
         master_frame.grid(column = 0, row = 0, columnspan = 4)
 
         # Object for taking care of instantiation of different test types
+        # don't need the update config for this GUI
+        # DBSender takes care of differentiating between boards
         self.gui_cfg = GUIConfig(board_cfg)
 
         # Creates the "Storage System" for the data during testing

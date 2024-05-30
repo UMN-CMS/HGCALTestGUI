@@ -129,8 +129,13 @@ class GUIWindow():
 
     #################################################
 
+<<<<<<< HEAD
+    # called after the serial number is entered
+    # sets the config to Wagon or Engine depending on the Board SN
+=======
     # is called after a serial number is entered
     # sets the config to either Wagon or Engine depending on the SN entered
+>>>>>>> be095cd05ba600901384a0e16122ba8dee5e4a44
     def update_config(self):
         sn = self.data_holder.get_serial_ID()
         new_cfg = update_config(sn)
