@@ -73,7 +73,7 @@ class DBSender():
 
             return ['User1', 'User2', 'User3']
 
-
+    # writes image to server disk and saves the name in the database
     def add_board_image(self, serial, image, view):
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
@@ -81,38 +81,6 @@ class DBSender():
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"serial_num": serial, "image": encodedImage, "view": view})
 
         print(r.text)
-
-
-    # Returns a list of booleans
-    # Whether test (by index) has been completed or not
-    def get_test_completion_staus(self, serial_number):
-
-        if (self.use_database):
-            r = requests.post('{}/get_test_completion_status.py'.format(self.db_url), data= serial_number)
-
-            lines = r.text.split('\n')
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
-
-            tests_completed = []
-            for i in range(begin, end):
-                temp = lines[i][1:-1].split(",")
-                temp[0] = str(temp[0])
-                temp[1] = int(temp[1])
-                tests_completed.append(temp)
-
-            return tests_completed
-
-        # If not using the database...
-        else:
-
-            blank_completion = []
-            for i in enumerate(self.gui_cfg.getNumTest()):
-                blank_completion.append('False')
-
-            return blank_completion
-
-
 
 
     # Returns a dictionary of booleans
@@ -179,6 +147,7 @@ class DBSender():
 
         return in_id
 
+    # sets the location in the database
     def update_location(self, sn, loc):
         if sn[3] == 'W':
             r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
@@ -195,6 +164,7 @@ class DBSender():
         for i in range(begin, end): 
             return lines[i]
 
+    # checks if the board is in the database
     def is_new_board(self, sn):
         print(sn)
         if sn[3] == 'W':
@@ -262,32 +232,4 @@ class DBSender():
 
         else:
             pass
-
- # Returns a list of all different types of tests
-    def get_test_list(self):
-        if (self.use_database):
-            r = requests.get('{}/get_test_types.py'.format(self.db_url))
-
-            lines = r.text.split('\n')
-
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
-
-            tests = []
-
-            for i in range(begin, end):
-                temp = lines[i][1:-1].split(",")
-                temp[0] = str(temp[0][1:-1])
-                temp[1] = int(temp[1])
-                tests.append(temp)
-
-            return tests
-
-        else:
-
-            blank_tests = []
-            for i in enumerate(self.gui_cfg.getNumTest()):
-                blank_tests.append("Test{}".format(i))
-
-            return blank_tests
 

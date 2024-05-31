@@ -92,66 +92,6 @@ class Inspection1(tk.Frame):
                 c1.grid(row = 1 + idx, column= 1, sticky='w', columnspan=2)
 
 
-        #self.board_chipped_bent = tk.BooleanVar()
-        #self.wagon_connection_pin_bent = tk.BooleanVar()
-        #self.engine_connection_pin_bent = tk.BooleanVar()
-        #self.visual_scratches = tk.BooleanVar()
-        #
-
-
-        ## Beginning of the CheckButtons
-        #
-        ## Checkbutton1
-        #c1 = tk.Checkbutton(
-        #    frm_window, 
-        #    font = font_scene_14,
-        #    text='Board Chipped/Bent',
-        #    variable= self.board_chipped_bent, 
-        #    onvalue=1, 
-        #    offvalue=0 
-        #    # command=print_selection
-        #    )
-        #c1.grid(row = 1, column= 1, sticky='w', columnspan=2)
-        #
-        ## Checkbutton2
-        #c2 = tk.Checkbutton(
-        #    frm_window, 
-        #    font = font_scene_14,
-        #    text='Wagon Connection Pin Bent',
-        #    variable= self.wagon_connection_pin_bent, 
-        #    onvalue=True, 
-        #    offvalue=False 
-        #    # command=print_selection
-        #    )
-        #c2.grid(row = 2, column= 1, sticky='w', columnspan=2)
-
-        ## Checkbutton3
-        #c3 = tk.Checkbutton(
-        #    frm_window, 
-        #    font = font_scene_14,
-        #    text='Engine Connection Pin Bent',
-        #    variable= self.engine_connection_pin_bent, 
-        #    onvalue=True, 
-        #    offvalue=False 
-        #    # command=print_selection
-        #    )
-        #c3.grid(row = 3, column= 1, sticky='w', columnspan=2)
-
-        ## Checkbutton4
-        #c4 = tk.Checkbutton(
-        #    frm_window, 
-        #    font = font_scene_14,
-        #    text='Visual Scratches',
-        #    variable= self.visual_scratches, 
-        #    onvalue=True, 
-        #    offvalue=False 
-        #    # command=print_selection
-        #)
-        #c4.grid(row = 4, column= 1, sticky='w', columnspan=2)
-
-
-
-
         
 
         # Create a label for the serial number box
@@ -219,10 +159,6 @@ class Inspection1(tk.Frame):
 
 
 
-
-
-        # # # # # # # # # 
-
         
         self.grid_columnconfigure(4, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -253,30 +189,23 @@ class Inspection1(tk.Frame):
     
     #################################################
 
+    # adds the visual inspection info to the data holder
     def update_data_holder(self):
-        #self.data_holder.inspection_data['board_chipped_bent'] = self.board_chipped_bent.get()
-        #self.data_holder.inspection_data['wagon_connection_pin_bent'] = self.wagon_connection_pin_bent.get()
-        #self.data_holder.inspection_data['engine_connection_pin_bent'] = self.engine_connection_pin_bent.get()
-        #self.data_holder.inspection_data['visual_scratches'] = self.visual_scratches.get()
-        
         for i, items in enumerate(self.tk_bools):
             self.data_holder.get_check_dict(0)[i]['value'] = items.get()           
-
-       
+ 
         self.data_holder.set_comment_dict(0, self.comment_box.get())  
         self.data_holder.add_inspection_to_comments()
         self.data_holder.print()
 
-        self.data_holder.update_from_json_string()
-
 
     #################################################
 
-    # Confirm button action takes the user to the test in progress scene
+    # Confirm button action takes the user to the camera scene scene
     def btn_confirm_action(self, _parent):
         
         self.update_data_holder()
-        _parent.set_frame_test_summary()
+        _parent.first_frame_camera_frame()
 
 
     #################################################

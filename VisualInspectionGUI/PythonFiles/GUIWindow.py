@@ -13,7 +13,6 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.InspectionScenes.Inspection1 import Inspection1
 from PythonFiles.Scenes.AddUserScene import AddUserScene
-from PythonFiles.Scenes.PhotoScene import PhotoScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.update_config import update_config
 from PythonFiles.Scenes.CameraScene import CameraScene
@@ -94,9 +93,6 @@ class GUIWindow():
         self.add_user_frame = AddUserScene(self, master_frame, self.data_holder)
         self.add_user_frame.grid(row=0,column=0)
 
-        self.photo_frame = PhotoScene(self, master_frame, self.data_holder)
-        self.photo_frame.grid(row=0,column=0)
-
         # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0)
@@ -129,13 +125,8 @@ class GUIWindow():
 
     #################################################
 
-<<<<<<< HEAD
-    # called after the serial number is entered
-    # sets the config to Wagon or Engine depending on the Board SN
-=======
     # is called after a serial number is entered
     # sets the config to either Wagon or Engine depending on the SN entered
->>>>>>> be095cd05ba600901384a0e16122ba8dee5e4a44
     def update_config(self):
         sn = self.data_holder.get_serial_ID()
         new_cfg = update_config(sn)
@@ -162,6 +153,7 @@ class GUIWindow():
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)
         self.scan_frame.grid(row=0, column=0)
 
+        # resets retake variables if the login screen is opened
         self.retake = False
         self.retaken = False
 
@@ -185,8 +177,6 @@ class GUIWindow():
         self.camera_index = -1
         self.photo_index = -1
 
-        print(self.data_holder.photos)
-
         self.next_frame_camera_frame()
 
 
@@ -196,22 +186,15 @@ class GUIWindow():
         logging.debug("GUIWindow: Trying to go to the next camera_frame.")
         photo_list = self.data_holder.get_photo_list()
 
+        # goes back to summary after photo has been retaken
         if self.retake == True and self.retaken == True:
             self.set_frame_test_summary()
         else:
             # number of photos is determined in the data holder
-            # if top and bottom is seleted, 2 photos are taken
-            # if connectors is selected, then it sets the number of connectors based on the serial number
-            if self.data_holder.photos == 'Top and Bottom':
-                if (self.camera_index < len(photo_list)):
-                    self.set_frame_camera_frame(self.camera_index)
-                else:
-                    self.set_frame_inspection_frame()
+            if (self.camera_index < len(photo_list)):
+                self.set_frame_camera_frame(self.camera_index)
             else:
-                if (self.camera_index < int(self.data_holder.num_modules)):
-                    self.set_frame_camera_frame(self.camera_index)
-                else:
-                    self.set_frame_inspection_frame()
+                self.set_frame_test_summary()
 
 
         logging.debug("GUIWindow: Frame has been set to the next camera_frame.")
@@ -233,17 +216,6 @@ class GUIWindow():
 
     #################################################
 
-    def set_frame_photo_frame(self):
-        self.photo_index = self.camera_index
-        print("\nphoto_index = #", self.photo_index)
-        logging.debug("GUIWindow: Setting frame to photo frame #{}.".format(self.photo_index))
-        self.camera_index += 1
-        self.photo_frame.set_text(self.photo_index)
-        self.set_frame(self.photo_frame)
-        self.photo_frame.update()
-
-    #################################################
-
     def set_frame_scan_frame(self):
         self.camera_index = 0
         self.photo_index = 0
@@ -252,15 +224,14 @@ class GUIWindow():
         self.scan_frame.scan_QR_code(master_window)
 
      #################################################
-    def set_frame_postscan(self):
 
+    def set_frame_postscan(self):
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
 
     #################################################
 
     def set_frame_splash_frame(self):
-
         self.set_frame(self.splash_frame)
 
     #################################################
@@ -360,7 +331,6 @@ class GUIWindow():
     #################################################
 
     def remove_all_widgets(self):
-        self.photo_frame.remove_widgets(self)
         self.inspection_frame.remove_widgets(self)
         self.add_user_frame.remove_widgets(self)
 
@@ -383,10 +353,8 @@ class GUIWindow():
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
-        # popup.wm_attributes('-toolwindow', 'True')
         self.popup.title("Help Window")
         self.popup.geometry("650x650+500+300")
-        #self.popup.grab_set()
 
         self.mycanvas = tk.Canvas(self.popup, background="#808080", width=630, height =650)
         self.viewingFrame = tk.Frame(self.mycanvas, width = 200, height = 200)
@@ -409,11 +377,6 @@ class GUIWindow():
 
         self.set_help_text(current_window)
 
-        # Creates frame in the new window
-        #frm_popup = tk.Frame(self.mycanvas)
-        #frm_popup.pack()
-
-
         # Creates label in the frame
         lbl_popup = tk.Label(
             self.viewingFrame,
@@ -427,16 +390,6 @@ class GUIWindow():
         self.scroller.pack(side="left", fill="both", expand=True)
 
 
-        #btn_ok = tk.Button(
-        #    frm_popup,
-        #    width = 8,
-        #    height = 2,
-        #    text = "OK",
-        #    font = ('Arial', 8),
-        #    relief = tk.RAISED,
-        #    command = lambda: self.destroy_popup()
-        #)
-        #btn_ok.grid(column = 0, row = 0)
 
 
     #############################################
@@ -446,10 +399,6 @@ class GUIWindow():
         # Help text from file
         file = open("{}/HGCAL_Help/{}_help.txt".format(PythonFiles.__path__[0], type(current_window).__name__))
         self.all_text = file.read()
-
-
-        #print("\nall_text: ", self.all_text)
-
 
         self.label_text.set(self.all_text)
 
@@ -492,7 +441,6 @@ class GUIWindow():
     def destroy_function(self, event=None):
         try:
             self.camera_frame.remove_widgets(self)
-            self.photo_frame.remove_widgets(self)
 
             logging.info("GUIWindow: Exiting the GUI.")
 

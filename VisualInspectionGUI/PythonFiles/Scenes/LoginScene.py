@@ -38,8 +38,9 @@ class LoginScene(tk.Frame):
         logging.info("LoginScene: Frame has been created.")
 
 
+        # TODO retire this scene and automatically log in based on the user signed in
+
         # Creating a list of users for dropdown menu
-        # Eventually need to add a way for a database to have control over this list
         User_List = self.data_holder.get_all_users()
 
         # Creating the title for the window
