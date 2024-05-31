@@ -20,6 +20,7 @@ class DataHolder():
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
 
+        # dictionary to store data
         self.data_dict = {
                 'user_ID': "_",
                 'test_stand': str(socket.gethostname()),
@@ -33,6 +34,7 @@ class DataHolder():
         self.data_dict["inspection_completed"] = False
         self.data_dict["inspection_pass"] = False
 
+        # dictionary to hold images before sending them to the database
         self.image_holder = {}
 
         # For the visual inspection component
@@ -45,8 +47,6 @@ class DataHolder():
                 }
 
         self.image_data = []
-
-        self.photos = 'Top and Bottom'
 
         # All of the checkbox logic
         # Dictionaries stored by inspection index
@@ -100,7 +100,7 @@ class DataHolder():
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)
 
 
-
+    # checks if the board is in the database already
     def check_if_new_board(self):
         logging.info("DataHolder: Checking if serial is a new board")
         print("testing if new board")
@@ -111,6 +111,7 @@ class DataHolder():
         is_new_board = self.data_sender.is_new_board(sn)
         print(is_new_board)
 
+        # if it's new, checks it in
         if is_new_board == True:
             in_id = self.data_sender.add_new_board(sn, user, comments)
             if in_id:
@@ -118,6 +119,7 @@ class DataHolder():
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
 
+        # otherwise it looks for previous test results
         else:
             prev_results, test_names = self.data_sender.get_previous_test_results(sn)
             if prev_results:
@@ -156,31 +158,19 @@ class DataHolder():
             # Saves the image to a file
             image.save(i)
 
-
+    # sends the image to the database
     def send_image(self):
-        if self.photos == 'Top and Bottom':
-            for i in self.image_holder:
-                idx = int(i[-5])
-                if idx == 0:
-                    view = 'Top'
-                else:
-                    view = 'Bottom'
-                print(view)
-                self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], view)
-
-        if self.photos == 'Connectors':
-            for i in self.image_holder:
-                idx = i[14]
-                self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], 'Connector ' + (idx+1))
-
-    def test_new_board(self, sn):
-        logging.info("DataHolder: Checking if serial is a new board")
-        return self.data_sender.is_new_board(sn)
-        #message = "is_new_board;{'sn': {}}".format(sn)
-        #return self.dbclient.send_request(message)
+        for i in self.image_holder:
+            idx = int(i[-5])
+            if idx == 0:
+                view = 'Top'
+            else:
+                view = 'Bottom'
+            print(view)
+            self.data_sender.add_board_image(self.data_dict["current_serial_ID"], self.image_holder[i], view)
 
 
-
+    # sets the boards location in the database to the current test stand
     def update_location(self, sn):
         text = self.data_sender.update_location(sn, 'Visual Inspection')
         print(text)
@@ -215,6 +205,7 @@ class DataHolder():
         logging.info("DataHolder: All results sent to database.")
     #################################################
 
+    # current method to send to the database
     def send_to_DB(self):
         test_names = "Visual Inspection"
         test_type_id = 0
@@ -237,8 +228,6 @@ class DataHolder():
 
     def get_all_users(self):
         users_list = self.data_sender.get_usernames()
-        #users_list = self.dbclient.send_request("get_usernames")
-        #print ("\n users_list:", users_list)
         return users_list
 
     #################################################
@@ -251,6 +240,7 @@ class DataHolder():
 
     #################################################
 
+    # sends the visual inspection json comments to the database
     def update_from_json_string(self):
 
         test_type = "Visual Inspection"
@@ -258,8 +248,6 @@ class DataHolder():
 
         passed = not any([x for x in self.inspection_data.values()][:-1])
 
-        #self.data_dict['user_ID'] = 
-        #self.data_dict['current_serial_ID'] = json_dict["board_sn"]
         self.data_dict['inspection_completed'] = True
         self.data_dict['inspection_pass'] = int(passed)
         self.data_dict['data'] = self.inspection_data
@@ -309,6 +297,7 @@ class DataHolder():
     ################################################
 
     # Keeps the login information stored
+    # resets all other data
     def data_holder_new_test(self):
 
         self.data_dict = {

@@ -42,7 +42,9 @@ class CameraScene(tk.Frame):
 
     def __init__(self, parent, master_frame, data_holder, video_source=0 ):
 
+        # variables to determine what to do with photo and prompting text
         self.photo_packed = False
+        self.flip = False
 
         self.master_frame = master_frame
 
@@ -61,16 +63,11 @@ class CameraScene(tk.Frame):
 
         # Frame for the buttons
         btn_frame=tk.Frame(self, width = 800)
-        #btn_frame.place(x=0,y=0, anchor="nw", width=800)
         btn_frame.pack(anchor="nw")
 
         # Snapshot button
         self.btn_snapshot=tk.Button(btn_frame, text="Snapshot",width=20, command=self.snapshot, fg="white")
         self.btn_snapshot.pack(side="left", padx=10, pady=10)
-
-        # Submit Button
-        # self.btn_snapshot=tk.Button(btn_frame, text="Submit",width=20, command=self.submit_button_action, fg="white")
-        # self.btn_snapshot.pack(side="right", padx=10, pady=10)
 
         # Help button
         self.btn_proses=tk.Button(
@@ -112,7 +109,7 @@ class CameraScene(tk.Frame):
         )
         self.desc_label.pack(side="right", padx=(90, 20), pady=10)
 
-	# Prevents the frame from shrinking
+        # Prevents the frame from shrinking
         self.pack_propagate(0)
 
 
@@ -123,6 +120,24 @@ class CameraScene(tk.Frame):
 
 
     def update_preview(self):
+
+        # gets rid of any old image
+        if self.photo_packed == True:
+            self.Engine_label.destroy() 
+            self.photo_packed = False
+
+            # adds text saying to flip the board over if it's the first time the bottom picture is being taken
+            if self.parent.retake == True:
+                pass
+            else: 
+                self.flip_label = tk.Label(
+                    master = self,
+                    text = 'Flip Board Over',
+                    font = ('Arial', 20),
+            )
+                self.flip_label.pack()
+                self.flip = True
+            
 
         # Prevents the camera from being started twice
         # If the camera is started twice, throws exceptions
@@ -156,13 +171,9 @@ class CameraScene(tk.Frame):
     def set_text(self, index):
         self.current_index = index
 
-        if self.data_holder.photos == 'Top and Bottom':
-            updated_title = self.data_holder.get_photo_list()[index]["name"]
-            updated_description = self.data_holder.get_photo_list()[index]["desc_short"]
-            print("updated_title: ", updated_title)
-        else:
-            updated_title = 'Connector ' + str(index+1)
-            updated_description = ''
+        updated_title = self.data_holder.get_photo_list()[index]["name"]
+        updated_description = self.data_holder.get_photo_list()[index]["desc_short"]
+        print("updated_title: ", updated_title)
 
         self.desc_label_text.set(updated_title)
         self.long_desc_label_text.set(updated_description)
@@ -171,7 +182,7 @@ class CameraScene(tk.Frame):
 
     # Saves a picture of the currently shown camera
     def snapshot(self):
-        # Writes the image to a file with a name that includes the date
+        # sets up a name for the file
         shortened_pn = "captured_image{}.png".format(self.current_index)
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
         print("self.photo_name: ", self.photo_name)
@@ -179,24 +190,12 @@ class CameraScene(tk.Frame):
         # Cannot be called unless camera is already started
         self.image = camera.switch_mode_and_capture_image(shortened_pn)
 
-        #try:
-        #    camera.stop_preview()
-        #    camera.stop()
-        #    self.camera_created = False
-        #except:
-        #    print("CameraScene: Unable to stop preview")
-        #    logging.debug("CameraScene: Unable to stop preview")
-
-        # Displays the image
-        # Ensure that the camera aspect ratio matches the aspect ratio here
-        # This may require some fine-tuning
-        #self.Engine_image = PIL.Image.open(self.photo_name)
-
+        # automatically crops the image by cutting away the background
         bg = PIL.Image.new(self.image.mode, self.image.size, self.image.getpixel((0,0)))
         diff = ImageChops.difference(self.image, bg)
         diff = ImageChops.add(diff, diff, 2.0, -60)
         imageBox = diff.getbbox()
-        # adds padding to the image, scuffed but it works
+        # adds padding to the image before cropping, scuffed but it works
         # can't work directly with a tuple, need to make list and then go back to tuple
         imageBox = list(imageBox)
         imageBox[0] += -50
@@ -206,28 +205,35 @@ class CameraScene(tk.Frame):
         imageBox = tuple(imageBox)
         self.image = self.image.crop(imageBox)
 
+        # stores the image in the data holder
+        # doesn't try to write it to disk, uses more ram but saves time
         self.data_holder.image_holder[self.photo_name] = self.image
+        # scales the image to fit the gui window after it's been cropped
+        # this doesn't affect the size of the actual image that goes into the Database
         height = int(self.image.size[1]*(1000/self.image.size[0]))
         self.Engine_image = self.image.resize((1000, height), PIL.Image.Resampling.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
-        # Check to see if it should just replace the old image
-        if self.photo_packed is False:
+        # if the flip prompt exists, destroy it
+        if self.flip == True:
+            self.flip_label.destroy()
+
+        # if there isn't an image currently displayed, add one
+        if self.photo_packed == False:
             self.Engine_label = tk.Label(self)
             self.Engine_label.configure(image=self.Engine_PhotoImage)
             self.Engine_label.image = self.Engine_PhotoImage
 
             self.Engine_label.pack()
             self.photo_packed = True
+        # else, replace the previous image
+        # this is used when retaking the image before clicking submit
         else:
             self.Engine_label.configure(image=self.Engine_PhotoImage)
             self.Engine_label.image = self.Engine_PhotoImage
-            print("\nreset image\n")
 
         self.data_holder.image_data.append(self.photo_name)
         self.parent.set_image_name(shortened_pn)
-
-        #self.submit_button_action()
 
     def continuous_update(self):
 
@@ -238,9 +244,7 @@ class CameraScene(tk.Frame):
 
             time.sleep(1)
 
-    # Submits the photo and goes to the next screen
-    # doesn't save the photo to disk initially for increased speed
-    # photo is stored in a dictionary and all photos are saved at the end
+    # goes to the next screen
     def submit_button_action(self):
         try:
             camera.stop_preview()
@@ -249,11 +253,12 @@ class CameraScene(tk.Frame):
         except:
             print("CameraScene: Unable to stop preview")
             logging.debug("CameraScene: Unable to stop preview")
+
+        # if a photo is being retaken, set the retaken value to true
         if self.parent.retake == True:
             self.parent.retaken = True
 
         self.parent.next_frame_camera_frame()
-        #self.parent.set_frame_photo_frame()
 
 
     # Closes the video camera with the "release()" command

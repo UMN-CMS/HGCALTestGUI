@@ -57,8 +57,11 @@ class PostScanScene(tk.Frame):
         else:
             logging.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
+        # creates a canvas to put things on
+        # need a canvas to be able to scroll
         self.canvas = tk.Canvas(self, width=800, height=600)
         self.frame = tk.Frame(self.canvas, width=800, height=600)
+        # allows for scrolling if tests go off the page
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
@@ -159,21 +162,13 @@ class PostScanScene(tk.Frame):
         
 
         # Creating the proceed buttons
-        tb_button = tk.Button(
+        proc_button = tk.Button(
             self.frame,
             relief = tk.RAISED,
-            text = "Top and Bottom",
-            command = lambda: self.btn_tb_action(parent)
+            text = "Next",
+            command = lambda: self.btn_proc_action(parent)
         )
-        tb_button.grid(row=1, column=3, padx = 10, pady = 10)
-
-        conn_button = tk.Button(
-            self.frame,
-            relief = tk.RAISED,
-            text = "Connectors",
-            command = lambda: self.btn_conn_action(parent)
-        )
-        conn_button.grid(row=2, column=3, padx = 10, pady = 10)
+        proc_button.grid(row=1, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
         next_board_button = tk.Button(
@@ -182,7 +177,7 @@ class PostScanScene(tk.Frame):
             text = "Back to Scan",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=2, column=3, padx = 10, pady = 10)
  
 
         # Creating the logout button
@@ -192,20 +187,15 @@ class PostScanScene(tk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=3, column=3, padx = 10, pady = 20)
  
     
 
 
     #################################################
 
-    def btn_tb_action(self, parent):
-        self.data_holder.photos = 'Top and Bottom'
-        parent.first_frame_camera_frame()
-
-    def btn_conn_action(self, parent):
-        self.data_holder.photos = 'Connectors'
-        parent.first_frame_camera_frame()
+    def btn_proc_action(self, parent):
+        parent.set_frame_inspection_frame()
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()
