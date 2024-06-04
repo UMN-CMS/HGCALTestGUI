@@ -196,6 +196,7 @@ class Inspection1(tk.Frame):
  
         self.data_holder.set_comment_dict(0, self.comment_box.get())  
         self.data_holder.add_inspection_to_comments()
+        self.data_holder.update_from_json_string()
         self.data_holder.print()
 
 
