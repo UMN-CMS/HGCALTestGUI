@@ -231,7 +231,6 @@ class TestSummaryScene(tk.Frame):
 
     def btn_NextBoard_action(self, parent):
         # this function saves the images
-        self.data_holder.update_from_json_string()
         self.data_holder.send_image()
         parent.set_frame_scan_frame()
 
