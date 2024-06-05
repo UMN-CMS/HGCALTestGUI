@@ -28,10 +28,18 @@ class DataHolder():
             self.test_list = self.data_sender.get_test_list()
             gui_tests = self.gui_cfg.getTests()
             db_test_names = dict(self.test_list)
-            self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
+            self.index_gui_to_db = {}
+            for i,x in enumerate(gui_tests):
+                if x['name'] in db_test_names.keys():
+                    self.index_gui_to_db[i] = x['name']
+            #self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
 
         else:
-            self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
+            gui_tests = self.gui_cfg.getTests()
+            self.index_gui_to_db = {}
+            for i,x in enumerate(gui_tests):
+                self.index_gui_to_db[i] = x['name']
+            #self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
 
         #dictionary of info to be held
         self.data_dict = {

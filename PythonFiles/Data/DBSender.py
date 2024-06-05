@@ -230,8 +230,7 @@ class DBSender():
             pass        
 
     def add_general_test(self, results, files):
-        if (self.use_database):
-    
+        if (self.use_database): 
             r = requests.post('{}/add_test2.py'.format(self.db_url), data = results, files=files)
 
         else:
