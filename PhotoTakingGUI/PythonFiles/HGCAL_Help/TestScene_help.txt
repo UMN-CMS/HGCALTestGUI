@@ -1,0 +1,45 @@
+----------------------------------------------------------------------------------------
+
+	HGCAL GUI HELP
+
+----------------------------------------------------------------------------------------
+
+
+	Scene: Test Scene
+
+	Date Updated: 6/16/23
+
+
+----------------------------------------------------------------------------------------
+
+
+	The Test Scene is a very important scene, as it is the last scene you will
+	see before a test is run. It is important to ensure that all of the 
+	information shown on this screen is correct before proceeding. 
+
+	There are three boxes of information displayed on this screen: "Tester", 
+	"Serial Number", and "Current Test". The first should display your name,
+	the second should display the serial ID of the board that you would like
+	to test (make sure that it is plugged into the test stand at this point),
+	and the third should display the name of the test that is going to be run.
+
+	If any of this information is incorrect, then you will need to proceed to
+	the previous scenes in order to change this information. If your username 
+	is incorrect, you will need to press the "Logout" button to return to the
+	Login Scene. If the board serial number is incorrect or if you would like
+	to switch which board you are testing, you will need to press the "Change
+	Board" button to go back to the Scan Scene. 
+
+	If all of the information looks correct, pressing the "Confirm" button
+	will send you to the Test In Progress Scene. This button will also tell
+	the testing machine to begin the test (which test is specified by the name
+	listed under the "Current Test"). 
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
+

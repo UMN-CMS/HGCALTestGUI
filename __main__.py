@@ -125,11 +125,11 @@ def run(board_cfg):
         pass
 
 
-def board_config(sn):
+def board_config(full):
 
     board_cfg = None
     
-    if sn == None:
+    if full == None:
         if any(node in y for y in  wagon_GUI_computers):
             from TestConfigs.Wagon_cfg import masterCfg
 
@@ -148,7 +148,7 @@ def board_config(sn):
         run(board_cfg)
 
     else:
-        update_config(sn)
+        update_config(full)
 
 def import_yaml(config_path):
 

@@ -1,0 +1,26 @@
+----------------------------------------------------------------------------------------
+
+	HGCAL GUI HELP
+
+----------------------------------------------------------------------------------------
+
+
+	Scene: Select Check Scene
+
+	Date Updated: 6/16/23
+
+
+----------------------------------------------------------------------------------------
+
+
+	The Select Check Scene is displayed after the Login Scene. The purpose of this 
+	scene is to select whether boards are being checked in or out of the lab.
+	Users must select an option provided in the drop-down box. After selecting the 
+	correct option, the submit button will bring you to the next scene, which is the 
+	Scan Scene.
+
+
+
+---------------------------------------------------------------------------------------
+
+

@@ -31,6 +31,23 @@ class DBSender():
         else:
             pass
 
+    def decode_label(self, full_id):
+        
+        r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/LabelDB/decode_label.py', data={'label': full_id})
+
+        lines = r.text.split('\n')
+
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
+
+        label_info = []
+
+        for i in range(begin, end):
+            label_info.append(lines[i])
+
+        return label_info
+
+
     def add_new_user_ID(self, user_ID, passwd):
         
         if (self.use_database):
@@ -53,8 +70,6 @@ class DBSender():
             r = requests.get('{}/get_usernames.py'.format(self.db_url))
             lines = r.text.split('\n')
 
-            print(lines)
-
             begin = lines.index("Begin") + 1
             end = lines.index("End")
 
@@ -72,53 +87,16 @@ class DBSender():
             #return ['User1', 'User2', 'User3']
             return self.gui_cfg.getUsers()
 
-    def add_board_image(self, serial, image):
-        pass
-        
-
-    # Returns a list of booleans
-    # Whether test (by index) has been completed or not
-    def get_test_completion_staus(self, serial_number):
-        
-        if (self.use_database):
-            r = requests.post('{}/get_test_completion_status.py'.format(self.db_url), data= serial_number)
-            
-            lines = r.text.split('\n')
-            begin = lines.index("Begin") + 1 
-            end = lines.index("End")
-            
-            tests_completed = []
-            for i in range(begin, end):
-                temp = lines[i][1:-1].split(",")
-                temp[0] = str(temp[0])
-                temp[1] = int(temp[1])
-                tests_completed.append(temp)
-
-            return tests_completed
-
-        # If not using the database...
-        else:
-
-            blank_completion = []
-            for i in enumerate(self.gui_cfg.getNumTest()):
-                blank_completion.append('False')
-
-            return blank_completion
-
-
-
 
     # Returns a list of booleans
     # Whether or not DB has passing results 
-    def get_previous_test_results(self, serial_number):
+    def get_previous_test_results(self, full_id):
    
-        r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'serial_number': str(serial_number)})
-        if serial_number[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
-        if serial_number[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"serial_number": str(serial_number)})
+        if full_id[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
+        if full_id[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
         
-        print(r.text)
         lines = r.text.split('\n')
 
         begin1 = lines.index("Begin1") + 1
@@ -146,15 +124,15 @@ class DBSender():
         return tests_passed, poss_tests
     
     
-    # Posts a new board with passed in serial number
-    def add_new_board(self, sn, user_id, comments):
-        if sn[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"serial_number": str(sn)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"serial_number": str(sn), 'person_id': str(user_id), 'comments': str(comments)})
+    # Posts a new board with passed in full id
+    def add_new_board(self, full, user_id, comments):
+        if full[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
             
-        if sn[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"serial_number": str(sn)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"serial_number": str(sn), 'person_id': str(user_id), 'comments': str(comments)})
+        if full[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
 
         try:
             lines = r.text.split('\n')
@@ -171,13 +149,12 @@ class DBSender():
 
         return in_id
 
-    def update_location(self, sn, loc):
-        if sn[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
-        if sn[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"serial_number": str(sn), 'location': loc})
+    def update_location(self, full, loc):
+        if full[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
+        if full[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
         
-        print(r.text)
         lines = r.text.split('\n')
    
         begin = lines.index("Begin") + 1
@@ -187,14 +164,12 @@ class DBSender():
         for i in range(begin, end): 
             return lines[i]
 
-    def is_new_board(self, sn):
-        print(sn[3])
-        if sn[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
-        if sn[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"serial_number": str(sn)})
+    def is_new_board(self, full):
+        if full[3] == 'W':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
+        if full[3] == 'E':
+            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
         
-        print(r.text)
         lines = r.text.split('\n')
    
         begin = lines.index("Begin") + 1
@@ -211,7 +186,7 @@ class DBSender():
 
 
     # Posts information via the "info" dictionary
-    # Serial number is within the info dictionary
+    # full id is within the info dictionary
     def add_board_info(self, info):
         
         if (self.use_database):
