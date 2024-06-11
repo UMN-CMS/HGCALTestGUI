@@ -45,7 +45,7 @@ class DataHolder():
         self.data_dict = {
                 'user_ID': "_",
                 'test_stand': str(socket.gethostname()),
-                'current_serial_ID': "-1BAD",
+                'current_full_ID': "-1BAD",
                 'queue': None,
                 'comments': "_",
                 'prev_results': None,
@@ -89,6 +89,8 @@ class DataHolder():
         # All of the comments logic
         # Dictionaries stored by inspection index
         self.all_comments = []
+
+        self.label_info = None
        
         # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
@@ -141,29 +143,26 @@ class DataHolder():
         for item in self.get_all_users():
             if self.data_dict['user_ID'] == item:
                 is_new_user_ID = False
-        #print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
-            #message = "add_new_user_ID;{'user_ID': {}, 'passwd': {}}".format(self.data_dict['user_ID'], passwd)
-            #self.dbclient.send_request(message)
 
     def get_physical_criteria(self, num):
         return self.ptest_criteria[num]
 
-    # when a serial number gets entered, this function checks if it's new
+    # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
-        logger.info("DataHolder: Checking if serial is a new board")
+        logger.info("DataHolder: Checking if full id is a new board")
 
-        sn = self.get_serial_ID()
+        full = self.get_full_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during general testing'
         #returns true if the board is new, false if not
-        is_new_board = self.data_sender.is_new_board(sn)
+        is_new_board = self.data_sender.is_new_board(full)
         
         if is_new_board == True:
             # data sender's add new board function returns the check in id
-            in_id = self.data_sender.add_new_board(sn, user, comments)
+            in_id = self.data_sender.add_new_board(full, user, comments)
             if in_id:
                 #print('Board added to Database')
                 self.data_dict['test_names'] = None
@@ -171,13 +170,18 @@ class DataHolder():
 
         else:
             # if the board is not new, this returns the previous testing information on the board
-            prev_results, test_names = self.data_sender.get_previous_test_results(sn)
+            prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
                 self.data_dict['test_names'] = test_names
                 self.data_dict['prev_results'] = prev_results
             else:
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
+
+    def decode_label(self):
+        full_id = self.get_full_ID()
+
+        self.label_info = self.data_sender.decode_label(full_id)
 
 
     #################################################
@@ -192,35 +196,25 @@ class DataHolder():
 
     ##################################################
 
-    def set_serial_ID(self, sn):
-        #self.data_sender.add_new_board(sn)
-        #message = "add_new_board;{'sn': {}}".format(sn)
-        #self.dbclient.send_request(message)
-                    
-        self.data_dict['current_serial_ID'] = sn
+    def set_full_ID(self, full):
+        self.data_dict['current_full_ID'] = full
         if self.gui_cfg.getSerialCheckSafe():
-            new_cfg = update_config(sn)
+            new_cfg = update_config(full)
             self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
-        logger.info("DataHolder: Serial Number has been set.")
-
-    def test_new_board(self, sn):
-        logger.info("DataHolder: Checking if serial is a new board")
-        return self.data_sender.is_new_board(sn)
-        #message = "is_new_board;{'sn': {}}".format(sn)
-        #return self.dbclient.send_request(message)
+        logger.info("DataHolder: Full ID has been set.")
 
 
-    def update_location(self, sn):
-        text = self.data_sender.update_location(sn, self.data_dict['test_stand'])
+    def update_location(self, full):
+        text = self.data_sender.update_location(full, self.data_dict['test_stand'])
         print(text)
 
 
     ##################################################
 
-    def get_serial_ID(self):
-        return self.data_dict['current_serial_ID']
+    def get_full_ID(self):
+        return self.data_dict['current_full_ID']
 
     #################################################
 
@@ -229,7 +223,7 @@ class DataHolder():
           
         person_ID = self.data_dict['user_ID']
         comments = self.data_dict['comments']
-        serial_number = self.get_serial_ID()
+        full_id = self.get_full_ID()
         
          
         for i in range(len(self.data_dict['tests_run'])):
@@ -237,7 +231,7 @@ class DataHolder():
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
-            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
+            info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
                 print(info_dict)
                 json.dump(info_dict, outfile)
@@ -262,23 +256,19 @@ class DataHolder():
             temp = 1 
 
 
-        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
             json.dump(info_dict, outfile)
 
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        #message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        #self.dbclient.send_request(message)
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
    
     def get_all_users(self):
         users_list = self.data_sender.get_usernames() 
-        #users_list = self.dbclient.send_request("get_usernames")
-        #print ("\n users_list:", users_list)
         return users_list
 
     #################################################
@@ -304,7 +294,8 @@ class DataHolder():
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
         self.data_dict['user_ID'] = json_dict["tester"]
-        self.data_dict['current_serial_ID'] = json_dict["board_sn"] 
+        # TODO replace instances of serial number within test scripts with full id
+        self.data_dict['current_full_ID'] = json_dict["board_sn"] 
         self.data_dict['test{}_completed'.format(current_test_idx)] = True
         self.data_dict['test{}_pass'.format(current_test_idx)] = json_dict["pass"]
 
@@ -370,13 +361,13 @@ class DataHolder():
     ################################################
 
     # resets the data holder when a new board is scanned
-    # Keeps the login information stored, serial number has already been changed
+    # Keeps the login information stored, full id has already been changed
     def data_holder_new_test(self): 
 
         self.data_dict = {
                 'user_ID': self.data_dict['user_ID'],
                 'test_stand': str(socket.gethostname()),
-                'current_serial_ID': self.data_dict['current_serial_ID'],
+                'current_full_ID': self.data_dict['current_full_ID'],
                 'queue': self.data_dict['queue'],
                 'comments': "_",
                 'prev_results': None,
@@ -401,6 +392,8 @@ class DataHolder():
                 }
 
         self.total_test_num = 0
+
+        self.label_info = None
 
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict['test{}_completed'.format(i)] = False

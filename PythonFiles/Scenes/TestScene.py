@@ -64,22 +64,22 @@ class TestScene(tk.Frame):
         ent_tester.pack(side = 'top')
         ent_tester.config(state = "disabled")
 
-        # Create a label for the serial number box
-        lbl_snum = tk.Label(
+        # Create a label for the full id box
+        lbl_full = tk.Label(
             frm_window, 
-            text = "Serial Number: ", 
+            text = "Full ID: ", 
             font = font_scene
             )
-        lbl_snum.pack(side = 'top')
+        lbl_full.pack(side = 'top')
 
-        # Create a entry for the serial number box
-        ent_snum = tk.Entry(
+        # Create a entry for the full id box
+        ent_full = tk.Entry(
             frm_window, 
             font = font_scene
             )
-        ent_snum.insert(0, self.data_holder.data_dict['current_serial_ID'])
-        ent_snum.pack(side = 'top')
-        ent_snum.config(state = "disabled")
+        ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
+        ent_full.pack(side = 'top')
+        ent_full.config(state = "disabled")
 
         # Create a label for the test about to be run
         lbl_test = tk.Label(
@@ -212,7 +212,7 @@ class TestScene(tk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
       
         #try:
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
 
@@ -243,7 +243,7 @@ class Test1Scene(TestScene):
 
         self.data_holder.print()
         super().btn_confirm_action(_parent)
-        test_1_client = REQClient('test1', self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        test_1_client = REQClient('test1', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
 
 #################################################################################
@@ -257,7 +257,7 @@ class Test2Scene(TestScene):
     def btn_confirm_action(self, _parent):
         self.data_holder.print()
         super().btn_confirm_action(_parent)
-        test_2_client = REQClient('test2', self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        test_2_client = REQClient('test2', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
         
 
@@ -274,7 +274,7 @@ class Test3Scene(TestScene):
 
         self.data_holder.print()
         super().btn_confirm_action(_parent)
-        test_3_client = REQClient('test3', self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        test_3_client = REQClient('test3', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
 
 
@@ -290,7 +290,7 @@ class Test4Scene(TestScene):
 
         self.data_holder.print()
         super().btn_confirm_action(_parent)
-        test_4_client = REQClient('test4', self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        test_4_client = REQClient('test4', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
 
 #################################################################################

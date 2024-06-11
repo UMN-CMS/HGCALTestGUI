@@ -35,7 +35,7 @@ class LocalHandler:
             if request is not None:
 
                 desired_test = request["desired_test"]
-                test_info = {"serial": request["serial"], "tester": request["tester"]}
+                test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
                 print("New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(conn_test, gui_cfg, desired_test, test_info))
@@ -103,7 +103,7 @@ class LocalHandler:
         mod = __import__(test_meta["TestScript"][:-3], fromlist=[test_meta["TestClass"]])
         test_class = getattr(mod, test_meta["TestClass"])
 
-        test_class(conn_test, board_sn=test_info["serial"], tester=test_info["tester"])
+        test_class(conn_test, board_sn=test_info["full_id"], tester=test_info["tester"])
 
 
     # removed in favor of task_local, which functions without a ZMQ server

@@ -166,11 +166,11 @@ class GUIWindow():
     #################################################
 
     def update_config(self):
-        #switch between Wagon and Engine config depending on the serial number entered
-        sn = self.data_holder.get_serial_ID()
+        #switch between Wagon and Engine config depending on the full id entered
+        full = self.data_holder.get_full_ID()
         if not self.gui_cfg.getSerialCheckSafe():
             return
-        new_cfg = update_config(sn)
+        new_cfg = update_config(full)
         self.gui_cfg = new_cfg
 
     #################################################
@@ -180,8 +180,8 @@ class GUIWindow():
         self.running_all_idx = test_idx
         self.run_all_tests_bool = True
 
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-        #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
+        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
 
         print("Confirm button sending test{}".format(self.running_all_idx))
@@ -327,7 +327,7 @@ class GUIWindow():
                 self.current_test_index += 1
                 
                 gui_cfg = self.data_holder.getGUIcfg()
-                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
                 self.set_frame_test_in_progress(self.queue)
 
                 print("Confirm button sending test{}".format(self.running_all_idx))

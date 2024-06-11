@@ -1,0 +1,36 @@
+----------------------------------------------------------------------------------------
+
+ 	HGCAL GUI HELP
+
+----------------------------------------------------------------------------------------
+
+
+	Scene: Splash Scene
+
+	Date Updated: 6/16/23
+
+
+----------------------------------------------------------------------------------------
+
+
+	The Splash Scene is displayed when the graphical user interface (GUI) is first
+	ran. The information provides credit to the students largely responsible
+	for the creation of this interface. The three students listed, along with
+	their home institutions are as follows:
+	
+		- Bryan Crossman (University of Minnesota)
+		- Andrew Kirzeder (Bethel University)
+		- Garrett Schindler (Bethel University)
+
+	This scene should only be displayed for a short period of time before
+	moving on to the next scene. The next scene should be the Login Scene.
+	No buttons are required to be pressed on this screen.
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
+

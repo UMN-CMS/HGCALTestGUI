@@ -1,0 +1,36 @@
+----------------------------------------------------------------------------------------
+
+	HGCAL GUI HELP
+
+----------------------------------------------------------------------------------------
+
+
+	Scene: Login Scene
+
+	Date Updated: 6/16/23
+
+
+----------------------------------------------------------------------------------------
+
+
+	The Login Scene is displayed directly after the Splash Scene as well as
+	via the "logout" buttons on many scenes. The purpose of this scene is to
+	have the user log into the system using the credentials stored on the 
+	web database. When this scene is shown, there is a call to the web 
+	database to grab the login options.
+
+	Users must select an option from the list of users provided in the drop-
+	down box. After selecting the desired user's name, the submit button will
+	bring you to the next scene, which is the Scan Scene.
+
+	If there is not an option for a specific user, you can select 
+	the "Add User" button to bring you to the Add User Scene. 
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
+

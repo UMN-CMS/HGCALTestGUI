@@ -50,12 +50,9 @@ class GUIConfig():
     def getUseScanner(self):
         return self.board_cfg["UsingScanner"]
 
-
-    # Get number of tests to define order of scenes and sidebar
     def getTests(self):
         return self.board_cfg["Test"]
 
-    # Get number of physical tests to define order of scenes and sidebar
     def getPhysicalTests(self):
         return self.board_cfg["PhysicalTest"]
 

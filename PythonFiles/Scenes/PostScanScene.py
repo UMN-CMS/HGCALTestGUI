@@ -21,7 +21,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-# Frame that shows up after serial number has been entered with info about the board
+# Frame that shows up after board has been entered with info about the board
 # @param parent -> References a GUIWindow object
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
@@ -86,14 +86,48 @@ class PostScanScene(tk.Frame):
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
 
-        # Adds Board Serial Number to the SummaryFrame
+        # Adds Board Full ID to the SummaryFrame
         self.id = tk.Label(
                 self.frame, 
                 fg='#0d0d0d', 
-                text = "Serial Number:" + str(self.data_holder.data_dict['current_serial_ID']),
-                font=('Arial',14,'bold')
+                text = str(self.data_holder.data_dict['current_full_ID']),
+                font=('Arial',16,'bold')
                 )
-        self.id.grid(row= 1, column= 1, pady = 20)
+        self.id.grid(row= 0, column= 2, pady = 20)
+
+        if self.data_holder.label_info:
+            self.major_name = tk.Label(
+                    self.frame, 
+                    fg='#0d0d0d', 
+                    text = "Major Type:" + str(self.data_holder.label_info[1]),
+                    font=('Arial',14,'bold')
+                    )
+            self.major_name.grid(row= 1, column= 1, pady = 20)
+
+            self.sub_name = tk.Label(
+                    self.frame, 
+                    fg='#0d0d0d', 
+                    text = "Sub Type:" + str(self.data_holder.label_info[3]),
+                    font=('Arial',14,'bold')
+                    )
+            self.sub_name.grid(row= 1, column= 2, pady = 20)
+
+            self.type_code = tk.Label(
+                    self.frame, 
+                    fg='#0d0d0d', 
+                    text = "Type Code:" + str(self.data_holder.label_info[4]),
+                    font=('Arial',14,'bold')
+                    )
+            self.type_code.grid(row= 2, column= 1, pady = 20)
+
+            self.sn_label = tk.Label(
+                    self.frame, 
+                    fg='#0d0d0d', 
+                    text = "SN:" + str(self.data_holder.label_info[5]),
+                    font=('Arial',14,'bold')
+                    )
+            self.sn_label.grid(row= 2, column= 2, pady = 20)
+
 
         green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
         green_check = green_check.resize((75, 75), Image.LANCZOS)
@@ -117,7 +151,7 @@ class PostScanScene(tk.Frame):
                             text = str(el) + ': ',
                             font=('Arial',14)
                             )
-                    self.lbl_res.grid(row=idx+2, column=1)
+                    self.lbl_res.grid(row=idx+3, column=1)
                     if res_dict[el] == 'Passed':
                         self.lbl_img = tk.Label(
                                 self.frame,
@@ -127,7 +161,7 @@ class PostScanScene(tk.Frame):
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=green_check
-                        self.lbl_img.grid(row=idx+2, column=2)
+                        self.lbl_img.grid(row=idx+3, column=2)
                     elif res_dict[el] == 'Failed':
                         self.lbl_img = tk.Label(
                                 self.frame,
@@ -137,14 +171,14 @@ class PostScanScene(tk.Frame):
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=redx
-                        self.lbl_img.grid(row=idx+2, column=2)
+                        self.lbl_img.grid(row=idx+3, column=2)
                     else:
                         self.lbl_res = tk.Label(
                                 self.frame,
                                 text = 'This test has not been run.',
                                 font=('Arial',14)
                                 )
-                        self.lbl_res.grid(row=idx+2, column=2)
+                        self.lbl_res.grid(row=idx+3, column=2)
                         
             else:
                 self.lbl_res = tk.Label(
@@ -152,16 +186,16 @@ class PostScanScene(tk.Frame):
                         text = str(self.data_holder.data_dict['prev_results']),
                         font=('Arial',14)
                         )
-                self.lbl_res.grid(row=2, column=1)
+                self.lbl_res.grid(row=3, column=1)
 
         except Exception as e:
             print(e)
-            self.lbl_snum = tk.Label(
+            self.lbl_full = tk.Label(
                     self, 
                     text = 'Error, No Results',
                     font=('Arial', 14) 
                     )
-            self.lbl_snum.grid(row = 2, column =1, pady = 10) 
+            self.lbl_full.grid(row = 3, column =1, pady = 10) 
 
         # Creating the proceed button
         proceed_button = tk.Button(
@@ -170,16 +204,16 @@ class PostScanScene(tk.Frame):
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
-        proceed_button.grid(row=1, column=3, padx = 10, pady = 10)
+        proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
         next_board_button = tk.Button(
             self.frame,
             relief = tk.RAISED,
-            text = "Back to Scan",
+            text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=2, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
  
 
         # Creating the logout button
@@ -189,7 +223,7 @@ class PostScanScene(tk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=3, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
  
     
 

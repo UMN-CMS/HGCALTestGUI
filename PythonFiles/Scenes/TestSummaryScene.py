@@ -34,7 +34,7 @@ class TestSummaryScene(tk.Frame):
         # Super class is the tk.Frame class
         super().__init__(master_frame, width=870, height=500)
 
-        self.sn_text = tk.StringVar()
+        self.id_text = tk.StringVar()
 
         logger.info("TestSummaryScene: Frame has been created.")
 
@@ -57,15 +57,15 @@ class TestSummaryScene(tk.Frame):
         self.title.grid(row= 0, column= 1, pady = 20)
 
 
-        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
+        self.id_text.set("Full ID: " + str(self.data_holder.data_dict['current_full_ID']))       
 
-        # Adds Board Serial Number to the TestSummaryFrame
-        self.lbl_snum = tk.Label(
+        # Adds Board Full ID to the TestSummaryFrame
+        self.lbl_id = tk.Label(
                 self, 
-                textvariable = self.sn_text,
+                textvariable = self.id_text,
                 font=('Arial', 14)
                 )
-        self.lbl_snum.grid(column = 2, row = 0, pady = 20, padx = 5)
+        self.lbl_id.grid(column = 2, row = 0, pady = 20, padx = 5)
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
 
@@ -88,7 +88,7 @@ class TestSummaryScene(tk.Frame):
         print(self.list_of_completed_tests)
         print(self.list_of_pass_fail)
 
-        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
+        self.id_text.set("Full ID: " + str(self.data_holder.data_dict['current_full_ID']))       
 
 
         # Adds Tester Name to the TestSummary Frame
@@ -402,7 +402,7 @@ class TestSummaryScene(tk.Frame):
     # Next test button action
     def btn_next_test_action(self, _parent):
         self.data_holder.data_holder_new_test()
-        self.lbl_snum.destroy()
+        self.lbl_id.destroy()
         _parent.reset_board()
         logger.info("TestSummaryScene: Starting a new test.")
         

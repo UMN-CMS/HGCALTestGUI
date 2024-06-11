@@ -36,7 +36,7 @@ class SSHHandler:
             if request is not None:
 
                 desired_test = request["desired_test"]
-                test_info = {"serial": request["serial"], "tester": request["tester"]}
+                test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
                 print("New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(queue, gui_cfg, desired_test, test_info))
@@ -99,7 +99,7 @@ class SSHHandler:
         print('SSHHandler: task_test has started.')
 
         # Dynamically import test class and testing info
-        serial = test_info["serial"]
+        full_id = test_info["full_id"]
         tester = test_info["tester"]
 
         test_command = gui_cfg["Test"][desired_test]['TestCommand']
@@ -110,8 +110,8 @@ class SSHHandler:
 
         #command to run test on ssh
         #username, hostname, test_command, and test_config are specified in GUI Config
-        #serial, tester, and test_config are extra arguments passed to the python command being run
-        cmd = ['ssh', username + '@' + hostname, test_command, serial, tester, test_config]
+        #full id, tester, and test_config are extra arguments passed to the python command being run
+        cmd = ['ssh', username + '@' + hostname, test_command, full_id, tester, test_config]
 
         #runs ssh command using python subprocess 
         proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)

@@ -52,8 +52,8 @@ class ScanScene(tk.Frame):
         
         if self.use_scanner:
 
-            self.ent_snum.config(state = 'normal')
-            self.ent_snum.delete(0,END)
+            self.ent_full.config(state = 'normal')
+            self.ent_full.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
 
@@ -62,14 +62,14 @@ class ScanScene(tk.Frame):
             from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 
             manager = mp.Manager()
-            serial = manager.list()
-            print(serial)
+            full_id = manager.list()
+            print(full_id)
 
-            self.ent_snum.config(state = 'normal')
+            self.ent_full.config(state = 'normal')
 
             logger.info("ScanScene: Beginning scan...")
             self.scanner = scan()
-            self.listener = mp.Process(target=listen, args=(serial, self.scanner))
+            self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
             self.listener.start()
                 
@@ -79,15 +79,15 @@ class ScanScene(tk.Frame):
                     self.master_window.update()
                 except:
                     pass
-                if not len(serial) == 0:
-                    self.data_holder.set_serial_ID( parse_xml(serial[0]))
+                if not len(full_id) == 0:
+                    self.data_holder.set_full_ID( parse_xml(full_id[0]))
 
                     self.listener.terminate()
                     self.scanner.terminate()
                 
-                    self.ent_snum.delete(0,END)
-                    self.ent_snum.insert(0, str(self.data_holder.get_serial_ID()))
-                    self.ent_snum.config(state = 'disabled')
+                    self.ent_full.delete(0,END)
+                    self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                    self.ent_full.config(state = 'disabled')
                     self.show_rescan_button()
                     break
 
@@ -131,26 +131,26 @@ class ScanScene(tk.Frame):
         lbl_scan.pack(padx = 50, pady = 50)
 
         # Create a label to label the entry box
-        lbl_snum = tk.Label(
+        lbl_full = tk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Serial Number:",
+            text = "Full ID: ",
             font = ('Arial', 16)
         )
-        lbl_snum.pack(padx = 20)
+        lbl_full.pack(padx = 20)
 
-        # Entry for the serial number to be displayed. Upon Scan, update and disable?
-        global ent_snum
+        # Entry for the full id to be displayed. Upon Scan, update and disable?
+        global ent_full
         
         # Creating intial value in entry box
         user_text = tk.StringVar(self)
         
         # Creates an entry box
-        self.ent_snum = tk.Entry(
+        self.ent_full = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
             textvariable= user_text, 
             )
-        self.ent_snum.pack(padx = 50)
+        self.ent_full.pack(padx = 50)
 
         # Traces an input to show the submit button once text is inside the entry box
         user_text.trace(
@@ -230,11 +230,12 @@ class ScanScene(tk.Frame):
 #            self.listener.terminate()
 #            self.scanner.terminate()
 
-        self.data_holder.set_serial_ID(self.ent_snum.get())
+        self.data_holder.set_full_ID(self.ent_full.get())
         if self.data_holder.getGUIcfg().get_if_use_DB():
             self.data_holder.check_if_new_board() 
 
-        self.data_holder.update_location(self.ent_snum.get())
+        self.data_holder.update_location(self.ent_full.get())
+        self.data_holder.decode_label()
         _parent.update_config()
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()

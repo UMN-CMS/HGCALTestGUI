@@ -3,17 +3,17 @@ import yaml
 from pathlib import Path
 
 
-def update_config(sn):
+def update_config(full_id):
 
-    # sets the config to wagon or engine based on the 4th character of the board serial number
-    if sn[3] == 'W':
+    # sets the config to wagon or engine based on the 4th character of the board's full id
+    if full_id[3] == 'W':
         #from TestConfigs.Wagon_cfg import masterCfg
         masterCfg = import_yaml(open(Path(__file__).parent.parent / "Configs/Wagon_cfg.yaml"))
         print(masterCfg)
         print('Changed board config to Wagon')
         board_cfg = masterCfg
 
-    if sn[3] == 'E':
+    if full_id[3] == 'E':
         #from TestConfigs.Engine_cfg import masterCfg
         masterCfg = import_yaml(open(Path(__file__).parent.parent / "Configs/Engine_cfg.yaml"))
         print('Changed board config to Engine')
