@@ -147,6 +147,7 @@ class DBSender():
         return in_id
 
     def update_location(self, full, loc):
+        loc = 'Last seen at ' + loc
         r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
        
         lines = r.text.split('\n')

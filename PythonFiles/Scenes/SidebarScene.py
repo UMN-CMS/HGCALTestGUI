@@ -29,7 +29,7 @@ class SidebarScene(ttk.Frame):
 
         super().__init__( sidebar_frame, width=213)
 
-        self.create_style()
+        self.create_style(parent)
 
         self.Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
         self.Green_Check_Image = self.Green_Check_Image.resize((50,50), Image.LANCZOS)
@@ -69,11 +69,11 @@ class SidebarScene(ttk.Frame):
 
         self.update_sidebar(parent)
 
-    def create_style(self):
+    def create_style(self, _parent):
 
         self.s = ttk.Style()
 
-        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark')

@@ -49,9 +49,9 @@ logger.addHandler(ch)
 logger.info("Creating new instance of HGCALTestGUI")
 
 # Creates a task of creating the GUIWindow
-def task_GUI(conn, conn_trigger, queue, board_cfg):
+def task_GUI(conn, conn_trigger, queue, board_cfg, curpath):
     # creates the main_window as an instantiation of GUIWindow
-    main_window = GUIWindow(conn, conn_trigger, queue, board_cfg)
+    main_window = GUIWindow(conn, conn_trigger, queue, board_cfg, curpath)
 
 # Creates a task of creating the SUBClient
 def task_SUBClient(conn, queue, board_cfg, sub_pipe):
@@ -67,7 +67,7 @@ def task_SSHHandler(gui_cfg, conn_trigger, queue):
 
     SSHHandler(gui_cfg, conn_trigger, queue)
 
-def run(board_cfg):    
+def run(board_cfg, curpath):    
     # Creates a Pipe for the SUBClient to talk to the GUI Window
     conn_SUB, conn_GUI = mp.Pipe()
 
@@ -84,18 +84,18 @@ def run(board_cfg):
     if board_cfg["TestHandler"]["name"] == "Local":
         # Creates a Queue to connect SUBClient and Handler
         q = mp.Queue()
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg))
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
         process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler, q))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
 
     elif board_cfg["TestHandler"]["name"] == "SSH":
         q = mp.Queue()
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg))
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
         process_Handler = mp.Process(target = task_SSHHandler, args=(board_cfg, conn_trigger_Handler, q))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
 
     else: 
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg))
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg, curpath))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, None))
 
     # Starts the processes
@@ -160,16 +160,16 @@ if __name__ == "__main__":
     if config_path is not None:
         board_cfg = import_yaml(config_path)
 
-        run(board_cfg)
+        run(board_cfg, curpath)
     elif any((node in x for x in wagon_GUI_computers)):
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
 
-        run(board_cfg)
+        run(board_cfg, curpath)
 
     elif any((node in x for x in wagon_GUI_computers)):
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Engine_cfg.yaml")
 
-        run(board_cfg)
+        run(board_cfg, curpath)
 
     else:
         board_config(None)

@@ -24,11 +24,11 @@ class SplashScene(ttk.Frame):
         self.initialize_GUI(parent, master_frame)
 
     #################################################
-    def create_style(self):
+    def create_style(self, _parent):
 
         self.s = ttk.Style()
 
-        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark') 
@@ -37,7 +37,7 @@ class SplashScene(ttk.Frame):
     def initialize_GUI(self, parent, master_frame):
         super().__init__(master_frame, width=870, height = 650)
 
-        self.create_style()
+        self.create_style(parent)
 
         logger.info("SplashScene: Frame has been initialized.")
         # Creating Bethel Logo
