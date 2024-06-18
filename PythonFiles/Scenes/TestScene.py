@@ -39,11 +39,11 @@ class TestScene(ttk.Frame):
 
     #################################################
 
-    def create_style(self):
+    def create_style(self, _parent):
 
         self.s = ttk.Style()
 
-        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark')
@@ -53,7 +53,7 @@ class TestScene(ttk.Frame):
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
         
-        self.create_style()
+        self.create_style(parent)
         # Create a centralized window for information
         frm_window = ttk.Frame(self, width=870, height = 480)
         frm_window.grid(column=1, row=0, padx = 223, pady = 100)

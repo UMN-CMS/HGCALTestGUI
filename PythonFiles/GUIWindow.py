@@ -43,7 +43,7 @@ class GUIWindow():
 
     #################################################
 
-    def __init__(self, conn, conn_trigger, queue, board_cfg):
+    def __init__(self, conn, conn_trigger, queue, board_cfg, main_path):
         
         self.conn = conn
         self.conn_trigger = conn_trigger
@@ -52,6 +52,7 @@ class GUIWindow():
         self.completed_window_alive = False
         self.current_test_index = 0
         self.gui_cfg = GUIConfig(board_cfg)
+        self.main_path = main_path
                              
         # Create the window named "self.master_window"
         self.master_window = tk.Tk()
