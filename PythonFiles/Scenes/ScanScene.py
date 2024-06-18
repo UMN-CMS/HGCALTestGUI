@@ -3,6 +3,7 @@
 # importing necessary modules
 import multiprocessing as mp
 import logging, time
+import tkinter.ttk as ttk
 import tkinter as tk
 import sys, time
 from tkinter import *
@@ -26,7 +27,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class ScanScene(tk.Frame):
+class ScanScene(ttk.Frame):
     
     #################################################
 
@@ -43,7 +44,17 @@ class ScanScene(tk.Frame):
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
+
+        self.create_style()
        
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
 
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
@@ -113,17 +124,17 @@ class ScanScene(tk.Frame):
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = tk.Label(self, image=QR_PhotoImage)
+        QR_label = ttk.Label(self, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
         QR_label.grid(column=1, row = 0)
 
-        Scan_Board_Prompt_Frame = Frame(self,)
+        Scan_Board_Prompt_Frame = ttk.Frame(self,)
         Scan_Board_Prompt_Frame.grid(column=0, row = 0)
 
         # creates a Label Variable, different customization options
-        lbl_scan = tk.Label(
+        lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
             font = ('Arial', 18)
@@ -131,7 +142,7 @@ class ScanScene(tk.Frame):
         lbl_scan.pack(padx = 50, pady = 50)
 
         # Create a label to label the entry box
-        lbl_full = tk.Label(
+        lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
             text = "Full ID: ",
             font = ('Arial', 16)
@@ -162,23 +173,23 @@ class ScanScene(tk.Frame):
             )
 
         # Rescan button creation
-        self.btn_rescan = tk.Button(
+        self.btn_rescan = ttk.Button(
             Scan_Board_Prompt_Frame,
             text="Rescan",
-            padx = 20,
-            pady =10,
-            relief = tk.RAISED,
+            #padx = 20,
+            #pady =10,
+            #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
         self.btn_rescan.pack(pady=30)
 
         # Submit button creation
-        self.btn_submit = tk.Button(
+        self.btn_submit = ttk.Button(
             Scan_Board_Prompt_Frame,
             text="Submit",
-            padx = 20,
-            pady = 10,
-            relief = tk.RAISED,
+            #padx = 20,
+            #pady = 10,
+            #relief = tk.RAISED,
             command= lambda:  self.btn_submit_action(parent)
             )
         self.btn_submit.pack()
@@ -216,22 +227,22 @@ class ScanScene(tk.Frame):
             
 
         # Creating frame for logout button
-        frm_logout = tk.Frame(self)
+        frm_logout = ttk.Frame(self)
         frm_logout.grid(column = 1, row = 1, sticky= 'se')
 
         # Creating the logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             frm_logout,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
 
         # Creating the help button
-        btn_help = tk.Button(
+        btn_help = ttk.Button(
             frm_logout,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )

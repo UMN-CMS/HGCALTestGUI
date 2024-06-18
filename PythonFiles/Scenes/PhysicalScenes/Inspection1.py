@@ -65,7 +65,7 @@ class Inspection1(tk.Frame):
             frm_window, 
             font = font_scene
             )
-        ent_snum.insert(0, self.data_holder.data_dict['current_serial_ID'])
+        ent_snum.insert(0, self.data_holder.data_dict['current_full_ID'])
         ent_snum.grid(row=0, column=3, pady=15)
         ent_snum.config(state = "disabled")
 

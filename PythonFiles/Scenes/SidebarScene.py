@@ -1,7 +1,7 @@
 #################################################################################
 
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from tkinter import Canvas
 from tkinter import Scrollbar
 from PIL import ImageTk as iTK
@@ -20,14 +20,16 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SidebarScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-class SidebarScene(tk.Frame):
+class SidebarScene(ttk.Frame):
 
     #################################################
 
     def __init__(self, parent, sidebar_frame, data_holder):
 
 
-        super().__init__( sidebar_frame, width=213, height = 650, bg = '#808080', padx = 10, pady=10)
+        super().__init__( sidebar_frame, width=213)
+
+        self.create_style()
 
         self.Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
         self.Green_Check_Image = self.Green_Check_Image.resize((50,50), Image.LANCZOS)
@@ -40,7 +42,7 @@ class SidebarScene(tk.Frame):
         ############        
         
         self.mycanvas = tk.Canvas(self, background="#808080", width=213, height =650)
-        self.viewingFrame = tk.Frame(self.mycanvas, background = "#808080", width = 213, height = 650)
+        self.viewingFrame = ttk.Frame(self.mycanvas, width = 213, height = 650)
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
@@ -67,6 +69,16 @@ class SidebarScene(tk.Frame):
 
         self.update_sidebar(parent)
 
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
+
+
     #################################################
 
     def onFrameConfigure(self, event):                                              
@@ -88,28 +100,28 @@ class SidebarScene(tk.Frame):
                 # Variables for easy button editing
         btn_height = 3
         btn_width = 18
-        btn_font = ('Arial', 10)
+        #btn_font = ('Arial', 10)
         btn_pady = 5
 
-        self.btn_login = tk.Button(
+        self.btn_login = ttk.Button(
             self.viewingFrame,
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'LOGIN PAGE',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font
+            #font = btn_font
         )
         self.btn_login.grid(column = 0, row = 0)
 
-        self.btn_scan = tk.Button(
+        self.btn_scan = ttk.Button(
             self.viewingFrame,
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'SCAN PAGE',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font
+            #font = btn_font
         )
-        self.btn_scan.grid(column = 0, row = 1)
+        self.btn_scan.grid(column = 0, row = 3)
 
         test_names = self.data_holder.getTestNames()
         physical_names = self.data_holder.getPhysicalNames()
@@ -128,16 +140,16 @@ class SidebarScene(tk.Frame):
 
         for i in range(self.data_holder.getNumPhysicalTest()): 
             #print("Physical Button should point to the {} test".format(i + physical_offset))
-            self.test_btns.append(tk.Button(
+            self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
-                pady = btn_pady,
+                #pady = btn_pady,
                 text = '{}'.format(physical_names[i]),
-                height = btn_height,
+                #height = btn_height,
                 width = btn_width,
-                font = btn_font,
+                #font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i)
                 ))
-            self.test_btns[i].grid(column = 0, row = i + original_offset)
+            self.test_btns[i].grid(column = 0, row = 6) #i + original_offset)
 
             #print(self.data_holder.data_dict)
 
@@ -154,44 +166,44 @@ class SidebarScene(tk.Frame):
         for i in range(self.data_holder.getNumTest()):
             
             #print("Digi Button should point to the {} test".format(i + physical_offset))
-            self.test_btns.append(tk.Button(
+            self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
-                pady = btn_pady,
+                #pady = btn_pady,
                 text = '{}'.format(test_names[i]),
-                height = btn_height,
+                #height = btn_height,
                 width = btn_width,
-                font = btn_font,
+                #font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i )
                 ))
-            self.test_btns[i].grid(column = 0, row = original_offset + i)
+            self.test_btns[i].grid(column = 0, row = 9) #original_offset + i)
 
             if self.data_holder.data_dict['test{}_pass'.format(i)] == True:
                 self.test_btns[i].config(state = 'disabled')
             
             digital_offset = digital_offset + 1
         
-        self.btn_summary = tk.Button(
+        self.btn_summary = ttk.Button(
             self.viewingFrame, 
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'TEST SUMMARY',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font,
+            #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row =  original_offset + digital_offset)
+        self.btn_summary.grid(column = 0, row =  12)#original_offset + digital_offset)
 
         
-        self.report_btn = tk.Button(
+        self.report_btn = ttk.Button(
             self.viewingFrame, 
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'Report Bug',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = ('Kozuka Gothic Pr6N L', 8),
+            #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row =  original_offset + digital_offset + 1)
+        self.report_btn.grid(column = 0, row = 15) #original_offset + digital_offset + 1)
         
 
 
