@@ -62,15 +62,6 @@ class DataHolder():
             self.data_dict['physical{}_completed'.format(i)] = False
             self.data_dict['physical{}_pass'.format(i)] = False
 
-        # dictionary of visual inspection results, not used except for in visual inspection gui
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
-                }
-
         self.data_lists = {
                 'test_results': [],
                 'test_completion': [],
@@ -82,13 +73,6 @@ class DataHolder():
 
         self.ptest_criteria = {}
         self.ptest_names = self.gui_cfg.getPhysicalNames()
-        # All of the checkbox logic
-        # Dictionaries stored by inspection index
-        self.all_checkboxes = []
-        
-        # All of the comments logic
-        # Dictionaries stored by inspection index
-        self.all_comments = []
 
         self.label_info = None
        
@@ -178,9 +162,7 @@ class DataHolder():
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
 
-    def decode_label(self):
-        full_id = self.get_full_ID()
-
+    def decode_label(self, full_id):
         self.label_info = self.data_sender.decode_label(full_id)
 
 
@@ -277,7 +259,6 @@ class DataHolder():
     def print(self):    
         print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data,  "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
            
-
  
     #################################################
     
@@ -376,17 +357,9 @@ class DataHolder():
                 'tests_run': [i for i in range(self.getNumTest())],
                 }
 
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
-                }
-
         self.data_lists = {
                 'test_results': [],
-                'test_completion': [], 
+                'test_completion': [],
                 'physical_results': [],
                 'physical_completion': [],
                 }

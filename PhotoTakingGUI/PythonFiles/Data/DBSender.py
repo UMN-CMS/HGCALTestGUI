@@ -39,8 +39,7 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
@@ -51,7 +50,7 @@ class DBSender():
 
     def decode_label(self, full_id):
         
-        r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/LabelDB/decode_label.py', data={'label': full_id})
+        r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
 
         lines = r.text.split('\n')
 
@@ -103,10 +102,7 @@ class DBSender():
     # Whether or not DB has passing results
     def get_previous_test_results(self, full_id):
 
-        if full_id[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
-        if full_id[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
+        r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
 
         lines = r.text.split('\n')
 
@@ -138,13 +134,9 @@ class DBSender():
     # Posts a new board with passed in full id
     # this is only called if the full id isn't recognized by is_new_board
     def add_new_board(self, full, user_id, comments):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
 
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
 
         try:
             lines = r.text.split('\n')
@@ -163,10 +155,7 @@ class DBSender():
 
     # sets the location in the database
     def update_location(self, full, loc):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
+        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
         
         lines = r.text.split('\n')
    
@@ -179,12 +168,7 @@ class DBSender():
 
     # checks if the board is in the database
     def is_new_board(self, full):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
-        else:
-            print('error')
+        r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
 
         lines = r.text.split('\n')
 

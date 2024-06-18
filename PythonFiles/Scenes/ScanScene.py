@@ -107,7 +107,7 @@ class ScanScene(tk.Frame):
         
         self.master_frame = master_frame
         
-        super().__init__(self.master_frame, width=870, height = 500)
+        super().__init__(self.master_frame, width=870, height = 650)
 
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
@@ -183,6 +183,38 @@ class ScanScene(tk.Frame):
             )
         self.btn_submit.pack()
 
+        #creates a frame for the label info
+        label_frame = Frame(self)
+        label_frame.grid(column=0, row = 1)
+
+        self.label_major = tk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            padx=50,
+            pady=20,
+            )
+        self.label_major.pack()
+
+        self.label_sub = tk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            padx=50,
+            pady=20,
+            )
+        self.label_sub.pack()
+
+        self.label_sn = tk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            padx=50,
+            pady=20,
+            )
+        self.label_sn.pack()
+            
+
         # Creating frame for logout button
         frm_logout = tk.Frame(self)
         frm_logout.grid(column = 1, row = 1, sticky= 'se')
@@ -231,12 +263,11 @@ class ScanScene(tk.Frame):
 #            self.scanner.terminate()
 
         self.data_holder.set_full_ID(self.ent_full.get())
+        _parent.update_config()
         if self.data_holder.getGUIcfg().get_if_use_DB():
             self.data_holder.check_if_new_board() 
 
         self.data_holder.update_location(self.ent_full.get())
-        self.data_holder.decode_label()
-        _parent.update_config()
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         _parent.set_frame_postscan()
 
@@ -263,13 +294,35 @@ class ScanScene(tk.Frame):
 
     # Function to activate the submit button
     def show_submit_button(self):
+        self.data_holder.decode_label(self.ent_full.get())
         self.btn_submit["state"] = "active"
+        try:
+            self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
+            self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
+            self.label_sn['text'] = 'Serial Number: ' + self.data_holder.label_info['SN']
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+        except TypeError:
+            self.label_major['text'] = ''
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+
 
     #################################################
 
     # Function to disable to the submit button
     def hide_submit_button(self):
         self.btn_submit["state"] = "disabled"
+        self.label_major['text'] = ''
+        self.label_sub['text'] = ''
+        self.label_sn['text'] = ''
+        self.label_major.update()
+        self.label_sub.update()
+        self.label_sn.update()
 
     #################################################
 

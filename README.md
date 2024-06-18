@@ -1,9 +1,10 @@
 
 
 
-# WagonTestGUI
+# HGCALTestGUI
 
-This repository contains the GUI used to run the quality control testing for all HGCAL LD Wagons.
+This repository contains the GUI used to run the quality control testing for all HGCAL Wagons and Engines.
+It also contains the CheckIn GUI and the Photo Taking GUI.
 
 ## Setup 
 
@@ -47,8 +48,8 @@ With those set up and running, open these files in VS Code (or any application t
 
 ```
 pip install -r requests.txt
-
-./MainFunction.py
+./__main__.py for HGCAL Testing GUI
+./MainFunction.py for PhotoTakingGUI and CheckInGUI
 
 ```
 ## Using the program
@@ -57,11 +58,11 @@ When the GUI loads in there will be a loading screen, this will change to the lo
 
 The login scene will require you to choose a user to continue into the program further. If you wish to add a new user, you may click the "Add User" button. However, this will require admin privileges within the database.
 
-The scan scene will require a board serial number to be scanned to progress forward. Simply scan the QR code on the board and then hit the "Submit" button. If you scan the wrong QR Code, you may push the "Rescan" button to scan another QR code.
+The scan scene will require a board id number to be scanned to progress forward. Simply scan the QR code on the board and then hit the "Submit" button. If you scan the wrong QR Code, you may push the "Rescan" button to scan another QR code. An id number can also be entered manually.
  
 Most scenes in the GUI will contain the "Change Boards" and "Logout" buttons. This will allow you to return to scan scene and scan a new board in or return to login scene to choose a new user respectively.
 
-When using the GUI, the sidebar will allow you to navigate to any frame that is not greyed out simply by click on the respective named button. If a test has been completed, it cannot be selected from the navigator, but instead requires the user to use the respective "Retest" button found on the test summary scene.
+When using the Testing GUI, the sidebar will allow you to navigate to any frame that is not greyed out simply by click on the respective named button. If a test has been completed, it cannot be selected from the navigator, but instead requires the user to use the respective "Retest" button found on the test summary scene.
 
 While a test is in progress, the GUI will disable sidebar navigation and prevent you from leaving the GUI. This can be overriden using CTRL + C, but it will not halt the test. That would require a similar override on the test station's computer.
 
