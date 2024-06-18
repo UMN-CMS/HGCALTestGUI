@@ -1,6 +1,7 @@
 ################################################################################
 import json, logging, socket, PythonFiles, copy, os
 from PythonFiles.Data.DBSender import DBSender
+from PythonFiles.update_config import update_config
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
 
@@ -27,23 +28,24 @@ class DataHolder():
                 'comments': "_",
                 'in_id': '',
                 'is_new_board': False,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
                 'test_names': '',
                 'prev_results': '',
                 }
 
-        # For the visual inspection component
+        # for the visual inspection component
         self.inspection_data = {
                 'board_bent': False,
                 'board_broken': False,
                 'component_missing': False,
                 'component_broken': False,
-                'inspection_comments': "_"
+                'inspection_comments': '_'
                 }
 
         # All of the checkbox logic
         # Dictionaries stored by inspection index
         self.all_checkboxes = []
+
+        self.label_info = None
 
         for index in range(self.gui_cfg.getNumInspections()):
             self.all_checkboxes.append(self.gui_cfg.getCheckDict(index))
@@ -106,6 +108,9 @@ class DataHolder():
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
 
+    def decode_label(self, full_id):
+        self.label_info = self.data_sender.decode_label(full_id)
+
     #################################################
 
 
@@ -127,6 +132,11 @@ class DataHolder():
 
     def set_full_ID(self, full):
         self.data_dict['current_full_ID'] = full
+        new_cfg = update_config(full)
+        self.gui_cfg = new_cfg
+
+        self.data_holder_new_test()
+        self.data_sender = DBSender(self.gui_cfg)
         logging.info("DataHolder: Full ID has been set.")
 
     def send_image(self, img_idx=0):
@@ -140,10 +150,11 @@ class DataHolder():
 
     # current method to send to the database
     def send_to_DB(self):
-        test_names = "Visual Inspection"
+        test_name = "Visual Inspection"
         test_type_id = 0
 
-        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_type_id, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
+        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_name, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
+        print(info_dict)
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
@@ -225,9 +236,6 @@ class DataHolder():
         self.current_test_idx = test_idx
         self.gui_cfg.setTestIndex(self.current_test_idx)
 
-    def getNumTest(self):
-        return self.gui_cfg.getNumTest()
-
     def getTestNames(self):
         return self.gui_cfg.getTestNames()
 
@@ -239,10 +247,9 @@ class DataHolder():
         self.data_dict = {
                 'user_ID': self.data_dict['user_ID'],
                 'test_stand': str(socket.gethostname()),
-                'current_full_ID': "-1BAD",
+                'current_full_ID': self.get_full_ID(),
                 'comments': "_",
                 'is_new_board': False,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
                 'test_names': '',
                 'prev_results': '',
                 'in_id': '',

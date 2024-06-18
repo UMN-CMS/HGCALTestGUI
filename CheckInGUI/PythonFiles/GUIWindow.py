@@ -12,7 +12,9 @@ from PythonFiles.Scenes.ScanScene import ScanScene
 from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.SummaryScene import SummaryScene
 from PythonFiles.Scenes.AddUserScene import AddUserScene
+from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.Scenes.InspectionScenes.Inspection1 import Inspection1
+from PythonFiles.update_config import update_config
 import logging
 import os
 import PythonFiles
@@ -85,6 +87,9 @@ class GUIWindow():
         self.inspection_frame = Inspection1(self, master_frame, self.data_holder)
         self.inspection_frame.grid(row=0,column=0)
 
+        self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
+        self.post_scan_frame.grid(row=0, column=0)
+
         # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0) 
@@ -107,6 +112,16 @@ class GUIWindow():
 
     #################################################
 
+    def update_config(self):
+        #switch between Wagon and Engine config depending on the full id entered
+        full = self.data_holder.get_full_ID()
+        if not self.gui_cfg.getSerialCheckSafe():
+            return
+        new_cfg = update_config(full)
+        self.gui_cfg = new_cfg
+
+    ################################################
+
     def set_frame_login_frame(self):  
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)    
@@ -128,6 +143,13 @@ class GUIWindow():
     def set_frame_inspection_frame(self):
         self.inspection_frame.update_frame(self)
         self.set_frame(self.inspection_frame)
+
+    #################################################
+
+    def set_frame_postscan(self):
+
+        self.post_scan_frame.update_frame()
+        self.set_frame(self.post_scan_frame)
 
     #################################################
 

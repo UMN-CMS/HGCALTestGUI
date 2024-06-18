@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-import tkinter.ttk as ttk
+from tkinter import ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -26,7 +26,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class PostScanScene(ttk.Frame):
+class PostScanScene(tk.Frame):
 
     #################################################
 
@@ -50,19 +50,8 @@ class PostScanScene(ttk.Frame):
         self.grid_propagate(0)
 
     #################################################
-
-    def create_style(self):
-
-        self.s = ttk.Style()
-
-        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
-        self.s.tk.call('package', 'require', 'awdark')
-        
-        self.s.theme_use('awdark')
-
+    
     def create_frame(self, parent):
-        self.create_style()
-
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
         print("PostScanScene: Destroying old widgets on the SummaryScene.")
         
@@ -75,8 +64,8 @@ class PostScanScene(ttk.Frame):
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
         self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = ttk.Frame(self.canvas, width=800, height=500)
-        self.scroller = tk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
+        self.frame = tk.Frame(self.canvas, width=800, height=500)
+        self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
         self.scroller.grid(row=0, column=1, sticky='NSEW')
@@ -88,19 +77,23 @@ class PostScanScene(ttk.Frame):
 
         self.onFrameConfigure(None)
 
+
         # Adds the title to the Summary Frame
-        self.title = ttk.Label(
+        self.title = tk.Label(
                 self.frame, 
-                text = "Board Scanned!",
+                fg='#0d0d0d', 
+                text = "This Board has already been Checked In",
+                font=('Arial',18,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
+            
 
-        # Adds Board Full ID to the SummaryFrame
-        self.id = ttk.Label(
+        # Adds Board full id to the SummaryFrame
+        self.id = tk.Label(
                 self.frame, 
-                #fg='#0d0d0d', 
-                text = str(self.data_holder.data_dict['current_full_ID']),
-                #font=('Arial',16,'bold')
+                fg='#0d0d0d', 
+                text = "Full ID:" + str(self.data_holder.data_dict['current_full_ID']),
+                font=('Arial',14,'bold')
                 )
         self.id.grid(row= 1, column= 1, pady = 20)
 
@@ -111,7 +104,6 @@ class PostScanScene(ttk.Frame):
         redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
         redx = redx.resize((75, 75), Image.LANCZOS)
         redx = iTK.PhotoImage(redx)
-        # adds previously run tests to the canvas with pass/fail info
         try:
             if self.data_holder.data_dict['test_names']:
                 res_dict = {}
@@ -137,7 +129,7 @@ class PostScanScene(ttk.Frame):
                                 )
                         self.lbl_img.image=green_check
                         self.lbl_img.grid(row=idx+2, column=2)
-                    elif res_dict[el] == 'Failed':
+                    else:
                         self.lbl_img = tk.Label(
                                 self.frame,
                                 image = redx,
@@ -147,14 +139,6 @@ class PostScanScene(ttk.Frame):
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
-                    else:
-                        self.lbl_res = tk.Label(
-                                self.frame,
-                                text = 'This test has not been run.',
-                                font=('Arial',14)
-                                )
-                        self.lbl_res.grid(row=idx+2, column=2)
-                        
             else:
                 self.lbl_res = tk.Label(
                         self.frame,
@@ -165,26 +149,26 @@ class PostScanScene(ttk.Frame):
 
         except Exception as e:
             print(e)
-            self.lbl_full = ttk.Label(
+            self.lbl_err = tk.Label(
                     self, 
-                    text = 'Error, No Results',
+                    text = "Some other error occured and Board was not entered. See logs for more info.",
                     font=('Arial', 14) 
                     )
-            self.lbl_full.grid(row = 2, column =1, pady = 10) 
+            self.lbl_err.grid(column = 1, row = 2, pady = 10) 
 
         # Creating the proceed button
-        proceed_button = ttk.Button(
+        proceed_button = tk.Button(
             self.frame,
-            #relief = tk.RAISED,
+            relief = tk.RAISED,
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
         proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
-        next_board_button = ttk.Button(
+        next_board_button = tk.Button(
             self.frame,
-            #relief = tk.RAISED,
+            relief = tk.RAISED,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -192,9 +176,9 @@ class PostScanScene(ttk.Frame):
  
 
         # Creating the logout button
-        btn_logout = ttk.Button(
+        btn_logout = tk.Button(
             self.frame,
-            #relief = tk.RAISED,
+            relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
@@ -206,7 +190,7 @@ class PostScanScene(ttk.Frame):
     #################################################
 
     def btn_proceed_action(self, _parent):
-        _parent.scan_frame_progress()
+        _parent.set_frame_inspection_frame()
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()

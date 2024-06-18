@@ -125,31 +125,6 @@ def run(board_cfg):
         pass
 
 
-def board_config(full):
-
-    board_cfg = None
-    
-    if full == None:
-        if any(node in y for y in  wagon_GUI_computers):
-            from TestConfigs.Wagon_cfg import masterCfg
-
-            print("Hostname setup for wagon testing. Initializing Wagon Test GUI...")
-
-            board_cfg = masterCfg
-        
-        if any(node in y for y in engine_GUI_computers):
-            from TestConfigs.Engine_cfg import masterCfg
-
-            print("Hostname setup for engine testing. Initializing Engine Test GUI...")
-
-            board_cfg = masterCfg
-
-
-        run(board_cfg)
-
-    else:
-        update_config(full)
-
 def import_yaml(config_path):
 
     return yaml.safe_load(open(config_path,"r"))
