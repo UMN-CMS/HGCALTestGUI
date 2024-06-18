@@ -131,9 +131,7 @@ class DataHolder():
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
 
-    def decode_label(self):
-        full_id = self.get_full_ID()
-
+    def decode_label(self, full_id):
         self.label_info = self.data_sender.decode_label(full_id)
 
 
