@@ -77,21 +77,23 @@ class PostScanScene(tk.Frame):
 
         self.onFrameConfigure(None)
 
+
         # Adds the title to the Summary Frame
         self.title = tk.Label(
                 self.frame, 
                 fg='#0d0d0d', 
-                text = "Board Selected!",
+                text = "This Board has already been Checked In",
                 font=('Arial',18,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
+            
 
-        # Adds Board Full ID to the SummaryFrame
+        # Adds Board full id to the SummaryFrame
         self.id = tk.Label(
                 self.frame, 
                 fg='#0d0d0d', 
-                text = str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial',16,'bold')
+                text = "Full ID:" + str(self.data_holder.data_dict['current_full_ID']),
+                font=('Arial',14,'bold')
                 )
         self.id.grid(row= 1, column= 1, pady = 20)
 
@@ -102,7 +104,6 @@ class PostScanScene(tk.Frame):
         redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
         redx = redx.resize((75, 75), Image.LANCZOS)
         redx = iTK.PhotoImage(redx)
-        # adds previously run tests to the canvas with pass/fail info
         try:
             if self.data_holder.data_dict['test_names']:
                 res_dict = {}
@@ -128,7 +129,7 @@ class PostScanScene(tk.Frame):
                                 )
                         self.lbl_img.image=green_check
                         self.lbl_img.grid(row=idx+2, column=2)
-                    elif res_dict[el] == 'Failed':
+                    else:
                         self.lbl_img = tk.Label(
                                 self.frame,
                                 image = redx,
@@ -138,14 +139,6 @@ class PostScanScene(tk.Frame):
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
-                    else:
-                        self.lbl_res = tk.Label(
-                                self.frame,
-                                text = 'This test has not been run.',
-                                font=('Arial',14)
-                                )
-                        self.lbl_res.grid(row=idx+2, column=2)
-                        
             else:
                 self.lbl_res = tk.Label(
                         self.frame,
@@ -156,12 +149,12 @@ class PostScanScene(tk.Frame):
 
         except Exception as e:
             print(e)
-            self.lbl_full = tk.Label(
+            self.lbl_err = tk.Label(
                     self, 
-                    text = 'Error, No Results',
+                    text = "Some other error occured and Board was not entered. See logs for more info.",
                     font=('Arial', 14) 
                     )
-            self.lbl_full.grid(row = 2, column =1, pady = 10) 
+            self.lbl_err.grid(column = 1, row = 2, pady = 10) 
 
         # Creating the proceed button
         proceed_button = tk.Button(
@@ -197,7 +190,7 @@ class PostScanScene(tk.Frame):
     #################################################
 
     def btn_proceed_action(self, _parent):
-        _parent.scan_frame_progress()
+        _parent.set_frame_inspection_frame()
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()

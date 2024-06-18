@@ -36,8 +36,7 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
@@ -45,6 +44,27 @@ class DBSender():
         # If not using the database, use this...
         else:
             pass    
+
+    def decode_label(self, full_id):
+        
+        if len(full_id) != 15:
+            label_info = None
+        else:
+            r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+            lines = r.text.split('\n')
+
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+
+            temp = []
+
+            for i in range(begin, end):
+                temp.append(lines[i])
+            
+            label_info = {'Major Type': temp[0], 'Subtype': temp[1], 'SN': temp[2]}
+
+        return label_info
+
      
 
     # Returns an acceptable list of usernames from the database
@@ -78,10 +98,6 @@ class DBSender():
     def get_previous_test_results(self, full_id):
    
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'full_id': str(full_id)})
-        if full_id[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
-        if full_id[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
         
         print(r.text)
         lines = r.text.split('\n')
@@ -114,24 +130,10 @@ class DBSender():
     
     # Posts a new board with passed in full id
     def add_new_board(self, full, user_id, comments):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
-            
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+        print(r.text)
+        r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
         
-           # if full[3] == 'W':
-           #     r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkout2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
-           #     
-           # if full[3] == 'E':
-           #     r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkout2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
- 
-        else:
-            
-            pass
-
         try:
             lines = r.text.split('\n')
 
@@ -142,17 +144,15 @@ class DBSender():
 
             for i in range(begin, end):
                 in_id = lines[i]
-        except:
+        except Exception as e:
+            print(e)
             in_id = None
 
         return in_id
 
 
     def update_location(self, full, loc):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
+        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
         
         lines = r.text.split('\n')
    
@@ -165,10 +165,7 @@ class DBSender():
 
 
     def is_new_board(self, full):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
         
         lines = r.text.split('\n')
    
@@ -223,10 +220,9 @@ class DBSender():
         attach_data = {'attach1': datafile}
         #print("Read from json file:", results)
 
-        if full_id[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-        if full_id[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
+        r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
+        print('\n This is from add_test_json.py \n')
+        print(r.text)
 
  # Returns a list of all different types of tests
     def get_test_list(self):

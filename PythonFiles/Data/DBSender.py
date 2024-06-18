@@ -33,17 +33,21 @@ class DBSender():
 
     def decode_label(self, full_id):
         
-        r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/LabelDB/decode_label.py', data={'label': full_id})
+        if len(full_id) != 15:
+            label_info = None
+        else:
+            r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+            lines = r.text.split('\n')
 
-        lines = r.text.split('\n')
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
 
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
+            temp = []
 
-        label_info = []
-
-        for i in range(begin, end):
-            label_info.append(lines[i])
+            for i in range(begin, end):
+                temp.append(lines[i])
+            
+            label_info = {'Major Type': temp[0], 'Subtype': temp[1], 'SN': temp[2]}
 
         return label_info
 
@@ -53,8 +57,8 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
+                # both Wagon and Engine scripts run the command for both databases
+                r = requests.post('{}/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
@@ -92,10 +96,7 @@ class DBSender():
     # Whether or not DB has passing results 
     def get_previous_test_results(self, full_id):
    
-        if full_id[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
-        if full_id[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
+        r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
         
         lines = r.text.split('\n')
 
@@ -126,13 +127,9 @@ class DBSender():
     
     # Posts a new board with passed in full id
     def add_new_board(self, full, user_id, comments):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
             
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
 
         try:
             lines = r.text.split('\n')
@@ -150,11 +147,8 @@ class DBSender():
         return in_id
 
     def update_location(self, full, loc):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        
+        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
+       
         lines = r.text.split('\n')
    
         begin = lines.index("Begin") + 1
@@ -165,10 +159,7 @@ class DBSender():
             return lines[i]
 
     def is_new_board(self, full):
-        if full[3] == 'W':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
-        if full[3] == 'E':
-            r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
         
         lines = r.text.split('\n')
    

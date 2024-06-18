@@ -32,7 +32,7 @@ class TestSummaryScene(tk.Frame):
         
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width=870, height=500)
+        super().__init__(master_frame, width=870, height=650)
 
         self.id_text = tk.StringVar()
 

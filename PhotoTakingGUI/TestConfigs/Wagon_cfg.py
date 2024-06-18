@@ -32,6 +32,51 @@ masterCfg = {
         ],  
 
 
+        "InspectionTest": [
+            
+            {
+                "name": "Inspection1",
+                "required": 1,
+                "checkboxes": [
+                    {
+                        "text": "Is the board bent?",
+                        "value": False,
+                        "requirement": False,
+                    },
+                    {
+                        "text": "Is the board visibly broken?",
+                        "value": False,
+                        "requirement": False,
+                    },
+                    {
+                        "text": "Are any components missing?",
+                        "value": False,
+                        "requirement": False,
+                    },
+                    {
+                        "text": "Are any components visibly broken?",
+                        "value": False,
+                        "requirement": False,
+                    },
+                    
+
+                ],
+                "user_entry": [
+                    {
+                        "text": "Enter a voltage between 0.5 and 1.2",
+                        "value": 0,
+                        "requirement": 1.0,
+                    }
+
+                ],
+
+                "comments": "No Comment",
+
+
+            },
+
+
+        ],
 
 
 

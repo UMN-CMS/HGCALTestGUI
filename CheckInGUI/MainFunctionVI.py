@@ -12,6 +12,8 @@ sys.path.append("..")
 from PythonFiles.GUIWindow import GUIWindow
 import socket
 import logging
+import yaml
+from pathlib import Path
 
 
 # Creates a main function to initialize the GUI
@@ -35,12 +37,8 @@ def main():
     engine_GUI_computers = [ 
 
     ]   
-   
-    board_cfg = None
 
-    from TestConfigs.Engine_cfg import masterCfg
-
-    print("Hostname setup for wagon testing. Initializing Wagon Test GUI...")
+    masterCfg = import_yaml("Configs/Wagon_cfg.yaml")
 
     board_cfg = masterCfg
 
@@ -48,6 +46,9 @@ def main():
     main_window = GUIWindow(board_cfg)
     
 
+def import_yaml(config_path):
+
+    return yaml.safe_load(open(config_path,"r"))
 
 
 
