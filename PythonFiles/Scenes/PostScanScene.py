@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -26,7 +26,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class PostScanScene(tk.Frame):
+class PostScanScene(ttk.Frame):
 
     #################################################
 
@@ -50,8 +50,19 @@ class PostScanScene(tk.Frame):
         self.grid_propagate(0)
 
     #################################################
-    
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
+
     def create_frame(self, parent):
+        self.create_style()
+
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
         print("PostScanScene: Destroying old widgets on the SummaryScene.")
         
@@ -64,8 +75,8 @@ class PostScanScene(tk.Frame):
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
         self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = tk.Frame(self.canvas, width=800, height=500)
-        self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
+        self.frame = ttk.Frame(self.canvas, width=800, height=500)
+        self.scroller = tk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
         self.scroller.grid(row=0, column=1, sticky='NSEW')
@@ -78,51 +89,51 @@ class PostScanScene(tk.Frame):
         self.onFrameConfigure(None)
 
         # Adds the title to the Summary Frame
-        self.title = tk.Label(
+        self.title = ttk.Label(
                 self.frame, 
-                fg='#0d0d0d', 
+                #fg='#0d0d0d', 
                 text = "Board Scanned!",
-                font=('Arial',18,'bold')
+                #font=('Arial',18,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
 
         # Adds Board Full ID to the SummaryFrame
-        self.id = tk.Label(
+        self.id = ttk.Label(
                 self.frame, 
-                fg='#0d0d0d', 
+                #fg='#0d0d0d', 
                 text = str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial',16,'bold')
+                #font=('Arial',16,'bold')
                 )
         self.id.grid(row= 0, column= 2, pady = 20)
 
         if self.data_holder.label_info:
-            self.major_name = tk.Label(
+            self.major_name = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Major Type:" + str(self.data_holder.label_info[1]),
-                    font=('Arial',14,'bold')
+                    #font=('Arial',14,'bold')
                     )
             self.major_name.grid(row= 1, column= 1, pady = 20)
 
-            self.sub_name = tk.Label(
+            self.sub_name = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Sub Type:" + str(self.data_holder.label_info[3]),
                     font=('Arial',14,'bold')
                     )
             self.sub_name.grid(row= 1, column= 2, pady = 20)
 
-            self.type_code = tk.Label(
+            self.type_code = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Type Code:" + str(self.data_holder.label_info[4]),
                     font=('Arial',14,'bold')
                     )
             self.type_code.grid(row= 2, column= 1, pady = 20)
 
-            self.sn_label = tk.Label(
+            self.sn_label = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "SN:" + str(self.data_holder.label_info[5]),
                     font=('Arial',14,'bold')
                     )
@@ -190,7 +201,7 @@ class PostScanScene(tk.Frame):
 
         except Exception as e:
             print(e)
-            self.lbl_full = tk.Label(
+            self.lbl_full = ttk.Label(
                     self, 
                     text = 'Error, No Results',
                     font=('Arial', 14) 
@@ -198,18 +209,18 @@ class PostScanScene(tk.Frame):
             self.lbl_full.grid(row = 3, column =1, pady = 10) 
 
         # Creating the proceed button
-        proceed_button = tk.Button(
+        proceed_button = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
         proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
-        next_board_button = tk.Button(
+        next_board_button = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -217,9 +228,9 @@ class PostScanScene(tk.Frame):
  
 
         # Creating the logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )

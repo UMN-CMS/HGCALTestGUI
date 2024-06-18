@@ -2,6 +2,7 @@
 
 # Importing Necessary Modules
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import messagebox
 import tkinter.font as font
 import logging
@@ -19,7 +20,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestScene')
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating class for the window
-class TestScene(tk.Frame):
+class TestScene(ttk.Frame):
 
     #################################################
 
@@ -38,17 +39,27 @@ class TestScene(tk.Frame):
 
     #################################################
 
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
+
     def update_frame(self, parent):
         logger.debug("ParentTestClass: A test frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
-
+        
+        self.create_style()
         # Create a centralized window for information
-        frm_window = tk.Frame(self, width=870, height = 480)
+        frm_window = ttk.Frame(self, width=870, height = 480)
         frm_window.grid(column=1, row=0, padx = 223, pady = 100)
 
         # Create a label for the tester's name
-        lbl_tester = tk.Label(
+        lbl_tester = ttk.Label(
             frm_window, 
             text = "Tester: ", 
             font = font_scene
@@ -65,7 +76,7 @@ class TestScene(tk.Frame):
         ent_tester.config(state = "disabled")
 
         # Create a label for the full id box
-        lbl_full = tk.Label(
+        lbl_full = ttk.Label(
             frm_window, 
             text = "Full ID: ", 
             font = font_scene
@@ -82,7 +93,7 @@ class TestScene(tk.Frame):
         ent_full.config(state = "disabled")
 
         # Create a label for the test about to be run
-        lbl_test = tk.Label(
+        lbl_test = ttk.Label(
             frm_window, 
             text = "Current Test: ", 
             font = font_scene
@@ -100,14 +111,14 @@ class TestScene(tk.Frame):
         self.ent_test.config(state = "disabled")
 
         # Create a label for confirming test
-        lbl_confirm = tk.Label(
+        lbl_confirm = ttk.Label(
             frm_window, 
             text = "Are you ready to begin the test?", 
             font = font_scene
             )
         lbl_confirm.pack(side = 'top')
 
-        self.lbl_desc_short = tk.Label(
+        self.lbl_desc_short = ttk.Label(
             frm_window,
             text = self.test_description_short,
             wraplength = 500,
@@ -117,7 +128,7 @@ class TestScene(tk.Frame):
 
         self.lbl_desc_short.pack(side = 'top')
 
-        self.lbl_desc = tk.Label(
+        self.lbl_desc = ttk.Label(
             frm_window,
             text = self.test_description_long,
             wraplength = 500,
@@ -128,10 +139,10 @@ class TestScene(tk.Frame):
         self.lbl_desc.pack(side = 'top')
 
         # Create a button for confirming test
-        btn_confirm = tk.Button(
+        btn_confirm = ttk.Button(
             frm_window, 
             text = "Confirm", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda:self.btn_confirm_action(parent)
             )
         btn_confirm.pack(side = 'top')
@@ -140,43 +151,43 @@ class TestScene(tk.Frame):
         if (self.test_idx == 0):
 
             # Create a button for confirming test
-            run_all_btn = tk.Button(
+            run_all_btn = ttk.Button(
                 frm_window, 
                 text = "Run All Tests", 
-                relief = tk.RAISED, 
+                #relief = tk.RAISED, 
                 command = lambda:self.run_all_action(parent)
                 )
             run_all_btn.pack(pady = 20)
             run_all_btn['font'] = font.Font(family = 'Arial', size = 13)
 
         # Create frame for logout button
-        frm_logout = tk.Frame(self)
+        frm_logout = ttk.Frame(self)
         frm_logout.grid(column = 2, row = 1, padx = 5, sticky = 'e')
 
         # Create a logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             frm_logout, 
             text = "Logout", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'center')
 
         # Create a frame for the back button
-        frm_back = tk.Frame(self)
+        frm_back = ttk.Frame(self)
         frm_back.grid(column = 2, row = 0, sticky = 'n', padx = 5)
 
         # Create a rescan button
-        btn_rescan = tk.Button(
+        btn_rescan = ttk.Button(
             frm_back, 
             text = "Change Boards", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda: self.btn_rescan_action(parent))
         btn_rescan.pack(anchor = 'n')
 
         # Creating the help button
-        btn_help = tk.Button(
+        btn_help = ttk.Button(
             frm_back,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )

@@ -2,7 +2,7 @@
 
 # Imports all the necessary modules
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from tkinter import messagebox
 from xml.dom.expatbuilder import parseFragmentString
 import time
@@ -17,17 +17,27 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestInProgressScene'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating the frame itself
-class TestInProgressScene(tk.Frame):
+class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
         super().__init__(master_frame, width=870, height = 500)
 
+        self.create_style()
         self.queue = queue
         self.data_holder = data_holder
         self.is_current_scene = False
         self.initialize_scene(parent, master_frame)
         self.conn = _conn
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '/home/cac23662/Public/WagonTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
 
     ##################################################
 
@@ -59,7 +69,7 @@ class TestInProgressScene(tk.Frame):
     def initialize_scene(self, parent, master_frame):
         
         logger.info("TestInProgressScene: The frame has been initialized.")
-        scrollbar = tk.Scrollbar(self)
+        scrollbar = ttk.Scrollbar(self)
         scrollbar.pack(side = "right", fill = 'y')
 
 
@@ -81,7 +91,7 @@ class TestInProgressScene(tk.Frame):
 
 
         # Creating the main title in the frame
-        lbl_title = tk.Label(self, 
+        lbl_title = ttk.Label(self, 
             text = "Test in progress. Please wait.", 
             font = ('Arial', 20)
             )

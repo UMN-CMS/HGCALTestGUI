@@ -45,7 +45,7 @@ class Test():
         
         self.save_results()
 
-        self.send_results()
+        self.send_results(self.result)
 
     # Dump results in JSON format for uploading to the database
     def dump_results(self):
