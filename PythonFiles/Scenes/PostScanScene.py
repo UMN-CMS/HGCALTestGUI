@@ -38,7 +38,7 @@ class PostScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 870, height = 650)
+        super().__init__(self.master_frame, width = 1300-213, height = 700)
 
         logger.info("PostScanScene: Frame has been created.")
 

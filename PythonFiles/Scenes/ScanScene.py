@@ -118,7 +118,7 @@ class ScanScene(ttk.Frame):
         
         self.master_frame = master_frame
         
-        super().__init__(self.master_frame, width=870, height = 650)
+        super().__init__(self.master_frame, width=1300-213, height = 700)
 
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
@@ -195,35 +195,29 @@ class ScanScene(ttk.Frame):
         self.btn_submit.pack()
 
         #creates a frame for the label info
-        label_frame = Frame(self)
+        label_frame = ttk.Frame(self)
         label_frame.grid(column=0, row = 1)
 
-        self.label_major = tk.Label(
+        self.label_major = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_major.pack()
+        self.label_major.pack(padx=50, pady=10)
 
-        self.label_sub = tk.Label(
+        self.label_sub = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_sub.pack()
+        self.label_sub.pack(padx=50, pady=10)
 
-        self.label_sn = tk.Label(
+        self.label_sn = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_sn.pack()
+        self.label_sn.pack(padx=50, pady=10)
             
 
         # Creating frame for logout button

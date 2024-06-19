@@ -35,7 +35,7 @@ class SplashScene(ttk.Frame):
 
 
     def initialize_GUI(self, parent, master_frame):
-        super().__init__(master_frame, width=870, height = 650)
+        super().__init__(master_frame, width=1300-213, height = 700)
 
         self.create_style(parent)
 

@@ -75,13 +75,13 @@ class GUIWindow():
         # Removes the tkinter logo from the window
         # self.master_window.wm_attributes('-toolwindow', 'True')
 
-        # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=870, height= 650)
-        self.master_frame.grid(column = 1, row = 0, columnspan = 4)
-
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 213, height = 650)
+        sidebar_frame = tk.Frame(self.master_window, width = 213, height=700)
         sidebar_frame.grid(column = 0 , row = 0)
+
+        # Creates and packs a frame that exists on top of the master_frame
+        self.master_frame = tk.Frame(self.master_window, width=1300-213, height=700)
+        self.master_frame.grid(column = 1, row = 0)
 
         # Creates the "Storage System" for the data during testing
         self.data_holder = DataHolder(self.gui_cfg)
@@ -135,6 +135,15 @@ class GUIWindow():
 
         self.master_window.mainloop()
         
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(self.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
 
     #################################################
 
