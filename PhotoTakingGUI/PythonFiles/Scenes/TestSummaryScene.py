@@ -3,6 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -24,7 +25,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class TestSummaryScene(tk.Frame):
+class TestSummaryScene(ttk.Frame):
 
     #################################################
 
@@ -42,8 +43,19 @@ class TestSummaryScene(tk.Frame):
 
         self.create_frame(parent)
 
+        self.create_style()
+
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
+    
+    def create_style(self):
+ 
+        self.s = ttk.Style()
+ 
+        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+ 
+        self.s.theme_use('awdark')
 
     #################################################
 
@@ -62,13 +74,13 @@ class TestSummaryScene(tk.Frame):
         logging.debug("TestSummaryScene: Table is being created with the results.")
         print("\n\nTestSummaryScene: Table is being created with the results.")
 
-        self.blank_frame = tk.Frame(self)
+        self.blank_frame = ttk.Frame(self)
         self.blank_frame.grid(row = 0, column = 0, padx = 80, pady = 20)
 
         # Adds the title to the TestSummary Frame
-        self.title = tk.Label(
+        self.title = ttk.Label(
                 self,
-                fg='#0d0d0d',
+                #fg='#0d0d0d',
                 text = "Visual Inspection Finished!",
                 font=('Arial',18,'bold')
                 )
@@ -86,7 +98,7 @@ class TestSummaryScene(tk.Frame):
                 Board_image = Board_image.resize((350, 200), Image.LANCZOS)
                 Board_PhotoImage = iTK.PhotoImage(Board_image)
                 if i == 0:
-                    retake_1 = tk.Button(
+                    retake_1 = ttk.Button(
                             self,
                             image = Board_PhotoImage,
                             command = lambda: self.btn_retake_action(parent, 0)
@@ -94,7 +106,7 @@ class TestSummaryScene(tk.Frame):
                     retake_1.image = Board_PhotoImage
                     retake_1.grid(column = i+1, row = 1)
                 if i == 1:
-                    retake_2 = tk.Button(
+                    retake_2 = ttk.Button(
                             self,
                             image = Board_PhotoImage,
                             command = lambda: self.btn_retake_action(parent, 1)
@@ -114,7 +126,7 @@ class TestSummaryScene(tk.Frame):
 
 
        # Adds Board full id to the TestSummaryFrame
-        self.lbl_full = tk.Label(
+        self.lbl_full = ttk.Label(
                 self,
                 text = "Full ID: " + str(self.data_holder.data_dict['current_full_ID']),
                 font=('Arial', 14)
@@ -122,7 +134,7 @@ class TestSummaryScene(tk.Frame):
         self.lbl_full.grid(column = 1, row = 2 + row_offset, pady = 10)
 
         # Adds Tester Name to the TestSummary Frame
-        self.lbl_tester = tk.Label(
+        self.lbl_tester = ttk.Label(
                 self,
                 text = "Tester: " + self.data_holder.data_dict['user_ID'],
                 font=('Arial', 14)
@@ -131,14 +143,14 @@ class TestSummaryScene(tk.Frame):
 
 
         # Creating frame for logout button
-        frm_logout = tk.Frame(self)
+        frm_logout = ttk.Frame(self)
         frm_logout.grid(column = 1, row = 5 + row_offset, sticky= 'se')
 
 
         # Creating the next board button
-        next_board_button = tk.Button(
+        next_board_button = ttk.Button(
             frm_logout,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Submit and Go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -146,9 +158,9 @@ class TestSummaryScene(tk.Frame):
 
 
         # Creating the logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             frm_logout,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )

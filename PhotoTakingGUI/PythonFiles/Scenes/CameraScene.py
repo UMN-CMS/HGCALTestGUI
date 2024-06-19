@@ -11,6 +11,7 @@ import PythonFiles
 import json, logging
 from picamera2 import Picamera2, Preview
 import tkinter as tk
+import tkinter.ttk as ttk
 import cv2
 import PIL.Image, PIL.ImageTk
 from PIL import ImageTk as iTK
@@ -38,7 +39,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogi
 # @param parent -> References a GUIWindow object
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
-class CameraScene(tk.Frame):
+class CameraScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder, video_source=0 ):
 
@@ -60,39 +61,39 @@ class CameraScene(tk.Frame):
         self.data_holder = data_holder
         self.parent = parent
 
+        # Add the style
+        self.create_style()
 
         # Frame for the buttons
-        btn_frame=tk.Frame(self, width = 800)
+        btn_frame=ttk.Frame(self, width = 800)
         btn_frame.pack(anchor="nw")
 
         # Snapshot button
-        self.btn_snapshot=tk.Button(btn_frame, text="Snapshot",width=20, command=self.snapshot, fg="white")
+        self.btn_snapshot=ttk.Button(btn_frame, text="Snapshot",width=20, command=self.snapshot)
         self.btn_snapshot.pack(side="left", padx=10, pady=10)
 
         # Help button
-        self.btn_proses=tk.Button(
+        self.btn_proses=ttk.Button(
             btn_frame,
             text="Help",
             width=10,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             command= lambda: self.help_action(parent),
-            fg="white"
         )
         self.btn_proses.pack(side="left", padx=10, pady=10)
 
-        self.btn_about=tk.Button(
+        self.btn_about=ttk.Button(
             btn_frame,
             text="Submit",
             width=10,
             command= lambda: self.submit_button_action(),
-            fg="white"
         )
         self.btn_about.pack(side="right", padx=10, pady=10)
 
         self.long_desc_label_text = tk.StringVar()
         self.long_desc_label_text.set("Photo Description")
 
-        self.long_desc_label = tk.Label(
+        self.long_desc_label = ttk.Label(
             master= btn_frame,
             textvariable = self.long_desc_label_text,
             font = ('Arial', 10),
@@ -102,7 +103,7 @@ class CameraScene(tk.Frame):
         self.desc_label_text = tk.StringVar()
         self.desc_label_text.set("Photo Type")
 
-        self.desc_label = tk.Label(
+        self.desc_label = ttk.Label(
             master= btn_frame,
             textvariable = self.desc_label_text,
             font = ('Arial', 19),
@@ -118,6 +119,15 @@ class CameraScene(tk.Frame):
 
         self.camera_created = False
 
+    def create_style(self):
+  
+        self.s = ttk.Style()
+  
+        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+  
+        self.s.theme_use('awdark')
+
 
     def update_preview(self):
 
@@ -130,7 +140,7 @@ class CameraScene(tk.Frame):
             if self.parent.retake == True:
                 pass
             else: 
-                self.flip_label = tk.Label(
+                self.flip_label = ttk.Label(
                     master = self,
                     text = 'Flip Board Over',
                     font = ('Arial', 20),
@@ -220,7 +230,7 @@ class CameraScene(tk.Frame):
 
         # if there isn't an image currently displayed, add one
         if self.photo_packed == False:
-            self.Engine_label = tk.Label(self)
+            self.Engine_label = ttk.Label(self)
             self.Engine_label.configure(image=self.Engine_PhotoImage)
             self.Engine_label.image = self.Engine_PhotoImage
 

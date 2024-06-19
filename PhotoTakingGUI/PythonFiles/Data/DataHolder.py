@@ -52,6 +52,8 @@ class DataHolder():
         # Dictionaries stored by inspection index
         self.all_checkboxes = []
 
+        self.label_info = None
+
         for index in range(self.gui_cfg.getNumInspections()):
             self.all_checkboxes.append(self.gui_cfg.getCheckDict(index))
 
