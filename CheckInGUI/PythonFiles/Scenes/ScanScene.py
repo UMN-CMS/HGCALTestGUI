@@ -211,28 +211,22 @@ class ScanScene(tk.Frame):
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_major.pack()
+        self.label_major.pack(padx=50, pady=10)
 
         self.label_sub = tk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_sub.pack()
+        self.label_sub.pack(padx=50, pady=10)
 
         self.label_sn = tk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
-            padx=50,
-            pady=20,
             )
-        self.label_sn.pack()
+        self.label_sn.pack(padx=50, pady=10)
 
         # Creating frame for logout button
         frm_logout = tk.Frame(self)
