@@ -64,15 +64,6 @@ class PostScanScene(ttk.Frame):
         self.s.tk.call('package', 'require', 'awdark')
   
         self.s.theme_use('awdark')
-    
-    def create_style(self):
-
-        self.s = ttk.Style()
-
-        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
-        self.s.tk.call('package', 'require', 'awdark')
-
-        self.s.theme_use('awdark') 
 
     def create_frame(self, parent):
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")

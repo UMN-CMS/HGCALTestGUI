@@ -16,19 +16,22 @@ class Inspection1(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
         super().__init__(master_frame, width = 1105, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         self.test_name = "SOMETHING STRING"
         self.data_holder = data_holder
-        self.create_style()
+        self.create_style(parent)
         self.update_frame(parent)
 
     #################################################
 
-    def create_style(self):
+    def create_style(self, _parent):
 
         self.s = ttk.Style()
 
-        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark') 
@@ -42,6 +45,9 @@ class Inspection1(ttk.Frame):
         # Create a centralized window for information
         frm_window = ttk.Frame(self, width = 1105, height = 850)
         frm_window.grid(column=0, row=0)
+        
+        frm_window.grid_rowconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(0, weight=1)
 
         # Create a label for the tester's name
         lbl_tester = ttk.Label(
@@ -169,8 +175,20 @@ class Inspection1(ttk.Frame):
 
 
 
+        # # # # # # # # # 
+
         
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(3, weight=1)
         self.grid_columnconfigure(4, weight=1)
+
+        frm_window.grid_columnconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(1, weight=1)
+        frm_window.grid_columnconfigure(2, weight=1)
+        frm_window.grid_columnconfigure(3, weight=1)
+        
         self.grid_rowconfigure(0, weight=1)
 
         

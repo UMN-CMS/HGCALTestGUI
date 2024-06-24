@@ -36,18 +36,18 @@ class ScanScene(ttk.Frame):
         self.data_holder = data_holder
         self.is_current_scene = False
         
-        self.create_style()
+        self.create_style(parent)
 
         self.EXIT_CODE = 0
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
         
-    def create_style(self):
+    def create_style(self, _parent):
 
         self.s = ttk.Style()
 
-        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark')
