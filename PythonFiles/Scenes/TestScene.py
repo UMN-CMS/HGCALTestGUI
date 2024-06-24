@@ -150,7 +150,6 @@ class TestScene(ttk.Frame):
             command = lambda:self.btn_confirm_action(parent)
             )
         btn_confirm.pack(side = 'top')
-        btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
 
         if (self.test_idx == 0):
 
@@ -162,7 +161,6 @@ class TestScene(ttk.Frame):
                 command = lambda:self.run_all_action(parent)
                 )
             run_all_btn.pack(pady = 20)
-            run_all_btn['font'] = font.Font(family = 'Arial', size = 13)
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
@@ -199,7 +197,7 @@ class TestScene(ttk.Frame):
         btn_help.pack(anchor = 's', padx = 10, pady = 10)
         
 
-       self.grid_propagate(0)
+        self.grid_propagate(0)
 
 
     #################################################

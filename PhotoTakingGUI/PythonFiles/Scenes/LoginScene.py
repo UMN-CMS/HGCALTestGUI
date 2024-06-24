@@ -28,13 +28,13 @@ class LoginScene(ttk.Frame):
 
         super().__init__(master_frame, style = 'LoginScene.TFrame', width = 1350, height = 850)
         self.data_holder = data_holder
-        self.create_style()
+        self.create_style(parent)
         self.update_frame(parent)
 
-    def create_style(self):
+    def create_style(self, _parent):
         self.s = ttk.Style()
         
-        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
        
         self.s.theme_use('awdark')
@@ -49,7 +49,7 @@ class LoginScene(ttk.Frame):
 
         logging.info("LoginScene: Frame has been created.")
 
-        img = ImageTk.PhotoImage(Image.open("/home/hgcal/Downloads/UMNLOGO.png"))
+        img = ImageTk.PhotoImage(Image.open("{}/PythonFiles/Images/UMNLOGO.png".format(parent.main_path)))
         bg_label = ttk.Label(self, image = img) 
         bg_label.place(x=275, y=250, relwidth=1, relheight=1)
         bg_label.image = img

@@ -38,11 +38,16 @@ class PostScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 870, height = 650)
+        super().__init__(self.master_frame, width = 1105, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
+
+        self.create_style(parent)
        
         self.create_frame(parent)        
 
@@ -50,6 +55,15 @@ class PostScanScene(tk.Frame):
         self.grid_propagate(0)
 
     #################################################
+
+    def create_style(self, _parent):
+        
+        self.s = ttk.Style()
+  
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+  
+        self.s.theme_use('awdark')
     
     def create_frame(self, parent):
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
@@ -64,7 +78,8 @@ class PostScanScene(tk.Frame):
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
         self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = tk.Frame(self.canvas, width=800, height=500)
+        self.frame = ttk.Frame(self.canvas, width=800, height=500)
+
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
@@ -113,14 +128,14 @@ class PostScanScene(tk.Frame):
                     res_dict[el[0]] = el[1]
 
                 for idx,el in enumerate(res_dict.keys()):
-                    self.lbl_res = tk.Label(
+                    self.lbl_res = ttk.Label(
                             self.frame,
                             text = str(el) + ': ',
                             font=('Arial',14)
                             )
                     self.lbl_res.grid(row=idx+2, column=1)
                     if res_dict[el] == 'Passed':
-                        self.lbl_img = tk.Label(
+                        self.lbl_img = ttk.Label(
                                 self.frame,
                                 image = green_check,
                                 width=75,
@@ -130,7 +145,7 @@ class PostScanScene(tk.Frame):
                         self.lbl_img.image=green_check
                         self.lbl_img.grid(row=idx+2, column=2)
                     else:
-                        self.lbl_img = tk.Label(
+                        self.lbl_img = ttk.Label(
                                 self.frame,
                                 image = redx,
                                 width=75,
@@ -140,7 +155,7 @@ class PostScanScene(tk.Frame):
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
             else:
-                self.lbl_res = tk.Label(
+                self.lbl_res = ttk.Label(
                         self.frame,
                         text = str(self.data_holder.data_dict['prev_results']),
                         font=('Arial',14)
@@ -149,7 +164,7 @@ class PostScanScene(tk.Frame):
 
         except Exception as e:
             print(e)
-            self.lbl_err = tk.Label(
+            self.lbl_err = ttk.Label(
                     self, 
                     text = "Some other error occured and Board was not entered. See logs for more info.",
                     font=('Arial', 14) 

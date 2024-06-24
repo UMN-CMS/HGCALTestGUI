@@ -43,7 +43,6 @@ class PostScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-
         logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
@@ -132,34 +131,30 @@ class PostScanScene(ttk.Frame):
                     res_dict[el[0]] = el[1]
 
                 for idx,el in enumerate(res_dict.keys()):
-                    self.lbl_res = tk.Label(
+                    self.lbl_res = ttk.Label(
                             self.frame,
                             text = str(el) + ': ',
                             font=('Arial',14)
                             )
                     self.lbl_res.grid(row=idx+2, column=1)
                     if res_dict[el] == 'Passed':
-                        self.lbl_img = tk.Label(
+                        self.lbl_img = ttk.Label(
                                 self.frame,
                                 image = green_check,
-                                width=75,
-                                height=75,
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=green_check
                         self.lbl_img.grid(row=idx+2, column=2)
                     elif res_dict[el] == 'Failed':
-                        self.lbl_img = tk.Label(
+                        self.lbl_img = ttk.Label(
                                 self.frame,
                                 image = redx,
-                                width=75,
-                                height=75,
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
                     else:
-                        self.lbl_res = tk.Label(
+                        self.lbl_res = ttk.Label(
                                 self.frame,
                                 text = 'This test has not been run.',
                                 font=('Arial',14)
@@ -167,7 +162,7 @@ class PostScanScene(ttk.Frame):
                         self.lbl_res.grid(row=idx+2, column=2)
                         
             else:
-                self.lbl_res = tk.Label(
+                self.lbl_res = ttk.Label(
                         self.frame,
                         text = str(self.data_holder.data_dict['prev_results']),
                         font=('Arial',14)

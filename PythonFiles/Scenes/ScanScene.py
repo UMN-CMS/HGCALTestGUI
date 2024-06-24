@@ -66,8 +66,6 @@ class ScanScene(ttk.Frame):
         self.s.theme_use('awdark')
 
 
-        self.parent = parent
-        
     
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
@@ -139,13 +137,13 @@ class ScanScene(ttk.Frame):
         # the .grid() adds it to the Frame
         QR_label.grid(column=1, row = 1, sticky='new')
 
-        Scan_Board_Prompt_Frame = Frame(self, width = 1105, height = 650)
+        Scan_Board_Prompt_Frame = ttk.Frame(self, width = 1105, height = 650)
         Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
         
-        Button_Frame1 = Frame(self)
+        Button_Frame1 = ttk.Frame(self)
         Button_Frame1.grid(column=1, row=0, sticky='ew')
 
-        Button_Frame2 = Frame(self)
+        Button_Frame2 = ttk.Frame(self)
         Button_Frame2.grid(column=1, row=2, sticky='ew')
 
         #resizing
@@ -163,7 +161,6 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            pady = 25,
             font = ('Arial', 18)
         )
         lbl_scan.grid(column=0, row=0, sticky='we')
@@ -174,7 +171,7 @@ class ScanScene(ttk.Frame):
             text = "Full ID: ",
             font = ('Arial', 16)
         )
-        lbl_full.pack(padx = 20)
+        lbl_scan.grid(column=0, row=2)
 
         # Entry for the full id to be displayed. Upon Scan, update and disable?
         global ent_full
