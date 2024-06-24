@@ -42,7 +42,7 @@ def main():
     board_cfg = masterCfg
 
 
-    main_window = GUIWindow(board_cfg)
+    main_window = GUIWindow(board_cfg, filepath)
     
 
 def import_yaml(config_path):

@@ -31,7 +31,7 @@ class GUIWindow():
 
     #################################################
 
-    def __init__(self, board_cfg):
+    def __init__(self, board_cfg, main_path):
         # Create the window named "master_window"
         # global makes master_window global and therefore accessible outside the function
         global master_window
@@ -41,11 +41,18 @@ class GUIWindow():
 
         # Creates the size of the window and disables resizing
         master_window.geometry("1350x850+25+100")
+        master_window.pack_propagate(1) 
+
+        #resizing master_frame, keeping sidebar same width
+        master_window.grid_columnconfigure(0, weight=0)  # Make the sidebar resizable
+        master_window.grid_columnconfigure(1, weight=1)  # Make the master frame resizable 
+        master_window.grid_rowconfigure(0, weight=1)
 
         # Variables necessary for the help popup
         self.all_text = "No help available for this scene."
         self.label_text = tk.StringVar()
 
+        self.main_path = main_path
 
         # Following line prevents the window from being resizable
         # master_window.resizable(0,0)
@@ -55,7 +62,7 @@ class GUIWindow():
 
         # Creates and packs a frame that exists on top of the master_frame
         master_frame = tk.Frame(master_window, width = 1350, height = 850)
-        master_frame.grid(column = 0, row = 0, columnspan = 4)
+        master_frame.grid(column = 0, row = 0, columnspan = 4, sticky="nsew")
 
         self.master_frame = master_frame
 
@@ -75,26 +82,26 @@ class GUIWindow():
 
         # At top so it can be referenced by other frames' code... Order of creation matters
         self.test_summary_frame = TestSummaryScene(self, master_frame, self.data_holder)
-        self.test_summary_frame.grid(row=0, column=0)
+        self.test_summary_frame.grid(row=0, column=0, sticky='nsew')
 
         self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
-        self.post_scan_frame.grid(row=0, column=0)
+        self.post_scan_frame.grid(row=0, column=0, sticky='nsew')
 
         self.login_frame = LoginScene(self, master_frame, self.data_holder)
-        self.login_frame.grid(row=0, column=0)
+        self.login_frame.grid(row=0, column=0, sticky='nsew')
 
         self.scan_frame = ScanScene(self, master_frame, self.data_holder)
-        self.scan_frame.grid(row=0, column=0)
+        self.scan_frame.grid(row=0, column=0, sticky='nsew')
 
         self.add_user_frame = AddUserScene(self, master_frame, self.data_holder)
-        self.add_user_frame.grid(row=0,column=0)
+        self.add_user_frame.grid(row=0,column=0, sticky='nsew')
 
         # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, master_frame)
-        self.splash_frame.grid(row=0, column=0)
+        self.splash_frame.grid(row=0, column=0, sticky='nsew')
 
         self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
-        self.camera_frame.grid(row=0, column=0)
+        self.camera_frame.grid(row=0, column=0, sticky='nsew')
 
         # indices to denote photo number and camera number to know when to finish
         self.camera_index = 0

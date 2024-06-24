@@ -34,6 +34,9 @@ class TestSummaryScene(ttk.Frame):
         # Call to the super class's constructor
         # Super class is the tk.Frame class
         super().__init__(master_frame, width = 1350, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         logging.info("TestSummaryScene: Frame has been created.")
 
@@ -43,16 +46,16 @@ class TestSummaryScene(ttk.Frame):
 
         self.create_frame(parent)
 
-        self.create_style()
+        self.create_style(parent)
 
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
     
-    def create_style(self):
+    def create_style(self, _parent):
  
         self.s = ttk.Style()
  
-        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
  
         self.s.theme_use('awdark')
@@ -76,6 +79,11 @@ class TestSummaryScene(ttk.Frame):
 
         self.blank_frame = ttk.Frame(self)
         self.blank_frame.grid(row = 0, column = 0, padx = 80, pady = 20)
+
+        self.columnconfigure(0, weight = 1)
+        self.columnconfigure(1, weight = 1)
+        self.columnconfigure(2, weight = 1)
+        self.columnconfigure(3, weight = 1)
 
         # Adds the title to the TestSummary Frame
         self.title = ttk.Label(

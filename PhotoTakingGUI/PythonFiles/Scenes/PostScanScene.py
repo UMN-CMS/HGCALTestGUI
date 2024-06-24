@@ -39,6 +39,9 @@ class PostScanScene(ttk.Frame):
         self.master_frame = master_frame
 
         super().__init__(self.master_frame,style = 'PostScanScene.TFrame', width = 1105, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         logger.info("PostScanScene: Frame has been created.")
 
@@ -46,17 +49,17 @@ class PostScanScene(ttk.Frame):
        
         self.create_frame(parent)        
 
-        self.create_style()
+        self.create_style(parent)
 
         # Fits the frame to set size rather than interior widgets
         self.grid_propagate(0)
 
     #################################################
-    def create_style(self):
+    def create_style(self, _parent):
         
         self.s = ttk.Style()
   
-        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
   
         self.s.theme_use('awdark')

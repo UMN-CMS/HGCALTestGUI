@@ -25,7 +25,7 @@ class SidebarScene(ttk.Frame):
     #################################################
 
     def __init__(self, parent, sidebar_frame, data_holder):
-        super().__init__(sidebar_frame, width=213, height=650, bg='#808080', padx=10, pady=10)
+        super().__init__(sidebar_frame, width=213, height=650)
 
 
         self.mycanvas = tk.Canvas(self, width=213, height=650, bg="#808080")
@@ -49,7 +49,6 @@ class SidebarScene(ttk.Frame):
         sidebar_frame.grid_columnconfigure(0, weight=1)
         sidebar_frame.grid_rowconfigure(0, weight=1)
 
-        """
         #background="#808080"
 
         self.mycanvas.grid(row=0, column=0, sticky="ns") 
@@ -57,10 +56,7 @@ class SidebarScene(ttk.Frame):
 
         self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
         self.viewingFrame.pack(fill='y', expand=True, side='left')
-        """
         
-        self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
-
 
         """
         self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
@@ -206,7 +202,7 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = physical_offset + original_offset + digital_offset + 1)        
+        self.report_btn.grid(column = 0, row = 15)        
 
 
 

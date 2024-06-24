@@ -40,10 +40,10 @@ class ScanScene(ttk.Frame):
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
     
-    def create_style(self):
+    def create_style(self, _parent):
         self.s = ttk.Style()
  
-        self.s.tk.call('lappend', 'auto_path', '/home/hgcal/HGCALTestGUI/awthemes-10.4.0')
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
  
         self.s.theme_use('awdark')
@@ -110,8 +110,12 @@ class ScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame,style = 'ScanScene.TFrame', width = 1105, height = 850)
-        self.create_style()
+        super().__init__(self.master_frame,style = 'ScanScene.TFrame', width = 1350, height = 850)
+
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
+
+        self.create_style(parent)
 
         logging.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
@@ -124,7 +128,22 @@ class ScanScene(ttk.Frame):
         QR_label.grid(column=1, row = 0)
 
         Scan_Board_Prompt_Frame = ttk.Frame(self)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0)
+        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
+
+        Button_Frame1 = ttk.Frame(self)
+        Button_Frame1.grid(column=1, row=0, sticky='ew')
+
+        Button_Frame2 = ttk.Frame(self)
+        Button_Frame2.grid(column=1, row=2, sticky='ew')
+
+        Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
+        Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
+        QR_label.grid_columnconfigure(0, weight=1)
+        Button_Frame1.grid_columnconfigure(0, weight=1)
+        Button_Frame2.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
         # creates a Label Variable, different customization options
         lbl_scan = ttk.Label(
@@ -187,24 +206,24 @@ class ScanScene(ttk.Frame):
         self.btn_submit.pack()
 
         #creates a frame for the label info
-        label_frame = Frame(self)
+        label_frame = ttk.Frame(self)
         label_frame.grid(column=0, row = 1)
 
-        self.label_major = tk.Label(
+        self.label_major = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
             )
         self.label_major.pack(padx=50, pady=10)
 
-        self.label_sub = tk.Label(
+        self.label_sub = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),
             )
         self.label_sub.pack(padx=50, pady=10)
 
-        self.label_sn = tk.Label(
+        self.label_sn = ttk.Label(
             label_frame,
             text='',
             font = ('Arial', 16),

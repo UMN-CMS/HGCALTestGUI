@@ -37,32 +37,9 @@ class DataHolder():
         # dictionary to hold images before sending them to the database
         self.image_holder = {}
 
-        # For the visual inspection component
-        self.inspection_data = {
-                'board_bent': False,
-                'board_broken': False,
-                'component_missing': False,
-                'component_broken': False,
-                'inspection_comments': "_"
-                }
-
         self.image_data = []
 
-        # All of the checkbox logic
-        # Dictionaries stored by inspection index
-        self.all_checkboxes = []
-
         self.label_info = None
-
-        for index in range(self.gui_cfg.getNumInspections()):
-            self.all_checkboxes.append(self.gui_cfg.getCheckDict(index))
-
-        # All of the comments logic
-        # Dictionaries stored by inspection index
-        self.all_comments = []
-
-        for index in range(self.gui_cfg.getNumInspections()):
-            self.all_comments.append(self.gui_cfg.getCommentDict(index))
 
         self.gui_cfg.setTestIndex(1)
 
@@ -78,15 +55,6 @@ class DataHolder():
 
     def get_photo_list(self):
         return self.photo_list
-
-    def get_check_dict(self, idx):
-        return self.all_checkboxes[idx]
-
-    def get_comment_dict(self, idx):
-        return self.all_comments[idx]
-
-    def set_comment_dict(self, idx, val):
-        self.all_comments[idx] = val
 
     def add_new_user_name(self, user_ID, passwd):
         self.data_dict['user_ID'] = user_ID
@@ -321,14 +289,6 @@ class DataHolder():
 
 
         self.image_holder = {}
-
-        self.inspection_data = {
-                'board_bent': False,
-                'board_broken': False,
-                'component_missing': False,
-                'component_broken': False,
-                'inspection_comments': "_"
-                }
 
         logging.info("DataHolder: DataHolder Information has been reset for a new test.")
 
