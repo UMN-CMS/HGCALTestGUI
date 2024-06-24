@@ -25,9 +25,11 @@ class SidebarScene(ttk.Frame):
     #################################################
 
     def __init__(self, parent, sidebar_frame, data_holder):
+        super().__init__(sidebar_frame, width=213, height=650, bg='#808080', padx=10, pady=10)
 
 
-        super().__init__( sidebar_frame, width=213)
+        self.mycanvas = tk.Canvas(self, width=213, height=650, bg="#808080")
+        self.viewingFrame = tk.Frame(self.mycanvas, background="#808080", width=213, height=650)
 
         self.create_style(parent)
 
@@ -40,35 +42,50 @@ class SidebarScene(ttk.Frame):
         
 
         ############        
-        
-        self.mycanvas = tk.Canvas(self, background="#808080", width=213, height =650)
-        self.viewingFrame = ttk.Frame(self.mycanvas, width = 213, height = 650)
+
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
+       
+        sidebar_frame.grid_columnconfigure(0, weight=1)
+        sidebar_frame.grid_rowconfigure(0, weight=1)
 
-        self.mycanvas.pack(side="right")
-        self.scroller.pack(side="left", fill="both", expand=True)
+        """
+        #background="#808080"
+
+        self.mycanvas.grid(row=0, column=0, sticky="ns") 
+        self.scroller.grid(row=0, column=1, sticky="nsw")
+
+        self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
+        self.viewingFrame.pack(fill='y', expand=True, side='left')
+        """
+        
+        self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
 
 
-        self.canvas_window = self.mycanvas.create_window((4,4), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
-
-
-
-
-
+        """
         self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
         self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
+        """
 
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
-        self.onFrameConfigure(None)
-
+        #self.onFrameConfigure(None)
 
         self.data_holder = data_holder
 
         self.update_sidebar(parent)
 
+        '''Reset the scroll region to encompass the inner frame'''
+        self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
+    """
+    def onCanvasConfigure(self, event):
+        '''Reset the canvas window to encompass inner frame when required'''
+        canvas_width = event.width
+        self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
+    """
+    
+    
     def create_style(self, _parent):
 
         self.s = ttk.Style()
@@ -77,20 +94,6 @@ class SidebarScene(ttk.Frame):
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark')
-
-
-    #################################################
-
-    def onFrameConfigure(self, event):                                              
-        '''Reset the scroll region to encompass the inner frame'''
-        self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
-
-    def onCanvasConfigure(self, event):
-        '''Reset the canvas window to encompass inner frame when required'''
-        pass
-        #canvas_width = event.width
-        #self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
-
 
     #################################################
     def update_sidebar(self, _parent):
@@ -203,8 +206,8 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = 15) #original_offset + digital_offset + 1)
-        
+        self.report_btn.grid(column = 0, row = physical_offset + original_offset + digital_offset + 1)        
+
 
 
         # List for creating check marks with for loop
@@ -245,10 +248,7 @@ class SidebarScene(ttk.Frame):
                 RedX_Label.image = self.Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + original_offset, column=1)
-
-
-
-        self.grid_propagate(0)
+ 
 
     #################################################
 

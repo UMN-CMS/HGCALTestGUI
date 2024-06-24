@@ -39,15 +39,16 @@ class PostScanScene(ttk.Frame):
         self.master_frame = master_frame
 
         super().__init__(self.master_frame, width = 1300-213, height = 700)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
+
 
         logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
        
         self.create_frame(parent)        
-
-        # Fits the frame to set size rather than interior widgets
-        self.grid_propagate(0)
 
     #################################################
 
@@ -74,26 +75,36 @@ class PostScanScene(ttk.Frame):
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
-        self.canvas = tk.Canvas(self, width=800, height=500)
+
+        self.canvas = tk.Canvas(self)
         self.frame = ttk.Frame(self.canvas, width=800, height=500)
-        self.scroller = tk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
+        self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
-        self.canvas.grid(row = 0, column = 0)
-        self.scroller.grid(row=0, column=1, sticky='NSEW')
-        self.window = self.canvas.create_window((4,4), window=self.frame, anchor='n', tags='self.frame')
+
+        self.canvas.grid(row = 0, column = 0, sticky='nsew')
+        self.scroller.grid(row=0, column=1, sticky='nsw')
+        self.window = self.canvas.create_window((0,0), window=self.frame, anchor='nw', tags='self.frame')
+        
+        #resizing
+        self.frame.pack(fill='both', expand=True)
 
         self.frame.bind('<Configure>', self.onFrameConfigure)
         self.frame.bind('<Enter>', self.onEnter)
         self.frame.bind('<Leave>', self.onLeave)
 
         self.onFrameConfigure(None)
+        
+        self.frame.grid_columnconfigure(1, weight = 1)
+        self.frame.grid_columnconfigure(2, weight = 1)
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_rowconfigure(0, weight = 1)
 
         # Adds the title to the Summary Frame
         self.title = ttk.Label(
                 self.frame, 
                 text = "Board Scanned!",
                 )
-        self.title.grid(row= 0, column= 1, pady = 20)
+        self.title.grid(row= 0, column= 1,  pady = 20)
 
         # Adds Board Full ID to the SummaryFrame
         self.id = ttk.Label(
@@ -181,6 +192,7 @@ class PostScanScene(ttk.Frame):
         )
         proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
+
         #creating the next board buttom
         next_board_button = ttk.Button(
             self.frame,
@@ -199,6 +211,7 @@ class PostScanScene(ttk.Frame):
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
+
  
     
 
@@ -214,6 +227,11 @@ class PostScanScene(ttk.Frame):
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
 
+    def get_submit_action(self):
+        return self.btn_proceed_action
+
+    def get_parent(self):
+        return self.parent
         
     
     #################################################

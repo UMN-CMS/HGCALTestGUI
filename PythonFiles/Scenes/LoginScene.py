@@ -30,6 +30,9 @@ class LoginScene(ttk.Frame):
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)
+   
+        self.parent = parent
+
 
     def create_style(self, _parent):
 
@@ -96,7 +99,6 @@ class LoginScene(ttk.Frame):
         self.btn_submit.pack()
         self.btn_submit.config(state = 'disabled')
 
-
         # Creating the add user button
         self.btn_add_user = ttk.Button(
             self, 
@@ -124,8 +126,6 @@ class LoginScene(ttk.Frame):
         # rather than adjusting to the size of the widgets
         self.pack_propagate(0)
 
-    
-
 
     #################################################
 
@@ -141,13 +141,22 @@ class LoginScene(ttk.Frame):
     # @params "_parent" is also a parent like "parent", but it is a different "parent",
     # passes in GUIWindow
     def btn_submit_action(self, _parent):
+        if (self.user_selected.get() != ""):
             # Sets the user_ID in the data_holder to the selected user
-        self.data_holder.set_user_ID(self.user_selected.get())
-        # Changes frame to scan_frame
-        _parent.set_frame_scan_frame()
-        logger.info("LoginScene: Submit button was selected. End of method")
+            self.data_holder.set_user_ID(self.user_selected.get())
+            # Changes frame to scan_frame
+            _parent.set_frame_scan_frame()
+            logger.info("LoginScene: Submit button was selected. End of method")
+        else:
+            pass
 
         # self.data_holder.print()
+    
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

@@ -33,6 +33,7 @@ class TestScene(ttk.Frame):
         self.test_description_long = test_description_long
         self.data_holder = data_holder
         self.test_idx = test_idx
+        self.parent = parent
         #print("Making test scene with index".format(self.test_idx))
         
         self.update_frame(parent)
@@ -56,7 +57,11 @@ class TestScene(ttk.Frame):
         self.create_style(parent)
         # Create a centralized window for information
         frm_window = ttk.Frame(self, width=870, height = 480)
-        frm_window.grid(column=1, row=0, padx = 223, pady = 100)
+        frm_window.grid(column=0, row=0, sticky='nsew')
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=0)
+        frm_window.columnconfigure(0, weight=1)
+        frm_window.rowconfigure(0, weight=1)
 
         # Create a label for the tester's name
         lbl_tester = ttk.Label(
@@ -65,7 +70,7 @@ class TestScene(ttk.Frame):
             font = font_scene
             )
         lbl_tester.pack(side = 'top')
-
+        
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
             frm_window, 
@@ -99,8 +104,7 @@ class TestScene(ttk.Frame):
             font = font_scene
             )
         lbl_test.pack(side = 'top')
-
-
+        
         # Create a entry for the test type
         self.ent_test = tk.Entry(
             frm_window, 
@@ -162,7 +166,8 @@ class TestScene(ttk.Frame):
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 2, row = 1, padx = 5, sticky = 'e')
+        frm_logout.grid(column = 2, row = 1, padx = 5, sticky = 'ew')
+        frm_logout.columnconfigure(0, weight=1)
 
         # Create a logout button
         btn_logout = ttk.Button(
@@ -194,8 +199,8 @@ class TestScene(ttk.Frame):
         btn_help.pack(anchor = 's', padx = 10, pady = 10)
         
 
-        self.grid_propagate(0)
-       
+       self.grid_propagate(0)
+
 
     #################################################
 
@@ -230,7 +235,11 @@ class TestScene(ttk.Frame):
         #print("Confirm button sending test{}".format(self.test_idx))
         _parent.set_frame_test_in_progress(self.queue)
         
+    def get_submit_action(self):
+        return self.btn_confirm_action
 
+    def get_parent(self):
+        return self.parent
     
     #################################################
 
