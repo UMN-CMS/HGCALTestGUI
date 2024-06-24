@@ -21,8 +21,8 @@ def main():
     
     logging.FileHandler(guiLogPath + "visual_gui.log", mode='a')
     
-    curpath = os.path.abspath(os.curdir)
-    print( "Current path is: %s" % (curpath))
+    filepath = os.path.dirname(os.path.abspath(__file__))
+    print( "Current path is: %s" % (filepath))
 
     node = socket.gethostname()
     print(socket.gethostname())
@@ -38,7 +38,7 @@ def main():
 
     ]   
 
-    masterCfg = import_yaml("Configs/Wagon_cfg.yaml")
+    masterCfg = import_yaml("{}/Configs/Wagon_cfg.yaml".format(filepath))
 
     board_cfg = masterCfg
 
