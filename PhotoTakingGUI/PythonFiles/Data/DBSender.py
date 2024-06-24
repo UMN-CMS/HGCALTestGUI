@@ -50,17 +50,21 @@ class DBSender():
 
     def decode_label(self, full_id):
         
-        r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+        if len(full_id) != 15:
+            label_info = None
+        else:
+            r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+            lines = r.text.split('\n')
 
-        lines = r.text.split('\n')
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
 
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
+            temp = []
 
-        label_info = []
-
-        for i in range(begin, end):
-            label_info.append(lines[i])
+            for i in range(begin, end):
+                temp.append(lines[i])
+            
+            label_info = {'Major Type': temp[0], 'Subtype': temp[1], 'SN': temp[2]}
 
         return label_info
 

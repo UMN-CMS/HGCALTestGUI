@@ -31,6 +31,16 @@ class AddUserScene(ttk.Frame):
         self.data_holder = data_holder
         self.create_style()
         self.update_frame(parent)
+        self.create_style(parent)
+
+    def create_style(self, _parent):
+        
+        self.s = ttk.Style()
+  
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+  
+        self.s.theme_use('awdark')
 
     def create_style(self):
 

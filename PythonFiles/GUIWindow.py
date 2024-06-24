@@ -59,8 +59,13 @@ class GUIWindow():
         self.master_window.title("HGCAL Test Window")
         # Creates the size of the window
         self.master_window.geometry("1300x700+25+100")
+        self.master_window.pack_propagate(1) 
 
-        
+        #resizing master_frame, keeping sidebar same width
+        self.master_window.grid_columnconfigure(0, weight=0)  # Make the sidebar resizable
+        self.master_window.grid_columnconfigure(1, weight=1)  # Make the master frame resizable 
+        self.master_window.grid_rowconfigure(0, weight=1)
+
         # Variables necessary for the help popup
         self.all_text = "No help available for this scene."
         self.label_text = tk.StringVar()
@@ -75,13 +80,15 @@ class GUIWindow():
         # Removes the tkinter logo from the window
         # self.master_window.wm_attributes('-toolwindow', 'True')
 
-        # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 213, height=700)
-        sidebar_frame.grid(column = 0 , row = 0)
 
         # Creates and packs a frame that exists on top of the master_frame
         self.master_frame = tk.Frame(self.master_window, width=1300-213, height=700)
-        self.master_frame.grid(column = 1, row = 0)
+        self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
+
+        # Creates a frame to house the sidebar on self.master_window
+        sidebar_frame = tk.Frame(self.master_window, width = 213, height=700)
+        sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
+
 
         # Creates the "Storage System" for the data during testing
         self.data_holder = DataHolder(self.gui_cfg)
@@ -89,7 +96,7 @@ class GUIWindow():
 
         # Creates all the widgets on the sidebar
         self.sidebar = SidebarScene(self, sidebar_frame, self.data_holder)
-        self.sidebar.pack()
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
 
         #################################################
         #   Creates all the different frames in layers  #
@@ -98,25 +105,25 @@ class GUIWindow():
         # At top so it can be referenced by other frames' code... Order of creation matters
 
         self.test_summary_frame = TestSummaryScene(self, self.master_frame, self.data_holder)
-        self.test_summary_frame.grid(row=0, column=0)
+        self.test_summary_frame.grid(row=0, column=0, sticky='nsew')
 
         self.login_frame = LoginScene(self, self.master_frame, self.data_holder)
-        self.login_frame.grid(row=0, column=0)
+        self.login_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.post_scan_frame = PostScanScene(self, self.master_frame, self.data_holder)
-        self.post_scan_frame.grid(row=0, column=0)
+        self.post_scan_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
-        self.scan_frame.grid(row=0, column=0)
+        self.scan_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
-        self.test_in_progress_frame.grid(row=0, column=0)
+        self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
-        self.add_user_frame.grid(row=0, column=0)
+        self.add_user_frame.grid(row=0, column=0, sticky= 'nsew')
 
         self.splash_frame = SplashScene(self, self.master_frame)
-        self.splash_frame.grid(row=0, column=0)
+        self.splash_frame.grid(row=0, column=0, sticky = 'nsew')
 
         #################################################
         #              End Frame Creation               #
@@ -161,14 +168,14 @@ class GUIWindow():
         # For the physical tests
         for test_idx,test in enumerate(physical_list):
             self.test_frames.append(Inspection1(self, self.master_frame, self.data_holder, test_idx))
-            self.test_frames[test_idx].grid(row=0, column=0)
+            self.test_frames[test_idx].grid(row=0, column=0, sticky='nsew')
             offset = offset + 1
 
         # For the digital tests
         for test_idx,test in enumerate(test_list):
 
             self.test_frames.append(TestScene(self, self.master_frame, self.data_holder, test["name"], test["desc_short"], test["desc_long"], queue, self.conn_trigger, test_idx))
-            self.test_frames[test_idx + offset].grid(row=0, column=0)
+            self.test_frames[test_idx + offset].grid(row=0, column=0, sticky='nsew')
 
         print("\ntest_frames len: ", len(self.test_frames))
 
@@ -224,6 +231,7 @@ class GUIWindow():
         self.scan_frame.scan_QR_code(self.master_window)
         
         logging.debug("GUIWindow: The frame has been set to scan_frame.")
+
 
     #################################################
 
@@ -291,10 +299,7 @@ class GUIWindow():
         logging.debug("GUIWindow: The frame has been set to test_in_progress_frame.")
         #self.sidebar.disable_all_btns()
         passed = self.test_in_progress_frame.begin_update(self.master_window, queue, self)
-        if passed:
-            self.go_to_next_test()   
-        else:
-            return
+        self.go_to_next_test()   
 
     #################################################
 
@@ -356,7 +361,15 @@ class GUIWindow():
 
     # Called to change the frame to the argument _frame
     def set_frame(self, _frame):
-        
+
+        #Binding space button to next frame
+        try: 
+            bind_func = _frame.get_submit_action()
+            _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
+        except: 
+            print("no bind function")
+ 
+
         # Updates the sidebar every time the frame is set
         self.sidebar.update_sidebar(self)
 

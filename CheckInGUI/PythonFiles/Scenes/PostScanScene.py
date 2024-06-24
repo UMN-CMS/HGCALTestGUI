@@ -38,13 +38,16 @@ class PostScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        self.create_style()
-
-        super().__init__(self.master_frame, width = 870, height = 650)
+        super().__init__(self.master_frame, width = 1105, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         logger.info("PostScanScene: Frame has been created.")
 
         self.parent = parent
+
+        self.create_style(parent)
        
         self.create_frame(parent)        
 
@@ -52,6 +55,15 @@ class PostScanScene(ttk.Frame):
         self.grid_propagate(0)
 
     #################################################
+
+    def create_style(self, _parent):
+        
+        self.s = ttk.Style()
+  
+        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+  
+        self.s.theme_use('awdark')
     
     def create_style(self):
 
@@ -76,6 +88,7 @@ class PostScanScene(ttk.Frame):
         
         self.canvas = tk.Canvas(self, width=800, height=500)
         self.frame = ttk.Frame(self.canvas, width=800, height=500)
+
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)

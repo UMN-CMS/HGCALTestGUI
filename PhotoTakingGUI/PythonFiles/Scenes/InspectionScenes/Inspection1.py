@@ -15,6 +15,9 @@ class Inspection1(tk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
         super().__init__(master_frame, width = 1105, height = 850)
+        
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
 
         self.test_name = "SOMETHING STRING"
         self.data_holder = data_holder
@@ -32,6 +35,9 @@ class Inspection1(tk.Frame):
         # Create a centralized window for information
         frm_window = tk.Frame(self, width = 1105, height = 850)
         frm_window.grid(column=0, row=0)
+        
+        frm_window.grid_rowconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(0, weight=1)
 
         # Create a label for the tester's name
         lbl_tester = tk.Label(
@@ -159,7 +165,17 @@ class Inspection1(tk.Frame):
 
 
         
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(3, weight=1)
         self.grid_columnconfigure(4, weight=1)
+
+        frm_window.grid_columnconfigure(0, weight=1)
+        frm_window.grid_columnconfigure(1, weight=1)
+        frm_window.grid_columnconfigure(2, weight=1)
+        frm_window.grid_columnconfigure(3, weight=1)
+
         self.grid_rowconfigure(0, weight=1)
 
         

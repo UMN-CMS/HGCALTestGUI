@@ -74,12 +74,12 @@ class Test():
         # Other types of connections to be implemented: MP pipes, os pipes
 
     # Need separate send function for results
-    def send_results(self, results):
+    def send_results(self):
 
         if self.conn is None:
-            print(results)
+            print(self.results)
         else:
-            self.conn.send("JSON ; " + results)
+            self.conn.send("JSON ; " + json.dumps(self.results))
     
 
     # Get results as a python dictionary

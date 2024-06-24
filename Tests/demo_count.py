@@ -45,6 +45,7 @@ class counting(Test):
                 # Simulating a failure case to show how that is handled by the Test API 
                 if random.random() < 0.03:
                     raise Exception("This is a simulated random failure case")
+                    
         except:
             self.send("Something went wrong while counting to {}... Don't worry, this is a simulated test failure to illustrate failure handling :)".format(max_range-1))
             test_passed = False

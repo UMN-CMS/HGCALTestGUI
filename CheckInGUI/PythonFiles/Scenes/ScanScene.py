@@ -115,6 +115,9 @@ class ScanScene(ttk.Frame):
         
         super().__init__(self.master_frame, width = 1105, height = 850)
 
+        master_frame.grid_rowconfigure(0, weight=1)
+        master_frame.grid_columnconfigure(0, weight=1)
+
         logging.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
