@@ -12,43 +12,33 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
 # Creating a class for the SUBSCRIBE socket-type Client
 class SUBClient():
 
-    def __init__(self, conn, queue, gui_cfg, local_pipe):
+    def __init__(self, conn, queue, gui_cfg, q):
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]), "r") as openfile:
             grabbed_ip = openfile.read()[:-1]
         logger.info("SUBClient has started") 
+        print('INFO:HGCALTestGUI.PythonFiles.utils.SUBClient: SUBClient has started')
         # Instantiates variables       
         self.conn = conn
         self.message = ""
-        if gui_cfg["TestHandler"]["name"] == "Local":
-            print('Local Pipe')
-            print(local_pipe)
-            self.local(conn, queue, gui_cfg, local_pipe)
+        if gui_cfg["TestHandler"]["name"] == "Local" or gui_cfg['TestHandler']['name'] == 'SSH':
+            self.local(conn, queue, gui_cfg, q)
         else:
             self.SUB_ZMQ(conn, queue, gui_cfg)
 
 
-    def local(self, conn, queue, gui_cfg, local_pipe):
+    def local(self, conn, queue, gui_cfg, q):
         try:
             while 1 > 0:
-                # Splits up every message that is received into topic and message
-                # the space around the semi-colon is necessary otherwise the topic and messaage
-                # will have extra spaces.
+                # gets the signal from the Handler and splits it into topic and message
+                # the topic determines what SUBClient will do with the message
                 try:
                     print("Waiting")
-                    self.topic, self.message = local_pipe.recv().split(" ; ")
-                    print(self.topic, self.message)
+                    signal = q.get()
+                    self.topic, self.message = signal.split(" ; ")
                 except Exception as e:
                     print("\nThere was an error trying to get the topic and/or message from the socket\n")
-                    logging.info("SUBClient: There was an error trying to get the topic and/or message from the socket")
-                                     
-
-                #poller = zmq.Poller()
-                #poller.register(listen_socket, zmq.POLLIN)
-                #if not poller.poll(7*1000):
-                #    print("Poller being bad")
-                #    
-                #    raise Exception("The SUBClient has failed to receive a topic and message")
-
+                    print(e)
+                    logging.info("SUBClient: There was an error trying to get the topic and/or message from the socket") 
                 logging.debug("The received topic is: %s" % self.topic)
                 logging.debug("The received message is: %s" % self.message)
 
@@ -88,10 +78,6 @@ class SUBClient():
             logging.critical("SUBClient: SUBClient has crashed. Please restart the software.")
         
 
-
-
-
-
     # Responsible for listening for ZMQ messages from teststand
     def SUB_ZMQ(self, conn, queue, gui_cfg):
         grabbed_ip = gui_cfg["TestHandler"]["remoteip"]
@@ -120,10 +106,6 @@ class SUBClient():
 
                 poller = zmq.Poller()
                 poller.register(listen_socket, zmq.POLLIN)
-                #if not poller.poll(7*1000):
-                #    print("Poller being bad")
-                #    
-                #    raise Exception("The SUBClient has failed to receive a topic and message")
 
                 logger.debug("The received topic is: %s" % self.topic)
                 logger.debug("The received message is: %s" % self.message)
@@ -133,6 +115,7 @@ class SUBClient():
 
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
+                    print(self.message)
                     queue.put(self.message)
                     logger.debug("SUBClient: The print message has been placed into the queue.")
 

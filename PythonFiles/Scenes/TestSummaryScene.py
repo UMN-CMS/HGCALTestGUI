@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -22,22 +22,23 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestSummaryScene')
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class TestSummaryScene(tk.Frame):
+class TestSummaryScene(ttk.Frame):
 
     #################################################
 
     def __init__(self, parent, master_frame, data_holder):
     
         self.parent = parent
-        
+        self.create_style(parent)
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width=870, height=500)
+        super().__init__(master_frame, width=1300-213, height=700)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        self.sn_text = tk.StringVar()
+
+        self.id_text = tk.StringVar()
 
         logger.info("TestSummaryScene: Frame has been created.")
 
@@ -45,11 +46,42 @@ class TestSummaryScene(tk.Frame):
 
         # Instantiates an updated table with the current data
         self.create_updated_table(parent)
-        
+
         self.parent = parent
 
-    #################################################
+        # Adds the title to the TestSummary Frame
+        self.title = ttk.Label(
+                self, 
+                #fg='#0d0d0d', 
+                text = "Testing Finished!",
+                font=('Arial',18,'bold')
+                )
+        self.title.grid(row= 0, column= 1, pady = 20, sticky='ew')
 
+
+        self.id_text.set("Full ID: " + str(self.data_holder.data_dict['current_full_ID']))       
+
+        # Adds Board Full ID to the TestSummaryFrame
+        self.lbl_id = ttk.Label(
+                self, 
+                textvariable = self.id_text,
+                font=('Arial', 14)
+                )
+        self.lbl_id.grid(column = 2, row = 0, pady = 20, padx = 5, sticky='ew')
+        
+        # Fits the frame to set size rather than interior widgets
+        self.grid_propagate(0)
+
+
+    #################################################
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
     
     # Creates the table with the updated information from the data_holder
     # @param parent -> References the GUIWindow object that creates the class
@@ -77,36 +109,16 @@ class TestSummaryScene(tk.Frame):
         print(self.list_of_completed_tests)
         print(self.list_of_pass_fail)
 
-        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))       
-        ##########    
-
-        # Adds the title to the TestSummary Frame
-        self.title = tk.Label(
-            self,
-            fg='#0d0d0d',
-            text="Testing Finished!",
-            font=('Arial', 14)
-        )
-        self.title.grid(row=0, column=0, pady=5, sticky='ew')
-
-        self.sn_text.set("Serial Number: " + str(self.data_holder.data_dict['current_serial_ID']))
-
-        # Adds Board Serial Number to the TestSummaryFrame
-        self.lbl_snum = tk.Label(
-            self,
-            textvariable=self.sn_text,
-            font=('Arial', 14)
-        )
-        self.lbl_snum.grid(column=1, row=0, pady=5, padx=5, sticky='ew')
+        self.id_text.set("Full ID: " + str(self.data_holder.data_dict['current_full_ID']))       
 
         # Adds Tester Name to the TestSummary Frame
-        self.lbl_tester = tk.Label(
-            self,
-            text="Tester: " + self.data_holder.data_dict['user_ID'],
-            font=('Arial', 14)
-        )
-        self.lbl_tester.grid(column=2, row=0, pady=5, padx=5, sticky='ew')
-        
+        self.lbl_tester = ttk.Label(
+                self, 
+                text = "Tester: " + self.data_holder.data_dict['user_ID'],
+                font=('Arial', 14)
+                )
+        self.lbl_tester.grid(column = 3, row = 0, pady = 20, padx = 5, sticky='ew')
+            
         self.columnconfigure(0, weight = 1)
         self.columnconfigure(1, weight = 1)
         self.columnconfigure(2, weight = 1)
@@ -114,11 +126,10 @@ class TestSummaryScene(tk.Frame):
 
 
 
-
         ##########
 
         self.mycanvas = tk.Canvas(self)
-        self.viewingFrame = tk.Frame(self.mycanvas, width = 802, height = 400)
+        self.viewingFrame = ttk.Frame(self.mycanvas, width = 802)
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
@@ -148,25 +159,26 @@ class TestSummaryScene(tk.Frame):
         
         # Adds the labels to the top of the table
         for index in range(len(self.list_of_table_labels)):
-            _label = tk.Label(
+            _label = ttk.Label(
                     self.viewingFrame, 
                     text = self.list_of_table_labels[index], 
-                    relief = 'ridge',  
-                    font=('Arial', 11, "bold"),
-                    padx=5,   # Horizontal padding
-                    pady=5    # Vertical padding
+                    #relief = 'ridge', 
+                    width=25, 
+                    #height=1, 
+                    font=('Arial', 11, "bold")
                     )
             _label.grid(row= 0, column=index, sticky='nsew')
             
 
         # Adds the test names to the first column
         for index in range(len(self.list_of_tests)):
-            _label= tk.Label(
+            _label= ttk.Label(
                     self.viewingFrame, 
                     text = self.list_of_tests[index], 
-                    font=('Arial', 11),
-                    padx=5,   
-                    pady=5    
+                    #relief = 'ridge', 
+                    width=25, 
+                    #height=3, 
+                    font=('Arial', 11)
                     )
             _label.grid(row=index + 1, column=0, sticky='nsew')
         
@@ -176,11 +188,12 @@ class TestSummaryScene(tk.Frame):
         for index in range(len(self.list_of_completed_tests)):
             
             # Instantiates a Label
-            _label = tk.Label(
+            _label = ttk.Label(
                         self.viewingFrame,
-                        font=('Arial',11),
-                        padx=5, 
-                        pady=5    
+                        #relief = 'ridge', 
+                        width=25, 
+                        #height=3, 
+                        font=('Arial',11)
                         )
 
             # if the test is completed, set the label to "Complete"
@@ -205,7 +218,7 @@ class TestSummaryScene(tk.Frame):
                 Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
                 Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
                 Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50)
+                GreenCheck_Label = ttk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=75)
                 GreenCheck_Label.image = Green_Check_PhotoImage
 
                 GreenCheck_Label.grid(row=index + 1, column=2)
@@ -215,7 +228,7 @@ class TestSummaryScene(tk.Frame):
                 Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
                 Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
                 Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50)
+                RedX_Label = ttk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=75)
                 RedX_Label.image = Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + 1, column=2)
@@ -283,23 +296,23 @@ class TestSummaryScene(tk.Frame):
         more_infos = []
 
         for i in range(self.data_holder.getNumTest() + self.data_holder.getNumPhysicalTest()):
-            rows.append(tk.Frame(self.viewingFrame))
+            rows.append(ttk.Frame(self.viewingFrame))
             rows[i].grid(column = 3, row = i + 1)
 
-            retests.append(tk.Button(
+            retests.append(ttk.Button(
                     rows[i], 
                     text = "RETEST",
-                    padx= 5,
-                    pady=3,  
+                    #padx= 5,
+                    #pady=3,  
                     command = lambda i=i: self.btn_retest_action(parent, i)
                     ))
             retests[i].grid(column = 0, row = 0)
 
-            more_infos.append(tk.Button(
+            more_infos.append(ttk.Button(
                     rows[i], 
                     text = "MORE INFO", 
-                    padx= 5,
-                    pady=3, 
+                    #padx= 5,
+                    #pady=3, 
                     command = lambda i=i: self.btn_more_info_action(parent, i)
                     ))
             more_infos[i].grid(column=1, row = 0)
@@ -307,10 +320,10 @@ class TestSummaryScene(tk.Frame):
             rows[i].columnconfigure(0, weight=1)
             rows[i].columnconfigure(1, weight=1)
 
-        btn_next_test = tk.Button(
+        btn_next_test = ttk.Button(
                 self.viewingFrame, 
                 text = "NEXT BOARD",
-                font = ('Arial', 15), 
+                #font = ('Arial', 15), 
                 command = lambda: self.btn_next_test_action(parent)
                 )
         btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 3, sticky='se', padx=20, pady=50)
@@ -335,7 +348,7 @@ class TestSummaryScene(tk.Frame):
             self.JSON_popup.attributes('-topmost', 'true') 
 
             # Creating a Frame For Console Output
-            frm_JSON = tk.Frame(self.JSON_popup, width = 500, height = 300, bg = 'green')
+            frm_JSON = ttk.Frame(self.JSON_popup, width = 500, height = 300, bg = 'green')
             frm_JSON.pack_propagate(0)
             frm_JSON.pack()
 
@@ -353,8 +366,9 @@ class TestSummaryScene(tk.Frame):
 
 
             temp = ""
-            for key, value in current_JSON_data.items():
-                temp = temp + "{} : {}".format(key, value) + "\n"
+            temp = json.dumps(current_JSON_data, indent=2)
+            #for key, value in current_JSON_data.items():
+            #    temp = temp + "{} : {}".format(key, value) + "\n"
 
 
             self.JSON_entry_box.delete(1.0,"end")
@@ -408,7 +422,7 @@ class TestSummaryScene(tk.Frame):
     # Next test button action
     def btn_next_test_action(self, _parent):
         self.data_holder.data_holder_new_test()
-        self.lbl_snum.destroy()
+        self.lbl_id.destroy()
         _parent.reset_board()
         logger.info("TestSummaryScene: Starting a new test.")
 

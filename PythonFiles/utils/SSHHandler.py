@@ -1,4 +1,5 @@
 import multiprocessing as mp
+import subprocess as sp
 import zmq, sys, os, signal, logging, json
 
 sys.path.append("{}".format(os.getcwd()))
@@ -15,35 +16,42 @@ sys.path.append("{}/Tests".format(os.getcwd()))
 # is used to trigger a new test via REQClient
 
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
+#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
 
-class LocalHandler:
+class SSHHandler:
 
-    def __init__(self, gui_cfg, conn_trigger):
+    def __init__(self, gui_cfg, conn_trigger, q):
 
-        conn_test, conn_pub = mp.Pipe()
-  
+        queue = mp.Queue()
+
         # Listen for test request
         while True:
+            print("New PUB proc")
+            print("waiting for trigger request")
             request = json.loads(conn_trigger.recv())
+            process_PUB = mp.Process(target = self.task_local, args=(queue,q))
+            process_PUB.start()
+
             if request is not None:
-                break
 
-        desired_test = request["desired_test"]
-        test_info = {"serial": request["serial"], "tester": request["tester"]}
+                desired_test = request["desired_test"]
+                test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
-        process_PUB = mp.Process(target = self.task_PUB, args=(conn_pub,))
-        process_test = mp.Process(target = self.task_test, args=(conn_test, gui_cfg, desired_test, test_info))
+                print("New test proc")
+                self.process_test = mp.Process(target = self.task_test, args=(queue, gui_cfg, desired_test, test_info))
+                self.process_test.start()
 
-        process_PUB.start()
-        process_test.start()
+                # Hold until test finish
+                print("Joining test proc")
+                self.process_test.join()
 
-        # Hold until test finish
-        process_test.join()
+                print("Terminate PUB proc")
+                process_PUB.terminate()
+
 
         try:
-            conn_pub.close()
-            conn_test.close()
+            queue.close()
 
         except Exception as e:
             print("PUB and test pipe could not be closed: {}".format(e))
@@ -53,62 +61,68 @@ class LocalHandler:
         except Exception as e:
             print("PUB and test process could not be terminated: {}".format(e))
 
-    def task_PUB(self, conn_pub):
-        # Used to allow CTRL+C keyboard interrupt
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-        # Creates zmq.Context object
-        cxt = zmq.Context()
-        # Sets socket type to PUBLISH
-        pub_socket = cxt.socket(zmq.PUB)
-        # Server side .bind
-        pub_socket.bind("tcp://*:5556")
-
-        # Creates a while loop that is searching for the "print" messages on the pipe
-        # Sends them immediately and once it receieves "Done." It prepares to receive and send
-        # the json files of results.
+    def task_local(self, queue, q):
+        # listens for incoming data and attaches the correct topic before sending it on to SUBClient
         try:
             while 1 > 0:
-                prints = conn_pub.recv()
+                print("Ready for next request")
+                prints = queue.get()
                 logging.info("Print statement received.")
                 logging.info("Testing if print statement is 'Done.'")
                 if prints == "Done.":
                     logging.info("String variable prints = 'Done.'")
-                    prints = "print ; " + str(prints)
+                    prints = 'print ; ' + str(prints)
                     logging.info("'print' topic added to the prints variable.")
-                    pub_socket.send_string(prints)
+                    q.put(prints)
                     logging.info("Sent final print statement.")
                     logging.info("Waiting for JSON on Pipe")
-                    json = conn_pub.recv()
+                    json = queue.get()
                     logging.info("JSON receieved.")
-                    json = "JSON ; " + str(json)
+                    json = 'JSON ; ' + str(json)
                     logging.info("JSON topic added to json string")
-                    pub_socket.send_string(str(json))
+                    q.put(str(json))
                     logging.info("JSON sent.")
-                    # Breaks the loop once it sends the JSON so the server will shut down
-                    break
                 else:
-                    prints = "print ; " + prints
+                    prints = 'print ; ' + str(prints)
                     logging.info(prints)
                     logging.info("'print' topic added to prints variable.")
-                    pub_socket.send_string(prints)
+                    q.put(prints)
                     logging.info("Sent print statement.")
-            
+                
             logging.info("Loop has been broken.")
         except:
-            logging.critical("PUBServer has crashed.")
-
-        # Closes the server once the loop is broken so that there is no hang-up in the code
-        print("PUBServer Closing")    
-        pub_socket.close()
+            logging.critical("Local server has crashed.")
 
 
     def task_test(self, conn_test, gui_cfg, desired_test, test_info):   
 
-        # Dynamically import test class 
-        test_meta = gui_cfg["Test"][desired_test]
-        # Need to strip .py from test script for import
-        mod = __import__(test_meta["TestScript"][:-3], fromlist=[test_meta["TestClass"]])
-        test_class = getattr(mod, test_meta["TestClass"])
+        print('SSHHandler: task_test has started.')
 
-        test_class(conn_test, board_sn=test_info["serial"], tester=test_info["tester"])
+        # Dynamically import test class and testing info
+        full_id = test_info["full_id"]
+        tester = test_info["tester"]
+
+        test_command = gui_cfg["Test"][desired_test]['TestCommand']
+        test_config = gui_cfg['Test'][desired_test]['TestConfig']
+    
+        username = gui_cfg['TestHandler']['username']
+        hostname = gui_cfg['TestHandler']['hostname']
+
+        #command to run test on ssh
+        #username, hostname, test_command, and test_config are specified in GUI Config
+        #full id, tester, and test_config are extra arguments passed to the python command being run
+        cmd = ['ssh', username + '@' + hostname, test_command, full_id, tester, test_config]
+
+        #runs ssh command using python subprocess 
+        proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
+        print('Test has been started')
+
+        #iterates over lines as they are received, sends them to task_local 
+        for line in iter(proc.stdout.readline, ''):
+            
+            conn_test.put(line)
+
+
+
+
 

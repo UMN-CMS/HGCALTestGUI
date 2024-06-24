@@ -39,7 +39,6 @@ def scan():
 def listen(serial, proc):
     for line in proc.stdout:
         if line is not None:
-            print(line.strip().decode('utf-8'))
             serial.append(line.strip().decode('utf-8'))
             return
 

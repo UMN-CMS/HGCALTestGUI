@@ -35,7 +35,7 @@ class REQClient():
     ################################################
 
     # Ensures nothing happens on instantiantion
-    def __init__(self, gui_cfg, desired_test, serial, tester, conn_trigger):
+    def __init__(self, gui_cfg, desired_test, full_id, tester, conn_trigger):
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]),"r") as openfile:
             grabbed_ip = openfile.read()[:-1]
         self.message = ""
@@ -45,34 +45,38 @@ class REQClient():
         # Run the ZMQ server on test stand and make requests via ZMQ client
         if test_handler_name == "ZMQ":
 
-            self.ZMQClient(gui_cfg, desired_test, serial, tester)
+            self.ZMQClient(gui_cfg, desired_test, full_id, tester)
         
         # Run tests only on the current computer
         elif test_handler_name == "Local":
 
-            self.LocalClient(conn_trigger, desired_test, serial, tester)
+            self.LocalClient(conn_trigger, desired_test, full_id, tester)
 
         # Run tests on another machine via SHH (key required)
         elif test_handler_name == "SSH":
 
-            self.SSHClient(gui_cfg, desired_test, serial, tester)
+            self.SSHClient(conn_trigger, desired_test, full_id, tester)
 
 
     # Handling tests run on the local machine
-    # A separate ZMQ server is used to send information to terminal
-    # within GUI
-    def LocalClient(self, conn_trigger, desired_test, serial, tester):
+    def LocalClient(self, conn_trigger, desired_test, full_id, tester):
 
         desired_test = int(desired_test[4:])
 
-        trigger_dict = {"desired_test": desired_test, "serial": serial, "tester": tester}
+        trigger_dict = {"desired_test": desired_test, "full_id": full_id, "tester": tester}
         trigger_message = json.dumps(trigger_dict)
 
         conn_trigger.send(trigger_message)
 
-    def SSHClient(self, gui_cfg, desired_test, serial, tester):
+    # Handling tests run via SSH
+    def SSHClient(self, conn_trigger, desired_test, full_id, tester):
 
-        pass
+        desired_test = int(desired_test[4:])
+
+        trigger_dict = {"desired_test": desired_test, "full_id": full_id, "tester": tester}
+        trigger_message = json.dumps(trigger_dict)
+
+        conn_trigger.send(trigger_message)
 
     def ZMQClient(self, gui_cfg, desired_test, serial, tester):
         sending_msg = desired_test + ";" + serial + ";" + tester

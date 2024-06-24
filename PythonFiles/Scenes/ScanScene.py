@@ -3,6 +3,7 @@
 # importing necessary modules
 import multiprocessing as mp
 import logging, time
+import tkinter.ttk as ttk
 import tkinter as tk
 import sys, time
 from tkinter import *
@@ -26,7 +27,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class ScanScene(tk.Frame):
+class ScanScene(ttk.Frame):
     
     #################################################
 
@@ -43,7 +44,7 @@ class ScanScene(tk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width=870, height = 500)
+        super().__init__(self.master_frame, width=1300-213, height = 700)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -53,17 +54,30 @@ class ScanScene(tk.Frame):
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
 
+        self.create_style(parent)
+       
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
+
+
         self.parent = parent
         
     
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
+    # can see more scanner documentation in the Visual Inspection GUI
     def scan_QR_code(self, master_window):
         
         if self.use_scanner:
 
-            self.ent_snum.config(state = 'normal')
-            self.ent_snum.delete(0,END)
+            self.ent_full.config(state = 'normal')
+            self.ent_full.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
             sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
@@ -71,14 +85,14 @@ class ScanScene(tk.Frame):
             from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 
             manager = mp.Manager()
-            serial = manager.list()
-            print(serial)
+            full_id = manager.list()
+            print(full_id)
 
-            self.ent_snum.config(state = 'normal')
+            self.ent_full.config(state = 'normal')
 
             logger.info("ScanScene: Beginning scan...")
             self.scanner = scan()
-            self.listener = mp.Process(target=listen, args=(serial, self.scanner))
+            self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
             self.listener.start()
                 
@@ -88,15 +102,15 @@ class ScanScene(tk.Frame):
                     self.master_window.update()
                 except:
                     pass
-                if not len(serial) == 0:
-                    self.data_holder.set_serial_ID( parse_xml(serial[0]))
+                if not len(full_id) == 0:
+                    self.data_holder.set_full_ID( parse_xml(full_id[0]))
 
                     self.listener.terminate()
                     self.scanner.terminate()
                 
-                    self.ent_snum.delete(0,END)
-                    self.ent_snum.insert(0, str(self.data_holder.get_serial_ID()))
-                    self.ent_snum.config(state = 'disabled')
+                    self.ent_full.delete(0,END)
+                    self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                    self.ent_full.config(state = 'disabled')
                     self.show_rescan_button()
                     break
 
@@ -119,7 +133,7 @@ class ScanScene(tk.Frame):
 
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = tk.Label(self, image=QR_PhotoImage)
+        QR_label = ttk.Label(self, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
@@ -146,7 +160,7 @@ class ScanScene(tk.Frame):
 
 
         # creates a Label Variable, different customization options
-        lbl_scan = tk.Label(
+        lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
             pady = 25,
@@ -155,27 +169,27 @@ class ScanScene(tk.Frame):
         lbl_scan.grid(column=0, row=0, sticky='we')
 
         # Create a label to label the entry box
-        lbl_snum = tk.Label(
+        lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Serial Number:",
-            pady = 10,
+            text = "Full ID: ",
             font = ('Arial', 16)
         )
-        lbl_snum.grid(column=0, row=2, sticky='we')
+        lbl_full.pack(padx = 20)
 
-        # Entry for the serial number to be displayed. Upon Scan, update and disable?
-        global ent_snum
+        # Entry for the full id to be displayed. Upon Scan, update and disable?
+        global ent_full
         
         # Creating intial value in entry box
         self.user_text = tk.StringVar(self)
         
         # Creates an entry box
-        self.ent_snum = tk.Entry(
+        self.ent_full = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
             textvariable= self.user_text,
             )
-        self.ent_snum.grid(column=0, row=3)
+        self.ent_full.grid(column=0, row=3)
+
 
         # Traces an input to show the submit button once text is inside the entry box
         self.user_text.trace(
@@ -187,44 +201,71 @@ class ScanScene(tk.Frame):
             )
 
         # Rescan button creation
-        self.btn_rescan = tk.Button(
+        self.btn_rescan = ttk.Button(
             Scan_Board_Prompt_Frame,
             text="Rescan",
-            padx = 20,
-            pady =10,
-            relief = tk.RAISED,
+            #padx = 20,
+            #pady =10,
+            #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
         self.btn_rescan.grid(column=0, row=5, padx=10, pady=5)
 
         # Submit button creation
-        self.btn_submit = tk.Button(
+        self.btn_submit = ttk.Button(
             Scan_Board_Prompt_Frame,
             text="Submit",
-            padx = 20,
-            pady = 10,
-            relief = tk.RAISED,
-            command= lambda:  self.btn_submit_action(self, parent, self.user_text)
+            #padx = 20,
+            #pady = 10,
+            #relief = tk.RAISED,
+            command= lambda:  self.btn_submit_action(parent)
             )
         self.btn_submit.grid(column=0, row=6, padx=10, pady=5)
 
+        #creates a frame for the label info
+        label_frame = ttk.Frame(self)
+        label_frame.grid(column=0, row = 1)
+
+        self.label_major = ttk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            )
+        self.label_major.pack(padx=50, pady=10)
+
+        self.label_sub = ttk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            )
+        self.label_sub.pack(padx=50, pady=10)
+
+        self.label_sn = ttk.Label(
+            label_frame,
+            text='',
+            font = ('Arial', 16),
+            )
+        self.label_sn.pack(padx=50, pady=10)
+            
+
+        # Creating frame for logout button
+        frm_logout = ttk.Frame(self)
+        frm_logout.grid(column = 1, row = 1, sticky= 'se')
+
         # Creating the logout button
-        btn_logout = tk.Button(
-            Button_Frame2,
-            relief = tk.RAISED,
-            padx = 20,
-            pady =10,
+        btn_logout = ttk.Button(
+            frm_logout,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.grid(column=0, row=1, sticky='ne', padx=10, pady=10)
 
         # Creating the help button
-        btn_help = tk.Button(
-            Button_Frame1,
-            relief = tk.RAISED,
-            padx = 20,
-            pady =10,
+
+        btn_help = ttk.Button(
+            frm_logout,
+            #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )
@@ -248,27 +289,24 @@ class ScanScene(tk.Frame):
 
     # Function for the submit button
     def btn_submit_action(self, _parent):
-        if (self.user_text.get() != "") :
-            self.EXIT_CODE = 1 
+       
+        self.EXIT_CODE = 1 
 
-    #        if self.use_scanner:
-    #            self.listener.terminate()
-    #            self.scanner.terminate()
+#        if self.use_scanner:
+#            self.listener.terminate()
+#            self.scanner.terminate()
 
-            self.data_holder.set_serial_ID(self.ent_snum.get())
-            if self.data_holder.getGUIcfg().get_if_use_DB():
-                self.data_holder.check_if_new_board() 
-            _parent.update_config()
-            _parent.create_test_frames(self.data_holder.data_dict['queue'])
-            _parent.set_frame_postscan()
-        else:
-            pass
+        self.data_holder.set_full_ID(self.ent_full.get())
+        _parent.update_config()
+        if self.data_holder.getGUIcfg().get_if_use_DB():
+            self.data_holder.check_if_new_board() 
 
-    def get_submit_action(self):
-        return self.btn_submit_action
+        self.data_holder.update_location(self.ent_full.get())
+        _parent.create_test_frames(self.data_holder.data_dict['queue'])
+        _parent.set_frame_postscan()
 
-    def get_parent(self):
-        return self.parent
+        self.EXIT_CODE = 0
+
 
     #################################################
 
@@ -284,17 +322,41 @@ class ScanScene(tk.Frame):
          # Send user back to login frame
         _parent.set_frame_login_frame() 
 
+        self.EXIT_CODE = 0
+
     #################################################
 
     # Function to activate the submit button
     def show_submit_button(self):
+        self.data_holder.decode_label(self.ent_full.get())
         self.btn_submit["state"] = "active"
+        try:
+            self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
+            self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
+            self.label_sn['text'] = 'Serial Number: ' + self.data_holder.label_info['SN']
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+        except TypeError:
+            self.label_major['text'] = ''
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+
 
     #################################################
 
     # Function to disable to the submit button
     def hide_submit_button(self):
         self.btn_submit["state"] = "disabled"
+        self.label_major['text'] = ''
+        self.label_sub['text'] = ''
+        self.label_sn['text'] = ''
+        self.label_major.update()
+        self.label_sub.update()
+        self.label_sn.update()
 
     #################################################
 

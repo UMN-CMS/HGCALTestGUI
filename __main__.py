@@ -18,11 +18,12 @@ if not os.path.exists(guiLogDir):
 # Importing necessary modules
 import multiprocessing as mp
 import socket
-# Imports the GUIWindow
+# Imports the GUIWindow and Handlers
 from PythonFiles.GUIWindow import GUIWindow
 from PythonFiles.utils.SUBClient import SUBClient
 from PythonFiles.update_config import update_config
 from PythonFiles.utils.LocalHandler import LocalHandler
+from PythonFiles.utils.SSHHandler import SSHHandler
 import sys
 import logging
 import yaml
@@ -48,29 +49,25 @@ logger.addHandler(ch)
 logger.info("Creating new instance of HGCALTestGUI")
 
 # Creates a task of creating the GUIWindow
-def task_GUI(conn, conn_trigger, queue, board_cfg):
+def task_GUI(conn, conn_trigger, queue, board_cfg, curpath):
     # creates the main_window as an instantiation of GUIWindow
-    main_window = GUIWindow(conn, conn_trigger, queue, board_cfg)
+    main_window = GUIWindow(conn, conn_trigger, queue, board_cfg, curpath)
 
 # Creates a task of creating the SUBClient
 def task_SUBClient(conn, queue, board_cfg, sub_pipe):
     # Creates the SUBSCRIBE Socket Client
-    #try:
     sub_client = SUBClient(conn, queue, board_cfg, sub_pipe)
-    #except Exception as e:
-    #    print("\n\n\n\n\nUh oh... an exception has been found...")
-    #    print("Exception: {}\n\n\n".format(e))
-    #    print("It looks like this has something to do with the SUBClient's instantiation\n\n") 
 
+# Function to create the handler of the type specified in the config file
 def task_LocalHandler(gui_cfg, conn_trigger, local_pipe):
 
     LocalHandler(gui_cfg, conn_trigger, local_pipe)
 
-def task_SSHHandler(gui_cfg):
+def task_SSHHandler(gui_cfg, conn_trigger, queue):
 
-    SSHHandler(gui_cfg)
+    SSHHandler(gui_cfg, conn_trigger, queue)
 
-def run(board_cfg):    
+def run(board_cfg, curpath):    
     # Creates a Pipe for the SUBClient to talk to the GUI Window
     conn_SUB, conn_GUI = mp.Pipe()
 
@@ -78,35 +75,40 @@ def run(board_cfg):
     if board_cfg["TestHandler"]["name"] != "ZMQ":
         conn_trigger_GUI, conn_trigger_Handler = mp.Pipe()
         
+    # Creates a queue to send information to the testing window
     queue = mp.Queue()
 
     #logging.FileHandler(guiLogPath + "gui.log", mode='a')
 
     # Turns creating the GUI and creating the SUBClient tasks into processes
     if board_cfg["TestHandler"]["name"] == "Local":
-        # Creates a Pipe to connect SUBClient and LocalClient
-        local_pipe, sub_pipe = mp.Pipe()
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg))
-        process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler, local_pipe))
-        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, sub_pipe))
+        # Creates a Queue to connect SUBClient and Handler
+        q = mp.Queue()
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
+        process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler, q))
+        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
+
     elif board_cfg["TestHandler"]["name"] == "SSH":
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg))
-        process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler))
-        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, None))
+        q = mp.Queue()
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
+        process_Handler = mp.Process(target = task_SSHHandler, args=(board_cfg, conn_trigger_Handler, q))
+        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
+
     else: 
-        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg))
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg, curpath))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, None))
 
     # Starts the processes
     process_GUI.start()
-    if board_cfg["TestHandler"]["name"] == "Local":
+    if board_cfg["TestHandler"]["name"] == "Local" or board_cfg['TestHandler']['name'] == 'SSH':
         process_Handler.start()
     process_SUBClient.start()
 
-    # Should hold the code at this line until the GUI process ends
+    # holds the code at this line until the GUI process ends
     process_GUI.join()
 
     try:
+        #closes multiprocessing connections
         conn_SUB.close()
         conn_GUI.close()
         conn_trigger_GUI.close()
@@ -122,31 +124,6 @@ def run(board_cfg):
         print("Terminate is unnecessary.")
         pass
 
-
-def board_config(sn):
-
-    board_cfg = None
-    
-    if sn == None:
-        if any(node in y for y in  wagon_GUI_computers):
-            from TestConfigs.Wagon_cfg import masterCfg
-
-            print("Hostname setup for wagon testing. Initializing Wagon Test GUI...")
-
-            board_cfg = masterCfg
-        
-        if any(node in y for y in engine_GUI_computers):
-            from TestConfigs.Engine_cfg import masterCfg
-
-            print("Hostname setup for engine testing. Initializing Engine Test GUI...")
-
-            board_cfg = masterCfg
-
-
-        run(board_cfg)
-
-    else:
-        update_config(sn)
 
 def import_yaml(config_path):
 
@@ -183,17 +160,19 @@ if __name__ == "__main__":
     if config_path is not None:
         board_cfg = import_yaml(config_path)
 
-        run(board_cfg)
+        run(board_cfg, curpath)
     elif any((node in x for x in wagon_GUI_computers)):
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
 
-        run(board_cfg)
+        run(board_cfg, curpath)
 
     elif any((node in x for x in wagon_GUI_computers)):
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Engine_cfg.yaml")
 
-        run(board_cfg)
+        run(board_cfg, curpath)
 
     else:
-        board_config(None)
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
+
+        run(board_cfg, curpath)
    

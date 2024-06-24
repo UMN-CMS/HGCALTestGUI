@@ -60,14 +60,14 @@ Test:
 # Tests which require a physical measurement
 # The pass fail criteria for these tests are specified here
 PhysicalTest: 
-- name: SAMPLE test 
-  required: true 
-  desc_short: Some short description of the test
-  desc_long: Long description of the test
-  criteria: 
-  - first testing criteria
-  - second testing criteria
-  - third testing criteria                
+  - name: SAMPLE test 
+    required: true 
+    desc_short: Some short description of the test
+    desc_long: Long description of the test
+    criteria: 
+      - first testing criteria
+      - second testing criteria
+      - third testing criteria                
 
     #################################
     # REMOVE FOR DEMO               #
@@ -81,4 +81,8 @@ DBInfo:
   reader: WagonDBReadUser
   inserter: WagonDBInserter
   baseURL: "http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB"
+
+People:
+  - Caleb
+
 ...

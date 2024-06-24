@@ -2,7 +2,7 @@
 
 # Imports all the necessary modules
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from tkinter import messagebox
 from xml.dom.expatbuilder import parseFragmentString
 import time
@@ -17,17 +17,27 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestInProgressScene'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating the frame itself
-class TestInProgressScene(tk.Frame):
+class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
-        super().__init__(master_frame, width=870, height = 500)
+        super().__init__(master_frame, width=1300-213, height = 700)
 
+        self.create_style(parent)
         self.queue = queue
         self.data_holder = data_holder
         self.is_current_scene = False
         self.initialize_scene(parent, master_frame)
         self.conn = _conn
+
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
 
     ##################################################
 
@@ -59,7 +69,7 @@ class TestInProgressScene(tk.Frame):
     def initialize_scene(self, parent, master_frame):
         
         logger.info("TestInProgressScene: The frame has been initialized.")
-        scrollbar = tk.Scrollbar(self)
+        scrollbar = ttk.Scrollbar(self)
         scrollbar.pack(side = "right", fill = 'y')
 
 
@@ -81,22 +91,18 @@ class TestInProgressScene(tk.Frame):
 
 
         # Creating the main title in the frame
-        lbl_title = tk.Label(self, 
+        lbl_title = ttk.Label(self, 
             text = "Test in progress. Please wait.", 
             font = ('Arial', 20)
             )
         lbl_title.pack(padx = 0, pady = 50)
 
         # Create a progress bar that does not track progress but adds motion to the window
-        '''self.prgbar_progress = ttk.Progressbar(
+        self.progressbar = ttk.Progressbar(
             self, 
             orient = 'horizontal',
             mode = 'indeterminate', length = 350)
-        self.prgbar_progress.pack(padx = 50)
-        self.prgbar_progress.start()
-
-        print("\n\n\n\n\n\n\n\n Starting Progress Bar \n\n\n\n\n\n\n")
-        '''
+        self.progressbar.pack(padx = 50)
         # A Button To Stop the Progress Bar and Progress Forward (Temporary until we link to actual progress)
         btn_stop = ttk.Button(
             self, 
@@ -113,8 +119,9 @@ class TestInProgressScene(tk.Frame):
 
     # A function for the stop button
     def btn_stop_action(self, _parent):
-
         _parent.return_to_current_test()
+        self.progressbar.stop()
+        #self.queue.put('Stop')
 
 
 
@@ -132,6 +139,7 @@ class TestInProgressScene(tk.Frame):
     #################################################
 
     def begin_update(self, master_window, queue, parent):
+
         logger.info("TestInProgressScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
@@ -141,6 +149,8 @@ class TestInProgressScene(tk.Frame):
         # Time spent in the waiting phase; in units of refresh_break
         # Time waiting (sec) = counter * refresh_break
         counter = 0
+
+        self.progressbar.start(10)
 
         self.window_closed = False
 
@@ -168,6 +178,16 @@ class TestInProgressScene(tk.Frame):
                     ent_console.insert(tk.END, "\n")
                     ent_console.see('end')
 
+                    if "Done." in text:
+                        print('Stopping Progress Bar')
+                        self.progressbar.stop()
+
+                    if "Exit." in text:
+                        self.progressbar.stop()
+                        time.sleep(1)
+                        parent.test_error_popup("Unable to run test")
+                        break
+
                     if text == "Results received successfully.":
                     
                         message =  self.conn.recv()
@@ -185,6 +205,7 @@ class TestInProgressScene(tk.Frame):
                         break
 
                 if self.window_closed == True:
+                    self.progressbar.destroy()
                     break
                     
                 #else:
@@ -224,10 +245,3 @@ class TestInProgressScene(tk.Frame):
 
         return True    
 
-
-
-    def close_prgbar(self):
-        #logger.debug("TestInProgressScene: Closing the progressbar.")
-        #self.prgbar_progress.stop()
-        #self.prgbar_progress.destroy()
-        logger.debug("TestInProgressScene: Progressbar succesfully closed.")

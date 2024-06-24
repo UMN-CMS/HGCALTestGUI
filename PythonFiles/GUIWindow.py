@@ -43,7 +43,7 @@ class GUIWindow():
 
     #################################################
 
-    def __init__(self, conn, conn_trigger, queue, board_cfg):
+    def __init__(self, conn, conn_trigger, queue, board_cfg, main_path):
         
         self.conn = conn
         self.conn_trigger = conn_trigger
@@ -52,12 +52,12 @@ class GUIWindow():
         self.completed_window_alive = False
         self.current_test_index = 0
         self.gui_cfg = GUIConfig(board_cfg)
+        self.main_path = main_path
                              
         # Create the window named "self.master_window"
-        # global makes self.master_window global and therefore accessible outside the function
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
-        # Creates the size of the window and disables resizing
+        # Creates the size of the window
         self.master_window.geometry("1300x700+25+100")
         self.master_window.pack_propagate(1) 
 
@@ -71,21 +71,24 @@ class GUIWindow():
         self.label_text = tk.StringVar()
         
         # Running all tests in succession?
+        # TODO add this to config file
         self.run_all_tests_bool = False
         
-        # Should be resizable with following code commented out
+        # resizable with following code commented out
         #self.master_window.resizable(0,0)
 
         # Removes the tkinter logo from the window
         # self.master_window.wm_attributes('-toolwindow', 'True')
 
+
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=870, height= 650)
+        self.master_frame = tk.Frame(self.master_window, width=1300-213, height=700)
         self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
 
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 213, height = 650)
+        sidebar_frame = tk.Frame(self.master_window, width = 213, height=700)
         sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
+
 
         # Creates the "Storage System" for the data during testing
         self.data_holder = DataHolder(self.gui_cfg)
@@ -113,16 +116,12 @@ class GUIWindow():
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
         self.scan_frame.grid(row=0, column=0, sticky = 'nsew')
 
-        #self.create_test_frames(queue)
-            
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
 
-        
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
         self.add_user_frame.grid(row=0, column=0, sticky= 'nsew')
 
-        # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, self.master_frame)
         self.splash_frame.grid(row=0, column=0, sticky = 'nsew')
 
@@ -143,6 +142,15 @@ class GUIWindow():
 
         self.master_window.mainloop()
         
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(self.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
 
     #################################################
 
@@ -175,10 +183,11 @@ class GUIWindow():
     #################################################
 
     def update_config(self):
-        sn = self.data_holder.get_serial_ID()
+        #switch between Wagon and Engine config depending on the full id entered
+        full = self.data_holder.get_full_ID()
         if not self.gui_cfg.getSerialCheckSafe():
             return
-        new_cfg = update_config(sn)
+        new_cfg = update_config(full)
         self.gui_cfg = new_cfg
 
     #################################################
@@ -188,12 +197,9 @@ class GUIWindow():
         self.running_all_idx = test_idx
         self.run_all_tests_bool = True
 
-        try:
-            test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-            #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'])
-            self.set_frame_test_in_progress(self.queue)
-        except Exception as e:
-            messagebox.showerror('Exception', e)
+        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
+        self.set_frame_test_in_progress(self.queue)
 
         print("Confirm button sending test{}".format(self.running_all_idx))
 
@@ -335,12 +341,9 @@ class GUIWindow():
                 self.data_holder.setTestIdx(self.current_test_index)
                 self.current_test_index += 1
                 
-                try:
-                    gui_cfg = self.data_holder.getGUIcfg()
-                    test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_serial_ID'], self.data_holder.data_dict['user_ID'], conn_trigger)
-                    self.set_frame_test_in_progress(self.queue)
-                except Exception as e:
-                    messagebox.showerror('Exception', e)
+                gui_cfg = self.data_holder.getGUIcfg()
+                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+                self.set_frame_test_in_progress(self.queue)
 
                 print("Confirm button sending test{}".format(self.running_all_idx))
             
@@ -622,6 +625,42 @@ class GUIWindow():
             )
         btn_okay.grid(column = 0, row = 1)
     
+    def test_error_popup(self, message):
+        
+        self.completed_window_alive = True
+       
+        # Creates a popup to inform user about the passing of a test
+        self.popup = tk.Toplevel()
+        # popup.wm_attributes('-toolwindow', 'True')
+        self.popup.title("Error Window") 
+        self.popup.geometry("300x150+500+300")
+        self.popup.grab_set()
+       
+
+        # Creates frame in the new window
+        frm_popup = tk.Frame(self.popup)
+        frm_popup.pack()
+
+        # Creates label in the frame
+        lbl_popup = tk.Label(
+            frm_popup, 
+            text = message,
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, pady = 25)
+
+        # Creates yes and no buttons for exiting
+        btn_okay = tk.Button(
+            frm_popup,     
+            width = 12,
+            height = 2,
+            text = "OK", 
+            relief = tk.RAISED,
+            font = ('Arial', 12), 
+            command = lambda: self.destroy_popup()
+            )
+        btn_okay.grid(column = 0, row = 1)
+    
 
 
     # Called when the no button is pressed to destroy popup and return you to the main window
@@ -693,8 +732,8 @@ class GUIWindow():
             self.master_window.update()
             self.popup.update()
 
-            if self.scan_frame.is_current_scene == True:
-                self.test_in_progress_frame.close_prgbar()
+            #if self.scan_frame.is_current_scene == True:
+                #self.test_in_progress_frame.close_prgbar()
             self.scan_frame.kill_processes()
 
             # Destroys the popup and master window

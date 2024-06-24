@@ -1,7 +1,7 @@
 #################################################################################
 
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from tkinter import Canvas
 from tkinter import Scrollbar
 from PIL import ImageTk as iTK
@@ -13,21 +13,36 @@ import platform
 
 
 
+
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SidebarScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-class SidebarScene(tk.Frame):
+class SidebarScene(ttk.Frame):
 
     #################################################
 
     def __init__(self, parent, sidebar_frame, data_holder):
         super().__init__(sidebar_frame, width=213, height=650, bg='#808080', padx=10, pady=10)
 
+
         self.mycanvas = tk.Canvas(self, width=213, height=650, bg="#808080")
         self.viewingFrame = tk.Frame(self.mycanvas, background="#808080", width=213, height=650)
+
+        self.create_style(parent)
+
+        self.Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        self.Green_Check_Image = self.Green_Check_Image.resize((50,50), Image.LANCZOS)
+        self.Green_Check_PhotoImage = iTK.PhotoImage(self.Green_Check_Image)
+        self.Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
+        self.Red_X_Image = self.Red_X_Image.resize((50,50), Image.LANCZOS)
+        self.Red_X_PhotoImage = iTK.PhotoImage(self.Red_X_Image)
+        
+
+        ############        
+
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
        
@@ -46,9 +61,7 @@ class SidebarScene(tk.Frame):
         
         self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
 
-        self.mycanvas.pack(side="right", fill='both', expand=True)
-        self.scroller.pack(side='left', fill='both', expand=True)
-        
+
         """
         self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
         self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
@@ -62,9 +75,7 @@ class SidebarScene(tk.Frame):
         self.data_holder = data_holder
 
         self.update_sidebar(parent)
-        
-##########        
-    def onFrameConfigure(self, event):
+
         '''Reset the scroll region to encompass the inner frame'''
         self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
     """
@@ -73,6 +84,16 @@ class SidebarScene(tk.Frame):
         canvas_width = event.width
         self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
     """
+    
+    
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
 
     #################################################
     def update_sidebar(self, _parent):
@@ -82,28 +103,28 @@ class SidebarScene(tk.Frame):
                 # Variables for easy button editing
         btn_height = 3
         btn_width = 18
-        btn_font = ('Arial', 10)
+        #btn_font = ('Arial', 10)
         btn_pady = 5
 
-        self.btn_login = tk.Button(
+        self.btn_login = ttk.Button(
             self.viewingFrame,
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'LOGIN PAGE',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font
+            #font = btn_font
         )
         self.btn_login.grid(column = 0, row = 0)
 
-        self.btn_scan = tk.Button(
+        self.btn_scan = ttk.Button(
             self.viewingFrame,
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'SCAN PAGE',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font
+            #font = btn_font
         )
-        self.btn_scan.grid(column = 0, row = 1)
+        self.btn_scan.grid(column = 0, row = 3)
 
         test_names = self.data_holder.getTestNames()
         physical_names = self.data_holder.getPhysicalNames()
@@ -117,29 +138,27 @@ class SidebarScene(tk.Frame):
         original_offset = 2
         
         # How much offset from the physical board tests
-        physical_offset = 0
 
         print("\nThere are {} physical tests\n".format(self.data_holder.getNumPhysicalTest()))
 
         for i in range(self.data_holder.getNumPhysicalTest()): 
             #print("Physical Button should point to the {} test".format(i + physical_offset))
-            self.test_btns.append(tk.Button(
+            self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
-                pady = btn_pady,
+                #pady = btn_pady,
                 text = '{}'.format(physical_names[i]),
-                height = btn_height,
+                #height = btn_height,
                 width = btn_width,
-                font = btn_font,
+                #font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i)
                 ))
-            self.test_btns[i+physical_offset].grid(column = 0, row = i + original_offset)
+            self.test_btns[i].grid(column = 0, row = 6) #i + original_offset)
 
             #print(self.data_holder.data_dict)
 
-            if self.data_holder.data_dict['physical{}_pass'.format(i+1+physical_offset)] == True:
-                self.test_btns[i+physical_offset].config(state = 'disabled')
+            if self.data_holder.data_dict['physical{}_pass'.format(i)] == True:
+                self.test_btns[i].config(state = 'disabled')
             
-            physical_offset = physical_offset + 1
 
 
         #
@@ -150,44 +169,45 @@ class SidebarScene(tk.Frame):
         for i in range(self.data_holder.getNumTest()):
             
             #print("Digi Button should point to the {} test".format(i + physical_offset))
-            self.test_btns.append(tk.Button(
+            self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
-                pady = btn_pady,
+                #pady = btn_pady,
                 text = '{}'.format(test_names[i]),
-                height = btn_height,
+                #height = btn_height,
                 width = btn_width,
-                font = btn_font,
-                command = lambda i=i: self.btn_test_action(_parent, i + physical_offset)
+                #font = btn_font,
+                command = lambda i=i: self.btn_test_action(_parent, i )
                 ))
-            self.test_btns[i+physical_offset].grid(column = 0, row = physical_offset + original_offset + i)
+            self.test_btns[i].grid(column = 0, row = 9) #original_offset + i)
 
-            if self.data_holder.data_dict['test{}_pass'.format(i+1)] == True:
-                self.test_btns[i+physical_offset].config(state = 'disabled')
+            if self.data_holder.data_dict['test{}_pass'.format(i)] == True:
+                self.test_btns[i].config(state = 'disabled')
             
             digital_offset = digital_offset + 1
         
-        self.btn_summary = tk.Button(
+        self.btn_summary = ttk.Button(
             self.viewingFrame, 
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'TEST SUMMARY',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = btn_font,
+            #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row = physical_offset + original_offset + digital_offset)
+        self.btn_summary.grid(column = 0, row =  12)#original_offset + digital_offset)
 
         
-        self.report_btn = tk.Button(
+        self.report_btn = ttk.Button(
             self.viewingFrame, 
-            pady = btn_pady,
+            #pady = btn_pady,
             text = 'Report Bug',
-            height = btn_height,
+            #height = btn_height,
             width = btn_width,
-            font = ('Kozuka Gothic Pr6N L', 8),
+            #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
         self.report_btn.grid(column = 0, row = physical_offset + original_offset + digital_offset + 1)        
+
 
 
         # List for creating check marks with for loop
@@ -200,23 +220,15 @@ class SidebarScene(tk.Frame):
             #print("Pass fail:", self.list_of_pass_fail)
             if(self.list_of_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
-                Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
-                GreenCheck_Label.image = Green_Check_PhotoImage
-
-                GreenCheck_Label.grid(row=index + original_offset + physical_offset, column=1)
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label.image = self.Green_Check_PhotoImage
+                GreenCheck_Label.grid(row=index + original_offset , column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
-                Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50, bg = '#808080')
-                RedX_Label.image = Red_X_PhotoImage
-
-                RedX_Label.grid(row=index + original_offset + physical_offset, column=1)
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label.image = self.Red_X_PhotoImage
+                RedX_Label.grid(row=index + original_offset , column=1)
 
         self.physical_pass_fail = self.data_holder.data_lists['physical_results']
         
@@ -225,21 +237,15 @@ class SidebarScene(tk.Frame):
             #print("Pass fail:", self.physical_pass_fail)
             if(self.physical_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
-                Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
-                GreenCheck_Label.image = Green_Check_PhotoImage
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label.image = self.Green_Check_PhotoImage
 
                 GreenCheck_Label.grid(row=index + original_offset, column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
-                Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
-                RedX_Label = tk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=50, height=50, bg = '#808080')
-                RedX_Label.image = Red_X_PhotoImage
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label.image = self.Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + original_offset, column=1)
  

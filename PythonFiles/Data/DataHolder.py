@@ -22,33 +22,45 @@ class DataHolder():
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
         #self.dbclient = DBSendClient()
-        
+        use_db = self.gui_cfg.get_if_use_DB()
+
+        if use_db:
+            self.test_list = self.data_sender.get_test_list()
+            gui_tests = self.gui_cfg.getTests()
+            db_test_names = dict(self.test_list)
+            self.index_gui_to_db = {}
+            for i,x in enumerate(gui_tests):
+                if x['name'] in db_test_names.keys():
+                    self.index_gui_to_db[i] = x['name']
+            #self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
+
+        else:
+            gui_tests = self.gui_cfg.getTests()
+            self.index_gui_to_db = {}
+            for i,x in enumerate(gui_tests):
+                self.index_gui_to_db[i] = x['name']
+            #self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
+
+        #dictionary of info to be held
         self.data_dict = {
                 'user_ID': "_",
                 'test_stand': str(socket.gethostname()),
-                'current_serial_ID': "-1BAD",
+                'current_full_ID': "-1BAD",
                 'queue': None,
                 'comments': "_",
                 'prev_results': None,
                 'test_names': None,
                 'checkin_id': None,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
+                'tests_run': [i  for i in range(self.getNumTest())],
                 }
+        # adds tests to dictionary to be marked as complete
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict["test{}_completed".format(i+1)] = False
-            self.data_dict["test{}_pass".format(i+1)] = False
+            self.data_dict["test{}_completed".format(i)] = False
+            self.data_dict["test{}_pass".format(i)] = False
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_dict['physical{}_completed'.format(i+1)] = False
-            self.data_dict['physical{}_pass'.format(i+1)] = False
-
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
-                }
+            self.data_dict['physical{}_completed'.format(i)] = False
+            self.data_dict['physical{}_pass'.format(i)] = False
 
         self.data_lists = {
                 'test_results': [],
@@ -61,20 +73,16 @@ class DataHolder():
 
         self.ptest_criteria = {}
         self.ptest_names = self.gui_cfg.getPhysicalNames()
-        # All of the checkbox logic
-        # Dictionaries stored by inspection index
-        self.all_checkboxes = []
-        
-        # All of the comments logic
-        # Dictionaries stored by inspection index
-        self.all_comments = []
-        
+
+        self.label_info = None
+       
+        # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i+1)])
-            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i+1)])
+            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i)])
+            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i)])
 
             temp_dict = {
-                '{}'.format(i+1) : self.gui_cfg.getPhysicalTestRequirements(i),
+                '{}'.format(i) : self.gui_cfg.getPhysicalTestRequirements(i),
             }
 
             self.ptest_criteria.update(temp_dict)
@@ -84,8 +92,8 @@ class DataHolder():
         print('\nptest_criteria: {}'.format(self.ptest_criteria))
 
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
+            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
+            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
 
             self.total_test_num = self.total_test_num + 1
     
@@ -119,68 +127,43 @@ class DataHolder():
         for item in self.get_all_users():
             if self.data_dict['user_ID'] == item:
                 is_new_user_ID = False
-        #print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
-            #message = "add_new_user_ID;{'user_ID': {}, 'passwd': {}}".format(self.data_dict['user_ID'], passwd)
-            #self.dbclient.send_request(message)
 
     def get_physical_criteria(self, num):
         return self.ptest_criteria[num]
 
-
+    # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
-        logger.info("DataHolder: Checking if serial is a new board")
-        #print("testing if new board")
+        logger.info("DataHolder: Checking if full id is a new board")
 
-        sn = self.get_serial_ID()
+        full = self.get_full_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during general testing'
-        is_new_board = self.data_sender.is_new_board(sn)
-        #print(is_new_board)
+        #returns true if the board is new, false if not
+        is_new_board = self.data_sender.is_new_board(full)
         
         if is_new_board == True:
-            in_id = self.data_sender.add_new_board(sn, user, comments)
+            # data sender's add new board function returns the check in id
+            in_id = self.data_sender.add_new_board(full, user, comments)
             if in_id:
                 #print('Board added to Database')
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
 
         else:
-            prev_results, test_names = self.data_sender.get_previous_test_results(sn)
+            # if the board is not new, this returns the previous testing information on the board
+            prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
                 self.data_dict['test_names'] = test_names
                 self.data_dict['prev_results'] = prev_results
             else:
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
-            
-            
 
-#        # Send request for query
-#        self.data_dict['is_new_board'] = self.test_new_board(self.get_serial_ID())        
-#        print("result received:", self.data_dict['is_new_board'])
-#        if self.data_dict['is_new_board'] == False:
-#            prev_results = self.data_sender.get_previous_test_results(self.get_serial_ID())
-#            #message = "get_previous_test_results;{'serial_number': {}}".format(self.get_serial_ID())
-#            #prev_results = self.dbclient.send_request(message)
-#            for result in prev_results:
-#                test_id = result[0]
-#                pass_fail = result[1]
-#                if pass_fail == 0:
-#                    pass_fail = False
-#                elif pass_fail == 1:
-#                    pass_fail = True
-#                for index, test in enumerate(self.data_dict['tests_run']):
-#                    if test_id == test:
-#                        for i in range(self.gui_cfg.getNumTest()):
-#                            if index == i: 
-#                                self.data_dict['test{}_pass'.format(i+1)] = pass_fail
-#                                self.data_dict['test{}_completed'.format(i+1)] = pass_fail
-#                        
-#        else:
-#            pass
+    def decode_label(self, full_id):
+        self.label_info = self.data_sender.decode_label(full_id)
 
 
     #################################################
@@ -195,31 +178,25 @@ class DataHolder():
 
     ##################################################
 
-    def set_serial_ID(self, sn):
-        #self.data_sender.add_new_board(sn)
-        #message = "add_new_board;{'sn': {}}".format(sn)
-        #self.dbclient.send_request(message)
-                    
-        self.data_dict['current_serial_ID'] = sn
+    def set_full_ID(self, full):
+        self.data_dict['current_full_ID'] = full
         if self.gui_cfg.getSerialCheckSafe():
-            new_cfg = update_config(sn)
+            new_cfg = update_config(full)
             self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
-        logger.info("DataHolder: Serial Number has been set.")
+        logger.info("DataHolder: Full ID has been set.")
 
-    def test_new_board(self, sn):
-        logger.info("DataHolder: Checking if serial is a new board")
-        return self.data_sender.is_new_board(sn)
-        #message = "is_new_board;{'sn': {}}".format(sn)
-        #return self.dbclient.send_request(message)
 
+    def update_location(self, full):
+        text = self.data_sender.update_location(full, self.data_dict['test_stand'])
+        print(text)
 
 
     ##################################################
 
-    def get_serial_ID(self):
-        return self.data_dict['current_serial_ID']
+    def get_full_ID(self):
+        return self.data_dict['current_full_ID']
 
     #################################################
 
@@ -228,7 +205,7 @@ class DataHolder():
           
         person_ID = self.data_dict['user_ID']
         comments = self.data_dict['comments']
-        serial_number = self.get_serial_ID()
+        full_id = self.get_full_ID()
         
          
         for i in range(len(self.data_dict['tests_run'])):
@@ -236,7 +213,7 @@ class DataHolder():
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
-            info_dict = {"serial_num":serial_number,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments} 
+            info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
                 print(info_dict)
                 json.dump(info_dict, outfile)
@@ -261,22 +238,19 @@ class DataHolder():
             temp = 1 
 
 
-        info_dict = {"serial_num":self.get_serial_ID(),"tester": self.data_dict['user_ID'], "test_type": self.data_dict['tests_run'][index], "successful": temp, "comments": self.data_dict['comments']}
+        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
             json.dump(info_dict, outfile)
+
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        #message = "add_test_json;{'json_file': {}, 'datafile_name': {}}".format("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
-        #self.dbclient.send_request(message)
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
    
     def get_all_users(self):
         users_list = self.data_sender.get_usernames() 
-        #users_list = self.dbclient.send_request("get_usernames")
-        #print ("\n users_list:", users_list)
         return users_list
 
     #################################################
@@ -285,7 +259,6 @@ class DataHolder():
     def print(self):    
         print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data,  "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
            
-
  
     #################################################
     
@@ -296,20 +269,21 @@ class DataHolder():
 
         test_names = self.gui_cfg.getTestNames()
 
-        current_test_idx = self.gui_cfg.getTestIndex() -1
+        current_test_idx = self.gui_cfg.getTestIndex()
         print("current_test_idx: {}".format(current_test_idx))
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
         self.data_dict['user_ID'] = json_dict["tester"]
-        self.data_dict['current_serial_ID'] = json_dict["board_sn"] 
-        self.data_dict['test{}_completed'.format(current_test_idx+1)] = True
-        self.data_dict['test{}_pass'.format(current_test_idx+1)] = json_dict["pass"]
+        # TODO replace instances of serial number within test scripts with full id
+        self.data_dict['current_full_ID'] = json_dict["board_sn"] 
+        self.data_dict['test{}_completed'.format(current_test_idx)] = True
+        self.data_dict['test{}_pass'.format(current_test_idx)] = json_dict["pass"]
 
         # Updates the lists
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i+1)]
-            self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i+1)]
+            self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i)]
+            self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i)]
         
         if self.gui_cfg.get_if_use_DB():
             self.send_to_DB(current_test_idx)
@@ -367,56 +341,51 @@ class DataHolder():
 
     ################################################
 
-    # Keeps the login information stored
+    # resets the data holder when a new board is scanned
+    # Keeps the login information stored, full id has already been changed
     def data_holder_new_test(self): 
 
         self.data_dict = {
                 'user_ID': self.data_dict['user_ID'],
                 'test_stand': str(socket.gethostname()),
-                'current_serial_ID': self.data_dict['current_serial_ID'],
+                'current_full_ID': self.data_dict['current_full_ID'],
                 'queue': self.data_dict['queue'],
                 'comments': "_",
                 'prev_results': None,
                 'test_names': None,
                 'checkin_id': None,
-                'tests_run': [str(i + 1) for i in range(self.getNumTest())],
-                }
-
-        self.inspection_data = {
-                'board_chipped_bent': False,
-                'wagon_connection_pin_bent': False,
-                'engine_connection_pin_bent': False,
-                'visual_scratches': False,
-                'inspection_comments': "_"
+                'tests_run': [i for i in range(self.getNumTest())],
                 }
 
         self.data_lists = {
                 'test_results': [],
-                'test_completion': [], 
+                'test_completion': [],
                 'physical_results': [],
                 'physical_completion': [],
                 }
 
         self.total_test_num = 0
 
+        self.label_info = None
+
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_dict['test{}_completed'.format(i+1)] = False
-            self.data_dict['test{}_pass'.format(i+1)] = False
+            self.data_dict['test{}_completed'.format(i)] = False
+            self.data_dict['test{}_pass'.format(i)] = False
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_dict['physical{}_completed'.format(i+1)] = False
-            self.data_dict['physical{}_pass'.format(i+1)] = False
+            self.data_dict['physical{}_completed'.format(i)] = False
+            self.data_dict['physical{}_pass'.format(i)] = False
 
 
         self.ptest_criteria = {}
         self.ptest_names = self.gui_cfg.getPhysicalNames()
 
         for i in range(self.gui_cfg.getNumPhysicalTest()):
-            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i+1)])
-            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i+1)])
+            self.data_lists['physical_results'].append(self.data_dict['physical{}_pass'.format(i)])
+            self.data_lists['physical_completion'].append(self.data_dict['physical{}_completed'.format(i)])
 
             temp_dict = {
-                '{}'.format(i+1) : self.gui_cfg.getPhysicalTestRequirements(i),
+                '{}'.format(i) : self.gui_cfg.getPhysicalTestRequirements(i),
             }
 
             self.ptest_criteria.update(temp_dict)
@@ -425,8 +394,8 @@ class DataHolder():
         
         #print(self.data_dict)
         for i in range(self.gui_cfg.getNumTest()):
-            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i+1)])
-            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i+1)])
+            self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
+            self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
 
             self.total_test_num = self.total_test_num + 1
 

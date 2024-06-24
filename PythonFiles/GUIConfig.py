@@ -25,6 +25,9 @@ class GUIConfig():
 
     # Get serial check safe attribute
     def getSerialCheckSafe(self):
+        print("="*30)
+        print("Serial Check Safe: {}".format(self.board_cfg["SerialCheckSafe"]))
+        print("="*30)
         return self.board_cfg["SerialCheckSafe"]
 
 
@@ -50,12 +53,9 @@ class GUIConfig():
     def getUseScanner(self):
         return self.board_cfg["UsingScanner"]
 
-
-    # Get number of tests to define order of scenes and sidebar
     def getTests(self):
         return self.board_cfg["Test"]
 
-    # Get number of physical tests to define order of scenes and sidebar
     def getPhysicalTests(self):
         return self.board_cfg["PhysicalTest"]
 
@@ -76,6 +76,9 @@ class GUIConfig():
 
     def getTestHandler(self):
         return self.board_cfg["TestHandler"]
+
+    def getUsers(self):
+        return self.board_cfg["People"]
 
     ################################
     

@@ -12,6 +12,13 @@ SerialCheckSafe: true
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: 192.168.140.22, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
 Test:
+- TestClass: ADC
+  TestPath: /home/HGCAL_dev/sw
+  TestScript: run_adc_self_test.py
+  desc_long: Checking all ADCs to see if they are running as expected before running any tests
+  desc_short: ADC interal test
+  name: ADC Self Test
+  required: 1
 - TestClass: gen_resist_test
   TestPath: /home/HGCAL_dev/sw
   TestScript: wagon_rtd.py
