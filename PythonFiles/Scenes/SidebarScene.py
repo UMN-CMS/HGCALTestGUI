@@ -121,7 +121,7 @@ class SidebarScene(ttk.Frame):
             width = btn_width,
             #font = btn_font
         )
-        self.btn_scan.grid(column = 0, row = 3)
+        self.btn_scan.grid(column = 0, row = 3, pady = btn_pady)
 
         test_names = self.data_holder.getTestNames()
         physical_names = self.data_holder.getPhysicalNames()
@@ -149,7 +149,7 @@ class SidebarScene(ttk.Frame):
                 #font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i)
                 ))
-            self.test_btns[i].grid(column = 0, row = 6) #i + original_offset)
+            self.test_btns[i].grid(column = 0, row = 6, pady = btn_pady) #i + original_offset)
 
             #print(self.data_holder.data_dict)
 
@@ -175,7 +175,7 @@ class SidebarScene(ttk.Frame):
                 #font = btn_font,
                 command = lambda i=i: self.btn_test_action(_parent, i )
                 ))
-            self.test_btns[i].grid(column = 0, row = 9) #original_offset + i)
+            self.test_btns[i].grid(column = 0, row = 9, pady = btn_pady) #original_offset + i)
 
             if self.data_holder.data_dict['test{}_pass'.format(i)] == True:
                 self.test_btns[i].config(state = 'disabled')
@@ -191,7 +191,7 @@ class SidebarScene(ttk.Frame):
             #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row =  12)#original_offset + digital_offset)
+        self.btn_summary.grid(column = 0, row =  12, pady = btn_pady)#original_offset + digital_offset)
 
         
         self.report_btn = ttk.Button(
@@ -203,7 +203,7 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = 15) #original_offset + digital_offset + 1)
+        self.report_btn.grid(column = 0, row = 15, pady = btn_pady) #original_offset + digital_offset + 1)
         
 
 
@@ -217,13 +217,13 @@ class SidebarScene(ttk.Frame):
             #print("Pass fail:", self.list_of_pass_fail)
             if(self.list_of_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')
                 GreenCheck_Label.image = self.Green_Check_PhotoImage
                 GreenCheck_Label.grid(row=index + original_offset , column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#33393b')
                 RedX_Label.image = self.Red_X_PhotoImage
                 RedX_Label.grid(row=index + original_offset , column=1)
 
@@ -234,14 +234,14 @@ class SidebarScene(ttk.Frame):
             #print("Pass fail:", self.physical_pass_fail)
             if(self.physical_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#808080')
+                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')
                 GreenCheck_Label.image = self.Green_Check_PhotoImage
 
                 GreenCheck_Label.grid(row=index + original_offset, column=1)
 
             else:
                 # Create a photoimage object of the QR Code
-                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#808080')
+                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#33393b')
                 RedX_Label.image = self.Red_X_PhotoImage
 
                 RedX_Label.grid(row=index + original_offset, column=1)

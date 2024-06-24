@@ -166,11 +166,14 @@ if __name__ == "__main__":
 
         run(board_cfg, curpath)
 
-    elif any((node in x for x in wagon_GUI_computers)):
+    elif any((node in x for x in engine_GUI_computers)):
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Engine_cfg.yaml")
 
         run(board_cfg, curpath)
 
     else:
-        board_config(None)
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
+
+        run(board_cfg, curpath)
+
    

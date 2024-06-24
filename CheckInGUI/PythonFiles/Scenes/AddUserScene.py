@@ -3,6 +3,7 @@
 
 # importing necessary modules
 import tkinter as tk
+import tkinter.ttk as ttk
 import logging
 import PythonFiles
 import os
@@ -20,7 +21,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
 
-class AddUserScene(tk.Frame):
+class AddUserScene(ttk.Frame):
 
     #################################################
 
@@ -28,7 +29,17 @@ class AddUserScene(tk.Frame):
         super().__init__(master_frame, width=850, height=500)
         logging.info("AddUserScene: Frame has been created.")
         self.data_holder = data_holder
+        self.create_style()
         self.update_frame(parent)
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
 
     def update_frame(self, parent):
         
@@ -36,7 +47,7 @@ class AddUserScene(tk.Frame):
             widget.destroy()
         
         # Creating the title for the window
-        lbl_title = tk.Label(
+        lbl_title = ttk.Label(
             self, 
             text="Add User", 
             font=('Arial', '24')
@@ -53,7 +64,7 @@ class AddUserScene(tk.Frame):
         self.user_entry.pack(pady=30)
 
         # Creating the title for the window
-        password_label = tk.Label(
+        password_label = ttk.Label(
             self, 
             text="Enter Admin Password", 
             font=('Arial', '20')
@@ -71,23 +82,23 @@ class AddUserScene(tk.Frame):
         self.user_password.pack(pady=30)
 
         # Creating the submit button
-        self.btn_submit = tk.Button(
+        self.btn_submit = ttk.Button(
             self, 
             text="Submit",
-            padx = 50,
-            pady = 10, 
-            relief=tk.RAISED, 
+            #padx = 50,
+            #pady = 10, 
+            #relief=tk.RAISED, 
             command= lambda:  self.btn_submit_action(parent)
             )
         self.btn_submit.pack()
         
         # Creating the cancel button
-        self.btn_submit = tk.Button(
+        self.btn_submit = ttk.Button(
             self, 
             text="Cancel",
-            padx = 50,
-            pady = 10, 
-            relief=tk.RAISED, 
+            #padx = 50,
+            #pady = 10, 
+            #relief=tk.RAISED, 
             command= lambda:  self.btn_cancel_action(parent)
             )
         self.btn_submit.pack()
@@ -162,11 +173,11 @@ class ConfirmPopup():
         self.popup.grab_set()
 
         # Creates frame in the new window
-        frm_popup = tk.Frame(self.popup)
+        frm_popup = ttk.Frame(self.popup)
         frm_popup.pack()
 
         # Creates label in the frame
-        lbl_popup = tk.Label(
+        lbl_popup = ttk.Label(
             frm_popup, 
             text = " You are about to add {} as a user \n Are you sure? ".format(self.new_user_name),
             font = ('Arial', 13)
@@ -174,23 +185,23 @@ class ConfirmPopup():
         lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25)
 
         # Creates retry and continue buttons
-        btn_retry = tk.Button(
+        btn_retry = ttk.Button(
              frm_popup,
              width = 8,
-             height = 2,
+             #height = 2,
              text = "Cancel", 
-             relief = tk.RAISED,
+             #relief = tk.RAISED,
              font = ('Arial', 12),
              command = lambda: self.cancel_function()
              )
         btn_retry.grid(column = 0, row = 1)
 
-        btn_continue = tk.Button(
+        btn_continue = ttk.Button(
             frm_popup,
             width = 8,
-            height = 2,
+            #height = 2,
             text = "Confirm",
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             font = ('Arial', 12),
             command = lambda: self.continue_function(self.parent)
         )

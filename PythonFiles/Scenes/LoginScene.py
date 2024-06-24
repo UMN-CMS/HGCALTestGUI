@@ -60,6 +60,7 @@ class LoginScene(ttk.Frame):
             text="Please Select Your Name", 
             #font=('Arial', '24')
             )
+        lbl_title.config(font = ('Arial', '48'))
         lbl_title.pack(pady=75)
 
         # Creating intial value in dropdown menu
@@ -93,8 +94,8 @@ class LoginScene(ttk.Frame):
             #relief=tk.RAISED, 
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.pack()
-        self.btn_submit.config(state = 'disabled')
+        self.btn_submit.pack(pady = (25,0))
+        self.btn_submit.config( state = 'disabled')
 
 
         # Creating the add user button
