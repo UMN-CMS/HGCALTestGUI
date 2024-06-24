@@ -2,6 +2,7 @@
 
 # Importing Necessary Modules
 import tkinter as tk
+import tkinter.ttk as ttk
 import tkinter.font as font
 
 
@@ -9,7 +10,7 @@ import tkinter.font as font
 
 
 # Creating class for the window
-class Inspection1(tk.Frame):
+class Inspection1(ttk.Frame):
 
     #################################################
 
@@ -18,10 +19,19 @@ class Inspection1(tk.Frame):
 
         self.test_name = "SOMETHING STRING"
         self.data_holder = data_holder
-        
+        self.create_style()
         self.update_frame(parent)
 
     #################################################
+
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark') 
 
     def update_frame(self, parent):
 
@@ -30,41 +40,41 @@ class Inspection1(tk.Frame):
         font_scene_14 = ('Arial', 14)
 
         # Create a centralized window for information
-        frm_window = tk.Frame(self, width = 1105, height = 850)
+        frm_window = ttk.Frame(self, width = 1105, height = 850)
         frm_window.grid(column=0, row=0)
 
         # Create a label for the tester's name
-        lbl_tester = tk.Label(
+        lbl_tester = ttk.Label(
             frm_window, 
             text = "Tester: ", 
-            font = font_scene
+            font = ('Arial', '26')
             )
-        lbl_tester.grid(row=0, column=0, pady=15 )
+        lbl_tester.grid(row=0, column=1, pady=15 , padx = 20)
 
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
             frm_window, 
-            font = font_scene
+            #font = font_scene
             )
         ent_tester.insert(0, self.data_holder.data_dict['user_ID'])
-        ent_tester.grid(row=0, column=1, pady=15 )
+        ent_tester.grid(row=0, column=2, pady=(75, 75) )
         ent_tester.config(state = "disabled")
 
         # Create a label for the full id box
-        lbl_full = tk.Label(
+        lbl_full = ttk.Label(
             frm_window, 
             text = "Full ID: ", 
-            font = font_scene
+            font = ('Arial', '26')
             )
-        lbl_full.grid(row=0, column=2, pady=15 )
+        lbl_full.grid(row=0, column=3, pady=15, padx = 20)
 
         # Create a entry for the full id box
         ent_full = tk.Entry(
             frm_window, 
-            font = font_scene
+            #font = font_scene
             )
         ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
-        ent_full.grid(row=0, column=3, pady=15)
+        ent_full.grid(pady=15, row = 0, column = 4)
         ent_full.config(state = "disabled")
 
         # TODO Index can change for different InspectionScenes
@@ -72,7 +82,8 @@ class Inspection1(tk.Frame):
         check_dictionary = self.data_holder.get_check_dict(inspection_index)
 
         self.tk_bools = []
-
+        self.s.configure('TCheckbutton', font = ('Arial', 30))
+        
         if len(check_dictionary) > 0:
             for idx, item in enumerate(self.data_holder.get_check_dict(0)):
         
@@ -80,77 +91,77 @@ class Inspection1(tk.Frame):
                 self.tk_bools.append(new_bool)
         
                 # Checkbutton1
-                c1 = tk.Checkbutton(
+                c1 = ttk.Checkbutton(
                     frm_window, 
-                    font = font_scene_14,
                     text=item['text'],
                     variable= new_bool, 
                     onvalue= True, 
-                    offvalue= False 
+                    offvalue= False,
+                    style = 'TCheckbutton'
                     # command=print_selection
                     )
-                c1.grid(row = 1 + idx, column= 1, sticky='w', columnspan=2)
-
+                c1.grid(pady = 5,row = 1 + idx, column= 2, sticky = 'w', columnspan=2)
 
         
 
-        lbl_comm = tk.Label(
+        lbl_comm = ttk.Label(
             frm_window, 
             text = "Comments:", 
-            font = font_scene
+            #font = font_scene
             )
-        lbl_comm.grid(row=5, column=1, pady=(25, 0) )
+        lbl_comm.grid(row=6, column=2, pady= (75,0) )
+        lbl_comm.config(font = ('Arial', '24'))
 
         # Comment Box
         self.comment_box = tk.Entry(
             frm_window,
-            font = font_scene,
+            #font = font_scene,
             state= 'normal',
             width= 75,
         )
-        self.comment_box.grid(row = 6, column =1, sticky='w', columnspan=5)
+        self.comment_box.grid(row = 7, column =1, rowspan = 2, columnspan=5)
 
 
 
     
 
         # Create a button for confirming test
-        btn_confirm = tk.Button(
+        btn_confirm = ttk.Button(
             frm_window, 
             text = "Confirm", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda:self.btn_confirm_action(parent)
             )
-        btn_confirm.grid(row = 9, column= 1, pady= 50)
-        btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
+        btn_confirm.grid(row = 9, column= 3, pady= 35)
+        #btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
 
 
 
         # Create frame for logout button
-        nav_frame = tk.Frame(self)
+        nav_frame = ttk.Frame(self)
         nav_frame.grid(column = 1, row = 0, sticky = 'ne', padx =5)
 
 
         # Create a rescan button
-        btn_rescan = tk.Button(
+        btn_rescan = ttk.Button(
             nav_frame, 
             text = "Change Boards", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda: self.btn_rescan_action(parent))
         btn_rescan.pack(anchor = 'ne', pady=15)
 
         # Create a logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             nav_frame, 
             text = "Logout", 
-            relief = tk.RAISED, 
+            #relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'se')
 
         # Creating the help button
-        btn_help = tk.Button(
+        btn_help = ttk.Button(
             nav_frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )

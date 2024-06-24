@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -26,7 +26,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class PostScanScene(tk.Frame):
+class PostScanScene(ttk.Frame):
 
     #################################################
 
@@ -65,6 +65,15 @@ class PostScanScene(tk.Frame):
   
         self.s.theme_use('awdark')
     
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark') 
+
     def create_frame(self, parent):
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
         print("PostScanScene: Destroying old widgets on the SummaryScene.")
@@ -94,9 +103,9 @@ class PostScanScene(tk.Frame):
 
 
         # Adds the title to the Summary Frame
-        self.title = tk.Label(
+        self.title = ttk.Label(
                 self.frame, 
-                fg='#0d0d0d', 
+                #fg='#0d0d0d', 
                 text = "This Board has already been Checked In",
                 font=('Arial',18,'bold')
                 )
@@ -104,9 +113,9 @@ class PostScanScene(tk.Frame):
             
 
         # Adds Board full id to the SummaryFrame
-        self.id = tk.Label(
+        self.id = ttk.Label(
                 self.frame, 
-                fg='#0d0d0d', 
+                #fg='#0d0d0d', 
                 text = "Full ID:" + str(self.data_holder.data_dict['current_full_ID']),
                 font=('Arial',14,'bold')
                 )
@@ -139,7 +148,7 @@ class PostScanScene(tk.Frame):
                                 self.frame,
                                 image = green_check,
                                 width=75,
-                                height=75,
+                                #height=75,
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=green_check
@@ -149,7 +158,7 @@ class PostScanScene(tk.Frame):
                                 self.frame,
                                 image = redx,
                                 width=75,
-                                height=75,
+                                #height=75,
                                 font=('Arial',14)
                                 )
                         self.lbl_img.image=redx
@@ -172,18 +181,18 @@ class PostScanScene(tk.Frame):
             self.lbl_err.grid(column = 1, row = 2, pady = 10) 
 
         # Creating the proceed button
-        proceed_button = tk.Button(
+        proceed_button = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
         proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         #creating the next board buttom
-        next_board_button = tk.Button(
+        next_board_button = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -191,9 +200,9 @@ class PostScanScene(tk.Frame):
  
 
         # Creating the logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )

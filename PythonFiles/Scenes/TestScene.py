@@ -67,14 +67,14 @@ class TestScene(ttk.Frame):
         lbl_tester = ttk.Label(
             frm_window, 
             text = "Tester: ", 
-            font = font_scene
+            #font = font_scene
             )
         lbl_tester.pack(side = 'top')
         
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
             frm_window, 
-            font = font_scene
+            #font = font_scene
             )
         ent_tester.insert(0, self.data_holder.data_dict['user_ID'])
         ent_tester.pack(side = 'top')
@@ -84,14 +84,14 @@ class TestScene(ttk.Frame):
         lbl_full = ttk.Label(
             frm_window, 
             text = "Full ID: ", 
-            font = font_scene
+            #font = font_scene
             )
         lbl_full.pack(side = 'top')
 
         # Create a entry for the full id box
         ent_full = tk.Entry(
             frm_window, 
-            font = font_scene
+            #font = font_scene
             )
         ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
         ent_full.pack(side = 'top')
@@ -101,14 +101,14 @@ class TestScene(ttk.Frame):
         lbl_test = ttk.Label(
             frm_window, 
             text = "Current Test: ", 
-            font = font_scene
+            #font = font_scene
             )
         lbl_test.pack(side = 'top')
         
         # Create a entry for the test type
         self.ent_test = tk.Entry(
             frm_window, 
-            font = font_scene
+            #font = font_scene
             )
         self.ent_test.pack(side = 'top')
         self.ent_test.insert(0, self.test_name)
@@ -118,7 +118,7 @@ class TestScene(ttk.Frame):
         lbl_confirm = ttk.Label(
             frm_window, 
             text = "Are you ready to begin the test?", 
-            font = font_scene
+            #font = font_scene
             )
         lbl_confirm.pack(side = 'top')
 
@@ -127,7 +127,7 @@ class TestScene(ttk.Frame):
             text = self.test_description_short,
             wraplength = 500,
             justify="left",
-            font = font_scene
+            #font = font_scene
             )
 
         self.lbl_desc_short.pack(side = 'top')
@@ -137,7 +137,7 @@ class TestScene(ttk.Frame):
             text = self.test_description_long,
             wraplength = 500,
             justify="left",
-            font = font_scene
+            #font = font_scene
             )
 
         self.lbl_desc.pack(side = 'top')

@@ -2,6 +2,7 @@
 
 # importing necessary modules
 import tkinter as tk
+import tkinter.ttk as ttk
 import logging
 import PythonFiles
 import os
@@ -18,7 +19,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class LoginScene(tk.Frame):
+class LoginScene(ttk.Frame):
 
     #################################################
 
@@ -26,8 +27,17 @@ class LoginScene(tk.Frame):
 
         super().__init__(master_frame, width = 1105, height = 850)
         self.data_holder = data_holder
+        self.create_style()
         self.update_frame(parent)
 
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
 
     def update_frame(self, parent):
 
@@ -43,10 +53,10 @@ class LoginScene(tk.Frame):
         User_List = self.data_holder.get_all_users()
 
         # Creating the title for the window
-        lbl_title = tk.Label(
+        lbl_title = ttk.Label(
             self, 
             text="Please Select Your Name", 
-            font=('Arial', '24')
+            font=('Arial', '48')
             )
         lbl_title.pack(pady=75)
 
@@ -55,14 +65,14 @@ class LoginScene(tk.Frame):
         self.user_selected.set("") # default value is empty
 
         # Creating the dropdown menu itself
-        self.opt_user_dropdown = tk.OptionMenu(
+        self.opt_user_dropdown = ttk.OptionMenu(
             self, 
             self.user_selected, # Tells option menu to use the created initial value
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
         self.opt_user_dropdown.pack(pady=15)
-        self.opt_user_dropdown.config(width = 20, font = ('Arial', 13))
-        self.opt_user_dropdown['menu'].configure(font = ('Arial', 12))
+        #self.opt_user_dropdown.config(width = 20, font = ('Arial', 13))
+        #self.opt_user_dropdown['menu'].configure(font = ('Arial', 12))
 
         # Traces when the user selects an option in the dropdown menu
         # When an option is selected, it calls the show_submit_button function
@@ -73,12 +83,12 @@ class LoginScene(tk.Frame):
 
         # Creating the submit button
         # It does not get enabled until the user selects an option menu option
-        self.btn_submit = tk.Button(
+        self.btn_submit = ttk.Button(
             self, 
             text="Submit",
-            padx = 50,
-            pady = 10, 
-            relief=tk.RAISED, 
+            #padx = 50,
+            #pady = 10, 
+            #relief=tk.RAISED, 
             command= lambda:  self.btn_submit_action(parent)
             )
         self.btn_submit.pack()
@@ -86,20 +96,20 @@ class LoginScene(tk.Frame):
 
 
         # Creating the add user button
-        self.btn_add_user = tk.Button(
+        self.btn_add_user = ttk.Button(
             self, 
             text="Add User",
-            padx = 20,
-            pady = 5, 
-            relief=tk.RAISED, 
+            #padx = 20,
+            #pady = 5, 
+            #relief=tk.RAISED, 
             command= lambda:  self.btn_add_user_action(parent)
             )
         self.btn_add_user.pack(pady=70)
 
         # Creating the help button
-        self.btn_help = tk.Button(
+        self.btn_help = ttk.Button(
             self,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )   

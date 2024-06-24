@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -26,7 +26,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param master_frame -> Tkinter object that the frame is going to be placed on
 # @param data_holder -> DataHolder object that stores all relevant data
 
-class SummaryScene(tk.Frame):
+class SummaryScene(ttk.Frame):
 
     #################################################
 
@@ -35,6 +35,8 @@ class SummaryScene(tk.Frame):
         # Call to the super class's constructor
         # Super class is the tk.Frame class
         super().__init__(master_frame, width = 1105, height = 850)
+
+        self.create_style()
 
         logging.info("SummaryScene: Frame has been created.")
 
@@ -49,6 +51,15 @@ class SummaryScene(tk.Frame):
 
     #################################################
     
+    def create_style(self):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+        self.s.tk.call('package', 'require', 'awdark')
+
+        self.s.theme_use('awdark')
+
     def create_frame(self, parent):
         logging.debug("SummaryScene: Destroying old widgets on the SummaryScene.")
         print("SummaryScene: Destroying old widgets on the SummaryScene.")
@@ -64,8 +75,8 @@ class SummaryScene(tk.Frame):
         logging.debug("SummaryScene: Table is being created with the results.")
         print("\n\nSummaryScene: Table is being created with the results.")
         
-        self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = tk.Frame(self.canvas, width=800, height=500)
+        self.canvas = tk.Canvas(self, width = 1105, height = 850, background = '#33393b')
+        self.frame = ttk.Frame(self.canvas, width=800, height=500)
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
@@ -80,69 +91,69 @@ class SummaryScene(tk.Frame):
 
         if self.data_holder.data_dict['is_new_board'] == True:
             # Adds the title to the Summary Frame
-            self.title = tk.Label(
+            self.title = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Board Checked in and Inspection Completed!",
-                    font=('Arial',18,'bold')
+                    font=('Arial',48,'bold')
                     )
             self.title.grid(row= 0, column= 1, pady = 20)
 
-            self.id = tk.Label(
+            self.id = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Check In ID:" + str(self.data_holder.data_dict['in_id']),
-                    font=('Arial',14,'bold')
+                    font=('Arial',24,'bold')
                     )
             self.id.grid(row= 1, column= 1, pady = 20)
 
         else:
             # Adds the title to the Summary Frame
-            self.title = tk.Label(
+            self.title = ttk.Label(
                     self.frame, 
-                    fg='#0d0d0d', 
+                    #fg='#0d0d0d', 
                     text = "Inspection Completed!",
-                    font=('Arial',18,'bold')
+                    font=('Arial',36,'bold')
                     )
             self.title.grid(row= 0, column= 1, pady = 20)
 
 
        # Adds Board full id to the SummaryFrame
-        self.lbl_full = tk.Label(
+        self.lbl_full = ttk.Label(
                 self.frame, 
                 text = "Full ID: " + str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial', 14) 
+                font=('Arial', 18) 
                 )
         self.lbl_full.grid(column = 1, row = 2, pady = 10) 
 
 
         # Adds Tester Name to the Summary Frame
-        self.lbl_tester = tk.Label(
+        self.lbl_tester = ttk.Label(
                 self.frame, 
                 text = "User: " + self.data_holder.data_dict['user_ID'],
-                font=('Arial', 14) 
+                font=('Arial', 18) 
                 )
         self.lbl_tester.grid(column = 1, row = 3, pady = 10)
 
         # Adds comments to the Summary Frame
-        self.lbl_com = tk.Label(
+        self.lbl_com = ttk.Label(
                 self.frame, 
                 text = "Comments: " + self.data_holder.data_dict['comments'],
-                font=('Arial', 14) 
+                font=('Arial', 18) 
                 )
         self.lbl_com.grid(column = 1, row = 4, pady = 10)
 
         # Adds time to the Summary Frame
-        self.lbl_time = tk.Label(
+        self.lbl_time = ttk.Label(
                 self.frame, 
                 text = str(datetime.datetime.now()),
-                font=('Arial', 14) 
+                font=('Arial', 18) 
                 )
-        self.lbl_time.grid(column = 1, row = 5, pady = 10)
+        self.lbl_time.grid(column = 1, row = 5, pady = (15, 75))
 
         # Creates the "table" as a frame object
-        self.frm_table = tk.Frame(self.frame)
-        self.frm_table.grid(row = 6, column= 1)
+        self.frm_table = ttk.Frame(self.frame)
+        self.frm_table.grid(row = 0, column = 1)
 
         # Where to start putting the JSON information
         starting_row = 4
@@ -154,16 +165,15 @@ class SummaryScene(tk.Frame):
             key_count = key_count + 1
             print("\nIndex: {}, Box: {}".format(index, box))
 
-            key_label = tk.Label(
+            key_label = ttk.Label(
                     self.frm_table,
                     text = box['text'],
-                    relief = 'ridge',
+                    #relief = 'ridge',
                     width=40,
-                    height=1,
-                    font=('Arial', 11, "bold")
+                    #height=1,
+                    font=('Arial', 24, "bold")
                     )
-            key_label.grid(row=key_count , column=0, padx = 2)
-
+            key_label.grid(row = key_count , column=1, padx = 15)
 
             # Correctly displays the booleans
             # If not a string, show as a boolean true/false
@@ -176,45 +186,45 @@ class SummaryScene(tk.Frame):
             else:
                 l_text = value['value']
 
-            result_label = tk.Label(
+            result_label = ttk.Label(
                     self.frm_table,
                     text = l_text,
-                    relief = 'ridge',
+                    #relief = 'ridge',
                     width=40,
-                    height=1,
-                    font=('Arial', 11, "bold")
+                    #height=1,
+                    font=('Arial', 18, "bold")
                     )
-            result_label.grid(row=key_count, column=1)
+            result_label.grid(row=key_count + 1, column=3)
 
         comment_index = 0
         comment_title_text = "Comments:"
-        comment_title = tk.Label(
+        comment_title = ttk.Label(
                self.frm_table,
                text = comment_title_text,
-               relief = 'ridge',
+               #relief = 'ridge',
                width=40,
-               height=2,
-               font=('Arial', 11, "bold")
+               #height=2,
+               font=('Arial', 24, "bold")
                )
         comment_title.grid(row=key_count + 1, column=0)
 
         comment_text = str(self.data_holder.get_comment_dict(comment_index))
-        comment_label = tk.Label(
+        comment_label = ttk.Label(
                self.frm_table,
                text = comment_text,
-               relief = 'ridge',
+               #relief = 'ridge',
                width=40,
-               height=2,
-               font=('Arial', 11, "bold")
+              #height=2,
+               font=('Arial', 18, "bold")
                )
         comment_label.grid(row=key_count + 1, column=1)
 
 
 
         #creating the next board buttom
-        next_board_button = tk.Button(
+        next_board_button = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Submit and go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -222,9 +232,9 @@ class SummaryScene(tk.Frame):
  
 
         # Creating the logout button
-        btn_logout = tk.Button(
+        btn_logout = ttk.Button(
             self.frame,
-            relief = tk.RAISED,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
