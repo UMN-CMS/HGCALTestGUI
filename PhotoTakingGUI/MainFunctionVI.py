@@ -12,6 +12,7 @@ sys.path.append("..")
 from PythonFiles.GUIWindow import GUIWindow
 import socket
 import logging
+import yaml
 
 
 # Creates a main function to initialize the GUI
@@ -19,8 +20,8 @@ def main():
     
     logging.FileHandler(guiLogPath + "visual_gui.log", mode='a')
     
-    curpath = os.path.abspath(os.curdir)
-    print( "Current path is: %s" % (curpath))
+    filepath = os.path.dirname(os.path.abspath(__file__))
+    print( "Current path is: %s" % (filepath))
 
     node = socket.gethostname()
     print(socket.gethostname())
@@ -36,11 +37,7 @@ def main():
 
     ]   
    
-    board_cfg = None
-
-    from TestConfigs.Engine_cfg import masterCfg
-
-    print("Hostname setup for wagon testing. Initializing Wagon Test GUI...")
+    masterCfg = import_yaml("{}/Configs/Wagon_cfg.yaml".format(filepath))
 
     board_cfg = masterCfg
 
@@ -48,8 +45,10 @@ def main():
     main_window = GUIWindow(board_cfg)
     
 
+def import_yaml(config_path):
 
-
+    return yaml.safe_load(open(config_path,"r"))
+    
 
 
 

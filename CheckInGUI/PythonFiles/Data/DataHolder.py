@@ -91,6 +91,8 @@ class DataHolder():
         user = self.data_dict['user_ID']
         #returns true if the board is new, false if not
         is_new_board = self.data_sender.is_new_board(full)
+        print('Is new board?')
+        print(is_new_board)
         comments = self.data_dict['comments']
         self.data_dict['is_new_board'] = is_new_board
         
