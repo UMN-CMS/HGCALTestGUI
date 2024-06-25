@@ -9,10 +9,10 @@ Instructions:
 '''
 import PythonFiles
 import json, logging
-#from picamera2 import Picamera2, Preview
+from picamera2 import Picamera2, Preview
 import tkinter as tk
 import tkinter.ttk as ttk
-#import cv2
+import cv2
 import PIL.Image, PIL.ImageTk
 from PIL import ImageTk as iTK
 from PIL import ImageChops
@@ -20,10 +20,10 @@ import time
 import os
 import numpy as np
 
-#from libcamera import controls
+from libcamera import controls
 
 global camera
-#camera = Picamera2()
+camera = Picamera2()
 
 #################################################################################
 
