@@ -135,23 +135,15 @@ class ScanScene(ttk.Frame):
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 1, sticky='new')
+        QR_label.grid(column=1, row = 0, sticky='new')
 
         Scan_Board_Prompt_Frame = ttk.Frame(self, width = 1105, height = 650)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
-        
-        Button_Frame1 = ttk.Frame(self)
-        Button_Frame1.grid(column=1, row=0, sticky='ew')
-
-        Button_Frame2 = ttk.Frame(self)
-        Button_Frame2.grid(column=1, row=2, sticky='ew')
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
 
         #resizing
         Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
         Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
         QR_label.grid_columnconfigure(0, weight=1)
-        Button_Frame1.grid_columnconfigure(0, weight=1)
-        Button_Frame2.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -221,7 +213,7 @@ class ScanScene(ttk.Frame):
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
-        label_frame.grid(column=0, row = 1)
+        label_frame.grid(column=0, row = 2)
 
         self.label_major = ttk.Label(
             label_frame,
