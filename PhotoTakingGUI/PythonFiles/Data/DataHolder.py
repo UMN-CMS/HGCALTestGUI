@@ -207,7 +207,7 @@ class DataHolder():
 
     # Prints all the variable values inside data_holder
     def print(self):
-        print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data, "\nimage_data:\n", self.image_data, "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
+        print("data_dict: \n", self.data_dict, "\nimage_data:\n", self.image_data, '\n\n')
 
 
 
