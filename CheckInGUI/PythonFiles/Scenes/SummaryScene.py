@@ -194,7 +194,7 @@ class SummaryScene(ttk.Frame):
                     #height=1,
                     font=('Arial', 18, "bold")
                     )
-            result_label.grid(row=key_count + 1, column=3)
+            result_label.grid(row=key_count, column=3)
 
         comment_index = 0
         comment_title_text = "Comments:"
@@ -220,7 +220,6 @@ class SummaryScene(ttk.Frame):
         comment_label.grid(row=key_count + 1, column=1)
 
 
-
         #creating the next board buttom
         next_board_button = ttk.Button(
             self.frame,
@@ -228,7 +227,7 @@ class SummaryScene(ttk.Frame):
             text = "Submit and go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=1, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=key_count+2, column=1)
  
 
         # Creating the logout button
@@ -238,7 +237,7 @@ class SummaryScene(ttk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=2, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=key_count+3, column=1)
     
 
 
