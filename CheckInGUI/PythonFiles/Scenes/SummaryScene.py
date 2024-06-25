@@ -220,7 +220,7 @@ class SummaryScene(ttk.Frame):
         comment_label.grid(row=key_count + 1, column=1)
 
 
-        #creating the next board buttom
+        #creating the next board button
         next_board_button = ttk.Button(
             self.frame,
             #relief = tk.RAISED,
@@ -228,7 +228,14 @@ class SummaryScene(ttk.Frame):
             command = lambda: self.btn_NextBoard_action(parent)
         )
         next_board_button.grid(row=key_count+2, column=1)
- 
+
+        #creating redo check in button
+        redo_checkin_button = ttk.Button(
+            self.frame,
+            text = "Cancel and Start Over",
+            command = lambda: self.btn_redo_action(parent)
+        )
+        redo_checkin_button.grid(row=key_count+3, column=1)
 
         # Creating the logout button
         btn_logout = ttk.Button(
@@ -237,7 +244,7 @@ class SummaryScene(ttk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=key_count+3, column=1)
+        btn_logout.grid(row=key_count+4, column=1)
     
 
 
@@ -249,6 +256,9 @@ class SummaryScene(ttk.Frame):
 
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
+    
+    def btn_redo_action(self, parent):
+        parent.set_frame_scan_frame()
 
     def onFrameConfigure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
