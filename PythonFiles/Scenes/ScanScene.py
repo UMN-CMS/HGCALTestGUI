@@ -129,7 +129,7 @@ class ScanScene(ttk.Frame):
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
-        QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
+        QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
         QR_label = ttk.Label(self, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
@@ -161,15 +161,15 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            font = ('Arial', 18)
+            font = ('Arial', 32)
         )
-        lbl_scan.grid(column=0, row=0, sticky='we')
+        lbl_scan.grid(column=1, row=0, sticky='n', pady = (25, 50))
 
         # Create a label to label the entry box
         lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
             text = "Full ID: ",
-            font = ('Arial', 16)
+            font = ('Arial', 24)
         )
         lbl_scan.grid(column=0, row=2)
 
@@ -206,7 +206,7 @@ class ScanScene(ttk.Frame):
             #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
-        self.btn_rescan.grid(column=0, row=5, padx=10, pady=5)
+        self.btn_rescan.grid(column=0, row=5, padx=10, pady= 25)
 
         # Submit button creation
         self.btn_submit = ttk.Button(

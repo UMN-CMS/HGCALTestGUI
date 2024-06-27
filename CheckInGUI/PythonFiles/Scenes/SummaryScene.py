@@ -76,11 +76,11 @@ class SummaryScene(ttk.Frame):
         print("\n\nSummaryScene: Table is being created with the results.")
         
         self.canvas = tk.Canvas(self, width = 1105, height = 850, background = '#33393b')
-        self.frame = ttk.Frame(self.canvas, width=800, height=500)
-        self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
+        self.frame = ttk.Frame(self, width= 1105, height=850)
+        self.scroller = ttk.Scrollbar(self.canvas, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
-        self.scroller.grid(row=0, column=1, sticky='NSEW')
+        self.scroller.grid()
         self.window = self.canvas.create_window((4,4), window=self.frame, anchor='n', tags='self.frame')
 
         self.frame.bind('<Configure>', self.onFrameConfigure)
@@ -153,7 +153,7 @@ class SummaryScene(ttk.Frame):
 
         # Creates the "table" as a frame object
         self.frm_table = ttk.Frame(self.frame)
-        self.frm_table.grid(row = 0, column = 1)
+        self.frm_table.grid(row = 6, column = 1)
 
         # Where to start putting the JSON information
         starting_row = 4
@@ -173,7 +173,7 @@ class SummaryScene(ttk.Frame):
                     #height=1,
                     font=('Arial', 24, "bold")
                     )
-            key_label.grid(row = key_count , column=1, padx = 15)
+            key_label.grid(row = key_count + 6 , column=1, padx = 15)
 
             # Correctly displays the booleans
             # If not a string, show as a boolean true/false
@@ -194,7 +194,7 @@ class SummaryScene(ttk.Frame):
                     #height=1,
                     font=('Arial', 18, "bold")
                     )
-            result_label.grid(row=key_count + 1, column=3)
+            result_label.grid(row=key_count + 6, column=3)
 
         comment_index = 0
         comment_title_text = "Comments:"
@@ -206,7 +206,7 @@ class SummaryScene(ttk.Frame):
                #height=2,
                font=('Arial', 24, "bold")
                )
-        comment_title.grid(row=key_count + 1, column=0)
+        comment_title.grid(row=key_count + 7, column=0)
 
         comment_text = str(self.data_holder.get_comment_dict(comment_index))
         comment_label = ttk.Label(
@@ -217,28 +217,29 @@ class SummaryScene(ttk.Frame):
               #height=2,
                font=('Arial', 18, "bold")
                )
-        comment_label.grid(row=key_count + 1, column=1)
+        comment_label.grid(row=key_count + 7, column=1)
 
-
+        frm_logout = ttk.Frame(self, width= 1105, height=850)
+        frm_logout.grid(sticky = 'se')
 
         #creating the next board buttom
         next_board_button = ttk.Button(
-            self.frame,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Submit and go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=1, column=3, padx = 10, pady = 10)
+        next_board_button.grid(sticky = 'ne', row = 0, column = 0, padx = 10, pady = 10)
  
 
         # Creating the logout button
         btn_logout = ttk.Button(
-            self.frame,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=2, column=3, padx = 10, pady = 20)
+        btn_logout.grid(sticky = 'ne',row=1, column=0, padx = 10, pady = 20)
     
 
 
