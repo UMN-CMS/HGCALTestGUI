@@ -139,18 +139,11 @@ class DataHolder():
         logger.info("DataHolder: Checking if full id is a new board")
 
         full = self.get_full_ID()
-        user = self.data_dict['user_ID']
-        comments = 'Checked in during general testing'
         #returns true if the board is new, false if not
         is_new_board = self.data_sender.is_new_board(full)
         
         if is_new_board == True:
-            # data sender's add new board function returns the check in id
-            in_id = self.data_sender.add_new_board(full, user, comments)
-            if in_id:
-                #print('Board added to Database')
-                self.data_dict['test_names'] = None
-                self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
+            pass
 
         else:
             # if the board is not new, this returns the previous testing information on the board

@@ -1,6 +1,6 @@
 ---
 DBInfo:
-  baseURL: http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB
+  baseURL: http://cmslab1.spa.umn.edu/Factory/WagonDB
   inserter: WagonDBInserter
   name: WagonDB
   reader: WagonDBReadUser

@@ -98,94 +98,112 @@ class PostScanScene(ttk.Frame):
         self.grid_columnconfigure(0, weight = 1)
         self.grid_rowconfigure(0, weight = 1)
 
-        # Adds the title to the Summary Frame
-        self.title = ttk.Label(
-                self.frame, 
-                text = "Board Scanned!",
-                )
-        self.title.grid(row= 0, column= 1,  pady = 20)
+        if self.data_holder.data_dict['prev_results']:
 
-        # Adds Board Full ID to the SummaryFrame
-        self.id = ttk.Label(
-                self.frame, 
-                #fg='#0d0d0d', 
-                text = str(self.data_holder.data_dict['current_full_ID']),
-                #font=('Arial',16,'bold')
-                )
-        self.id.grid(row= 1, column= 1, pady = 20)
+            # Adds the title to the Summary Frame
+            self.title = ttk.Label(
+                    self.frame, 
+                    text = "Board Scanned!",
+                    )
+            self.title.grid(row= 0, column= 1,  pady = 20)
 
-        green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-        green_check = green_check.resize((75, 75), Image.LANCZOS)
-        green_check = iTK.PhotoImage(green_check)
+            # Adds Board Full ID to the SummaryFrame
+            self.id = ttk.Label(
+                    self.frame, 
+                    #fg='#0d0d0d', 
+                    text = str(self.data_holder.data_dict['current_full_ID']),
+                    #font=('Arial',16,'bold')
+                    )
+            self.id.grid(row= 1, column= 1, pady = 20)
 
-        redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
-        redx = redx.resize((75, 75), Image.LANCZOS)
-        redx = iTK.PhotoImage(redx)
-        # adds previously run tests to the canvas with pass/fail info
-        try:
-            if self.data_holder.data_dict['test_names']:
-                res_dict = {}
-                for n in self.data_holder.data_dict['test_names']:
-                    res_dict[n] = []
-                for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
-                    res_dict[el[0]] = el[1]
+            green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+            green_check = green_check.resize((75, 75), Image.LANCZOS)
+            green_check = iTK.PhotoImage(green_check)
 
-                for idx,el in enumerate(res_dict.keys()):
-                    self.lbl_res = ttk.Label(
-                            self.frame,
-                            text = str(el) + ': ',
-                            font=('Arial',14)
-                            )
-                    self.lbl_res.grid(row=idx+2, column=1)
-                    if res_dict[el] == 'Passed':
-                        self.lbl_img = ttk.Label(
-                                self.frame,
-                                image = green_check,
-                                font=('Arial',14)
-                                )
-                        self.lbl_img.image=green_check
-                        self.lbl_img.grid(row=idx+2, column=2)
-                    elif res_dict[el] == 'Failed':
-                        self.lbl_img = ttk.Label(
-                                self.frame,
-                                image = redx,
-                                font=('Arial',14)
-                                )
-                        self.lbl_img.image=redx
-                        self.lbl_img.grid(row=idx+2, column=2)
-                    else:
+            redx = Image.open('{}/Images/RedX.png'.format(PythonFiles.__path__[0]))
+            redx = redx.resize((75, 75), Image.LANCZOS)
+            redx = iTK.PhotoImage(redx)
+            # adds previously run tests to the canvas with pass/fail info
+            try:
+                if self.data_holder.data_dict['test_names']:
+                    res_dict = {}
+                    for n in self.data_holder.data_dict['test_names']:
+                        res_dict[n] = []
+                    for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
+                        res_dict[el[0]] = el[1]
+
+                    for idx,el in enumerate(res_dict.keys()):
                         self.lbl_res = ttk.Label(
                                 self.frame,
-                                text = 'This test has not been run.',
+                                text = str(el) + ': ',
                                 font=('Arial',14)
                                 )
-                        self.lbl_res.grid(row=idx+2, column=2)
-                        
-            else:
-                self.lbl_res = ttk.Label(
-                        self.frame,
-                        text = str(self.data_holder.data_dict['prev_results']),
-                        font=('Arial',14)
-                        )
-                self.lbl_res.grid(row=2, column=1)
+                        self.lbl_res.grid(row=idx+2, column=1)
+                        if res_dict[el] == 'Passed':
+                            self.lbl_img = ttk.Label(
+                                    self.frame,
+                                    image = green_check,
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_img.image=green_check
+                            self.lbl_img.grid(row=idx+2, column=2)
+                        elif res_dict[el] == 'Failed':
+                            self.lbl_img = ttk.Label(
+                                    self.frame,
+                                    image = redx,
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_img.image=redx
+                            self.lbl_img.grid(row=idx+2, column=2)
+                        else:
+                            self.lbl_res = ttk.Label(
+                                    self.frame,
+                                    text = 'This test has not been run.',
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_res.grid(row=idx+2, column=2)
+                            
+                else:
+                    self.lbl_res = ttk.Label(
+                            self.frame,
+                            text = str(self.data_holder.data_dict['prev_results']),
+                            font=('Arial',14)
+                            )
+                    self.lbl_res.grid(row=2, column=1)
 
-        except Exception as e:
-            print(e)
-            self.lbl_full = ttk.Label(
+            except Exception as e:
+                print(e)
+                self.lbl_full = ttk.Label(
+                        self, 
+                        text = 'Error, No Results',
+                        font=('Arial', 14) 
+                        )
+                self.lbl_full.grid(row = 2, column =1, pady = 10) 
+
+            # Creating the proceed button
+            proceed_button = ttk.Button(
+                self.frame,
+                #relief = tk.RAISED,
+                text = "Proceed",
+                command = lambda: self.btn_proceed_action(parent)
+            )
+            proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
+
+        else:
+            self.lbl_1 = ttk.label(
                     self, 
-                    text = 'Error, No Results',
+                    text = "This board hasn't been checked in.",
                     font=('Arial', 14) 
                     )
-            self.lbl_full.grid(row = 2, column =1, pady = 10) 
+            self.lbl_1.grid(row = 2, column =1, pady = 10) 
 
-        # Creating the proceed button
-        proceed_button = ttk.Button(
-            self.frame,
-            #relief = tk.RAISED,
-            text = "Proceed",
-            command = lambda: self.btn_proceed_action(parent)
-        )
-        proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
+            self.lbl_2 = ttk.label(
+                    self, 
+                    text = "Please visit the check in and inspection station.",
+                    font=('Arial', 14) 
+                    )
+            self.lbl_2.grid(row = 2, column =1, pady = 10) 
+
 
 
         #creating the next board buttom

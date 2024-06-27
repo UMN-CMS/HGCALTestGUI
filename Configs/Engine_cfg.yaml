@@ -12,7 +12,7 @@ Board_type:
 
 DBInfo:
   admin: EngineDBInserter
-  baseURL: http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/EngineDB
+  baseURL: http://cmslab1.spa.umn.edu/Factory/EngineDB
   inserter: EngineDBInserter
   name: EngineDB
   reader: EngineDBReadUser
