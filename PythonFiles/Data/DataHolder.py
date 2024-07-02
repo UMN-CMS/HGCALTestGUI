@@ -3,6 +3,7 @@ import json, logging, socket, PythonFiles, copy, os
 import requests
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
+import yaml
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
 
@@ -75,6 +76,33 @@ class DataHolder():
         self.ptest_names = self.gui_cfg.getPhysicalNames()
 
         self.label_info = None
+
+        self.config_id = None
+
+        self.admin = False
+        self.password = None
+
+        self.tester_type = None
+        self.wagon_tester_info = {
+                'Kria': None,
+                'Tester': None,
+                'Interposer': None,
+                'Wagon Wheel 1': None,
+                'Wagon Wheel 2': None,
+                'Wagon Wheel 3': None,
+                'Wagon Wheel 4': None,
+                'num_wagon_wheels': 0,
+                'interposer_type': None,
+                }
+
+        self.engine_tester_info = {
+                'ZCU': None,
+                'East Interposer': None,
+                'West Interposer': None,
+                'Test Bridge 1': None,
+                'Test Bridge 2': None,
+                }
+
        
         # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
@@ -119,7 +147,7 @@ class DataHolder():
     def set_comment_dict(self, idx, val):
         self.all_comments[idx] = val 
 
-    def add_new_user_name(self, user_ID, passwd):
+    def add_new_user_name(self, user_ID):
         self.data_dict['user_ID'] = user_ID
         
         is_new_user_ID = True
@@ -129,10 +157,11 @@ class DataHolder():
                 is_new_user_ID = False
 
         if is_new_user_ID:
-            self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
+            self.data_sender.add_new_user_ID(self.data_dict['user_ID'], self.password)        
 
     def get_physical_criteria(self, num):
         return self.ptest_criteria[num]
+
 
     # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
@@ -193,6 +222,41 @@ class DataHolder():
 
     #################################################
 
+    def attempt_admin_access(self, password):
+        admin_connected = self.data_sender.attempt_admin_access(password)
+        if admin_connected == True:
+            self.admin = True
+            self.password = password
+
+    def upload_test_stand_info(self):
+        if self.tester_type == 'Wagon':
+            info_dict = {'kria': self.wagon_tester_info['Kria'],
+                    'tester': self.wagon_tester_info['Tester'],
+                    'interposer': self.wagon_tester_info['Interposer'],
+                    'interposer_type': self.wagon_tester_info['interposer_type'],
+                    'wheel_1': self.wagon_tester_info['wheel_1'],
+                    'wheel_2': self.wagon_tester_info['wheel_2'],
+                    'wheel_3': self.wagon_tester_info['wheel_3'],
+                    'wheel_4': self.wagon_tester_info['wheel_4'],
+                    'test_stand': self.data_dict['test_stand'],
+                    }
+
+            wagon_cfg = yaml.safe_load(open('../../Configs/Wagon_cfg.yaml',"r"))
+            db_url = wagon_cfg['DBInfo']['baseURL']
+        if self.tester_type == 'Engine':
+            info_dict = {'ZCU': self.wagon_tester_info['ZCU'],
+                    'east_interposer': self.wagon_tester_info['East Interposer'],
+                    'west_interposer': self.wagon_tester_info['West Interposer'],
+                    'bridge_1': self.wagon_tester_info['Test Bridge 1'],
+                    'bridge_2': self.wagon_tester_info['Test Bridge 2'],
+                    'test_stand': self.data_dict['test_stand'],
+                    }
+            engine_cfg = yaml.safe_load(open('../../Configs/Engine_cfg.yaml',"r"))
+            db_url = engine_cfg['DBInfo']['baseURL']
+        self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
+
+    #################################################
+
     # Future method to send data to the database
     def send_all_to_DB(self):
           
@@ -231,7 +295,10 @@ class DataHolder():
             temp = 1 
 
 
-        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        if self.config_id:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
+        else:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             print(info_dict)
@@ -360,6 +427,8 @@ class DataHolder():
         self.total_test_num = 0
 
         self.label_info = None
+
+        self.config_id = None
 
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict['test{}_completed'.format(i)] = False
