@@ -27,7 +27,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class ScanScene(ttk.Frame):
+class AdminScanScene(ttk.Frame):
     
     #################################################
 
@@ -44,15 +44,16 @@ class ScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
+        self.parent = parent
+
         super().__init__(self.master_frame, width=1300-213, height = 700)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
-        self.initialize_GUI(parent, master_frame)
+        self.initialize_GUI(parent)
 
         self.create_style(parent)
        
@@ -124,7 +125,7 @@ class ScanScene(ttk.Frame):
             logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
-    def initialize_GUI(self, parent, master_frame):
+    def initialize_GUI(self, parent):
 
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
@@ -135,26 +136,34 @@ class ScanScene(ttk.Frame):
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 0, sticky='new')
+        QR_label.grid(column=1, row = 1, sticky='new')
 
         Scan_Board_Prompt_Frame = ttk.Frame(self, width = 1105, height = 650)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
+        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
+        
+        Button_Frame1 = ttk.Frame(self)
+        Button_Frame1.grid(column=1, row=0, sticky='ew')
+
+        Button_Frame2 = ttk.Frame(self)
+        Button_Frame2.grid(column=1, row=2, sticky='ew')
 
         #resizing
         Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
         Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
         QR_label.grid_columnconfigure(0, weight=1)
+        Button_Frame1.grid_columnconfigure(0, weight=1)
+        Button_Frame2.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
         # creates a Label Variable, different customization options
-        lbl_scan = ttk.Label(
+        self.lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
             font = ('Arial', 18)
         )
-        lbl_scan.grid(column=0, row=0, sticky='we')
+        self.lbl_scan.grid(column=0, row=0, sticky='we')
 
         # Create a label to label the entry box
         lbl_full = ttk.Label(
@@ -162,7 +171,7 @@ class ScanScene(ttk.Frame):
             text = "Full ID: ",
             font = ('Arial', 16)
         )
-        lbl_scan.grid(column=0, row=2)
+        lbl_full.grid(column=0, row=2)
 
         # Entry for the full id to be displayed. Upon Scan, update and disable?
         global ent_full
@@ -212,7 +221,7 @@ class ScanScene(ttk.Frame):
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
-        label_frame.grid(column=0, row = 2)
+        label_frame.grid(column=0, row = 1)
 
         self.label_major = ttk.Label(
             label_frame,
@@ -259,7 +268,15 @@ class ScanScene(ttk.Frame):
         )
         btn_help.grid(column=0, row=0, sticky='ne', padx=10, pady=10)
 
-        
+
+    def update_frame(self, parent, index):
+        self.ent_full.delete(0,END)
+        if self.data_holder.tester_type == 'Wagon':
+            self.index = list(self.data_holder.wagon_tester_info)[index]
+            self.lbl_scan['text'] = 'Scan the ' + self.index
+        if self.data_holder.tester_type == 'Engine':
+            self.index = list(self.data_holder.engine_tester_info)[index]
+            self.lbl_scan['text'] = 'Scan the ' + self.index
 
 
     #################################################
@@ -276,18 +293,12 @@ class ScanScene(ttk.Frame):
        
         self.EXIT_CODE = 1 
 
-#        if self.use_scanner:
-#            self.listener.terminate()
-#            self.scanner.terminate()
+        if self.data_holder.tester_type == 'Wagon':
+            self.data_holder.wagon_tester_info[self.index] = self.ent_full.get()
+        if self.data_holder.tester_type == 'Engine':
+            self.data_holder.engine_tester_info[self.index] = self.ent_full.get()
 
-        self.data_holder.set_full_ID(self.ent_full.get())
-        _parent.update_config()
-        if self.data_holder.getGUIcfg().get_if_use_DB():
-            self.data_holder.check_if_new_board() 
-
-        self.data_holder.update_location(self.ent_full.get())
-        _parent.create_test_frames(self.data_holder.data_dict['queue'])
-        _parent.set_frame_postscan()
+        _parent.next_frame_admin_scan()
 
         self.EXIT_CODE = 0
 
@@ -365,3 +376,136 @@ class ScanScene(ttk.Frame):
             self.EXIT_CODE = 1
         except:
             logger.info("ScanScene: Processes could not be terminated.")
+
+
+##########################################################
+
+class interposer_Popup():
+    
+    #################################################
+
+    def __init__(self, parent, data_holder):
+        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
+        self.confirm_popup(data_holder)
+        self.parent = parent    
+
+    #################################################
+
+    # Function to make retry or continue window if the test fails
+    def confirm_popup(self, data_holder):
+        self.data_holder = data_holder
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Select Interposer Type") 
+        self.popup.geometry("200x100+550+350")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Select Interposer Type",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2)
+
+        # Creates retry and continue buttons
+        btn_east = ttk.Button(
+             frm_popup,
+             text = "East", 
+             command = lambda: self.east_function(self.parent)
+             )
+        btn_east.grid(column = 1, row = 1)
+
+        btn_west = ttk.Button(
+            frm_popup,
+            text = "West",
+            command = lambda: self.west_function(self.parent)
+        )
+        btn_west.grid(column = 0, row = 1)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+
+
+    #################################################
+    
+    def east_function(self, _parent):
+        self.popup.destroy()
+        self.data_holder.wagon_tester_info['interposer_type'] = 'East'
+        
+    #################################################
+
+    def west_function(self, _parent):
+        self.popup.destroy()
+        self.data_holder.wagon_tester_info['interposer_type'] = 'West'
+
+
+
+###############################################################
+
+
+
+class finished_Popup():
+    
+    #################################################
+
+    def __init__(self, parent, data_holder):
+        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
+        self.confirm_popup(data_holder)
+        self.parent = parent    
+
+    #################################################
+
+    # Function to make retry or continue window if the test fails
+    def confirm_popup(self, data_holder):
+        self.data_holder = data_holder
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Done") 
+        self.popup.geometry("300x150+550+350")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Finished Scanning Tester Info",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2)
+
+        # Creates retry and continue buttons
+        btn_ok = ttk.Button(
+             frm_popup,
+             text = "OK", 
+             command = lambda: self.east_function(self.parent)
+             )
+        btn_ok.grid(column = 1, row = 1)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+
+
+    #################################################
+    
+    def east_function(self, _parent):
+        self.popup.destroy()
+        
+

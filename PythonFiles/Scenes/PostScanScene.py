@@ -190,14 +190,14 @@ class PostScanScene(ttk.Frame):
             proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         else:
-            self.lbl_1 = ttk.label(
+            self.lbl_1 = ttk.Label(
                     self, 
                     text = "This board hasn't been checked in.",
                     font=('Arial', 14) 
                     )
             self.lbl_1.grid(row = 2, column =1, pady = 10) 
 
-            self.lbl_2 = ttk.label(
+            self.lbl_2 = ttk.Label(
                     self, 
                     text = "Please visit the check in and inspection station.",
                     font=('Arial', 14) 

@@ -101,15 +101,15 @@ class LoginScene(ttk.Frame):
         self.btn_submit.config( state = 'disabled')
 
         # Creating the add user button
-        self.btn_add_user = ttk.Button(
+        self.btn_admin = ttk.Button(
             self, 
-            text="Add User",
+            text="Admin Tools",
             #padx = 20,
             #pady = 5, 
             #relief=tk.RAISED, 
-            command= lambda:  self.btn_add_user_action(parent)
+            command= lambda:  self.btn_admin_action(parent)
             )
-        self.btn_add_user.pack(pady=40)
+        self.btn_admin.pack(pady=40)
 
 
 
@@ -161,9 +161,8 @@ class LoginScene(ttk.Frame):
 
     #################################################
 
-    # To be given commands later, for now it is a dummy function
-    def btn_add_user_action(self, _parent):
-        _parent.set_frame_add_user_frame()
+    def btn_admin_action(self, _parent):
+        pass_pop = PasswordPopup(_parent, self.data_holder)
     
     #################################################
 
@@ -174,5 +173,174 @@ class LoginScene(ttk.Frame):
     
     #################################################
 
+class PasswordPopup():
     
+    #################################################
+
+    def __init__(self, parent, data_holder):
+        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
+        self.create_style(parent)
+        self.password_popup(data_holder)
+        self.parent = parent    
+
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
+
+    #################################################
+
+    # Function to enter password for admin access
+    def password_popup(self, data_holder):
+        self.data_holder = data_holder
+        logger.info("PasswordPopup: Prompting the user for the admin password")
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Admin Access") 
+        self.popup.geometry("300x200+500+300")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Enter Admin Password",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2)
+
+        self.password = ""
+        self.user_password = tk.Entry(
+            frm_popup,
+            textvariable= self.password,
+            font=('Arial', '15'),
+            show = "*"
+            )
+        self.user_password.grid(column = 0, row = 1, columnspan = 2)
+
+        # Creates retry and continue buttons
+        btn_retry = ttk.Button(
+             frm_popup,
+             text = "Cancel", 
+             command = lambda: self.cancel_function()
+             )
+        btn_retry.grid(column = 1, row = 2)
+
+        btn_continue = ttk.Button(
+            frm_popup,
+            text = "Confirm",
+            command = lambda: self.continue_function(self.parent)
+        )
+        btn_continue.grid(column = 0, row = 2)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(2, weight=1)
+
+
+    #################################################
+    
+    # Called when the "cancel" button is selected
+    def cancel_function(self):
+        self.popup.destroy()
+        
+    #################################################
+
+    # Called to continue on in the testing procedure
+    def continue_function(self, _parent):  
+        self.data_holder.attempt_admin_access(self.user_password.get())
+        print(self.data_holder.admin)
+        if self.data_holder.admin == True:
+            _parent.set_frame_admin_frame()
+        else:
+            fail_pop = FailedPopup(_parent, self.data_holder)
+
+        self.popup.destroy()
+
+
+
+
+#################################################################################
+
+class FailedPopup():
+    
+    #################################################
+
+    def __init__(self, parent, data_holder):
+        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
+        self.password_popup(data_holder)
+        self.parent = parent    
+
+    #################################################
+
+    # Function to enter password for admin access
+    def password_popup(self, data_holder):
+        self.data_holder = data_holder
+        logger.info("PasswordPopup: Admin Access was denied.")
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Admin Connection Failed") 
+        self.popup.geometry("300x200+500+300")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Incorrect Password!",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25)
+
+        # Creates retry and continue buttons
+        btn_retry = ttk.Button(
+             frm_popup,
+             text = "Retry", 
+             command = lambda: self.retry_function(self.parent)
+             )
+        btn_retry.grid(column = 0, row = 1)
+
+        btn_ok = ttk.Button(
+            frm_popup,
+            text = "Cancel",
+            command = lambda: self.cancel_function()
+        )
+        btn_ok.grid(column = 1, row = 1)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+
+
+    #################################################
+    
+    # Called when the "cancel" button is selected
+    def cancel_function(self):
+        self.popup.destroy()
+
+    def retry_function(self, _parent):
+        self.popup.destroy()
+        pass_pop = PasswordPopup(_parent, self.data_holder)
+        
+
+
 #################################################################################

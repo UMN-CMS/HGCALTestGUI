@@ -24,7 +24,10 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestInProgressScene import *
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
-from PythonFiles.Scenes.PhysicalScenes.Inspection1 import Inspection1
+from PythonFiles.Scenes.AdminScene import AdminScene
+from PythonFiles.Scenes.AdminScanScene import AdminScanScene
+from PythonFiles.Scenes.AdminScanScene import interposer_Popup
+from PythonFiles.Scenes.AdminScanScene import finished_Popup
 from PythonFiles.update_config import update_config
 import webbrowser
 
@@ -118,6 +121,12 @@ class GUIWindow():
 
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
+
+        self.admin_scan_frame = AdminScanScene(self, self.master_frame, self.data_holder)
+        self.admin_scan_frame.grid(row=0, column=0, sticky = 'nsew')
+
+        self.admin_frame = AdminScene(self, self.master_frame, self.data_holder)
+        self.admin_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
         self.add_user_frame.grid(row=0, column=0, sticky= 'nsew')
@@ -215,6 +224,52 @@ class GUIWindow():
 
     #################################################
 
+    def set_frame_admin_frame(self):
+        self.admin_frame.update_frame(self)
+        self.set_frame(self.admin_frame)
+
+        logging.debug("GUIWindow: The frame has been set to admin_frame.")
+
+    def set_frame_admin_scan(self):
+        self.component_index = 0
+        print('Component Index: ' + str(self.component_index))
+        self.admin_scan_frame.is_current_scene = True
+        self.admin_scan_frame.update_frame(self, self.component_index)
+        self.set_frame(self.admin_scan_frame)
+        self.admin_scan_frame.scan_QR_code(self.master_window)
+
+        logging.debug("GUIWindow: The frame has been set to admin_scan_frame.")
+
+    def next_frame_admin_scan(self):
+        self.component_index += 1
+        print('Component Index: ' + str(self.component_index))
+        if self.data_holder.tester_type == 'Wagon':
+            if self.component_index < 3+int(self.data_holder.wagon_tester_info['num_wagon_wheels']):
+                self.admin_scan_frame.update_frame(self, self.component_index)
+                if list(self.data_holder.wagon_tester_info)[self.component_index] == 'Interposer':
+                    interposer_popup = interposer_Popup(self, self.data_holder)
+
+                self.admin_scan_frame.scan_QR_code(self.master_window)
+            else:
+                finished_Popup(self, self.data_holder)
+                print(self.data_holder.wagon_tester_info)
+                self.data_holder.upload_test_stand_info()
+                self.set_frame_scan_frame()
+
+        if self.data_holder.tester_type == 'Engine':
+            if self.component_index < 5:
+                self.admin_scan_frame.update_frame(self, self.component_index)
+                self.admin_scan_frame.scan_QR_code(self.master_window)
+            else:
+                finished_Popup(self, self.data_holder)
+                print(self.data_holder.engine_tester_info)
+                self.data_holder.upload_test_stand_info()
+                self.set_frame_scan_frame()
+
+
+
+    #################################################
+
     def set_frame_login_frame(self):  
 
         self.sidebar.update_sidebar(self)
@@ -250,6 +305,8 @@ class GUIWindow():
 
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
+
+        logging.debug("GUIWindow: The frame has been set to post_scan_frame.")
 
     #################################################
 
