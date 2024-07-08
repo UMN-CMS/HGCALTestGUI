@@ -121,13 +121,23 @@ class ScanScene(ttk.Frame):
 
         logging.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
-        QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
+        QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
         QR_label = ttk.Label(self, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=2, row = 0) #, sticky= 'ne')
+        QR_label.grid(column=3, row = 0, sticky= 'ne', pady = (250,0))
+
+        logging.info("ScanScene: Frame has been created.")
+        # Create a photoimage object of the QR Code
+        QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
+        QR_PhotoImage = iTK.PhotoImage(QR_image)
+        QR_label2 = ttk.Label(self, image=QR_PhotoImage)
+        QR_label2.image = QR_PhotoImage
+
+        # the .grid() adds it to the Frame
+        QR_label2.grid(column=3, row = 0, sticky= 'ne', pady =(100, 0), padx = (75,0))
 
         Scan_Board_Prompt_Frame = ttk.Frame(self,)
         Scan_Board_Prompt_Frame.grid(column=0, row = 0)
@@ -245,7 +255,7 @@ class ScanScene(ttk.Frame):
 
         # Creating frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 2, row = 0, sticky= 'se')
+        frm_logout.grid(column = 3, row = 0, sticky= 'se')
 
        
         # Creating the logout button

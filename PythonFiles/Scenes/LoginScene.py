@@ -63,7 +63,7 @@ class LoginScene(ttk.Frame):
             text="Please Select Your Name", 
             #font=('Arial', '24')
             )
-        lbl_title.config(font = ('Arial', '48'))
+        lbl_title.config(font = ('Arial', '52'))
         lbl_title.pack(pady=75)
 
         # Creating intial value in dropdown menu

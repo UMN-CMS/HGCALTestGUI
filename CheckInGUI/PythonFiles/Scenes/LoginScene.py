@@ -56,7 +56,7 @@ class LoginScene(ttk.Frame):
         lbl_title = ttk.Label(
             self, 
             text="Please Select Your Name", 
-            font=('Arial', '48')
+            font=('Arial', '62')
             )
         lbl_title.pack(pady=75)
 

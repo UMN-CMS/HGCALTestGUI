@@ -51,7 +51,7 @@ class AddUserScene(ttk.Frame):
         lbl_title = ttk.Label(
             self, 
             text="Add User", 
-            font=('Arial', '24')
+            font=('Arial', '42')
             )
         lbl_title.pack(pady=(50,0))
 
@@ -68,7 +68,7 @@ class AddUserScene(ttk.Frame):
         password_label = ttk.Label(
             self, 
             text="Enter Admin Password", 
-            font=('Arial', '20')
+            font=('Arial', '36')
             )
         password_label.pack(pady=(10,0))
 
@@ -91,7 +91,7 @@ class AddUserScene(ttk.Frame):
             #relief=tk.RAISED, 
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.pack()
+        self.btn_submit.pack(pady = 15)
         
         # Creating the cancel button
         self.btn_submit = ttk.Button(

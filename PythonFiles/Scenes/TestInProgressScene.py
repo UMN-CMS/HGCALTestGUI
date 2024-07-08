@@ -80,7 +80,7 @@ class TestInProgressScene(ttk.Frame):
             bg = 'black', 
             fg = 'white', 
             height= 15,
-            width= 400,
+            width= 150,
             font = ('Arial', 15),
             yscrollcommand = scrollbar.set
             )
@@ -93,7 +93,7 @@ class TestInProgressScene(ttk.Frame):
         # Creating the main title in the frame
         lbl_title = ttk.Label(self, 
             text = "Test in progress. Please wait.", 
-            font = ('Arial', 20)
+            font = ('Arial', 32)
             )
         lbl_title.pack(padx = 0, pady = 50)
 

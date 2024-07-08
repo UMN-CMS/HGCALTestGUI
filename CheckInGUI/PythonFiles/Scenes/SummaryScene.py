@@ -76,7 +76,7 @@ class SummaryScene(ttk.Frame):
         print("\n\nSummaryScene: Table is being created with the results.")
         
         self.canvas = tk.Canvas(self, width = 1105, height = 850, background = '#33393b')
-        self.frame = ttk.Frame(self.canvas, width=800, height=500)
+        self.frame = ttk.Frame(self.canvas, width=1105, height=850)
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
         self.canvas.grid(row = 0, column = 0)
@@ -95,9 +95,9 @@ class SummaryScene(ttk.Frame):
                     self.frame, 
                     #fg='#0d0d0d', 
                     text = "Board Checked in and Inspection Completed!",
-                    font=('Arial',48,'bold')
+                    font=('Arial',32,'bold')
                     )
-            self.title.grid(row= 0, column= 1, pady = 20)
+            self.title.grid(row= 0, column= 1, pady = 50)
 
             self.id = ttk.Label(
                     self.frame, 
@@ -149,11 +149,11 @@ class SummaryScene(ttk.Frame):
                 text = str(datetime.datetime.now()),
                 font=('Arial', 18) 
                 )
-        self.lbl_time.grid(column = 1, row = 5, pady = (15, 75))
+        self.lbl_time.grid(column = 1, row = 5, pady = (15, 150))
 
         # Creates the "table" as a frame object
         self.frm_table = ttk.Frame(self.frame)
-        self.frm_table.grid(row = 0, column = 1)
+        self.frm_table.grid(row = 8, column = 1, sticky = 's')
 
         # Where to start putting the JSON information
         starting_row = 4
@@ -171,9 +171,9 @@ class SummaryScene(ttk.Frame):
                     #relief = 'ridge',
                     width=40,
                     #height=1,
-                    font=('Arial', 24, "bold")
+                    font=('Arial', 30, "bold")
                     )
-            key_label.grid(row = key_count , column=1, padx = 15)
+            key_label.grid(row = key_count , sticky = 'sw', column=1, padx = 15)
 
             # Correctly displays the booleans
             # If not a string, show as a boolean true/false
@@ -192,7 +192,7 @@ class SummaryScene(ttk.Frame):
                     #relief = 'ridge',
                     width=40,
                     #height=1,
-                    font=('Arial', 18, "bold")
+                    font=('Arial', 30, "bold")
                     )
             result_label.grid(row=key_count, column=3)
 
@@ -219,32 +219,35 @@ class SummaryScene(ttk.Frame):
                )
         comment_label.grid(row=key_count + 1, column=1)
 
+        # Create frame for logout button
+        nav_frame = ttk.Frame(self)
+        nav_frame.grid(column = 3, row = 0, sticky = 'se', padx =5)
 
         #creating the next board button
         next_board_button = ttk.Button(
-            self.frame,
+            nav_frame,
             #relief = tk.RAISED,
             text = "Submit and go to Next Board",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=key_count+2, column=1)
+        next_board_button.grid(pady = 5,row=key_count+2, column=1, padx = 5)
 
         #creating redo check in button
         redo_checkin_button = ttk.Button(
-            self.frame,
+            nav_frame,
             text = "Cancel and Start Over",
             command = lambda: self.btn_redo_action(parent)
         )
-        redo_checkin_button.grid(row=key_count+3, column=1)
+        redo_checkin_button.grid(pady = 5,row=key_count+3, column=1, padx = 5)
 
         # Creating the logout button
         btn_logout = ttk.Button(
-            self.frame,
+            nav_frame,
             #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=key_count+4, column=1)
+        btn_logout.grid(row=key_count+4,pady = 5, column=1, padx = 5)
     
 
 

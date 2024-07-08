@@ -44,7 +44,7 @@ class Inspection1(ttk.Frame):
 
         # Create a centralized window for information
         frm_window = ttk.Frame(self, width = 1105, height = 850)
-        frm_window.grid(column=0, row=0)
+        frm_window.grid(column=0, row=0, sticky = 'n')
         
         frm_window.grid_rowconfigure(0, weight=1)
         frm_window.grid_columnconfigure(0, weight=1)
@@ -55,7 +55,7 @@ class Inspection1(ttk.Frame):
             text = "Tester: ", 
             font = ('Arial', '26')
             )
-        lbl_tester.grid(row=0, column=1, pady=15 , padx = 20)
+        lbl_tester.grid(row=0, column=1,sticky = 'nw', pady=15 , padx = 20)
 
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
@@ -63,7 +63,7 @@ class Inspection1(ttk.Frame):
             #font = font_scene
             )
         ent_tester.insert(0, self.data_holder.data_dict['user_ID'])
-        ent_tester.grid(row=0, column=2, pady=(75, 75) )
+        ent_tester.grid(row=0, column=2, sticky = 'nw', pady=25 )
         ent_tester.config(state = "disabled")
 
         # Create a label for the full id box
@@ -72,7 +72,7 @@ class Inspection1(ttk.Frame):
             text = "Full ID: ", 
             font = ('Arial', '26')
             )
-        lbl_full.grid(row=0, column=3, pady=15, padx = 20)
+        lbl_full.grid(row=0, column=3, pady=10, padx = 20, sticky = 'nw')
 
         # Create a entry for the full id box
         ent_full = tk.Entry(
@@ -80,25 +80,32 @@ class Inspection1(ttk.Frame):
             #font = font_scene
             )
         ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
-        ent_full.grid(pady=15, row = 0, column = 4)
+        ent_full.grid(pady=25, row = 0, column = 4, sticky = 'nw')
         ent_full.config(state = "disabled")
+
+         # Create a centralized window for information
+        frm_Q = ttk.Frame(self)
+        frm_Q.grid(column=0, row=0, sticky = 'n', pady = (200,0))
+        frm_Q.grid_rowconfigure(0, weight=1)
+        frm_Q.grid_columnconfigure(0, weight=1)
+
 
         # TODO Index can change for different InspectionScenes
         inspection_index = 0
         check_dictionary = self.data_holder.get_check_dict(inspection_index)
 
         self.tk_bools = []
-        self.s.configure('TCheckbutton', font = ('Arial', 30))
+        self.s.configure('TCheckbutton', font = ('Arial','36'))
         
         if len(check_dictionary) > 0:
             for idx, item in enumerate(self.data_holder.get_check_dict(0)):
         
                 new_bool = tk.BooleanVar()
                 self.tk_bools.append(new_bool)
-        
+
                 # Checkbutton1
                 c1 = ttk.Checkbutton(
-                    frm_window, 
+                    frm_Q, 
                     text=item['text'],
                     variable= new_bool, 
                     onvalue= True, 
@@ -106,16 +113,14 @@ class Inspection1(ttk.Frame):
                     style = 'TCheckbutton'
                     # command=print_selection
                     )
-                c1.grid(pady = 5,row = 1 + idx, column= 2, sticky = 'w', columnspan=2)
-
-        
+                c1.grid( row = 1 + idx, column= 2, sticky = 'nw', columnspan=2)
 
         lbl_comm = ttk.Label(
             frm_window, 
             text = "Comments:", 
             #font = font_scene
             )
-        lbl_comm.grid(row=6, column=2, pady= (75,0) )
+        lbl_comm.grid(row=0, column=1, pady= (75,0) )
         lbl_comm.config(font = ('Arial', '24'))
 
         # Comment Box
@@ -125,7 +130,7 @@ class Inspection1(ttk.Frame):
             state= 'normal',
             width= 75,
         )
-        self.comment_box.grid(row = 7, column =1, rowspan = 2, columnspan=5)
+        self.comment_box.grid(row = 1, column =1,  columnspan=5)
 
 
 
@@ -138,14 +143,14 @@ class Inspection1(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda:self.btn_confirm_action(parent)
             )
-        btn_confirm.grid(row = 9, column= 3, pady= 35)
+        btn_confirm.grid(row = 5, column= 2, pady= 35, sticky = 's')
         #btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
 
 
 
         # Create frame for logout button
         nav_frame = ttk.Frame(self)
-        nav_frame.grid(column = 1, row = 0, sticky = 'ne', padx =5)
+        nav_frame.grid(column = 1, row = 0, sticky = 'se', padx =5)
 
 
         # Create a rescan button
@@ -154,7 +159,7 @@ class Inspection1(ttk.Frame):
             text = "Change Boards", 
             #relief = tk.RAISED, 
             command = lambda: self.btn_rescan_action(parent))
-        btn_rescan.pack(anchor = 'ne', pady=15)
+        btn_rescan.pack(anchor = 'se', pady=15)
 
         # Create a logout button
         btn_logout = ttk.Button(
@@ -171,7 +176,7 @@ class Inspection1(ttk.Frame):
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.pack(anchor = 's', padx = 10, pady = 10)
+        btn_help.pack(anchor = 'se', pady = 10)
 
 
 

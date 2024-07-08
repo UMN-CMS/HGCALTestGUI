@@ -54,7 +54,7 @@ class TestSummaryScene(ttk.Frame):
                 self, 
                 #fg='#0d0d0d', 
                 text = "Testing Finished!",
-                font=('Arial',18,'bold')
+                font=('Arial',28,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20, sticky='ew')
 
@@ -65,7 +65,7 @@ class TestSummaryScene(ttk.Frame):
         self.lbl_id = ttk.Label(
                 self, 
                 textvariable = self.id_text,
-                font=('Arial', 14)
+                font=('Arial', 20)
                 )
         self.lbl_id.grid(column = 2, row = 0, pady = 20, padx = 5, sticky='ew')
         
@@ -115,7 +115,7 @@ class TestSummaryScene(ttk.Frame):
         self.lbl_tester = ttk.Label(
                 self, 
                 text = "Tester: " + self.data_holder.data_dict['user_ID'],
-                font=('Arial', 14)
+                font=('Arial', 24)
                 )
         self.lbl_tester.grid(column = 3, row = 0, pady = 20, padx = 5, sticky='ew')
             
@@ -165,9 +165,9 @@ class TestSummaryScene(ttk.Frame):
                     #relief = 'ridge', 
                     width=25, 
                     #height=1, 
-                    font=('Arial', 11, "bold")
+                    font=('Arial', 24, "bold")
                     )
-            _label.grid(row= 0, column=index, sticky='nsew')
+            _label.grid(row= 3, column=index, sticky='nsew', padx = 15, pady = 15)
             
 
         # Adds the test names to the first column
@@ -178,9 +178,9 @@ class TestSummaryScene(ttk.Frame):
                     #relief = 'ridge', 
                     width=25, 
                     #height=3, 
-                    font=('Arial', 11)
+                    font=('Arial', 16)
                     )
-            _label.grid(row=index + 1, column=0, sticky='nsew')
+            _label.grid(row=index + 5, column=0, sticky='nsew', padx = 15, pady = 15)
         
 
 
@@ -190,25 +190,25 @@ class TestSummaryScene(ttk.Frame):
             # Instantiates a Label
             _label = ttk.Label(
                         self.viewingFrame,
-                        #relief = 'ridge', 
                         width=25, 
-                        #height=3, 
-                        font=('Arial',11)
+                        font=('Arial',16)
                         )
 
             # if the test is completed, set the label to "Complete"
             if (self.list_of_completed_tests[index]):
                 _label.config(
-                        text = "COMPLETED"
+                        text = "COMPLETED",
+                        justify = "center"
                         )
             # else, set the label to "Unfinished"
             else:
                 _label.config(
-                        text = "UNFINISHED"
+                        text = "UNFINISHED",
+                        justify = "center"
                         )
 
             # Puts the completed/unfinished label into the table       
-            _label.grid(row=index + 1, column=1, sticky="ew")
+            _label.grid(row=index + 5, column=1, sticky="ew", padx = 10, pady = 15)
 
 
         # Adds the Image as to whether the test was completed or not
@@ -221,7 +221,7 @@ class TestSummaryScene(ttk.Frame):
                 GreenCheck_Label = ttk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=75)
                 GreenCheck_Label.image = Green_Check_PhotoImage
 
-                GreenCheck_Label.grid(row=index + 1, column=2)
+                GreenCheck_Label.grid(row=index + 5, column=2, pady = 15)
 
             else:
                 # Create a photoimage object of the QR Code
@@ -231,7 +231,7 @@ class TestSummaryScene(ttk.Frame):
                 RedX_Label = ttk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=75)
                 RedX_Label.image = Red_X_PhotoImage
 
-                RedX_Label.grid(row=index + 1, column=2)
+                RedX_Label.grid(row=index + 5, column=2, pady = 15)
 
 
         self.create_retest_more_info_btns(parent)
@@ -297,7 +297,7 @@ class TestSummaryScene(ttk.Frame):
 
         for i in range(self.data_holder.getNumTest() + self.data_holder.getNumPhysicalTest()):
             rows.append(ttk.Frame(self.viewingFrame))
-            rows[i].grid(column = 3, row = i + 1)
+            rows[i].grid(column = 3, row = i + 5)
 
             retests.append(ttk.Button(
                     rows[i], 
@@ -306,7 +306,7 @@ class TestSummaryScene(ttk.Frame):
                     #pady=3,  
                     command = lambda i=i: self.btn_retest_action(parent, i)
                     ))
-            retests[i].grid(column = 0, row = 0)
+            retests[i].grid(column = 0, row = i , pady = 15)
 
             more_infos.append(ttk.Button(
                     rows[i], 
@@ -315,7 +315,7 @@ class TestSummaryScene(ttk.Frame):
                     #pady=3, 
                     command = lambda i=i: self.btn_more_info_action(parent, i)
                     ))
-            more_infos[i].grid(column=1, row = 0)
+            more_infos[i].grid(column=1, row = i , pady = 15)
         
             rows[i].columnconfigure(0, weight=1)
             rows[i].columnconfigure(1, weight=1)
@@ -326,8 +326,7 @@ class TestSummaryScene(ttk.Frame):
                 #font = ('Arial', 15), 
                 command = lambda: self.btn_next_test_action(parent)
                 )
-        btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 3, sticky='se', padx=20, pady=50)
-        
+        btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 5, sticky='se', pady=50, padx = 50)        
 
         logger.debug("TestSummaryScene: Buttons finshed being created.")
     
