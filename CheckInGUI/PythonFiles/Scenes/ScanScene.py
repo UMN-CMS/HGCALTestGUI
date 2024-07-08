@@ -62,7 +62,7 @@ class ScanScene(ttk.Frame):
         self.master_window = master_window
         self.hide_rescan_button()
 
-        sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
+        #sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
         from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 
@@ -74,7 +74,7 @@ class ScanScene(ttk.Frame):
 
         print("\nScanScene: Beginning scan...\n")
         logging.info("ScanScene: Beginning scan...")
-        self.scanner = scan()
+        self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
         self.listener.start()
@@ -112,6 +112,7 @@ class ScanScene(ttk.Frame):
     def initialize_GUI(self, parent, master_frame):
         
         self.master_frame = master_frame
+        self.parent = parent
         
         super().__init__(self.master_frame, width = 1105, height = 850)
 

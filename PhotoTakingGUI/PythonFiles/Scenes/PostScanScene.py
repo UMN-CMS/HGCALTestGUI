@@ -3,7 +3,7 @@
 import PythonFiles
 import json, logging
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 from matplotlib.pyplot import table
@@ -38,7 +38,7 @@ class PostScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame,style = 'PostScanScene.TFrame', width = 1105, height = 850)
+        super().__init__(self.master_frame, width = 1300-213, height = 700)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -49,22 +49,20 @@ class PostScanScene(ttk.Frame):
        
         self.create_frame(parent)        
 
+    #################################################
+
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
+
+    def create_frame(self, parent):
         self.create_style(parent)
 
-        # Fits the frame to set size rather than interior widgets
-        self.grid_propagate(0)
-
-    #################################################
-    def create_style(self, _parent):
-        
-        self.s = ttk.Style()
-  
-        self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
-        self.s.tk.call('package', 'require', 'awdark')
-  
-        self.s.theme_use('awdark')
-    
-    def create_frame(self, parent):
         logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
         print("PostScanScene: Destroying old widgets on the SummaryScene.")
         
@@ -76,159 +74,137 @@ class PostScanScene(ttk.Frame):
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
-        self.canvas = tk.Canvas(self, width=800, height=600, bg = '#33393b')
-        self.frame = ttk.Frame(self.canvas, width=800, height=600)
-        
+
+        self.canvas = tk.Canvas(self)
+        self.frame = ttk.Frame(self.canvas, width=800, height=500)
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
-        self.canvas.grid(row = 0, column = 0)
-        self.scroller.grid(row=0, column=1, sticky='NSEW')
-        self.window = self.canvas.create_window((4,4), window=self.frame, anchor='n', tags='self.frame')
+
+        self.canvas.grid(row = 0, column = 0, sticky='nsew')
+        self.scroller.grid(row=0, column=1, sticky='nsw')
+        self.window = self.canvas.create_window((0,0), window=self.frame, anchor='nw', tags='self.frame')
+        
+        #resizing
+        self.frame.pack(fill='both', expand=True)
 
         self.frame.bind('<Configure>', self.onFrameConfigure)
         self.frame.bind('<Enter>', self.onEnter)
         self.frame.bind('<Leave>', self.onLeave)
 
         self.onFrameConfigure(None)
+        
+        self.frame.grid_columnconfigure(1, weight = 1)
+        self.frame.grid_columnconfigure(2, weight = 1)
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_rowconfigure(0, weight = 1)
 
-        # Adds the title to the Summary Frame
-        self.title = ttk.Label(
-                self.frame, 
-                #fg='#0d0d0d', 
-                text = "Board Scanned!",
-                font=('Arial',18,'bold')
-                )
-        self.title.grid(row= 0, column= 1, pady = 20)
+        if self.data_holder.data_dict['prev_results']:
 
-        # Adds Board full id to the SummaryFrame
-        self.id = ttk.Label(
-                self.frame, 
-                #fg='#0d0d0d', 
-                text = str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial',16,'bold')
-                )
-        self.id.grid(row= 0, column= 2, pady = 20)
+            # Adds the title to the Summary Frame
+            self.title = ttk.Label(
+                    self.frame, 
+                    text = "Board Scanned!",
+                    )
+            self.title.grid(row= 0, column= 1,  pady = 20)
 
-        if self.data_holder.label_info:
-            self.major_name = ttk.Label(
+            # Adds Board Full ID to the SummaryFrame
+            self.id = ttk.Label(
                     self.frame, 
                     #fg='#0d0d0d', 
-                    text = "Major Type:" + str(self.data_holder.label_info[1]),
-                    font=('Arial',14,'bold')
+                    text = str(self.data_holder.data_dict['current_full_ID']),
+                    #font=('Arial',16,'bold')
                     )
-            self.major_name.grid(row= 1, column= 1, pady = 20)
+            self.id.grid(row= 1, column= 1, pady = 20)
 
-            self.sub_name = ttk.Label(
-                    self.frame, 
-                    #fg='#0d0d0d', 
-                    text = "Sub Type:" + str(self.data_holder.label_info[3]),
-                    font=('Arial',14,'bold')
-                    )
-            self.sub_name.grid(row= 1, column= 2, pady = 20)
+            green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+            green_check = green_check.resize((75, 75), Image.LANCZOS)
+            green_check = iTK.PhotoImage(green_check)
 
-            self.type_code = ttk.Label(
-                    self.frame, 
-                    #fg='#0d0d0d', 
-                    text = "Type Code:" + str(self.data_holder.label_info[4]),
-                    font=('Arial',14,'bold')
-                    )
-            self.type_code.grid(row= 2, column= 1, pady = 20)
+            redx = Image.open('{}/Images/RedX.png'.format(PythonFiles.__path__[0]))
+            redx = redx.resize((75, 75), Image.LANCZOS)
+            redx = iTK.PhotoImage(redx)
+            # adds previously run tests to the canvas with pass/fail info
+            try:
+                if self.data_holder.data_dict['test_names']:
+                    res_dict = {}
+                    for n in self.data_holder.data_dict['test_names']:
+                        res_dict[n] = []
+                    for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
+                        res_dict[el[0]] = el[1]
 
-            self.sn_label = ttk.Label(
-                    self.frame, 
-                    #fg='#0d0d0d', 
-                    text = "SN:" + str(self.data_holder.label_info[5]),
-                    font=('Arial',14,'bold')
-                    )
-            self.sn_label.grid(row= 2, column= 2, pady = 20)
-
-
-        green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-        green_check = green_check.resize((75, 75), Image.LANCZOS)
-        green_check = iTK.PhotoImage(green_check)
-
-        redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
-        redx = redx.resize((75, 75), Image.LANCZOS)
-        redx = iTK.PhotoImage(redx)
-        # adds previously run tests to the canvas with pass/fail info
-        try:
-            if self.data_holder.data_dict['test_names']:
-                res_dict = {}
-                for n in self.data_holder.data_dict['test_names']:
-                    res_dict[n] = []
-                for idx,el in enumerate(self.data_holder.data_dict['prev_results']):
-                    res_dict[el[0]] = el[1]
-
-                for idx,el in enumerate(res_dict.keys()):
-                    self.lbl_res = tk.Label(
+                    for idx,el in enumerate(res_dict.keys()):
+                        self.lbl_res = ttk.Label(
+                                self.frame,
+                                text = str(el) + ': ',
+                                font=('Arial',14)
+                                )
+                        self.lbl_res.grid(row=idx+2, column=1)
+                        if res_dict[el] == 'Passed':
+                            self.lbl_img = ttk.Label(
+                                    self.frame,
+                                    image = green_check,
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_img.image=green_check
+                            self.lbl_img.grid(row=idx+2, column=2)
+                        elif res_dict[el] == 'Failed':
+                            self.lbl_img = ttk.Label(
+                                    self.frame,
+                                    image = redx,
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_img.image=redx
+                            self.lbl_img.grid(row=idx+2, column=2)
+                        else:
+                            self.lbl_res = ttk.Label(
+                                    self.frame,
+                                    text = 'This test has not been run.',
+                                    font=('Arial',14)
+                                    )
+                            self.lbl_res.grid(row=idx+2, column=2)
+                            
+                else:
+                    self.lbl_res = ttk.Label(
                             self.frame,
-                            text = str(el) + ': ',
-                            font=('Arial',14),
-                            fg = 'white',
-                            bg = '#33393b'
+                            text = str(self.data_holder.data_dict['prev_results']),
+                            font=('Arial',14)
                             )
-                    self.lbl_res.grid(row=idx+3, column=1)
-                    if res_dict[el] == 'Passed':
-                        self.lbl_img = tk.Label(
-                                self.frame,
-                                image = green_check,
-                                width=75,
-                                height=75,
-                                font=('Arial',14),
-                                fg = 'white',
-                                bg = '#33393b'
-                                )
-                        self.lbl_img.image=green_check
-                        self.lbl_img.grid(row=idx+3, column=2)
-                    elif res_dict[el] == 'Failed':
-                        self.lbl_img = tk.Label(
-                                self.frame,
-                                image = redx,
-                                width=75,
-                                height=75,
-                                font=('Arial',14),
-                                fg = 'white',
-                                bg = '#33393b'
-                                )
-                        self.lbl_img.image=redx
-                        self.lbl_img.grid(row=idx+3, column=2)
-                    else:
-                        self.lbl_res = tk.Label(
-                                self.frame,
-                                text = 'This test has not been run.',
-                                font=('Arial',14),
-                                fg = 'white',
-                                bg = '#33393b'
-                                )
-                        self.lbl_res.grid(row=idx+3, column=2)
-                        
-            else:
-                self.lbl_res = tk.Label(
-                        self.frame,
-                        text = str(self.data_holder.data_dict['prev_results']),
-                        font=('Arial',14),
-                        fg = 'white',
-                        bg = '#33393b'
+                    self.lbl_res.grid(row=2, column=1)
+
+            except Exception as e:
+                print(e)
+                self.lbl_full = ttk.Label(
+                        self, 
+                        text = 'Error, No Results',
+                        font=('Arial', 14) 
                         )
-                self.lbl_res.grid(row=3, column=1)
+                self.lbl_full.grid(row = 2, column =1, pady = 10) 
 
-        except Exception as e:
-            print(e)
-            self.lbl_err = ttk.Label(
+            # Creating the proceed button
+            proceed_button = ttk.Button(
+                self.frame,
+                #relief = tk.RAISED,
+                text = "Proceed",
+                command = lambda: self.btn_proceed_action(parent)
+            )
+            proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
+
+        else:
+            self.lbl_1 = ttk.Label(
                     self, 
-                    text = 'Error, No Results',
-                    font=('Arial', 14)
+                    text = "This board hasn't been checked in.",
+                    font=('Arial', 14) 
                     )
-            self.lbl_err.grid(row = 3, column =1, pady = 10) 
+            self.lbl_1.grid(row = 2, column =1, pady = 10) 
 
-        # Creating the proceed button
-        proc_button = ttk.Button(
-            self.frame,
-            #relief = tk.RAISED,
-            text = "Next",
-            command = lambda: self.btn_proc_action(parent)
-        )
-        proc_button.grid(row=2, column=3, padx = 10, pady = 10)
+            self.lbl_2 = ttk.Label(
+                    self, 
+                    text = "Please visit the check in and inspection station.",
+                    font=('Arial', 14) 
+                    )
+            self.lbl_2.grid(row = 2, column =1, pady = 10) 
+
+
 
         #creating the next board buttom
         next_board_button = ttk.Button(
@@ -248,14 +224,15 @@ class PostScanScene(ttk.Frame):
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
+
  
     
 
 
     #################################################
 
-    def btn_proc_action(self, _parent):
-        _parent.first_frame_camera_frame()
+    def btn_proceed_action(self, _parent):
+        _parent.scan_frame_progress()
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()
@@ -263,6 +240,11 @@ class PostScanScene(ttk.Frame):
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
 
+    def get_submit_action(self):
+        return self.btn_proceed_action
+
+    def get_parent(self):
+        return self.parent
         
     
     #################################################

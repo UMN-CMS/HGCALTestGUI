@@ -58,7 +58,7 @@ class ScanScene(ttk.Frame):
         self.master_window = master_window
         self.hide_rescan_button()
 
-        sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
+        #sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
         from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 
@@ -69,7 +69,7 @@ class ScanScene(ttk.Frame):
 
         print("\nScanScene: Beginning scan...\n")
         logging.info("ScanScene: Beginning scan...")
-        self.scanner = scan()
+        self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
         self.listener.start()
@@ -109,6 +109,7 @@ class ScanScene(ttk.Frame):
     def initialize_GUI(self, parent, master_frame):
 
         self.master_frame = master_frame
+        self.parent = parent
 
         super().__init__(self.master_frame,style = 'ScanScene.TFrame', width = 1350, height = 850)
 
@@ -125,22 +126,14 @@ class ScanScene(ttk.Frame):
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 0)
+        QR_label.grid(column=1, row = 0, sticky='new')
 
         Scan_Board_Prompt_Frame = ttk.Frame(self)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
-
-        Button_Frame1 = ttk.Frame(self)
-        Button_Frame1.grid(column=1, row=0, sticky='ew')
-
-        Button_Frame2 = ttk.Frame(self)
-        Button_Frame2.grid(column=1, row=2, sticky='ew')
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
 
         Scan_Board_Prompt_Frame.grid_columnconfigure(0, weight=1)
         Scan_Board_Prompt_Frame.grid_columnconfigure(1, weight=1)
         QR_label.grid_columnconfigure(0, weight=1)
-        Button_Frame1.grid_columnconfigure(0, weight=1)
-        Button_Frame2.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -149,7 +142,7 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            font = ('Arial', 18)
+            font = ('Arial', 48)
         )
         lbl_scan.pack(padx = 50, pady = 50)
 

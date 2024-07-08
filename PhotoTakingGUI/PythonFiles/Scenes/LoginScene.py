@@ -65,7 +65,7 @@ class LoginScene(ttk.Frame):
             text="Please Select Your Name"
             )
         
-        lbl_title.configure(font = ('Arial', 48))      
+        lbl_title.configure(font = ('Arial', 52))      
         lbl_title.pack(pady=75)
 
         # Creating intial value in dropdown menu
@@ -78,7 +78,7 @@ class LoginScene(ttk.Frame):
             self.user_selected, # Tells option menu to use the created initial value
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
-        self.opt_user_dropdown.pack(pady=15)
+        self.opt_user_dropdown.pack(pady=(0,20))
         #self.opt_user_dropdown.config(width = 20, font = ('Arial', 13))
         #self.opt_user_dropdown['menu'].configure(font = ('Arial', 12))
 

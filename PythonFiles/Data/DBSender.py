@@ -31,6 +31,19 @@ class DBSender():
         else:
             pass
 
+    def attempt_admin_access(self, password):
+        r = requests.post('{}/connect_admin.py'.format(self.db_url), data={'password': password})
+        lines = r.text.split('\n')
+
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
+
+        for i in range(begin, end):
+            if lines[i] == 'Success':
+                return True
+            else:
+                return False
+
     def decode_label(self, full_id):
         
         if len(full_id) != 15:
@@ -203,6 +216,18 @@ class DBSender():
         else:
             pass
 
+    def add_test_stand_info(self, info_dict, db_url):
+        r = requests.post('{}/add_test_stand_info.py'.format(db_url), data = info_dict)
+
+        lines = r.text.split('\n')
+
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
+
+        for i in range(begin, end): 
+            return lines[i]
+        
+
     def add_test_json(self, json_file, datafile_name):
         load_file = open(json_file)
         results = json.load(load_file)        
@@ -222,6 +247,8 @@ class DBSender():
     def get_test_list(self):
         if (self.use_database):
             r = requests.get('{}/get_test_types.py'.format(self.db_url))
+
+            print(r.text)
 
             lines = r.text.split('\n')
 
