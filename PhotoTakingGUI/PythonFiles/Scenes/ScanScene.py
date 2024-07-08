@@ -142,7 +142,7 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            font = ('Arial', 18)
+            font = ('Arial', 48)
         )
         lbl_scan.pack(padx = 50, pady = 50)
 
