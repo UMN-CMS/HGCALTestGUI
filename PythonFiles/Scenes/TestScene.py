@@ -67,26 +67,25 @@ class TestScene(ttk.Frame):
         lbl_tester = ttk.Label(
             frm_window, 
             text = "Tester: ", 
-            #font = font_scene
+            font = ('Arial', '24')
             )
-        lbl_tester.pack(side = 'top')
+        lbl_tester.pack(side = 'top', pady = 10)
         
         # Create an entry for the tester's name
         ent_tester = tk.Entry(
             frm_window, 
-            #font = font_scene
             )
         ent_tester.insert(0, self.data_holder.data_dict['user_ID'])
-        ent_tester.pack(side = 'top')
+        ent_tester.pack(side = 'top', pady = 10)
         ent_tester.config(state = "disabled")
 
         # Create a label for the full id box
         lbl_full = ttk.Label(
             frm_window, 
             text = "Full ID: ", 
-            #font = font_scene
+            font = ('Arial', '24')
             )
-        lbl_full.pack(side = 'top')
+        lbl_full.pack(side = 'top', pady = 10)
 
         # Create a entry for the full id box
         ent_full = tk.Entry(
@@ -94,23 +93,22 @@ class TestScene(ttk.Frame):
             #font = font_scene
             )
         ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
-        ent_full.pack(side = 'top')
+        ent_full.pack(side = 'top', pady = 10)
         ent_full.config(state = "disabled")
 
         # Create a label for the test about to be run
         lbl_test = ttk.Label(
             frm_window, 
             text = "Current Test: ", 
-            #font = font_scene
+            font = ('Arial', '24')
             )
-        lbl_test.pack(side = 'top')
-        
+        lbl_test.pack(side = 'top', pady = 10)
+
         # Create a entry for the test type
         self.ent_test = tk.Entry(
             frm_window, 
-            #font = font_scene
             )
-        self.ent_test.pack(side = 'top')
+        self.ent_test.pack(side = 'top', pady = 10)
         self.ent_test.insert(0, self.test_name)
         self.ent_test.config(state = "disabled")
 
@@ -118,49 +116,28 @@ class TestScene(ttk.Frame):
         lbl_confirm = ttk.Label(
             frm_window, 
             text = "Are you ready to begin the test?", 
-            #font = font_scene
+            font = ('Arial', '24')
             )
-        lbl_confirm.pack(side = 'top')
+        lbl_confirm.pack(side = 'top', pady = 15)
 
         self.lbl_desc_short = ttk.Label(
             frm_window,
             text = self.test_description_short,
             wraplength = 500,
-            justify="left",
-            #font = font_scene
+            justify="center",
+            font = ('Arial', '24')
             )
 
-        self.lbl_desc_short.pack(side = 'top')
+        self.lbl_desc_short.pack(side = 'top', pady = 15)
 
         self.lbl_desc = ttk.Label(
             frm_window,
             text = self.test_description_long,
-            wraplength = 500,
-            justify="left",
-            #font = font_scene
+            wraplength = 800,
+            justify="center",
+            font = ('Arial', '24')
             )
-
-        self.lbl_desc.pack(side = 'top')
-
-        # Create a button for confirming test
-        btn_confirm = ttk.Button(
-            frm_window, 
-            text = "Confirm", 
-            #relief = tk.RAISED, 
-            command = lambda:self.btn_confirm_action(parent)
-            )
-        btn_confirm.pack(side = 'top')
-
-        if (self.test_idx == 0):
-
-            # Create a button for confirming test
-            run_all_btn = ttk.Button(
-                frm_window, 
-                text = "Run All Tests", 
-                #relief = tk.RAISED, 
-                command = lambda:self.run_all_action(parent)
-                )
-            run_all_btn.pack(pady = 20)
+        self.lbl_desc.pack(side = 'top', pady = 15)
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
@@ -173,28 +150,44 @@ class TestScene(ttk.Frame):
             text = "Logout", 
             #relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
-        btn_logout.pack(anchor = 'center')
+        btn_logout.pack(anchor = 'center', pady = 5)
 
-        # Create a frame for the back button
-        frm_back = ttk.Frame(self)
-        frm_back.grid(column = 2, row = 0, sticky = 'n', padx = 5)
+        # Create a button for confirming test
+        btn_confirm = ttk.Button(
+            frm_logout,
+            text = "Confirm",
+            #relief = tk.RAISED, 
+            command = lambda:self.btn_confirm_action(parent)
+            )
+        btn_confirm.pack(anchor = 'center', pady = 5)
+
+        if (self.test_idx == 0):
+
+            # Create a button for confirming test
+            run_all_btn = ttk.Button(
+                frm_logout, 
+                text = "Run All Tests",
+                command = lambda:self.run_all_action(parent),
+                )
+            run_all_btn.pack(anchor = 'center', pady = 5)
+
 
         # Create a rescan button
         btn_rescan = ttk.Button(
-            frm_back, 
+            frm_logout, 
             text = "Change Boards", 
             #relief = tk.RAISED, 
             command = lambda: self.btn_rescan_action(parent))
-        btn_rescan.pack(anchor = 'n')
+        btn_rescan.pack(anchor = 'center', pady = 5)
 
         # Creating the help button
         btn_help = ttk.Button(
-            frm_back,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.pack(anchor = 's', padx = 10, pady = 10)
+        btn_help.pack(anchor = 'center', pady = 5)
         
 
         self.grid_propagate(0)

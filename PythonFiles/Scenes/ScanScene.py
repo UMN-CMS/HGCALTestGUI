@@ -126,19 +126,30 @@ class ScanScene(ttk.Frame):
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
 
+        QR_Frame = ttk.Frame(self)
+        QR_Frame.grid(sticky = 'ne', column = 1)
+
         logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
-        QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
+        QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = ttk.Label(self, image=QR_PhotoImage)
+        QR_label = ttk.Label(QR_Frame, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
+        QR_image2 = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
+        QR_PhotoImage = iTK.PhotoImage(QR_image2)
+        QR_label2 = ttk.Label(QR_Frame, image=QR_PhotoImage)
+        QR_label2.image = QR_PhotoImage
+
+
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 1, sticky='new')
+        QR_label.grid(column=1, row = 1, sticky='nw', pady = (25, 15))
+        QR_label2.grid(column=1, row = 2, sticky='nw', pady = 15)
+
 
         Scan_Board_Prompt_Frame = ttk.Frame(self, width = 1105, height = 650)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 1, sticky='nsew')
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
         
         Button_Frame1 = ttk.Frame(self)
         Button_Frame1.grid(column=1, row=0, sticky='ew')
@@ -161,15 +172,15 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            font = ('Arial', 18)
+            font = ('Arial', 28)
         )
-        lbl_scan.grid(column=0, row=0, sticky='we')
+        lbl_scan.grid(column=0, row=0, sticky='n', pady = 50)
 
         # Create a label to label the entry box
         lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
             text = "Full ID: ",
-            font = ('Arial', 16)
+            font = ('Arial', 24)
         )
         lbl_scan.grid(column=0, row=2)
 
@@ -182,7 +193,7 @@ class ScanScene(ttk.Frame):
         # Creates an entry box
         self.ent_full = tk.Entry(
             Scan_Board_Prompt_Frame,
-            font = ('Arial', 16),
+            font = ('Arial', 24),
             textvariable= self.user_text,
             )
         self.ent_full.grid(column=0, row=3)
@@ -206,7 +217,7 @@ class ScanScene(ttk.Frame):
             #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_frame)
             )
-        self.btn_rescan.grid(column=0, row=5, padx=10, pady=5)
+        self.btn_rescan.grid(column=0, row=5, padx=10, pady=(25,10))
 
         # Submit button creation
         self.btn_submit = ttk.Button(

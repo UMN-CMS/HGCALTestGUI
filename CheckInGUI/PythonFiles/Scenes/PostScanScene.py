@@ -77,8 +77,8 @@ class PostScanScene(ttk.Frame):
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
-        self.canvas = tk.Canvas(self, width=800, height=500)
-        self.frame = ttk.Frame(self.canvas, width=800, height=500)
+        self.canvas = tk.Canvas(self, width = 1105, height = 850, bg = "#33393b")
+        self.frame = ttk.Frame(self.canvas, width = 1105, height = 850)
 
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
@@ -98,7 +98,7 @@ class PostScanScene(ttk.Frame):
                 self.frame, 
                 #fg='#0d0d0d', 
                 text = "This Board has already been Checked In",
-                font=('Arial',18,'bold')
+                font=('Arial',40,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
             
@@ -107,8 +107,8 @@ class PostScanScene(ttk.Frame):
         self.id = ttk.Label(
                 self.frame, 
                 #fg='#0d0d0d', 
-                text = "Full ID:" + str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial',14,'bold')
+                text = "Full ID:  " + str(self.data_holder.data_dict['current_full_ID']),
+                font=('Arial',24,'bold')
                 )
         self.id.grid(row= 1, column= 1, pady = 20)
 
@@ -171,6 +171,11 @@ class PostScanScene(ttk.Frame):
                     )
             self.lbl_err.grid(column = 1, row = 2, pady = 10) 
 
+ 
+        # Creating frame for logout button
+        frm_logout = ttk.Frame(self)
+        frm_logout.grid(column = 3, row = 0, sticky= 'se')
+
         # Creating the proceed button
         proceed_button = ttk.Button(
             self.frame,
@@ -178,7 +183,7 @@ class PostScanScene(ttk.Frame):
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
-        proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
+        proceed_button.grid(row = 3, column = 1, padx = 10, pady = (25,0))
 
         #creating the next board buttom
         next_board_button = ttk.Button(
@@ -187,19 +192,25 @@ class PostScanScene(ttk.Frame):
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
- 
+        next_board_button.grid(row = 4,column =1 ,padx = 10, pady = 25)
 
         # Creating the logout button
         btn_logout = ttk.Button(
-            self.frame,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
- 
-    
+        btn_logout.grid(sticky = 's', padx = 10, pady = 0)
+
+        # Creating the help button
+        btn_help = ttk.Button(
+            frm_logout,
+            #relief = tk.RAISED,
+            text = "Help",
+            command = lambda: self.help_action(parent)
+        )
+        btn_help.grid(sticky = 's', padx = 10, pady = 10) 
 
 
     #################################################
