@@ -24,6 +24,7 @@ class Inspection1(ttk.Frame):
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)
+        self.parent = parent
 
     #################################################
 
@@ -241,6 +242,11 @@ class Inspection1(ttk.Frame):
         self.update_data_holder()
         _parent.set_frame_summary()
 
+    def get_submit_action(self):
+        return self.btn_confirm_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

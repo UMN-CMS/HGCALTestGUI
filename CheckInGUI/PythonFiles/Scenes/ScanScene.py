@@ -311,6 +311,11 @@ class ScanScene(ttk.Frame):
         else:
             _parent.set_frame_postscan()
         
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

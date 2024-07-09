@@ -138,6 +138,11 @@ class AddUserScene(ttk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
     

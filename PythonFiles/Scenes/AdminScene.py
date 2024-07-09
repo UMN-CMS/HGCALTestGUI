@@ -198,6 +198,9 @@ class Popup2():
         frm_popup = ttk.Frame(self.popup, width=300, height=200)
         frm_popup.grid(row=0, column=0, sticky='nsew')
 
+        bind_func = self.continue_function
+        frm_popup.bind_all("<Return>", lambda event: bind_func(self.parent))
+
         # Creates label in the frame
         lbl_popup = ttk.Label(
             frm_popup, 

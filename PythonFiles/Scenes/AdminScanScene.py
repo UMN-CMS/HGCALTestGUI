@@ -298,10 +298,16 @@ class AdminScanScene(ttk.Frame):
         if self.data_holder.tester_type == 'Engine':
             self.data_holder.engine_tester_info[self.index] = self.ent_full.get()
 
-        _parent.next_frame_admin_scan()
-
         self.EXIT_CODE = 0
 
+        _parent.next_frame_admin_scan()
+
+
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

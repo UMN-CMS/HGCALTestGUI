@@ -29,6 +29,7 @@ class LoginScene(ttk.Frame):
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)
+        self.parent = parent
 
     def create_style(self, _parent):
 
@@ -127,6 +128,11 @@ class LoginScene(ttk.Frame):
     def help_action(self, _parent):
         _parent.help_popup(self)
 
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     ################################################# 
 

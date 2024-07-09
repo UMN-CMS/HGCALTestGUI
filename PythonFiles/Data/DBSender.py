@@ -217,7 +217,7 @@ class DBSender():
             pass
 
     def add_test_stand_info(self, info_dict, db_url):
-        r = requests.post('{}/add_test_stand_info.py'.format(db_url), data = info_dict)
+        r = requests.post('{}/add_test_station_info.py'.format(db_url), data = info_dict)
 
         lines = r.text.split('\n')
 
