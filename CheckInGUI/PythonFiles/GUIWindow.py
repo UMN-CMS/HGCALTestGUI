@@ -181,6 +181,12 @@ class GUIWindow():
         #  The Following Code Determines What Buttons Are Visible On The Side Bar   #
         #############################################################################
 
+        #Binding return button to next frame
+        try: 
+            bind_func = _frame.get_submit_action()
+            _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
+        except: 
+            print("no bind function")
             
 
         # Hides the submit button on scan frame until an entry is given to the computer

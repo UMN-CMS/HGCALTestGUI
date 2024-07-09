@@ -260,6 +260,12 @@ class SummaryScene(ttk.Frame):
     def btn_redo_action(self, parent):
         parent.set_frame_scan_frame()
 
+    def get_submit_action(self):
+        return self.btn_NextBoard_action
+
+    def get_parent(self):
+        return self.parent
+
     def onFrameConfigure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
         

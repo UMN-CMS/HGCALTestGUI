@@ -20,6 +20,8 @@ class DataHolder():
         # Object for taking care of instantiation for different test types
         self.gui_cfg = gui_cfg
 
+        self.curpath = os.path.dirname(os.path.abspath(__file__))
+
         # Object that sends information to the database
         self.data_sender = DBSender(gui_cfg)
         #self.dbclient = DBSendClient()
@@ -234,14 +236,13 @@ class DataHolder():
                     'tester': self.wagon_tester_info['Tester'],
                     'interposer': self.wagon_tester_info['Interposer'],
                     'interposer_type': self.wagon_tester_info['interposer_type'],
-                    'wheel_1': self.wagon_tester_info['wheel_1'],
-                    'wheel_2': self.wagon_tester_info['wheel_2'],
-                    'wheel_3': self.wagon_tester_info['wheel_3'],
-                    'wheel_4': self.wagon_tester_info['wheel_4'],
+                    'wheel_1': self.wagon_tester_info['Wagon Wheel 1'],
+                    'wheel_2': self.wagon_tester_info['Wagon Wheel 2'],
+                    'wheel_3': self.wagon_tester_info['Wagon Wheel 3'],
+                    'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
                     'test_stand': self.data_dict['test_stand'],
                     }
-
-            wagon_cfg = yaml.safe_load(open('../../Configs/Wagon_cfg.yaml',"r"))
+            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
             db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
             info_dict = {'ZCU': self.wagon_tester_info['ZCU'],
@@ -249,9 +250,9 @@ class DataHolder():
                     'west_interposer': self.wagon_tester_info['West Interposer'],
                     'bridge_1': self.wagon_tester_info['Test Bridge 1'],
                     'bridge_2': self.wagon_tester_info['Test Bridge 2'],
-                    'test_stand': self.data_dict['test_stand'],
-                    }
-            engine_cfg = yaml.safe_load(open('../../Configs/Engine_cfg.yaml',"r"))
+                'test_stand': self.data_dict['test_stand'],
+                }
+            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
             db_url = engine_cfg['DBInfo']['baseURL']
         self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
 
@@ -308,7 +309,7 @@ class DataHolder():
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
-   
+
     def get_all_users(self):
         users_list = self.data_sender.get_usernames() 
         return users_list
@@ -319,12 +320,12 @@ class DataHolder():
     def print(self):    
         print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data,  "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
            
- 
+
     #################################################
-    
+
     def update_from_json_string(self, imported_json_string):
         json_dict = json.loads(imported_json_string)
- 
+
         test_type = json_dict["name"]
 
         test_names = self.gui_cfg.getTestNames()
@@ -373,7 +374,7 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
-   
+
     ################################################
 
     # Tracking the test index in another place and propagating to the config
@@ -469,6 +470,6 @@ class DataHolder():
 
     ################################################
 
-#################################################################################
+    #################################################################################
 
 

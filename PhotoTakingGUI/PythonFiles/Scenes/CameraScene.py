@@ -270,6 +270,12 @@ class CameraScene(ttk.Frame):
 
         self.parent.next_frame_camera_frame()
 
+    def get_submit_action(self):
+        return self.submit_button_action
+
+    def get_parent(self):
+        return self.parent
+
 
     # Closes the video camera with the "release()" command
     # Important for closing gracefully

@@ -145,6 +145,13 @@ class AddUserScene(ttk.Frame):
         
         _parent.set_frame_login_frame()
 
+
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
+
     #################################################
 
 #################################################################################

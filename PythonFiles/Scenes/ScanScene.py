@@ -44,6 +44,8 @@ class ScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
+        self.parent = parent
+
         super().__init__(self.master_frame, width=1300-213, height = 700)
 
         master_frame.grid_rowconfigure(0, weight=1)
@@ -291,6 +293,11 @@ class ScanScene(ttk.Frame):
 
         self.EXIT_CODE = 0
 
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
 
     #################################################
 

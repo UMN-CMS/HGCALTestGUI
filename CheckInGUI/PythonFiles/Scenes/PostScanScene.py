@@ -213,6 +213,12 @@ class PostScanScene(ttk.Frame):
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
 
+    def get_submit_action(self):
+        return self.btn_proceed_action
+
+    def get_parent(self):
+        return self.parent
+
         
     
     #################################################

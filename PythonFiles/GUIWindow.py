@@ -254,7 +254,7 @@ class GUIWindow():
                 finished_Popup(self, self.data_holder)
                 print(self.data_holder.wagon_tester_info)
                 self.data_holder.upload_test_stand_info()
-                self.set_frame_scan_frame()
+                self.set_frame_login_frame()
 
         if self.data_holder.tester_type == 'Engine':
             if self.component_index < 5:
@@ -264,7 +264,7 @@ class GUIWindow():
                 finished_Popup(self, self.data_holder)
                 print(self.data_holder.engine_tester_info)
                 self.data_holder.upload_test_stand_info()
-                self.set_frame_scan_frame()
+                self.set_frame_login_frame()
 
 
 
@@ -419,7 +419,7 @@ class GUIWindow():
     # Called to change the frame to the argument _frame
     def set_frame(self, _frame):
 
-        #Binding space button to next frame
+        #Binding return button to next frame
         try: 
             bind_func = _frame.get_submit_action()
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
@@ -792,6 +792,7 @@ class GUIWindow():
             #if self.scan_frame.is_current_scene == True:
                 #self.test_in_progress_frame.close_prgbar()
             self.scan_frame.kill_processes()
+            self.admin_scan_frame.kill_processes()
 
             # Destroys the popup and master window
             self.popup.destroy()

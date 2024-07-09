@@ -260,7 +260,13 @@ class ScanScene(ttk.Frame):
         _parent.help_popup(self)
 
 
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
     #################################################
+
 
     #################################################
 

@@ -245,6 +245,7 @@ class PostScanScene(ttk.Frame):
 
     def get_parent(self):
         return self.parent
+
         
     
     #################################################

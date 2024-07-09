@@ -190,6 +190,12 @@ class TestSummaryScene(ttk.Frame):
     def btn_retake_action(self, parent, photo_index):
         parent.retake_photo(photo_index)
 
+    def get_submit_action(self):
+        return self.btn_NextBoard_action
+
+    def get_parent(self):
+        return self.parent
+
 
 
     #################################################
