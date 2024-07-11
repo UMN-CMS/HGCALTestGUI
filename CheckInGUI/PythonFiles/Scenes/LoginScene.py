@@ -69,6 +69,7 @@ class LoginScene(ttk.Frame):
         self.opt_user_dropdown = ttk.OptionMenu(
             self, 
             self.user_selected, # Tells option menu to use the created initial value
+            'Select User',
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
         self.opt_user_dropdown.pack(pady=15)
