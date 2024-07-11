@@ -118,15 +118,28 @@ class ScanScene(ttk.Frame):
 
         self.create_style(parent)
 
+        lbl_frm = ttk.Frame(self)
+        lbl_frm.grid(column=1, row = 0 )
+
+
         logging.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
-        QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
+        QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label = ttk.Label(self, image=QR_PhotoImage)
+        QR_label = ttk.Label(lbl_frm, image=QR_PhotoImage)
         QR_label.image = QR_PhotoImage
 
         # the .grid() adds it to the Frame
-        QR_label.grid(column=1, row = 0, sticky='new')
+        QR_label.grid(column=0, row = 0, sticky='new', pady = (0, 45))
+
+        # Create a photoimage object of the QR Code
+        QR_image2 = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
+        QR_PhotoImage = iTK.PhotoImage(QR_image2)
+        QR_label2 = ttk.Label(lbl_frm, image=QR_PhotoImage)
+        QR_label2.image = QR_PhotoImage
+
+        # the .grid() adds it to the Frame
+        QR_label2.grid(column=0, row = 1, sticky='new')
 
         Scan_Board_Prompt_Frame = ttk.Frame(self)
         Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
@@ -142,17 +155,17 @@ class ScanScene(ttk.Frame):
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
-            font = ('Arial', 48)
+            font = ('Arial',36)
         )
-        lbl_scan.pack(padx = 50, pady = 50)
+        lbl_scan.pack(padx = 50, pady = (85, 100))
 
         # Create a label to label the entry box
         lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
             text = "Full ID:",
-            font = ('Arial', 16)
+            font = ('Arial', 18)
         )
-        lbl_full.pack(padx = 20)
+        lbl_full.pack(padx = 20, pady = 15)
 
         # Creating intial value in entry box
         user_text = tk.StringVar(self)
@@ -162,8 +175,9 @@ class ScanScene(ttk.Frame):
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
             textvariable= user_text,
+            width = 50
             )
-        self.ent_full.pack(padx = 50)
+        self.ent_full.pack(padx = (75, 50))
 
         #self.ent_snum.mark_set("insert", "%d.%d" % (1, 1))
 
@@ -235,7 +249,7 @@ class ScanScene(ttk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
+        btn_logout.pack(anchor = 'se', padx = 10, pady = 10)
 
         # Creating the help button
         btn_help = ttk.Button(
@@ -244,7 +258,7 @@ class ScanScene(ttk.Frame):
             text = "Help",
             command = lambda: self.help_action(parent)
         )
-        btn_help.pack(anchor = 's', padx = 10, pady = 20)
+        btn_help.pack(anchor = 's', padx = 10)
 
 
 
