@@ -116,7 +116,7 @@ class PostScanScene(ttk.Frame):
                     )
             self.id.grid(row= 1, column= 1, pady = 20)
 
-            green_check = Image.open("{}/Images/Green/CheckMark.png".format(PythonFiles.__path__[0]))
+            green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
             green_check = green_check.resize((75, 75), Image.LANCZOS)
             green_check = iTK.PhotoImage(green_check)
 

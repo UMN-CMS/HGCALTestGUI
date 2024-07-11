@@ -231,7 +231,7 @@ class ScanScene(ttk.Frame):
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
-        label_frame.grid(column=0, row = 2)
+        label_frame.grid(column=0, row = 1)
 
         self.label_major = ttk.Label(
             label_frame,
