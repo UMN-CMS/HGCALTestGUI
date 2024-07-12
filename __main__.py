@@ -142,7 +142,7 @@ if __name__ == "__main__":
         print("Opting for custom configuration setup called below")
         config_path = None
 
-    curpath = os.path.abspath(os.curdir)
+    curpath = Path(__file__).parent.absolute()
     print( "Current path is: %s" % (curpath))
 
     node = socket.gethostname()

@@ -245,11 +245,11 @@ class DataHolder():
             wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
             db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
-            info_dict = {'ZCU': self.wagon_tester_info['ZCU'],
-                    'east_interposer': self.wagon_tester_info['East Interposer'],
-                    'west_interposer': self.wagon_tester_info['West Interposer'],
-                    'bridge_1': self.wagon_tester_info['Test Bridge 1'],
-                    'bridge_2': self.wagon_tester_info['Test Bridge 2'],
+            info_dict = {'ZCU': self.engine_tester_info['ZCU'],
+                    'east_interposer': self.engine_tester_info['East Interposer'],
+                    'west_interposer': self.engine_tester_info['West Interposer'],
+                    'bridge_1': self.engine_tester_info['Test Bridge 1'],
+                    'bridge_2': self.engine_tester_info['Test Bridge 2'],
                 'test_stand': self.data_dict['test_stand'],
                 }
             engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
