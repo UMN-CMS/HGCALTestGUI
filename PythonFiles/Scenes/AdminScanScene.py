@@ -102,13 +102,13 @@ class AdminScanScene(ttk.Frame):
                 except:
                     pass
                 if not len(full_id) == 0:
-                    self.data_holder.set_full_ID( parse_xml(full_id[0]))
+                    board = parse_xml(full_id[0])
 
                     self.listener.terminate()
                     self.scanner.terminate()
                 
                     self.ent_full.delete(0,END)
-                    self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                    self.ent_full.insert(0, str(board))
                     self.ent_full.config(state = 'disabled')
                     self.show_rescan_button()
                     break
