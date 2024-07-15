@@ -300,16 +300,11 @@ class ScanScene(ttk.Frame):
         self.EXIT_CODE = 1 
         
         self.data_holder.set_full_ID(self.ent_full.get())
-        _parent.update_config()
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
-
         self.data_holder.check_if_new_board()
         self.data_holder.update_location(self.ent_full.get())
-
-        if self.data_holder.data_dict['in_id'] or self.data_holder.data_dict['prev_results'] != '':
-            _parent.set_frame_inspection_frame()
-        else:
-            _parent.set_frame_postscan()
+        _parent.update_config()
+        _parent.set_frame_postscan()
         
     def get_submit_action(self):
         return self.btn_submit_action
