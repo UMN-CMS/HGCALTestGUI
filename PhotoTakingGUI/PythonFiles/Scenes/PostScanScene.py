@@ -104,17 +104,17 @@ class PostScanScene(ttk.Frame):
             self.title = ttk.Label(
                     self.frame, 
                     text = "Board Scanned!",
+                    font = ('Arial', 32)
                     )
             self.title.grid(row= 0, column= 1,  pady = 20)
 
             # Adds Board Full ID to the SummaryFrame
             self.id = ttk.Label(
                     self.frame, 
-                    #fg='#0d0d0d', 
                     text = str(self.data_holder.data_dict['current_full_ID']),
-                    #font=('Arial',16,'bold')
+                    font=('Arial',32,'bold')
                     )
-            self.id.grid(row= 1, column= 1, pady = 20)
+            self.id.grid(row= 0, column= 2, pady = 20)
 
             green_check = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
             green_check = green_check.resize((75, 75), Image.LANCZOS)
@@ -136,38 +136,38 @@ class PostScanScene(ttk.Frame):
                         self.lbl_res = ttk.Label(
                                 self.frame,
                                 text = str(el) + ': ',
-                                font=('Arial',14)
+                                font=('Arial',24)
                                 )
-                        self.lbl_res.grid(row=idx+2, column=1)
+                        self.lbl_res.grid(row=idx+5, column=1, pady = 7)
                         if res_dict[el] == 'Passed':
                             self.lbl_img = ttk.Label(
                                     self.frame,
                                     image = green_check,
-                                    font=('Arial',14)
+                                    font=('Arial',24)
                                     )
                             self.lbl_img.image=green_check
-                            self.lbl_img.grid(row=idx+2, column=2)
+                            self.lbl_img.grid(row=idx+5, column=2, pady = 7)
                         elif res_dict[el] == 'Failed':
                             self.lbl_img = ttk.Label(
                                     self.frame,
                                     image = redx,
-                                    font=('Arial',14)
+                                    font=('Arial',24)
                                     )
                             self.lbl_img.image=redx
-                            self.lbl_img.grid(row=idx+2, column=2)
+                            self.lbl_img.grid(row=idx+5, column=2, pady = 7)
                         else:
                             self.lbl_res = ttk.Label(
                                     self.frame,
                                     text = 'This test has not been run.',
-                                    font=('Arial',14)
+                                    font=('Arial',24)
                                     )
-                            self.lbl_res.grid(row=idx+2, column=2)
+                            self.lbl_res.grid(row=idx+5, column=2, pady = 7)
                             
                 else:
                     self.lbl_res = ttk.Label(
                             self.frame,
                             text = str(self.data_holder.data_dict['prev_results']),
-                            font=('Arial',14)
+                            font=('Arial',24)
                             )
                     self.lbl_res.grid(row=2, column=1)
 
@@ -176,54 +176,54 @@ class PostScanScene(ttk.Frame):
                 self.lbl_full = ttk.Label(
                         self, 
                         text = 'Error, No Results',
-                        font=('Arial', 14) 
+                        font=('Arial', 24) 
                         )
                 self.lbl_full.grid(row = 2, column =1, pady = 10) 
 
             # Creating the proceed button
             proceed_button = ttk.Button(
-                self.frame,
+                self,
                 #relief = tk.RAISED,
                 text = "Proceed",
                 command = lambda: self.btn_proceed_action(parent)
             )
-            proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
+            proceed_button.grid(sticky = 's', padx = 10, pady = 25)
 
         else:
             self.lbl_1 = ttk.Label(
                     self, 
                     text = "This board hasn't been checked in.",
-                    font=('Arial', 14) 
+                    font=('Arial', 32) 
                     )
-            self.lbl_1.grid(row = 2, column =1, pady = 10) 
+            self.lbl_1.grid(row = 0, column =0, pady = 10, sticky = 'n' ) 
 
             self.lbl_2 = ttk.Label(
                     self, 
                     text = "Please visit the check in and inspection station.",
-                    font=('Arial', 14) 
+                    font=('Arial', 32) 
                     )
-            self.lbl_2.grid(row = 2, column =1, pady = 10) 
+            self.lbl_2.grid(row = 0, column =0, pady = 10, sticky = 'n') 
 
-
+        logout_frm = ttk.Frame(self)
+        logout_frm.grid(sticky = 'se')
 
         #creating the next board buttom
         next_board_button = ttk.Button(
-            self.frame,
-            #relief = tk.RAISED,
+            logout_frm,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row=3, column=3, padx = 10, pady = 10)
+        next_board_button.grid(row=0, column=0, padx = 10, pady = 10)
  
 
         # Creating the logout button
         btn_logout = ttk.Button(
-            self.frame,
+            logout_frm,
             #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
+        btn_logout.grid(row=1, column=0, padx = 10, pady = 10)
 
  
     
@@ -232,7 +232,8 @@ class PostScanScene(ttk.Frame):
     #################################################
 
     def btn_proceed_action(self, _parent):
-        _parent.scan_frame_progress()
+        #_parent.scan_frame_progress()
+        _parent.set_frame_camera_frame(0)
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()

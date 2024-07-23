@@ -61,6 +61,7 @@ class GUIWindow():
         # Create the window named "self.master_window"
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
+
         # Creates the size of the window
         self.master_window.geometry("1300x700+25+100")
         self.master_window.pack_propagate(1) 
@@ -155,11 +156,11 @@ class GUIWindow():
         self.master_frame.after(100, self.set_frame_login_frame)
 
         self.master_window.mainloop()
-        
+       
 
     def create_style(self):
 
-        self.s = ttk.Style()
+        self.s = tk.Style()
 
         self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(self.main_path))
         self.s.tk.call('package', 'require', 'awdark')
@@ -504,7 +505,9 @@ class GUIWindow():
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
-        # popup.wm_attributes('-toolwindow', 'True')
+        self.popup.create_style(self)
+
+       # popup.wm_attributes('-toolwindow', 'True')
         self.popup.title("Exit Window") 
         self.popup.geometry("300x150+500+300")
         self.popup.grab_set()
@@ -526,10 +529,8 @@ class GUIWindow():
         btn_ok = tk.Button(
             frm_popup,
             width = 12,
-            height = 2,
             text = "OK",
             font = ('Arial', 12),
-            relief = tk.RAISED,
             command = lambda: self.destroy_popup()
         )
         btn_ok.grid(column = 0, row = 1, columnspan=2)
@@ -555,7 +556,7 @@ class GUIWindow():
        
         self.mycanvas = tk.Canvas(self.popup, background="#808080", width=630, height =650)
         self.viewingFrame = tk.Frame(self.mycanvas, width = 200, height = 200)
-        self.scroller = ttk.Scrollbar(self.popup, orient="vertical", command=self.mycanvas.yview)
+        self.scroller = tk.Scrollbar(self.popup, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
 
@@ -750,21 +751,30 @@ class GUIWindow():
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
+
         # popup.wm_attributes('-toolwindow', 'True')
         self.popup.title("Exit Window") 
-        self.popup.geometry("300x150+500+300")
+        self.popup.geometry("300x200+500+300")
+        self.popup.pack_propagate(1)
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
         self.popup.grab_set()
-       
+ 
 
         # Creates frame in the new window
-        frm_popup = tk.Frame(self.popup)
-        frm_popup.pack()
+        frm_popup = tk.Frame(self.popup, width = 300, height = 200)
+        frm_popup.grid()
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(2, weight=1)
 
         # Creates label in the frame
         lbl_popup = tk.Label(
             frm_popup, 
             text = "Are you sure you would like to exit?",
-            font = ('Arial', 13)
+            font = ('Arial', 14)
             )
         lbl_popup.grid(column = 0, row = 0, columnspan = 2, pady = 25)
 
@@ -772,10 +782,7 @@ class GUIWindow():
         btn_yes = tk.Button(
             frm_popup,     
             width = 12,
-            height = 2,
             text = "Yes", 
-            relief = tk.RAISED,
-            font = ('Arial', 12), 
             command = lambda: self.destroy_function()
             )
         btn_yes.grid(column = 0, row = 1)
@@ -783,10 +790,7 @@ class GUIWindow():
         btn_no = tk.Button(
             frm_popup,
             width = 12,
-            height = 2,
             text = "No",
-            relief = tk.RAISED,
-            font = ('Arial', 12),
             command = lambda: self.destroy_popup()
         )
         btn_no.grid(column = 1, row = 1)

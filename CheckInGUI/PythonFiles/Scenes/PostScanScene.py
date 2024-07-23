@@ -119,6 +119,8 @@ class PostScanScene(ttk.Frame):
         redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
         redx = redx.resize((75, 75), Image.LANCZOS)
         redx = iTK.PhotoImage(redx)
+
+        row_offset = 2
         try:
             if self.data_holder.data_dict['test_names']:
                 res_dict = {}
@@ -154,6 +156,7 @@ class PostScanScene(ttk.Frame):
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
+                        row_offset += idx+2
             else:
                 self.lbl_res = ttk.Label(
                         self.frame,
@@ -183,7 +186,7 @@ class PostScanScene(ttk.Frame):
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
-        proceed_button.grid(row = 3, column = 1, padx = 10, pady = (25,0))
+        proceed_button.grid(row=row_offset+1, column=1)
 
         #creating the next board buttom
         next_board_button = ttk.Button(
@@ -192,7 +195,7 @@ class PostScanScene(ttk.Frame):
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row = 4,column =1 ,padx = 10, pady = 25)
+        next_board_button.grid(row=row_offset+2, column=1)
 
         # Creating the logout button
         btn_logout = ttk.Button(
