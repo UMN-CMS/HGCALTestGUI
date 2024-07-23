@@ -28,6 +28,7 @@ from PythonFiles.Scenes.AdminScene import AdminScene
 from PythonFiles.Scenes.AdminScanScene import AdminScanScene
 from PythonFiles.Scenes.AdminScanScene import interposer_Popup
 from PythonFiles.Scenes.AdminScanScene import finished_Popup
+from PythonFiles.Scenes.ComponentScanScene import TesterComponentScene
 from PythonFiles.update_config import update_config
 import webbrowser
 
@@ -85,11 +86,11 @@ class GUIWindow():
 
 
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=1300-213, height=700)
+        self.master_frame = tk.Frame(self.master_window, width=1300-225, height=700)
         self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
 
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 213, height=700)
+        sidebar_frame = tk.Frame(self.master_window, width = 225, height=700)
         sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
 
 
@@ -128,11 +129,15 @@ class GUIWindow():
         self.admin_frame = AdminScene(self, self.master_frame, self.data_holder)
         self.admin_frame.grid(row=0, column=0, sticky = 'nsew')
 
+        self.tester_component_frame = TesterComponentScene(self, self.master_frame, self.data_holder)
+        self.tester_component_frame.grid(row=0, column=0, sticky = 'nsew')
+
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
         self.add_user_frame.grid(row=0, column=0, sticky= 'nsew')
 
         self.splash_frame = SplashScene(self, self.master_frame)
         self.splash_frame.grid(row=0, column=0, sticky = 'nsew')
+
 
         #################################################
         #              End Frame Creation               #
@@ -266,7 +271,16 @@ class GUIWindow():
                 self.data_holder.upload_test_stand_info()
                 self.set_frame_login_frame()
 
+    #################################################
 
+
+    def set_frame_tester_component_frame(self):
+
+        self.tester_component_frame.is_current_scene = True
+        self.set_frame(self.tester_component_frame)
+        self.tester_component_frame.scan_QR_code(self.master_window)
+
+        logging.debug("GUIWindow: The frame has been set to tester_component_frame.")
 
     #################################################
 
@@ -277,6 +291,7 @@ class GUIWindow():
         self.set_frame(self.login_frame)        
 
         logging.debug("GUIWindow: The frame has been set to login_frame.")
+
     #################################################
 
     def set_frame_scan_frame(self):

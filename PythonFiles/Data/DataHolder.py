@@ -256,6 +256,19 @@ class DataHolder():
             db_url = engine_cfg['DBInfo']['baseURL']
         self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
 
+    def set_component_info(self, label, working, comments):
+        info_dict = {'label': label, 'working': working, 'comments': comments}
+
+        if self.tester_type == 'Wagon':
+            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
+            db_url = wagon_cfg['DBInfo']['baseURL']
+
+        if self.tester_type == 'Engine':
+            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
+            db_url = engine_cfg['DBInfo']['baseURL']
+
+        self.data_sender.set_component_info(info_dict, db_url)
+
     #################################################
 
     # Future method to send data to the database

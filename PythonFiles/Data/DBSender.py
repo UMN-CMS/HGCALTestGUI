@@ -216,6 +216,9 @@ class DBSender():
         else:
             pass
 
+    def set_component_info(self, info_dict, db_url):
+        r = requests.post('{}/set_component_info.py'.format(db_url), data = info_dict)
+
     def add_test_stand_info(self, info_dict, db_url):
         r = requests.post('{}/add_test_station_info.py'.format(db_url), data = info_dict)
 
