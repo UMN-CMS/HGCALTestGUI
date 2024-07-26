@@ -25,9 +25,6 @@ class GUIConfig():
 
     # Get serial check safe attribute
     def getSerialCheckSafe(self):
-        print("="*30)
-        print("Serial Check Safe: {}".format(self.board_cfg["SerialCheckSafe"]))
-        print("="*30)
         return self.board_cfg["SerialCheckSafe"]
 
 

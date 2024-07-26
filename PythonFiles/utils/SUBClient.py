@@ -16,6 +16,7 @@ class SUBClient():
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]), "r") as openfile:
             grabbed_ip = openfile.read()[:-1]
         logger.info("SUBClient has started") 
+        print('\n')
         print('INFO:HGCALTestGUI.PythonFiles.utils.SUBClient: SUBClient has started')
         # Instantiates variables       
         self.conn = conn

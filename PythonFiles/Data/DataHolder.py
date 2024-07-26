@@ -119,8 +119,6 @@ class DataHolder():
 
             self.total_test_num = self.total_test_num + 1
 
-        print('\nptest_criteria: {}'.format(self.ptest_criteria))
-
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
@@ -195,7 +193,7 @@ class DataHolder():
 
     def set_user_ID(self, user_ID):
 
-        print("\n\n\n\n\nuser_ID", user_ID)
+        print("\nuser_ID", user_ID)
  
         self.data_dict['user_ID'] = user_ID 
         logger.debug("DataHolder: User ID has been set.")
@@ -280,7 +278,6 @@ class DataHolder():
         
          
         for i in range(len(self.data_dict['tests_run'])):
-            print("Iteration:", i)
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1

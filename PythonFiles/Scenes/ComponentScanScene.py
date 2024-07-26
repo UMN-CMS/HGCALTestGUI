@@ -72,8 +72,8 @@ class TesterComponentScene(ttk.Frame):
 
         self.ent_full.config(state = 'normal')
 
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
+        print("\nComponentScanScene: Beginning scan...\n")
+        logging.info("ComponentScanScene: Beginning scan...")
         self.scanner = scan()
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 

@@ -63,8 +63,8 @@ class PostScanScene(ttk.Frame):
     def create_frame(self, parent):
         self.create_style(parent)
 
-        logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
-        print("PostScanScene: Destroying old widgets on the SummaryScene.")
+        logger.debug("PostScanScene: Destroying old widgets on the PostScanScene.")
+        print("PostScanScene: Destroying old widgets on the PostScanScene.")
         
         try:
             for widget in self.winfo_children():

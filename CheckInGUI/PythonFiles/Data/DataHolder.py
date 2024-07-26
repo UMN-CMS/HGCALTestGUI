@@ -76,7 +76,6 @@ class DataHolder():
         for item in self.get_all_users():
             if self.data_dict['user_ID'] == item:
                 is_new_user_ID = False
-        print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
@@ -117,8 +116,6 @@ class DataHolder():
 
 
     def set_user_ID(self, user_ID):
-
-        print("\n\n\n\n\nuser_ID", user_ID)
  
         self.data_dict['user_ID'] = user_ID 
         logging.debug("DataHolder: User ID has been set.")
@@ -159,7 +156,6 @@ class DataHolder():
         print(info_dict)
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-            print(info_dict)
             json.dump(info_dict, outfile)
 
         with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:

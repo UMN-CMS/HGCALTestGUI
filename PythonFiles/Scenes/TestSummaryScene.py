@@ -105,9 +105,6 @@ class TestSummaryScene(ttk.Frame):
             else:
                 prev_names.add(name)
             
-        
-        print(self.list_of_completed_tests)
-        print(self.list_of_pass_fail)
 
         self.id_text.set("Full ID: " + str(self.data_holder.data_dict['current_full_ID']))       
 
@@ -242,9 +239,6 @@ class TestSummaryScene(ttk.Frame):
 
         new_width = self.viewingFrame.winfo_reqwidth()
         new_height = self.viewingFrame.winfo_reqheight()
-        
-        print("\nnew_width: {}, new_height: {}\n".format(new_width, new_height))
-
 
         self.mycanvas.configure(width = new_width, height = new_height)      
 

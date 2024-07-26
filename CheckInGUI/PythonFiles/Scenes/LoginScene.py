@@ -148,9 +148,6 @@ class LoginScene(ttk.Frame):
         # Changes frame to scan_frame
         _parent.set_frame_scan_frame()
 
-
-        self.data_holder.print()
-
     #################################################
 
     # To be given commands later, for now it is a dummy function

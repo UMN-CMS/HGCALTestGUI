@@ -145,9 +145,6 @@ class LoginScene(ttk.Frame):
         # Changes frame to scan_frame
         _parent.set_frame_scan_frame()
 
-
-        self.data_holder.print()
-
     def get_submit_action(self):
         return self.btn_submit_action
 

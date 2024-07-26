@@ -344,9 +344,6 @@ class GUIWindow():
         self.all_text = file.read()
 
 
-        #print("\nall_text: ", self.all_text)
-
-
         self.label_text.set(self.all_text)
 
 

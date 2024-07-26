@@ -73,8 +73,6 @@ class DBSender():
             r = requests.get('{}/get_usernames.py'.format(self.db_url))
             lines = r.text.split('\n')
 
-            #print(lines)
-
             begin = lines.index("Begin") + 1
             end = lines.index("End")
 
@@ -98,8 +96,6 @@ class DBSender():
     def get_previous_test_results(self, full_id):
    
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'full_id': str(full_id)})
-        
-        print(r.text)
         lines = r.text.split('\n')
 
         begin1 = lines.index("Begin1") + 1
@@ -131,7 +127,6 @@ class DBSender():
     # Posts a new board with passed in full id
     def add_new_board(self, full, user_id, comments):
         r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-        print(r.text)
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
         
         try:
@@ -218,11 +213,8 @@ class DBSender():
         datafile = open(datafile_name, "rb")        
 
         attach_data = {'attach1': datafile}
-        #print("Read from json file:", results)
 
         r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-        print('\n This is from add_test_json.py \n')
-        print(r.text)
 
  # Returns a list of all different types of tests
     def get_test_list(self):
