@@ -26,10 +26,11 @@ class DataHolder():
                 'test_stand': str(socket.gethostname()),
                 'current_full_ID': "-1BAD",
                 'comments': "_",
-                'in_id': '',
+                'in_id': None,
                 'is_new_board': False,
                 'test_names': '',
                 'prev_results': '',
+                'manufacturer': 'None',
                 }
 
         # for the visual inspection component
@@ -80,6 +81,14 @@ class DataHolder():
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)        
 
+    def get_manufacturers(self):
+        return self.data_sender.get_manufacturers()
+
+    def set_manufacturer_id(self, manufacturer):
+        self.data_dict['manufacturer']  = manufacturer
+
+    def add_component(self, component, barcode):
+        self.data_sender.add_component(component, barcode, self.get_full_ID())
 
 
     # when a board gets entered, this function checks if it's new
@@ -97,7 +106,7 @@ class DataHolder():
         
         if is_new_board == True:
             # data sender's add new board function returns the check in id
-            self.data_dict['in_id'] = self.data_sender.add_new_board(full, user, comments)
+            self.data_dict['in_id'] = self.data_sender.add_new_board(full, user, comments, self.data_dict['manufacturer'])
 
         else:
             # if the board is not new, this returns the previous testing information on the board
@@ -250,7 +259,8 @@ class DataHolder():
                 'is_new_board': False,
                 'test_names': '',
                 'prev_results': '',
-                'in_id': '',
+                'in_id': None,
+                'manufacturer': self.data_dict['manufacturer'],
                 }
 
         logging.info("DataHolder: DataHolder Information has been reset for a new test.")        

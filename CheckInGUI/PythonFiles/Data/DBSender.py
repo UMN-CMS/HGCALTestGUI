@@ -125,8 +125,8 @@ class DBSender():
     
     
     # Posts a new board with passed in full id
-    def add_new_board(self, full, user_id, comments):
-        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+    def add_new_board(self, full, user_id, comments, manufacturer):
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer})
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
         
         try:
@@ -175,7 +175,23 @@ class DBSender():
             elif lines[i] == "False":
                 return False
 
+    def get_manufacturers(self):
+        r = requests.post('{}/get_manufacturers.py'.format(self.db_url))
+ 
+        lines = r.text.split('\n')
+   
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
 
+        manufacturers = []
+        for i in range(begin, end):     
+            manufacturers.append(lines[i])
+
+        return manufacturers
+
+    def add_component(self, component, barcode, full_id):
+        r = requests.post('{}/add_component.py'.format(self.db_url), data = {'component': component, 'barcode': barcode, 'full_id': full_id})
+        print(r.text)
 
 
     # Posts information via the "info" dictionary

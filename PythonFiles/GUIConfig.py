@@ -68,7 +68,6 @@ class GUIConfig():
         return self.board_cfg['DBInfo']['use_database']
 
     def getGUIType(self):
-        print(self.board_cfg)
         return self.board_cfg["GUIType"]
 
     def getTestHandler(self):

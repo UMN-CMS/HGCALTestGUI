@@ -13,6 +13,7 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.SummaryScene import SummaryScene
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
+from PythonFiles.Scenes.ComponentScanScene import ComponentScanScene
 from PythonFiles.Scenes.InspectionScenes.Inspection1 import Inspection1
 from PythonFiles.update_config import update_config
 import logging
@@ -93,6 +94,9 @@ class GUIWindow():
         self.inspection_frame = Inspection1(self, master_frame, self.data_holder)
         self.inspection_frame.grid(row=0,column=0, sticky='nsew')
 
+        self.component_scan_frame = ComponentScanScene(self, master_frame, self.data_holder)
+        self.component_scan_frame.grid(row=0, column=0, sticky='nsew')
+
         self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
         self.post_scan_frame.grid(row=0, column=0, sticky='nsew')
 
@@ -136,6 +140,25 @@ class GUIWindow():
         logging.debug("guiwindow: conclusion of the 'set_frame_login_frame(self)' method")
 
 
+    #################################################
+
+    def set_frame_component_frame(self, component):
+        self.component_scan_frame.is_current_scene = True
+        self.component_scan_frame.update()
+        self.set_frame(self.component_scan_frame)
+        self.component_scan_frame.scan_QR_code(master_window, component)
+    
+    def first_frame_component_frame(self):
+        self.component = 'LDO'
+        self.set_frame_component_frame('LDO')
+
+    def next_frame_component_frame(self):
+        if self.component == 'LDO':
+            self.component = 'FPGA'
+            self.set_frame_component_frame('FPGA')
+        else:
+            self.set_frame_inspection_frame()
+            
     #################################################
     
     def set_frame_scan_frame(self):

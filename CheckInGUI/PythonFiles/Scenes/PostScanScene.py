@@ -98,7 +98,7 @@ class PostScanScene(ttk.Frame):
                 self.frame, 
                 #fg='#0d0d0d', 
                 text = "This Board has already been Checked In",
-                font=('Arial',40,'bold')
+                font=('Arial',35,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
             
@@ -178,21 +178,30 @@ class PostScanScene(ttk.Frame):
 
         # Creating the proceed button
         proceed_button = ttk.Button(
-            self.frame,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Proceed",
             command = lambda: self.btn_proceed_action(parent)
         )
-        proceed_button.grid(row = 3, column = 1, padx = 10, pady = (25,0))
+        proceed_button.grid(row = 3, column = 0, padx = 10, pady = 25, sticky = 's')
 
-        #creating the next board buttom
+        #creating the next board button
         next_board_button = ttk.Button(
-            self.frame,
+            frm_logout,
             #relief = tk.RAISED,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
-        next_board_button.grid(row = 4,column =1 ,padx = 10, pady = 25)
+        next_board_button.grid(row = 4,column =0 ,padx = 10, pady = 25, sticky = 's')
+
+        #creating the component scan board button
+        scan_components = ttk.Button(
+            frm_logout,
+            #relief = tk.RAISED,
+            text = "Check In Components",
+            command = lambda: self.btn_components_action(parent)
+        )
+        scan_components.grid(row = 5,column =0 ,padx = 10, pady = 25, sticky = 's')
 
         # Creating the logout button
         btn_logout = ttk.Button(
@@ -220,6 +229,9 @@ class PostScanScene(ttk.Frame):
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()
+
+    def btn_components_action(self, parent):
+        parent.first_frame_component_frame()
 
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 

@@ -33,7 +33,6 @@ class SUBClient():
                 # gets the signal from the Handler and splits it into topic and message
                 # the topic determines what SUBClient will do with the message
                 try:
-                    print("Waiting")
                     signal = q.get()
                     self.topic, self.message = signal.split(" ; ")
                 except Exception as e:
@@ -55,7 +54,7 @@ class SUBClient():
                     
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
-                    queue.put("Results received successfully.")
+                    queue.put("Results received successfully.\r\n")
                     logging.info("SUBClient: Informed the user that the results have been received.")
 
                     # Sends the JSON to GUIWindow on the pipe.

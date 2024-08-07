@@ -63,16 +63,16 @@ def task_LocalHandler(gui_cfg, conn_trigger, local_pipe):
 
     LocalHandler(gui_cfg, conn_trigger, local_pipe)
 
-def task_SSHHandler(gui_cfg, conn_trigger, queue):
+def task_SSHHandler(gui_cfg, host_cfg, conn_trigger, queue):
 
-    SSHHandler(gui_cfg, conn_trigger, queue)
+    SSHHandler(gui_cfg, host_cfg, conn_trigger, queue)
 
-def run(board_cfg, curpath):    
+def run(board_cfg, curpath, host_cfg):    
     # Creates a Pipe for the SUBClient to talk to the GUI Window
     conn_SUB, conn_GUI = mp.Pipe()
 
     # Create another pipe to trigger the tests when needed
-    if board_cfg["TestHandler"]["name"] != "ZMQ":
+    if host_cfg["TestHandler"]["name"] != "ZMQ":
         conn_trigger_GUI, conn_trigger_Handler = mp.Pipe()
         
     # Creates a queue to send information to the testing window
@@ -81,26 +81,26 @@ def run(board_cfg, curpath):
     #logging.FileHandler(guiLogPath + "gui.log", mode='a')
 
     # Turns creating the GUI and creating the SUBClient tasks into processes
-    if board_cfg["TestHandler"]["name"] == "Local":
+    if host_cfg["TestHandler"]["name"] == "Local":
         # Creates a Queue to connect SUBClient and Handler
         q = mp.Queue()
         process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
         process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler, q))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
 
-    elif board_cfg["TestHandler"]["name"] == "SSH":
+    elif host_cfg["TestHandler"]["name"] == "SSH":
         q = mp.Queue()
         process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
-        process_Handler = mp.Process(target = task_SSHHandler, args=(board_cfg, conn_trigger_Handler, q))
+        process_Handler = mp.Process(target = task_SSHHandler, args=(board_cfg, host_cfg, conn_trigger_Handler, q))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
 
     else: 
         process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg, curpath))
-        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, None))
+        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, host_cfg, None))
 
     # Starts the processes
     process_GUI.start()
-    if board_cfg["TestHandler"]["name"] == "Local" or board_cfg['TestHandler']['name'] == 'SSH':
+    if host_cfg["TestHandler"]["name"] == "Local" or board_cfg['TestHandler']['name'] == 'SSH':
         process_Handler.start()
     process_SUBClient.start()
 
@@ -142,6 +142,15 @@ if __name__ == "__main__":
         print("Opting for custom configuration setup called below")
         config_path = None
 
+    try:
+        if sys.argv[2] is not None:
+            host_path = sys.argv[2]
+    except:
+        if config_path:
+            host_path = sys.argv[1]
+        else:
+            host_path = None
+
     curpath = Path(__file__).parent.absolute()
     print( "Current path is: %s" % (curpath))
 
@@ -159,26 +168,27 @@ if __name__ == "__main__":
 
     if config_path is not None:
         board_cfg = import_yaml(config_path)
+        host_cfg = import_yaml(host_path)
 
-        run(board_cfg, curpath)
+        run(board_cfg, curpath, host_cfg)
     elif any((node in x for x in wagon_GUI_computers)):
         print('Configs/Wagon_cfg.yaml')
         print('\n')
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
 
-        run(board_cfg, curpath)
+        run(board_cfg, curpath, board_cfg)
 
     elif any((node in x for x in engine_GUI_computers)):
         print('Configs/Engine_cfg.yaml')
         print('\n')
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Engine_cfg.yaml")
 
-        run(board_cfg, curpath)
+        run(board_cfg, curpath, board_cfg)
 
     else:
         print('Configs/Wagon_cfg.yaml')
         print('\n')
         board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
 
-        run(board_cfg, curpath)
+        run(board_cfg, curpath, board_cfg)
 
