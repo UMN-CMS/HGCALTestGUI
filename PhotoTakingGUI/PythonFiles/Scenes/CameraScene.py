@@ -96,7 +96,7 @@ class CameraScene(ttk.Frame):
         self.long_desc_label = ttk.Label(
             master= btn_frame,
             textvariable = self.long_desc_label_text,
-            font = ('Arial', 10),
+            font = ('Arial', 24),
         )
         self.long_desc_label.pack(side="right", padx=(20, 90), pady=10)
 
@@ -106,7 +106,7 @@ class CameraScene(ttk.Frame):
         self.desc_label = ttk.Label(
             master= btn_frame,
             textvariable = self.desc_label_text,
-            font = ('Arial', 19),
+            font = ('Arial', 24),
         )
         self.desc_label.pack(side="right", padx=(90, 20), pady=10)
 

@@ -80,7 +80,7 @@ class TestInProgressScene(ttk.Frame):
             bg = 'black', 
             fg = 'white', 
             height= 15,
-            width= 150,
+            width= 75,
             font = ('Arial', 15),
             yscrollcommand = scrollbar.set
             )

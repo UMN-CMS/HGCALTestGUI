@@ -90,9 +90,16 @@ class TestSummaryScene(ttk.Frame):
                 self,
                 #fg='#0d0d0d',
                 text = "Visual Inspection Finished!",
-                font=('Arial',18,'bold')
+                font=('Arial',32,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
+
+        self.retake_prompt = ttk.Label(
+                self,
+                text = 'Click an image to retake it.',
+                font=('Arial', 20),
+        )
+        self.retake_prompt.grid(row=1,column=1)
 
         row_offset = 0
 
@@ -112,7 +119,7 @@ class TestSummaryScene(ttk.Frame):
                             command = lambda: self.btn_retake_action(parent, 0)
                             )
                     retake_1.image = Board_PhotoImage
-                    retake_1.grid(column = i+1, row = 1)
+                    retake_1.grid(column = i+1, row = 2)
                 if i == 1:
                     retake_2 = ttk.Button(
                             self,
@@ -120,7 +127,7 @@ class TestSummaryScene(ttk.Frame):
                             command = lambda: self.btn_retake_action(parent, 1)
                             )
                     retake_2.image = Board_PhotoImage
-                    retake_2.grid(column = i+1, row = 1)
+                    retake_2.grid(column = i+1, row = 2)
 
             except Exception as e:
                 print("TestSummaryScene: Could not find captured_image.")
@@ -137,22 +144,22 @@ class TestSummaryScene(ttk.Frame):
         self.lbl_full = ttk.Label(
                 self,
                 text = "Full ID: " + str(self.data_holder.data_dict['current_full_ID']),
-                font=('Arial', 14)
+                font=('Arial', 32)
                 )
-        self.lbl_full.grid(column = 1, row = 2 + row_offset, pady = 10)
+        self.lbl_full.grid(column = 1, row = 3 + row_offset, pady = 10)
 
         # Adds Tester Name to the TestSummary Frame
         self.lbl_tester = ttk.Label(
                 self,
                 text = "Tester: " + self.data_holder.data_dict['user_ID'],
-                font=('Arial', 14)
+                font=('Arial', 24)
                 )
-        self.lbl_tester.grid(column = 1, row = 3 + row_offset, pady = 10)
+        self.lbl_tester.grid(column = 1, row = 4 + row_offset, pady = 10)
 
 
         # Creating frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 1, row = 5 + row_offset, sticky= 'se')
+        frm_logout.grid(column = 1, row = 6 + row_offset, pady = 20)
 
 
         # Creating the next board button
@@ -172,7 +179,7 @@ class TestSummaryScene(ttk.Frame):
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
-        btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
+        btn_logout.pack(anchor = 'n', padx = 10, pady = 20)
 
 
 

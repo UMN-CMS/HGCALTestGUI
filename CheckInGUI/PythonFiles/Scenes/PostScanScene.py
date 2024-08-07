@@ -119,6 +119,8 @@ class PostScanScene(ttk.Frame):
         redx = Image.open('{}//Images/RedX.png'.format(PythonFiles.__path__[0]))
         redx = redx.resize((75, 75), Image.LANCZOS)
         redx = iTK.PhotoImage(redx)
+
+        row_offset = 2
         try:
             if self.data_holder.data_dict['test_names']:
                 res_dict = {}
@@ -154,6 +156,7 @@ class PostScanScene(ttk.Frame):
                                 )
                         self.lbl_img.image=redx
                         self.lbl_img.grid(row=idx+2, column=2)
+                        row_offset += idx+2
             else:
                 self.lbl_res = ttk.Label(
                         self.frame,

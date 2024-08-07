@@ -68,6 +68,7 @@ class LoginScene(ttk.Frame):
             self, 
             self.user_selected,
             User_List[0],
+
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
         self.opt_user_dropdown.pack(pady=15)

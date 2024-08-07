@@ -317,7 +317,6 @@ class ScanScene(ttk.Frame):
         self.EXIT_CODE = 1 
         
         self.data_holder.set_full_ID(self.ent_full.get())
-        _parent.update_config()
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
 
         self.data_holder.set_manufacturer_id(self.manuf_selected.get())
@@ -337,6 +336,7 @@ class ScanScene(ttk.Frame):
                 print('Error: Please scan a Wagon or an Engine.')
 
         self.EXIT_CODE = 0
+
         
     def get_submit_action(self):
         return self.btn_submit_action

@@ -164,6 +164,7 @@ class DBSender():
         
         lines = r.text.split('\n')
    
+        print(r.text)
         begin = lines.index("Begin") + 1
         end = lines.index("End")
 
