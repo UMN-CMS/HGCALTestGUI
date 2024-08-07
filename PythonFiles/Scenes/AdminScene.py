@@ -112,7 +112,6 @@ class Popup1():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 
@@ -187,7 +186,6 @@ class Popup2():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 
@@ -276,7 +274,6 @@ class Popup3():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 

@@ -50,7 +50,6 @@ class LoginScene(ttk.Frame):
 
 
         # Creating a list of users for dropdown menu
-        # Eventually need to add a way for a database to have control over this list
         User_List = self.data_holder.get_all_users()
 
         # Creating the title for the window
@@ -148,9 +147,6 @@ class LoginScene(ttk.Frame):
         self.data_holder.set_user_ID(self.user_selected.get())
         # Changes frame to scan_frame
         _parent.set_frame_scan_frame()
-
-
-        self.data_holder.print()
 
     #################################################
 

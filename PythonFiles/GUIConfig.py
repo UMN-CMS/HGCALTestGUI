@@ -25,9 +25,6 @@ class GUIConfig():
 
     # Get serial check safe attribute
     def getSerialCheckSafe(self):
-        print("="*30)
-        print("Serial Check Safe: {}".format(self.board_cfg["SerialCheckSafe"]))
-        print("="*30)
         return self.board_cfg["SerialCheckSafe"]
 
 
@@ -71,7 +68,6 @@ class GUIConfig():
         return self.board_cfg['DBInfo']['use_database']
 
     def getGUIType(self):
-        print(self.board_cfg)
         return self.board_cfg["GUIType"]
 
     def getTestHandler(self):

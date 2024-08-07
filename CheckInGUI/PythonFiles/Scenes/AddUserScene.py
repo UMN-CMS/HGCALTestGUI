@@ -160,7 +160,6 @@ class ConfirmPopup():
     #################################################
 
     def __init__(self, parent, data_holder, new_user_name, password):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder, new_user_name, password)
         self.parent = parent    
 
@@ -231,9 +230,6 @@ class ConfirmPopup():
         self.data_holder.add_new_user_name(self.new_user_name, self.password)
         # Changes frame to scan_frame
         _parent.set_frame_login_frame()
-
-        self.data_holder.print()
-
 
 
 #################################################################################

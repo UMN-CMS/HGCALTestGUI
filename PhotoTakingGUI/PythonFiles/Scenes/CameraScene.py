@@ -163,8 +163,6 @@ class CameraScene(ttk.Frame):
 
             self.camera_created = True
 
-            print("Camera Preview started")
-
         camera.set_controls( {"AfMode" : controls.AfModeEnum.Continuous} )
 
 
@@ -183,7 +181,6 @@ class CameraScene(ttk.Frame):
 
         updated_title = self.data_holder.get_photo_list()[index]["name"]
         updated_description = self.data_holder.get_photo_list()[index]["desc_short"]
-        print("updated_title: ", updated_title)
 
         self.desc_label_text.set(updated_title)
         self.long_desc_label_text.set(updated_description)
@@ -195,7 +192,6 @@ class CameraScene(ttk.Frame):
         # sets up a name for the file
         shortened_pn = "captured_image{}.png".format(self.current_index)
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
-        print("self.photo_name: ", self.photo_name)
 
         # Cannot be called unless camera is already started
         self.image = camera.switch_mode_and_capture_image(shortened_pn)

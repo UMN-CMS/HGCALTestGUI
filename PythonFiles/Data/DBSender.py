@@ -251,8 +251,6 @@ class DBSender():
         if (self.use_database):
             r = requests.get('{}/get_test_types.py'.format(self.db_url))
 
-            print(r.text)
-
             lines = r.text.split('\n')
 
             begin = lines.index("Begin") + 1

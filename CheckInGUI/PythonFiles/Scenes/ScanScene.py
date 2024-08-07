@@ -139,7 +139,7 @@ class ScanScene(ttk.Frame):
         QR_label2.grid(column=3, row = 0, sticky= 'ne', pady =(100, 0), padx = (75,0))
 
         Scan_Board_Prompt_Frame = ttk.Frame(self,)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0)
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0, rowspan=2)
 
         # creates a Label Variable, different customization options
         self.lbl_check = ttk.Label(
@@ -177,6 +177,24 @@ class ScanScene(ttk.Frame):
             textvariable= user_text, 
             )
         self.ent_full.pack(padx = 50, pady = 25)
+
+        manufacturers_list = ['None'] + self.data_holder.get_manufacturers()
+        self.manuf_selected = tk.StringVar(self)
+
+        lbl_full = ttk.Label(
+            Scan_Board_Prompt_Frame,
+            text = "Select Manufacturer:",
+            font = ('Arial', 24)
+        )
+        lbl_full.pack(padx = 20)
+
+        self.manufacturer_dropdown = ttk.OptionMenu(
+            Scan_Board_Prompt_Frame,
+            self.manuf_selected,
+            self.data_holder.data_dict['manufacturer'],
+            *manufacturers_list # Tells the dropdown menu to use every index in the manufacturers_list list
+            ) 
+        self.manufacturer_dropdown.pack(pady=15)
 
         # Create a label to label the comments box
         lbl_com = ttk.Label(
@@ -229,7 +247,7 @@ class ScanScene(ttk.Frame):
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
-        label_frame.grid(column=0, row = 1)
+        label_frame.grid(column=3, row = 1, sticky='ne')
 
         self.label_major = ttk.Label(
             label_frame,
@@ -254,7 +272,7 @@ class ScanScene(ttk.Frame):
 
         # Creating frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 3, row = 0, sticky= 'se')
+        frm_logout.grid(column = 3, row = 1, sticky= 'se')
 
        
         # Creating the logout button
@@ -300,10 +318,25 @@ class ScanScene(ttk.Frame):
         
         self.data_holder.set_full_ID(self.ent_full.get())
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
+
+        self.data_holder.set_manufacturer_id(self.manuf_selected.get())
+
         self.data_holder.check_if_new_board()
         self.data_holder.update_location(self.ent_full.get())
-        _parent.update_config()
-        _parent.set_frame_postscan()
+
+        if self.data_holder.data_dict['prev_results'] != '':
+            _parent.set_frame_postscan()
+            
+        else:
+            if self.ent_full.get()[3] == 'W':
+                _parent.set_frame_inspection_frame()
+            elif self.ent_full.get()[3] == 'E':
+                _parent.first_frame_component_frame()
+            else: 
+                print('Error: Please scan a Wagon or an Engine.')
+
+        self.EXIT_CODE = 0
+
         
     def get_submit_action(self):
         return self.btn_submit_action

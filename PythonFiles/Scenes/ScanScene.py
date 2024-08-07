@@ -91,6 +91,7 @@ class ScanScene(ttk.Frame):
             self.ent_full.config(state = 'normal')
 
             logger.info("ScanScene: Beginning scan...")
+            print("ScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 

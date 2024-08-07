@@ -391,7 +391,6 @@ class interposer_Popup():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 
@@ -459,13 +458,11 @@ class interposer_Popup():
 ###############################################################
 
 
-
 class finished_Popup():
     
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 

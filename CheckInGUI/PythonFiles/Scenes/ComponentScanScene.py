@@ -27,7 +27,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class TesterComponentScene(ttk.Frame):
+class ComponentScanScene(ttk.Frame):
     
     #################################################
 
@@ -55,8 +55,12 @@ class TesterComponentScene(ttk.Frame):
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
     # can see more scanner documentation in the Visual Inspection GUI
-    def scan_QR_code(self, master_window):
+    def scan_QR_code(self, master_window, component):
+
+        #self.EXIT_CODE = 0
         
+        self.component = component
+        self.lbl_scan['text'] = component
         self.ent_full.config(state = 'normal')
         self.ent_full.delete(0,END)
         self.master_window = master_window
@@ -72,9 +76,9 @@ class TesterComponentScene(ttk.Frame):
 
         self.ent_full.config(state = 'normal')
 
-        print("\nComponentScanScene: Beginning scan...\n")
-        logging.info("ComponentScanScene: Beginning scan...")
-        self.scanner = scan()
+        print("\nScanScene: Beginning scan...\n")
+        logging.info("ScanScene: Beginning scan...")
+        self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
         self.listener.start()
@@ -86,13 +90,13 @@ class TesterComponentScene(ttk.Frame):
             except:
                 pass
             if not len(full_id) == 0:
-                self.label = parse_xml(full_id[0])
+                self.data_holder.set_full_ID( parse_xml(full_id[0]))
 
                 self.listener.terminate()
                 self.scanner.terminate()
                
                 self.ent_full.delete(0,END)
-                self.ent_full.insert(0, str(self.label))
+                self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
                 self.ent_full.config(state = 'disabled')
                 self.show_rescan_button()
                 break
@@ -129,23 +133,32 @@ class TesterComponentScene(ttk.Frame):
         # the .grid() adds it to the Frame
         QR_label.grid(column=3, row = 0, sticky= 'ne', pady = (250,0))
 
+        # Create a photoimage object of the QR Code
+        QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
+        QR_PhotoImage = iTK.PhotoImage(QR_image)
+        QR_label2 = ttk.Label(self, image=QR_PhotoImage)
+        QR_label2.image = QR_PhotoImage
+
+        # the .grid() adds it to the Frame
+        QR_label2.grid(column=3, row = 0, sticky= 'ne', pady =(100, 0), padx = (75,0))
+
         Scan_Board_Prompt_Frame = ttk.Frame(self,)
         Scan_Board_Prompt_Frame.grid(column=0, row = 0)
 
         # creates a Label Variable, different customization options
         self.lbl_check = ttk.Label(
             master = Scan_Board_Prompt_Frame,
-            text = 'Check In',
+            text = 'Scan Engine Components',
             font = ('Arial', 40)
         )
         self.lbl_check.pack(padx = 50, pady = 50)
  
-        lbl_scan = ttk.Label(
+        self.lbl_scan = ttk.Label(
             Scan_Board_Prompt_Frame,
             text = "Scan the QR Code on the Board",
             font = ('Arial', 24)
         )
-        lbl_scan.pack(padx = 50, pady = 25)
+        self.lbl_scan.pack(padx = 50, pady = 25)
 
         # Create a label to label the entry box
         lbl_full = ttk.Label(
@@ -169,42 +182,6 @@ class TesterComponentScene(ttk.Frame):
             )
         self.ent_full.pack(padx = 50, pady = 25)
 
-        Option_list = ['Yes', 'No']
-        self.option_selected = tk.StringVar(self)
-
-        lbl_select = ttk.Label(
-            Scan_Board_Prompt_Frame,
-            text = "Does the component work?",
-            font = ('Arial', 24)
-        )
-        lbl_select.pack(padx = 20)
-
-        self.opt_user_dropdown = ttk.OptionMenu(
-            Scan_Board_Prompt_Frame, 
-            self.option_selected,
-            Option_list[0],
-            *Option_list,
-            ) 
-        self.opt_user_dropdown.pack(pady=20)
-
-        # Create a label to label the comments box
-        lbl_com = ttk.Label(
-            Scan_Board_Prompt_Frame,
-            text = "Comments:",
-            font = ('Arial', 32),
-        )
-        lbl_com.pack(padx = 20)
-
-        com_text = ''
-        #place to enter comments
-        self.ent_com = tk.Text(
-            master = Scan_Board_Prompt_Frame,
-            font = ('Arial', 16),
-            height = 5,
-            width = 20
-            )
-        self.ent_com.pack(padx = 50)
-
         # Traces an input to show the submit button once text is inside the entry box
         user_text.trace(
             "w", 
@@ -216,25 +193,25 @@ class TesterComponentScene(ttk.Frame):
 
         # Rescan button creation
         self.btn_rescan = ttk.Button(
-            self,
+            Scan_Board_Prompt_Frame,
             text="Rescan",
             #padx = 20,
             #pady =10,
             #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_window)
             )
-        self.btn_rescan.grid(row = 1, column = 3, sticky = 'ne')
+        self.btn_rescan.pack(pady=30)
 
         # Submit button creation
         self.btn_submit = ttk.Button(
-            self,
+            Scan_Board_Prompt_Frame,
             text="Submit",
             #padx = 20,
             #pady = 10,
             #relief = tk.RAISED,
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.grid(row = 1, column = 4, sticky = 'ne')
+        self.btn_submit.pack()
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
@@ -270,7 +247,7 @@ class TesterComponentScene(ttk.Frame):
         btn_logout = ttk.Button(
             frm_logout,
             #relief = tk.RAISED,
-            text = "Done Updating Info",
+            text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
@@ -304,12 +281,13 @@ class TesterComponentScene(ttk.Frame):
     def btn_submit_action(self, _parent):
         
         self.EXIT_CODE = 1 
-
-        self.data_holder.set_component_info(self.ent_full.get(), self.option_selected.get(), self.ent_com.get(1.0, 'end-1c'))
-        _parent.set_frame_tester_component_frame()
         
-        self.EXIT_CODE = 0
+        self.data_holder.add_component(self.component, self.ent_full.get())
 
+        _parent.next_frame_component_frame()
+
+        self.EXIT_CODE = 0
+        
     def get_submit_action(self):
         return self.btn_submit_action
 
