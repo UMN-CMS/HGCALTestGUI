@@ -190,8 +190,8 @@ class DBSender():
 
         return manufacturers
 
-    def add_component(self, component, barcode, full_id):
-        r = requests.post('{}/add_component.py'.format(self.db_url), data = {'component': component, 'barcode': barcode, 'full_id': full_id})
+    def add_component(self, barcode, full_id):
+        r = requests.post('{}/add_component.py'.format(self.db_url), data = {'barcode': barcode, 'full_id': full_id})
         print(r.text)
 
 

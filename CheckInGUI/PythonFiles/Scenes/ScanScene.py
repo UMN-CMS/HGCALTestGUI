@@ -331,7 +331,7 @@ class ScanScene(ttk.Frame):
             if self.ent_full.get()[3] == 'W':
                 _parent.set_frame_inspection_frame()
             elif self.ent_full.get()[3] == 'E':
-                _parent.first_frame_component_frame()
+                _parent.set_frame_component_frame()
             else: 
                 print('Error: Please scan a Wagon or an Engine.')
 

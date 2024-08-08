@@ -142,22 +142,11 @@ class GUIWindow():
 
     #################################################
 
-    def set_frame_component_frame(self, component):
+    def set_frame_component_frame(self):
         self.component_scan_frame.is_current_scene = True
         self.component_scan_frame.update()
         self.set_frame(self.component_scan_frame)
-        self.component_scan_frame.scan_QR_code(master_window, component)
-    
-    def first_frame_component_frame(self):
-        self.component = 'LDO'
-        self.set_frame_component_frame('LDO')
-
-    def next_frame_component_frame(self):
-        if self.component == 'LDO':
-            self.component = 'FPGA'
-            self.set_frame_component_frame('FPGA')
-        else:
-            self.set_frame_inspection_frame()
+        self.component_scan_frame.scan_QR_code(master_window)
             
     #################################################
     

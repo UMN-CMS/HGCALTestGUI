@@ -87,8 +87,8 @@ class DataHolder():
     def set_manufacturer_id(self, manufacturer):
         self.data_dict['manufacturer']  = manufacturer
 
-    def add_component(self, component, barcode):
-        self.data_sender.add_component(component, barcode, self.get_full_ID())
+    def add_component(self, barcode):
+        self.data_sender.add_component(barcode, self.get_full_ID())
 
 
     # when a board gets entered, this function checks if it's new
