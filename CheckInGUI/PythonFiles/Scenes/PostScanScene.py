@@ -201,7 +201,7 @@ class PostScanScene(ttk.Frame):
         scan_components = ttk.Button(
             frm_logout,
             #relief = tk.RAISED,
-            text = "Check In Components",
+            text = "Check In LDO",
             command = lambda: self.btn_components_action(parent)
         )
         scan_components.grid(row = 5,column =0 ,padx = 10, pady = 25, sticky = 's')
@@ -234,7 +234,7 @@ class PostScanScene(ttk.Frame):
         parent.set_frame_scan_frame()
 
     def btn_components_action(self, parent):
-        parent.first_frame_component_frame()
+        parent.set_frame_component_frame()
 
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 

@@ -55,12 +55,10 @@ class ComponentScanScene(ttk.Frame):
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
     # can see more scanner documentation in the Visual Inspection GUI
-    def scan_QR_code(self, master_window, component):
+    def scan_QR_code(self, master_window):
 
         #self.EXIT_CODE = 0
         
-        self.component = component
-        self.lbl_scan['text'] = component
         self.ent_full.config(state = 'normal')
         self.ent_full.delete(0,END)
         self.master_window = master_window
@@ -155,7 +153,7 @@ class ComponentScanScene(ttk.Frame):
  
         self.lbl_scan = ttk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Scan the QR Code on the Board",
+            text = "Scan the LDO",
             font = ('Arial', 24)
         )
         self.lbl_scan.pack(padx = 50, pady = 25)
@@ -282,9 +280,9 @@ class ComponentScanScene(ttk.Frame):
         
         self.EXIT_CODE = 1 
         
-        self.data_holder.add_component(self.component, self.ent_full.get())
+        self.data_holder.add_component(self.ent_full.get())
 
-        _parent.next_frame_component_frame()
+        _parent.set_frame_inspection_frame()
 
         self.EXIT_CODE = 0
         

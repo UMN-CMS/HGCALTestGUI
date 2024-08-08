@@ -1,0 +1,125 @@
+GUIType: Engine
+
+People: [Nadja, Charlie, Bryan, Devin, HGCAL_dev]
+
+Board_type:
+  - name: Engine V3 Right
+    requiredTests: [0, 1, 2, 3, 4]
+    type_sn: '100300'
+  - name: Engine V3 Left
+    requiredTests: [0, 1, 2, 3, 4]
+    type_sn: '100310'
+
+DBInfo:
+  admin: EngineDBInserter
+  baseURL: http://cmslab1.spa.umn.edu/Factory/EngineDB
+  inserter: EngineDBInserter
+  name: EngineDB
+  reader: EngineDBReadUser
+  use_database: true
+
+
+SerialCheckSafe: true
+UsingScanner: true
+
+# TestHandler: {name: Local, remoteip: localhost}
+# TestHandler: {name: SSH, username: HGCAL_dev, hostname: cmstester5, remoteip: <remoteip>}
+TestHandler: {name: ZMQ, localip: "localhost", remoteip: "umn-zcu102-b", username: "test_server",
+#  serverpath: <serverpath>, serverscript: <serverscript>}
+
+
+PhysicalTest: []
+Test:
+  - TestClass: TestXPWR
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_startup.py
+    desc_long: Measure using the tester, and should find approximately 1.2V.
+    desc_short: Check the the X_PWR voltage is correct.
+    name: X_PWR
+    required: 1
+
+  - TestClass: TestSetupLpgbt
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_startup.py
+    desc_long: Perform nominal setup from BE. Do setup, link trick, setup. Check PUSMStatus
+      (0x1d9) reports READY (0x13) for all 3 lpGBTs. Check lpGBTs locked to BE All
+      3 RX equal within 200 Hz. Check All 3 RX-DV equal within 200 Hz
+    desc_short: Ensure setup can be performed
+    name: lpGBT setup
+    required: 1
+
+  - TestClass: TestLpgbtId
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_startup.py
+    desc_long: Read lpgbt ids
+    desc_short: Check ids
+    name: LPGBT ID
+    required: 1
+
+  - TestClass: TestI2C
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_i2c.py
+    desc_long: Check that engine can communicate as an I2C master
+    desc_short: Engine can use I2C master
+    name: I2C
+    required: 1
+
+  - TestClass: TestGpio
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_gpio.py
+    desc_long: Read and write to all GPIO channels and verify levels. Write nominal
+      configuration and then toggle each line one-by-one and verify change in both
+      lpGBT status and voltage level
+    desc_short: Check the quality of the GPIOs
+    name: GPIO functionality
+    required: 1
+
+  - TestClass: TestAdc
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_adc.py
+    desc_long: Measure known voltages/resistances. Check measured values for all 4
+      gains within tolerances, (only need to do all 4 gains for one measurement).
+    desc_short: Check quality of the ADCs
+    name: ADC functionality
+    required: 1
+
+  - TestClass: TestUplink
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: PRBS validation from lpGBTs. Check bit error rate below threshold.
+    desc_short: Check the quality of the uplinks
+    name: Uplink quality
+    required: 1
+
+
+  - TestClass: TestFC
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
+    desc_short: Check the quality of the Fast Command path
+    name: Fast Command quality
+    required: 1
+
+  - TestClass: TestElinkUp
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
+    desc_short: Check the quality of the elinks
+    name: Elink quality
+    required: 1
+
+  - TestClass: TestEClockRates
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: Check that all EClocks are running at 320MHz.
+    desc_short: Ensure EClock rates are correct
+    name: EClock Rates
+    required: 1
+
+      #  - TestClass: CurrentDraw
+      #    TestPath: /home/test_server/test_code/engine_tests
+      #    TestScript: 
+      #    desc_long: Use the HS current sensing to record the current drawn by the engine
+      #    desc_short: Measure the current drawn by the engine
+      #    name: Current Draw
+      #    required: 1

@@ -156,39 +156,44 @@ if __name__ == "__main__":
 
     node = socket.gethostname()
     print(socket.gethostname())
-    wagon_GUI_computers = [
-        "cmsfactory1.cmsfactorynet",
+    ld_wagon_computers = [
+        "cmsfactory4.cmsfactorynet",
         "cmsfactory5.cmsfactorynet",
-        "cmslab4.umncmslab",
+    ]
+    hd_wagon_computers = []
+    ld_engine_computers = [
+        "cmsfactory1.cmsfactorynet",
         "cmsfactory2.cmsfactorynet",
     ]
-    engine_GUI_computers = [
-        "cmsfactory4.cmsfactorynet",
-    ]
+    hd_engine_computers = []
 
     if config_path is not None:
         board_cfg = import_yaml(config_path)
         host_cfg = import_yaml(host_path)
 
         run(board_cfg, curpath, host_cfg)
-    elif any((node in x for x in wagon_GUI_computers)):
-        print('Configs/Wagon_cfg.yaml')
-        print('\n')
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
+    elif any((node in x for x in ld_wagon_computers)):
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Wagon_cfg.yaml")
 
         run(board_cfg, curpath, board_cfg)
 
-    elif any((node in x for x in engine_GUI_computers)):
-        print('Configs/Engine_cfg.yaml')
-        print('\n')
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/Engine_cfg.yaml")
+    elif any((node in x for x in hd_wagon_computers)):
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/HD_Wagon_cfg.yaml")
+
+        run(board_cfg, curpath, board_cfg)
+
+    elif any((node in x for x in ld_engine_computers)):
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Engine_cfg.yaml")
+
+        run(board_cfg, curpath, board_cfg)
+
+    elif any((node in x for x in hd_engine_computers)):
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/HD_Engine_cfg.yaml")
 
         run(board_cfg, curpath, board_cfg)
 
     else:
-        print('Configs/Wagon_cfg.yaml')
-        print('\n')
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/Wagon_cfg.yaml")
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Wagon_cfg.yaml")
 
         run(board_cfg, curpath, board_cfg)
 
