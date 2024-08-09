@@ -96,9 +96,9 @@ class TestSummaryScene(ttk.Frame):
 
         self.retake_prompt = ttk.Label(
                 self,
-                text = 'Click an image to retake it.',
-                font=('Arial', 20),
-        )
+                text = "Press an image to retake it.",
+                font=('Arial',20)
+                )
         self.retake_prompt.grid(row=1,column=1)
 
         row_offset = 0

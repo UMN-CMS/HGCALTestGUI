@@ -64,9 +64,8 @@ class LoginScene(ttk.Frame):
         lbl_title = ttk.Label(
             self, 
             text="Please Select Your Name"
-            )
-        
-        lbl_title.configure(font = ('Arial', 52))      
+            )       
+        lbl_title.configure(font = ('Arial', 72))      
         lbl_title.pack(pady=75)
 
         # Creating intial value in dropdown menu
@@ -77,12 +76,11 @@ class LoginScene(ttk.Frame):
         self.opt_user_dropdown = ttk.OptionMenu(
             self, 
             self.user_selected, # Tells option menu to use the created initial value
-            None,
+            'Select User',
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
         self.opt_user_dropdown.pack(pady=(0,20))
-        #self.opt_user_dropdown.config(width = 20, font = ('Arial', 13))
-        #self.opt_user_dropdown['menu'].configure(font = ('Arial', 12))
+        self.opt_user_dropdown.config(width = 14)
 
         # Traces when the user selects an option in the dropdown menu
         # When an option is selected, it calls the show_submit_button function
@@ -100,8 +98,8 @@ class LoginScene(ttk.Frame):
             )
 
 
-        self.btn_submit.pack()
-        self.btn_submit.config(state = 'disabled')
+        self.btn_submit.pack(pady = (0,25))
+        self.btn_submit.config(state = 'disabled', width = 12)
         
         # Creating the add user button
         self.btn_add_user = ttk.Button(
@@ -109,7 +107,8 @@ class LoginScene(ttk.Frame):
             text="Add User",
             command= lambda:  self.btn_add_user_action(parent)
             )
-        self.btn_add_user.pack(pady=70)
+        self.btn_add_user.pack(pady=50)
+        self.btn_add_user.config(width = 12)
 
         # Creating the help button
         self.btn_help = ttk.Button(
@@ -117,7 +116,8 @@ class LoginScene(ttk.Frame):
             text = "Help",
             command = lambda: self.help_action(parent)
         )   
-        self.btn_help.pack(anchor = 's', padx = 10, pady = 20) 
+        self.btn_help.config(width = 12)
+        self.btn_help.pack(anchor = 's', padx = 10, pady = 25) 
 
 
         # Forces frame to stay the size of the main_window
