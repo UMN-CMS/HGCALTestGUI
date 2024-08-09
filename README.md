@@ -40,7 +40,12 @@ apt install -y python3-picamera2
 The drivers for the scanner can be found here; choose the appropriate drivers for your OS:
 https://www.zebra.com/us/en/support-downloads/software/scanner-software/scanner-sdk-for-linux.html?downloadId=dfb89068-1045-4411-961e-6499333ef749
 
-After downloading the .zip file, run "unzip <filename.zip>", "cd <filename>", and "sudo dpkg -i *"
+After downloading the .zip file, run
+```
+unzip <filename.zip>
+cd <filename>
+sudo dpkg -i *
+```
 
 You will also need to run "make" in the following directory of each GUI for the scanner to work:
 ```
