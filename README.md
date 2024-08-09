@@ -20,6 +20,33 @@ When updating the code, you can use the following commands:
     
 You can then open a pull request (PR) by going to the Github repo and then we can merge your code into the master branch. 
 
+## Package Installation
+_You must use python3_. To install all of the dependancies for this project, you will need to run the following installation commands. Notice that the versioning for the opencv is important (this is to prevent extensive installation times). 
+```
+# If permissions denied, add a 'sudo' before each line
+apt-get install python3-pil python3-pil.imagetk
+apt  install python3-tk
+pip3 install -U numpy
+pip3 install pyzmq
+pip3 install pyyaml
+
+# Version type matters here
+pip3 install opencv-contrib-python==4.5.3.56 
+```
+For Photo Taking Stand Only
+```
+apt install -y python3-picamera2
+```
+The drivers for the scanner can be found here; choose the appropriate drivers for your OS:
+https://www.zebra.com/us/en/support-downloads/software/scanner-software/scanner-sdk-for-linux.html?downloadId=dfb89068-1045-4411-961e-6499333ef749
+
+After downloading the .zip file, run "unzip <filename.zip>", "cd <filename>", and "sudo dpkg -i *"
+
+You will also need to run "make" in the following directory of each GUI for the scanner to work:
+```
+./PythonFiles/Scanner/
+```
+
 ## To run the program:
 
 To run the program:
