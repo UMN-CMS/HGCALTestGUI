@@ -10,7 +10,7 @@ It also contains the CheckIn GUI and the Photo Taking GUI.
 
 Run these commands from your working area to pull the code in:
 
-    git clone git@github.com:UMN-CMS/WagonTestGUI.git
+    git clone git@github.com:UMN-CMS/HGCALTestGUI.git
     
 When updating the code, you can use the following commands:
     
