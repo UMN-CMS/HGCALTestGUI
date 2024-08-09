@@ -50,7 +50,6 @@ class LoginScene(ttk.Frame):
 
 
         # Creating a list of users for dropdown menu
-        # Eventually need to add a way for a database to have control over this list
         User_List = self.data_holder.get_all_users()
 
         # Creating the title for the window
@@ -63,13 +62,13 @@ class LoginScene(ttk.Frame):
 
         # Creating intial value in dropdown menu
         self.user_selected = tk.StringVar(self)
-        self.user_selected.set("") # default value is empty
 
         # Creating the dropdown menu itself
         self.opt_user_dropdown = ttk.OptionMenu(
             self, 
-            self.user_selected, # Tells option menu to use the created initial value
-            'Select User',
+            self.user_selected,
+            User_List[0],
+
             *User_List # Tells the dropdown menu to use every index in the User_List list
             ) 
         self.opt_user_dropdown.pack(pady=15)
@@ -148,9 +147,6 @@ class LoginScene(ttk.Frame):
         self.data_holder.set_user_ID(self.user_selected.get())
         # Changes frame to scan_frame
         _parent.set_frame_scan_frame()
-
-
-        self.data_holder.print()
 
     #################################################
 

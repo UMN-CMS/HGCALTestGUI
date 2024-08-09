@@ -119,8 +119,6 @@ class DataHolder():
 
             self.total_test_num = self.total_test_num + 1
 
-        print('\nptest_criteria: {}'.format(self.ptest_criteria))
-
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
@@ -195,7 +193,7 @@ class DataHolder():
 
     def set_user_ID(self, user_ID):
 
-        print("\n\n\n\n\nuser_ID", user_ID)
+        print("\nuser_ID", user_ID)
  
         self.data_dict['user_ID'] = user_ID 
         logger.debug("DataHolder: User ID has been set.")
@@ -245,16 +243,29 @@ class DataHolder():
             wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
             db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
-            info_dict = {'ZCU': self.wagon_tester_info['ZCU'],
-                    'east_interposer': self.wagon_tester_info['East Interposer'],
-                    'west_interposer': self.wagon_tester_info['West Interposer'],
-                    'bridge_1': self.wagon_tester_info['Test Bridge 1'],
-                    'bridge_2': self.wagon_tester_info['Test Bridge 2'],
+            info_dict = {'ZCU': self.engine_tester_info['ZCU'],
+                    'east_interposer': self.engine_tester_info['East Interposer'],
+                    'west_interposer': self.engine_tester_info['West Interposer'],
+                    'bridge_1': self.engine_tester_info['Test Bridge 1'],
+                    'bridge_2': self.engine_tester_info['Test Bridge 2'],
                 'test_stand': self.data_dict['test_stand'],
                 }
             engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
             db_url = engine_cfg['DBInfo']['baseURL']
         self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
+
+    def set_component_info(self, label, working, comments):
+        info_dict = {'label': label, 'working': working, 'comments': comments}
+
+        if self.tester_type == 'Wagon':
+            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
+            db_url = wagon_cfg['DBInfo']['baseURL']
+
+        if self.tester_type == 'Engine':
+            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
+            db_url = engine_cfg['DBInfo']['baseURL']
+
+        self.data_sender.set_component_info(info_dict, db_url)
 
     #################################################
 
@@ -267,7 +278,6 @@ class DataHolder():
         
          
         for i in range(len(self.data_dict['tests_run'])):
-            print("Iteration:", i)
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
@@ -302,7 +312,7 @@ class DataHolder():
             info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-            print(info_dict)
+            print(str(info_dict) + '\r\n')
             json.dump(info_dict, outfile)
 
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
@@ -324,20 +334,20 @@ class DataHolder():
     #################################################
 
     def update_from_json_string(self, imported_json_string):
-        json_dict = json.loads(imported_json_string)
-
-        test_type = json_dict["name"]
+        json_string = imported_json_string.replace("'", '"')
+        json_string = json_string.replace('True', 'true')
+        json_string = json_string.replace('False', 'false')
+        json_dict = json.loads(json_string)
 
         test_names = self.gui_cfg.getTestNames()
 
         current_test_idx = self.gui_cfg.getTestIndex()
-        print("current_test_idx: {}".format(current_test_idx))
+        print("current_test_idx: {}\r\n".format(current_test_idx))
+
+        test_type = test_names[current_test_idx]
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
-        self.data_dict['user_ID'] = json_dict["tester"]
-        # TODO replace instances of serial number within test scripts with full id
-        self.data_dict['current_full_ID'] = json_dict["board_sn"] 
         self.data_dict['test{}_completed'.format(current_test_idx)] = True
         self.data_dict['test{}_pass'.format(current_test_idx)] = json_dict["pass"]
 

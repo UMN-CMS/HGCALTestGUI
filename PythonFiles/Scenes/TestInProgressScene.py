@@ -124,7 +124,6 @@ class TestInProgressScene(ttk.Frame):
         #self.queue.put('Stop')
 
 
-
     # Goes to the next scene after the progress scene is complete
     def go_to_next_frame(self, _parent):
         _parent.go_to_next_test()
@@ -163,23 +162,20 @@ class TestInProgressScene(ttk.Frame):
             
             information_received = False
             while 1>0:
-                #try:
-                #print("\nUpdating master_window")
                 master_window.update()
-                #print("Queue: ")
-                #print(queue)
                 if not queue.empty():    
-                    #print("\n\nTestInProgressScene: the queue is not empty") 
                     information_received = True
                     logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
                     print(text)
-                    ent_console.insert(tk.END, text)
+                    ent_console.insert(tk.END, text.strip('\r\n'))
+                    # need this twice since the first one is stripped from the original text
+                    ent_console.insert(tk.END, "\n")
                     ent_console.insert(tk.END, "\n")
                     ent_console.see('end')
 
                     if "Done." in text:
-                        print('Stopping Progress Bar')
+                        print('Stopping Progress Bar\r\n')
                         self.progressbar.stop()
 
                     if "Exit." in text:
@@ -188,13 +184,16 @@ class TestInProgressScene(ttk.Frame):
                         parent.test_error_popup("Unable to run test")
                         break
 
-                    if text == "Results received successfully.":
+                    if "Results received successfully." in text:
                     
                         message =  self.conn.recv()
                         print(message)   
                         self.data_holder.update_from_json_string(message) 
                         
                         logger.info("TestInProgressScene: JSON Received.")
+                        FinishedTestPopup(parent, self.data_holder, queue)
+
+                    if "Closing Test Window." in text:
                         try:
                             master_window.update()
                         except Exception as e:
@@ -244,4 +243,76 @@ class TestInProgressScene(ttk.Frame):
         #    print("\n\nException:  ", e, "\n\n")
 
         return True    
+
+#########################################################
+
+
+class FinishedTestPopup():
+    
+    #################################################
+
+    def __init__(self, parent, data_holder, queue):
+        self.create_style(parent)
+        self.finished_popup(data_holder)
+        self.parent = parent    
+        self.queue = queue
+
+    def create_style(self, _parent):
+
+        self.s = ttk.Style()
+
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('package', 'require', 'awdark')
+        
+        self.s.theme_use('awdark')
+
+    #################################################
+
+    # Function to enter password for admin access
+    def finished_popup(self, data_holder):
+        self.data_holder = data_holder
+        logger.info("PasswordPopup: Prompting the user for the admin password")
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Test Completed") 
+        self.popup.geometry("300x200+500+300")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        bind_func = self.continue_function
+        frm_popup.bind_all("<Return>", lambda event: bind_func(self.parent))
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Test has finished running.",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0)
+
+        btn_continue = ttk.Button(
+            frm_popup,
+            text = "Continue",
+            command = lambda: self.continue_function(self.parent)
+        )
+        btn_continue.grid(column = 0, row = 1)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+
+        
+    #################################################
+
+    # Called to continue on in the testing procedure
+    def continue_function(self, _parent):  
+        self.popup.destroy()
+        self.queue.put('Closing Test Window.')
+
 

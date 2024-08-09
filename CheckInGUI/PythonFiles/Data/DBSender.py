@@ -73,8 +73,6 @@ class DBSender():
             r = requests.get('{}/get_usernames.py'.format(self.db_url))
             lines = r.text.split('\n')
 
-            #print(lines)
-
             begin = lines.index("Begin") + 1
             end = lines.index("End")
 
@@ -98,8 +96,6 @@ class DBSender():
     def get_previous_test_results(self, full_id):
    
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={'full_id': str(full_id)})
-        
-        print(r.text)
         lines = r.text.split('\n')
 
         begin1 = lines.index("Begin1") + 1
@@ -129,9 +125,8 @@ class DBSender():
     
     
     # Posts a new board with passed in full id
-    def add_new_board(self, full, user_id, comments):
-        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
-        print(r.text)
+    def add_new_board(self, full, user_id, comments, manufacturer):
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer})
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
         
         try:
@@ -181,7 +176,23 @@ class DBSender():
             elif lines[i] == "False":
                 return False
 
+    def get_manufacturers(self):
+        r = requests.post('{}/get_manufacturers.py'.format(self.db_url))
+ 
+        lines = r.text.split('\n')
+   
+        begin = lines.index("Begin") + 1
+        end = lines.index("End")
 
+        manufacturers = []
+        for i in range(begin, end):     
+            manufacturers.append(lines[i])
+
+        return manufacturers
+
+    def add_component(self, barcode, full_id):
+        r = requests.post('{}/add_component.py'.format(self.db_url), data = {'barcode': barcode, 'full_id': full_id})
+        print(r.text)
 
 
     # Posts information via the "info" dictionary
@@ -219,11 +230,8 @@ class DBSender():
         datafile = open(datafile_name, "rb")        
 
         attach_data = {'attach1': datafile}
-        #print("Read from json file:", results)
 
         r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
-        print('\n This is from add_test_json.py \n')
-        print(r.text)
 
  # Returns a list of all different types of tests
     def get_test_list(self):

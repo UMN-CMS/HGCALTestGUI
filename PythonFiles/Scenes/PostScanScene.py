@@ -38,7 +38,7 @@ class PostScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 1105, height = 850)
+        super().__init__(self.master_frame, width = 1300-213, height = 700)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -63,8 +63,8 @@ class PostScanScene(ttk.Frame):
     def create_frame(self, parent):
         self.create_style(parent)
 
-        logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
-        print("PostScanScene: Destroying old widgets on the SummaryScene.")
+        logger.debug("PostScanScene: Destroying old widgets on the PostScanScene.")
+        print("PostScanScene: Destroying old widgets on the PostScanScene.")
         
         try:
             for widget in self.winfo_children():
@@ -76,17 +76,18 @@ class PostScanScene(ttk.Frame):
         
 
         self.canvas = tk.Canvas(self)
-        self.frame = ttk.Frame(self.canvas, width=1105, height=850)
+        self.frame = ttk.Frame(self.canvas)
         self.scroller = ttk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scroller.set)
 
-        self.canvas.grid(row = 0, column = 0, sticky='new')
+        self.canvas.grid(row = 0, column = 0, sticky='nsew')
         self.scroller.grid(row=0, column=1, sticky='nsw')
         self.window = self.canvas.create_window((0,0), window=self.frame, anchor='nw', tags='self.frame')
         
         #resizing
-        self.frame.pack(fill='both', expand=True)
+        #self.frame.pack(fill='both', expand=True)
 
+        self.canvas.bind('<Configure>', self.onCanvasConfigure)
         self.frame.bind('<Configure>', self.onFrameConfigure)
         self.frame.bind('<Enter>', self.onEnter)
         self.frame.bind('<Leave>', self.onLeave)
@@ -95,6 +96,7 @@ class PostScanScene(ttk.Frame):
         
         self.frame.grid_columnconfigure(1, weight = 1)
         self.frame.grid_columnconfigure(2, weight = 1)
+        self.frame.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
         self.grid_rowconfigure(0, weight = 1)
 
@@ -104,7 +106,7 @@ class PostScanScene(ttk.Frame):
             self.title = ttk.Label(
                     self.frame, 
                     text = "Board Scanned!",
-                    font = ('Arial' '48')
+                    font=('Arial',20)
                     )
             self.title.grid(row= 0, column= 1,  pady = 20)
 
@@ -112,7 +114,7 @@ class PostScanScene(ttk.Frame):
             self.id = ttk.Label(
                     self.frame, 
                     text = str(self.data_holder.data_dict['current_full_ID']),
-                    font = ('Arial', '32')
+                    font=('Arial',20)
                     )
             self.id.grid(row= 1, column= 1, pady = 20)
 
@@ -136,7 +138,7 @@ class PostScanScene(ttk.Frame):
                         self.lbl_res = ttk.Label(
                                 self.frame,
                                 text = str(el) + ': ',
-                                font=('Arial',24)
+                                font=('Arial',14)
                                 )
                         self.lbl_res.grid(row=idx+2, column=1)
                         if res_dict[el] == 'Passed':
@@ -159,7 +161,7 @@ class PostScanScene(ttk.Frame):
                             self.lbl_res = ttk.Label(
                                     self.frame,
                                     text = 'This test has not been run.',
-                                    font=('Arial',24)
+                                    font=('Arial',14)
                                     )
                             self.lbl_res.grid(row=idx+2, column=2)
                             
@@ -167,7 +169,7 @@ class PostScanScene(ttk.Frame):
                     self.lbl_res = ttk.Label(
                             self.frame,
                             text = str(self.data_holder.data_dict['prev_results']),
-                            font=('Arial',20)
+                            font=('Arial',14)
                             )
                     self.lbl_res.grid(row=2, column=1)
 
@@ -176,39 +178,40 @@ class PostScanScene(ttk.Frame):
                 self.lbl_full = ttk.Label(
                         self, 
                         text = 'Error, No Results',
-                        font=('Arial', 20) 
+                        font=('Arial', 14) 
                         )
                 self.lbl_full.grid(row = 2, column =1, pady = 10) 
 
             # Creating the proceed button
             proceed_button = ttk.Button(
                 self.frame,
+                #relief = tk.RAISED,
                 text = "Proceed",
                 command = lambda: self.btn_proceed_action(parent)
             )
-            proceed_button.grid(row=4, column=1, padx = 10, pady = 10)
+            proceed_button.grid(row=2, column=3, padx = 10, pady = 10)
 
         else:
             self.lbl_1 = ttk.Label(
-                    self.frame, 
+                    self, 
                     text = "This board hasn't been checked in.",
-                    font=('Arial', 32) 
+                    font=('Arial', 14) 
                     )
-            self.lbl_1.grid(row = 4, column =1, pady = 10) 
+            self.lbl_1.grid(row = 2, column =1, pady = 10) 
 
             self.lbl_2 = ttk.Label(
-                    self.frame, 
+                    self, 
                     text = "Please visit the check in and inspection station.",
-                    font=('Arial', 32) 
+                    font=('Arial', 14) 
                     )
-            self.lbl_2.grid(row = 5, column =1, pady = 10) 
+            self.lbl_2.grid(row = 2, column =1, pady = 10) 
 
-        logout_frm = ttk.Frame(self)
-        logout_frm.grid(sticky = 'ne')
+
 
         #creating the next board buttom
         next_board_button = ttk.Button(
-            logout_frm,
+            self.frame,
+            #relief = tk.RAISED,
             text = "Change Boards",
             command = lambda: self.btn_NextBoard_action(parent)
         )
@@ -217,14 +220,14 @@ class PostScanScene(ttk.Frame):
 
         # Creating the logout button
         btn_logout = ttk.Button(
-            logout_frm,
+            self.frame,
+            #relief = tk.RAISED,
             text = "Logout",
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.grid(row=4, column=3, padx = 10, pady = 20)
 
  
-    
 
 
     #################################################
@@ -243,7 +246,6 @@ class PostScanScene(ttk.Frame):
 
     def get_parent(self):
         return self.parent
-
         
     
     #################################################
@@ -255,6 +257,9 @@ class PostScanScene(ttk.Frame):
 
     def onFrameConfigure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+
+    def onCanvasConfigure(self, event):
+        self.canvas.itemconfig(self.window, width=event.width)
 
     def onMouseWheel(self, event):
         if event.num == 4:

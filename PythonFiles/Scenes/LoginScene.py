@@ -26,7 +26,7 @@ class LoginScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
 
-        super().__init__(master_frame, width=1300-213, height=700)
+        super().__init__(master_frame, width=1300-225, height=700)
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)
@@ -149,8 +149,6 @@ class LoginScene(ttk.Frame):
             logger.info("LoginScene: Submit button was selected. End of method")
         else:
             pass
-
-        # self.data_holder.print()
     
     def get_submit_action(self):
         return self.btn_submit_action
@@ -177,7 +175,6 @@ class PasswordPopup():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.create_style(parent)
         self.password_popup(data_holder)
         self.parent = parent    
@@ -281,7 +278,6 @@ class FailedPopup():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.password_popup(data_holder)
         self.parent = parent    
 

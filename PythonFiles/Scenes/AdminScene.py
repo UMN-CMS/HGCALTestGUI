@@ -73,6 +73,13 @@ class AdminScene(ttk.Frame):
             )
         self.btn_submit.pack()
 
+        self.btn_submit = ttk.Button(
+            self, 
+            text="Add Tester Component Info",
+            command= lambda:  self.btn_component_action(parent)
+            )
+        self.btn_submit.pack()
+
         # Forces frame to stay the size of the main_window
         # rather than adjusting to the size of the widgets
         self.pack_propagate(0)
@@ -91,6 +98,11 @@ class AdminScene(ttk.Frame):
         popup1 = Popup1(_parent, self.data_holder)
 
     #################################################
+    
+    def btn_component_action(self, _parent): 
+        popup3 = Popup3(_parent, self.data_holder)
+
+    #################################################
 
 #################################################################################
 
@@ -100,7 +112,6 @@ class Popup1():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 
@@ -175,7 +186,6 @@ class Popup2():
     #################################################
 
     def __init__(self, parent, data_holder):
-        print("\n\n\n\n\n{}\n\n\n\n".format(parent))
         self.confirm_popup(data_holder)
         self.parent = parent    
 
@@ -254,6 +264,80 @@ class Popup2():
         self.popup.destroy()
         _parent.set_frame_admin_scan()
 
+
+
+#################################################################################
+
+
+class Popup3():
+    
+    #################################################
+
+    def __init__(self, parent, data_holder):
+        self.confirm_popup(data_holder)
+        self.parent = parent    
+
+    #################################################
+
+    # Function to make retry or continue window if the test fails
+    def confirm_popup(self, data_holder):
+        self.data_holder = data_holder
+        logger.info("AdminTools: Teststand info is being specified.")
+        # Creates a popup to ask whether or not to retry the test
+        self.popup = tk.Toplevel()
+        self.popup.title("Select Test Stand Type") 
+        self.popup.geometry("300x200+500+300")
+        self.popup.pack_propagate(1) 
+        self.popup.grid_columnconfigure(0, weight=1)  # Make the master frame resizable 
+        self.popup.grid_rowconfigure(0, weight=1)
+        self.popup.grab_set()
+
+        # Creates frame in the new window
+        frm_popup = ttk.Frame(self.popup, width=300, height=200)
+        frm_popup.grid(row=0, column=0, sticky='nsew')
+
+        # Creates label in the frame
+        lbl_popup = ttk.Label(
+            frm_popup, 
+            text = "Select Test Stand Type",
+            font = ('Arial', 13)
+            )
+        lbl_popup.grid(column = 0, row = 0, columnspan = 2)
+
+        # Creates retry and continue buttons
+        btn_wagon = ttk.Button(
+             frm_popup,
+             text = "Wagon Tester", 
+             command = lambda: self.wagon_function(self.parent)
+             )
+        btn_wagon.grid(column = 1, row = 1)
+
+        btn_continue = ttk.Button(
+            frm_popup,
+            text = "Engine Tester",
+            command = lambda: self.engine_function(self.parent)
+        )
+        btn_continue.grid(column = 0, row = 1)
+
+        frm_popup.grid_columnconfigure(0, weight=1)
+        frm_popup.grid_columnconfigure(1, weight=1)
+        frm_popup.grid_rowconfigure(0, weight=1)
+        frm_popup.grid_rowconfigure(1, weight=1)
+
+
+    #################################################
+    
+    def wagon_function(self, _parent):
+        self.popup.destroy()
+        self.data_holder.tester_type = 'Wagon'
+        _parent.set_frame_tester_component_frame()
+        
+    #################################################
+
+    def engine_function(self, _parent):
+        self.popup.destroy()
+        self.data_holder.tester_type = 'Engine'
+        _parent.set_frame_tester_component_frame()
 
 
 #################################################################################

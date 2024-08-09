@@ -27,7 +27,7 @@ logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), f
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class ScanScene(ttk.Frame):
+class TesterComponentScene(ttk.Frame):
     
     #################################################
 
@@ -72,9 +72,9 @@ class ScanScene(ttk.Frame):
 
         self.ent_full.config(state = 'normal')
 
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
-        self.scanner = scan(self.parent.main_path)
+        print("\nComponentScanScene: Beginning scan...\n")
+        logging.info("ComponentScanScene: Beginning scan...")
+        self.scanner = scan()
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
         self.listener.start()
@@ -86,13 +86,13 @@ class ScanScene(ttk.Frame):
             except:
                 pass
             if not len(full_id) == 0:
-                self.data_holder.set_full_ID( parse_xml(full_id[0]))
+                self.label = parse_xml(full_id[0])
 
                 self.listener.terminate()
                 self.scanner.terminate()
                
                 self.ent_full.delete(0,END)
-                self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                self.ent_full.insert(0, str(self.label))
                 self.ent_full.config(state = 'disabled')
                 self.show_rescan_button()
                 break
@@ -129,17 +129,8 @@ class ScanScene(ttk.Frame):
         # the .grid() adds it to the Frame
         QR_label.grid(column=3, row = 0, sticky= 'ne', pady = (250,0))
 
-        # Create a photoimage object of the QR Code
-        QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
-        QR_PhotoImage = iTK.PhotoImage(QR_image)
-        QR_label2 = ttk.Label(self, image=QR_PhotoImage)
-        QR_label2.image = QR_PhotoImage
-
-        # the .grid() adds it to the Frame
-        QR_label2.grid(column=3, row = 0, sticky= 'ne', pady =(100, 0), padx = (75,0))
-
         Scan_Board_Prompt_Frame = ttk.Frame(self,)
-        Scan_Board_Prompt_Frame.grid(column=0, row = 0, rowspan=2)
+        Scan_Board_Prompt_Frame.grid(column=0, row = 0)
 
         # creates a Label Variable, different customization options
         self.lbl_check = ttk.Label(
@@ -178,23 +169,23 @@ class ScanScene(ttk.Frame):
             )
         self.ent_full.pack(padx = 50, pady = 25)
 
-        manufacturers_list = ['None'] + self.data_holder.get_manufacturers()
-        self.manuf_selected = tk.StringVar(self)
+        Option_list = ['Yes', 'No']
+        self.option_selected = tk.StringVar(self)
 
-        lbl_full = ttk.Label(
+        lbl_select = ttk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Select Manufacturer:",
+            text = "Does the component work?",
             font = ('Arial', 24)
         )
-        lbl_full.pack(padx = 20)
+        lbl_select.pack(padx = 20)
 
-        self.manufacturer_dropdown = ttk.OptionMenu(
-            Scan_Board_Prompt_Frame,
-            self.manuf_selected,
-            self.data_holder.data_dict['manufacturer'],
-            *manufacturers_list # Tells the dropdown menu to use every index in the manufacturers_list list
+        self.opt_user_dropdown = ttk.OptionMenu(
+            Scan_Board_Prompt_Frame, 
+            self.option_selected,
+            Option_list[0],
+            *Option_list,
             ) 
-        self.manufacturer_dropdown.pack(pady=15)
+        self.opt_user_dropdown.pack(pady=20)
 
         # Create a label to label the comments box
         lbl_com = ttk.Label(
@@ -225,29 +216,29 @@ class ScanScene(ttk.Frame):
 
         # Rescan button creation
         self.btn_rescan = ttk.Button(
-            Scan_Board_Prompt_Frame,
+            self,
             text="Rescan",
             #padx = 20,
             #pady =10,
             #relief = tk.RAISED,
             command = lambda:  self.scan_QR_code(self.master_window)
             )
-        self.btn_rescan.pack(pady=30)
+        self.btn_rescan.grid(row = 1, column = 3, sticky = 'ne')
 
         # Submit button creation
         self.btn_submit = ttk.Button(
-            Scan_Board_Prompt_Frame,
+            self,
             text="Submit",
             #padx = 20,
             #pady = 10,
             #relief = tk.RAISED,
             command= lambda:  self.btn_submit_action(parent)
             )
-        self.btn_submit.pack()
+        self.btn_submit.grid(row = 1, column = 4, sticky = 'ne')
 
         #creates a frame for the label info
         label_frame = ttk.Frame(self)
-        label_frame.grid(column=3, row = 1, sticky='ne')
+        label_frame.grid(column=0, row = 1)
 
         self.label_major = ttk.Label(
             label_frame,
@@ -272,14 +263,14 @@ class ScanScene(ttk.Frame):
 
         # Creating frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 3, row = 1, sticky= 'se')
+        frm_logout.grid(column = 3, row = 0, sticky= 'se')
 
        
         # Creating the logout button
         btn_logout = ttk.Button(
             frm_logout,
             #relief = tk.RAISED,
-            text = "Logout",
+            text = "Done Updating Info",
             command = lambda: self.btn_logout_action(parent)
         )
         btn_logout.pack(anchor = 'se', padx = 10, pady = 20)
@@ -292,8 +283,6 @@ class ScanScene(ttk.Frame):
             command = lambda: self.help_action(parent)
         )
         btn_help.pack(anchor = 's', padx = 10, pady = 20)
-
-
 
 
         # Locks frame size to the master_frame size
@@ -315,29 +304,12 @@ class ScanScene(ttk.Frame):
     def btn_submit_action(self, _parent):
         
         self.EXIT_CODE = 1 
+
+        self.data_holder.set_component_info(self.ent_full.get(), self.option_selected.get(), self.ent_com.get(1.0, 'end-1c'))
+        _parent.set_frame_tester_component_frame()
         
-        self.data_holder.set_full_ID(self.ent_full.get())
-        self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
-
-        self.data_holder.set_manufacturer_id(self.manuf_selected.get())
-
-        self.data_holder.check_if_new_board()
-        self.data_holder.update_location(self.ent_full.get())
-
-        if self.data_holder.data_dict['prev_results'] != '':
-            _parent.set_frame_postscan()
-            
-        else:
-            if self.ent_full.get()[3] == 'W':
-                _parent.set_frame_inspection_frame()
-            elif self.ent_full.get()[3] == 'E':
-                _parent.set_frame_component_frame()
-            else: 
-                print('Error: Please scan a Wagon or an Engine.')
-
         self.EXIT_CODE = 0
 
-        
     def get_submit_action(self):
         return self.btn_submit_action
 

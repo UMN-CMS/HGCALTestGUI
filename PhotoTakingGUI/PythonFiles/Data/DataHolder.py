@@ -64,7 +64,6 @@ class DataHolder():
         for item in self.get_all_users():
             if self.data_dict['user_ID'] == item:
                 is_new_user_ID = False
-        print("\n\n\n\n\n\nIs the user new?:{}\n\n\n\n\n\n".format(is_new_user_ID))
 
         if is_new_user_ID:
             self.data_sender.add_new_user_ID(self.data_dict['user_ID'], passwd)
@@ -73,19 +72,18 @@ class DataHolder():
     # checks if the board is in the database already
     def check_if_new_board(self):
         logging.info("DataHolder: Checking if board is a new board")
-        print("testing if new board")
 
         full = self.get_full_ID()
         user = self.data_dict['user_ID']
         comments = 'Checked in during Visual Inspection'
         is_new_board = self.data_sender.is_new_board(full)
-        print(is_new_board)
 
         # if it's new, checks it in
         if is_new_board == True:
+            print('DataHolder: Board not found, checking it in.')
             in_id = self.data_sender.add_new_board(full, user, comments)
             if in_id:
-                print('Board added to Database')
+                print('DataHolder: Board added to Database.')
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
 
@@ -107,8 +105,6 @@ class DataHolder():
 
 
     def set_user_ID(self, user_ID):
-
-        print("\n\n\n\n\nuser_ID", user_ID)
 
         self.data_dict['user_ID'] = user_ID
         logging.debug("DataHolder: User ID has been set.")
@@ -139,7 +135,6 @@ class DataHolder():
                 view = 'Top'
             else:
                 view = 'Bottom'
-            print(view)
             self.data_sender.add_board_image(self.data_dict["current_full_ID"], self.image_holder[i], view)
 
 
@@ -165,7 +160,6 @@ class DataHolder():
 
 
         for i in range(len(self.data_dict['tests_run'])):
-            print("Iteration:", i)
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1

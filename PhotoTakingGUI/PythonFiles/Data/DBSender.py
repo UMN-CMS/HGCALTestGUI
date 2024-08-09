@@ -74,8 +74,6 @@ class DBSender():
             r = requests.get('{}/get_usernames.py'.format(self.db_url))
             lines = r.text.split('\n')
 
-            print(lines)
-
             begin = lines.index("Begin") + 1
             end = lines.index("End")
 
@@ -98,8 +96,6 @@ class DBSender():
         image.save(buffered, format="JPEG")
         encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
-
-        print(r.text)
 
 
     # Returns a dictionary of booleans
@@ -225,7 +221,6 @@ class DBSender():
         datafile = open(datafile_name, "rb")
 
         attach_data = {'attach1': datafile}
-        #print("Read from json file:", results)
 
         if (self.use_database):
             r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)

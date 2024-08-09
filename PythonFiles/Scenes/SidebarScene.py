@@ -118,9 +118,6 @@ class SidebarScene(ttk.Frame):
 
         test_names = self.data_holder.getTestNames()
         physical_names = self.data_holder.getPhysicalNames()
-        print('\n\n\n\n\n\n\n\n')
-        print(test_names)
-        print(physical_names)
 
         self.test_btns = []
 
@@ -129,10 +126,8 @@ class SidebarScene(ttk.Frame):
         
         # How much offset from the physical board tests
 
-        print("\nThere are {} physical tests\n".format(self.data_holder.getNumPhysicalTest()))
 
         for i in range(self.data_holder.getNumPhysicalTest()): 
-            #print("Physical Button should point to the {} test".format(i + physical_offset))
             self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
                 text = '{}'.format(physical_names[i]),
@@ -141,7 +136,6 @@ class SidebarScene(ttk.Frame):
                 ))
             self.test_btns[i].grid(column = 0, row = 3 + i, pady = btn_pady, padx = btn_padx) #i + original_offset)
 
-            #print(self.data_holder.data_dict)
 
             if self.data_holder.data_dict['physical{}_pass'.format(i)] == True:
                 self.test_btns[i].config(state = 'disabled')
@@ -155,7 +149,6 @@ class SidebarScene(ttk.Frame):
 
         for i in range(self.data_holder.getNumTest()):
             
-            #print("Digi Button should point to the {} test".format(i + physical_offset))
             self.test_btns.append(ttk.Button(
                 self.viewingFrame, 
                 text = '{}'.format(test_names[i]),
@@ -178,7 +171,7 @@ class SidebarScene(ttk.Frame):
             #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row =  12, pady = btn_pady)#original_offset + digital_offset)
+        self.btn_summary.grid(column = 0, row = 14, pady = btn_pady)
 
         
         self.report_btn = ttk.Button(
@@ -190,7 +183,7 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = 15, pady = (btn_pady, 235)) #original_offset + digital_offset + 1)
+        self.report_btn.grid(column = 0, row = 15, pady = (btn_pady, 235))
 
 
 
@@ -201,7 +194,6 @@ class SidebarScene(ttk.Frame):
 
         # For loop to create checkmarks based on pass/fail
         for index in range(len(self.list_of_pass_fail)):
-            #print("Pass fail:", self.list_of_pass_fail)
             if(self.list_of_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
                 GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')
@@ -218,7 +210,6 @@ class SidebarScene(ttk.Frame):
         
         # For loop to create checkmarks based on pass/fail
         for index in range(len(self.physical_pass_fail)):
-            #print("Pass fail:", self.physical_pass_fail)
             if(self.physical_pass_fail[index] == True):
                 # Create a photoimage object of the QR Code
                 GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')

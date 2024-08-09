@@ -91,6 +91,7 @@ class ScanScene(ttk.Frame):
             self.ent_full.config(state = 'normal')
 
             logger.info("ScanScene: Beginning scan...")
+            print("ScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -103,13 +104,13 @@ class ScanScene(ttk.Frame):
                 except:
                     pass
                 if not len(full_id) == 0:
-                    self.data_holder.set_full_ID( parse_xml(full_id[0]))
+                    label = parse_xml(full_id[0])
 
                     self.listener.terminate()
                     self.scanner.terminate()
                 
                     self.ent_full.delete(0,END)
-                    self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                    self.ent_full.insert(0, str(label))
                     self.ent_full.config(state = 'disabled')
                     self.show_rescan_button()
                     break
@@ -337,7 +338,6 @@ class ScanScene(ttk.Frame):
     # Function to activate the submit button
     def show_submit_button(self):
         self.data_holder.decode_label(self.ent_full.get())
-        self.btn_submit["state"] = "active"
         try:
             self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
             self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
@@ -345,6 +345,9 @@ class ScanScene(ttk.Frame):
             self.label_major.update()
             self.label_sub.update()
             self.label_sn.update()
+            major = self.data_holder.label_info['Major Type']
+            if major == 'LD-Engine' or major == 'HD-Engine' or major == 'LD-Wagon-West' or major == 'LD-Wagon-East' or major == 'HD-Wagon':
+                self.btn_submit["state"] = "active"
         except TypeError:
             self.label_major['text'] = ''
             self.label_sub['text'] = ''

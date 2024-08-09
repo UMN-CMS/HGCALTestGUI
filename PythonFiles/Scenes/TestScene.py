@@ -34,7 +34,6 @@ class TestScene(ttk.Frame):
         self.data_holder = data_holder
         self.test_idx = test_idx
         self.parent = parent
-        #print("Making test scene with index".format(self.test_idx))
         
         self.update_frame(parent)
 
@@ -223,7 +222,6 @@ class TestScene(ttk.Frame):
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
 
-        #print("Confirm button sending test{}".format(self.test_idx))
         _parent.set_frame_test_in_progress(self.queue)
         
     def get_submit_action(self):
@@ -252,7 +250,6 @@ class Test1Scene(TestScene):
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
 
-        self.data_holder.print()
         super().btn_confirm_action(_parent)
         test_1_client = REQClient('test1', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
@@ -266,7 +263,6 @@ class Test2Scene(TestScene):
 
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
-        self.data_holder.print()
         super().btn_confirm_action(_parent)
         test_2_client = REQClient('test2', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
@@ -283,7 +279,6 @@ class Test3Scene(TestScene):
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
 
-        self.data_holder.print()
         super().btn_confirm_action(_parent)
         test_3_client = REQClient('test3', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)
@@ -299,7 +294,6 @@ class Test4Scene(TestScene):
     # Override to add specific functionality
     def btn_confirm_action(self, _parent):
 
-        self.data_holder.print()
         super().btn_confirm_action(_parent)
         test_4_client = REQClient('test4', self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         _parent.set_frame_test_in_progress(self.queue)

@@ -163,7 +163,6 @@ class SummaryScene(ttk.Frame):
         # Loop through all of the keys in the data_holder.inspection_data dictionary
         for index,box in enumerate(self.data_holder.all_checkboxes[0]):
             key_count = key_count + 1
-            print("\nIndex: {}, Box: {}".format(index, box))
 
             key_label = ttk.Label(
                     self.frm_table,
