@@ -97,7 +97,7 @@ def run(board_cfg):
     else: 
         process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, None))
-
+        print("Back to main.py")
     # Starts the processes
     process_GUI.start()
     if board_cfg["TestHandler"]["name"] == "Local" or board_cfg['TestHandler']['name'] == 'SSH':

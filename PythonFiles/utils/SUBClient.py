@@ -13,6 +13,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
 class SUBClient():
 
     def __init__(self, conn, queue, gui_cfg, q):
+        print("SUBCLIENT IS HERE")
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]), "r") as openfile:
             grabbed_ip = openfile.read()[:-1]
         logger.info("SUBClient has started") 
@@ -21,9 +22,12 @@ class SUBClient():
         self.conn = conn
         self.message = ""
         if gui_cfg["TestHandler"]["name"] == "Local" or gui_cfg['TestHandler']['name'] == 'SSH':
+            print("calling local in SUBCleient")
             self.local(conn, queue, gui_cfg, q)
         else:
+            print("Calling SUB_ZMQ in SubClient")
             self.SUB_ZMQ(conn, queue, gui_cfg)
+            print("Finished calling SUB ZMQ")
 
 
     def local(self, conn, queue, gui_cfg, q):
@@ -54,6 +58,7 @@ class SUBClient():
                     
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
+                    print("In SUBClient")
                     queue.put("Results received successfully.")
                     logging.info("SUBClient: Informed the user that the results have been received.")
 
@@ -97,7 +102,10 @@ class SUBClient():
                 # will have extra spaces.
                 try:
                     print("Waiting")
+                    print("Under waiting")
                     self.topic, self.message = listen_socket.recv_string().split(" ; ")
+                    print("self.topic:", self.topic)
+                    print("self.message:", self.message)
                     print(self.topic, self.message)
                 except Exception as e:
                     print("\nThere was an error trying to get the topic and/or message from the socket\n")
@@ -119,14 +127,16 @@ class SUBClient():
                     logger.debug("SUBClient: The print message has been placed into the queue.")
 
                 elif self.topic == "JSON":
-                    
+                    print("In JZON in SUB ZMQ in subclient") 
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
                     queue.put("Results received successfully.")
                     logger.info("SUBClient: Informed the user that the results have been received.")
 
                     # Sends the JSON to GUIWindow on the pipe.
+                    print(f"Trying to send {self.message}")
                     self.conn.send(self.message)
+                    print("Is it complaining yet?")
                     logger.info("SUBClient: The JSON has been sent to the GUIWindow along the pipe.")
 
                 elif self.topic == "LCD":
@@ -139,7 +149,7 @@ class SUBClient():
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
                     queue.put("SUBClient: An error has occurred. Check logs for more details.")
-
+                print("All done")
         except Exception as e:
             print("Outer Try: {}".format(e))
             logger.debug(e)
