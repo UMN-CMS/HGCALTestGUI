@@ -37,7 +37,7 @@ class GUIWindow():
         global master_window
         master_window = tk.Tk()
 
-        master_window.title("Visual Inspection Window")
+        master_window.title("Photo Taking Window")
 
         # Creates the size of the window and disables resizing
         master_window.geometry("1350x850+25+100")
@@ -70,7 +70,7 @@ class GUIWindow():
         self.gui_cfg = GUIConfig(board_cfg)
 
         # Creates the "Storage System" for the data during testing
-        self.data_holder = DataHolder(self.gui_cfg)
+        self.data_holder = DataHolder(self.gui_cfg, self.main_path)
 
         # Creates a static image for camera to replace
         blank_image = "EnginePhoto.png"

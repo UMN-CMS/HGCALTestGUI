@@ -9,8 +9,9 @@ from io import BytesIO
 
 class DBSender():
 
-    def __init__(self, gui_cfg):
+    def __init__(self, gui_cfg, main_path):
         self.gui_cfg = gui_cfg
+        self.main_path = main_path
 
         # Predefined URL for the database
         self.db_url = self.gui_cfg.getDBInfo("baseURL")
@@ -96,6 +97,19 @@ class DBSender():
         image.save(buffered, format="JPEG")
         encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
+
+        lines = r.text.split('\n')
+
+        saved_image = False
+        for l in lines:
+            if 'File received successfully!' in l:
+                saved_image = True
+
+        if saved_image == False:
+            print("Failed to save image, opting for local file storage...")
+            image.save("{}/PythonFiles/Images/{}_{}.png".format(self.main_path, full_id, view))
+            print("Image saved to local disk successfully.")
+                
 
 
     # Returns a dictionary of booleans

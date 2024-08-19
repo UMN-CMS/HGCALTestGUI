@@ -202,7 +202,7 @@ class PostScanScene(ttk.Frame):
                     text = "Please visit the check in and inspection station.",
                     font=('Arial', 32) 
                     )
-            self.lbl_2.grid(row = 0, column =0, pady = 10, sticky = 'n') 
+            self.lbl_2.grid(row = 1, column =0, pady = 10, sticky = 'n') 
 
         logout_frm = ttk.Frame(self)
         logout_frm.grid(sticky = 'se')
@@ -226,8 +226,6 @@ class PostScanScene(ttk.Frame):
         btn_logout.grid(row=1, column=0, padx = 10, pady = 10)
 
  
-    
-
 
     #################################################
 
