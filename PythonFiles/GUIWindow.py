@@ -63,7 +63,7 @@ class GUIWindow():
         self.master_window.title("HGCAL Test Window")
 
         # Creates the size of the window
-        self.master_window.geometry("1300x700+25+100")
+        self.master_window.geometry("1300x800+25+100")
         self.master_window.pack_propagate(1) 
 
         #resizing master_frame, keeping sidebar same width
@@ -75,8 +75,6 @@ class GUIWindow():
         self.all_text = "No help available for this scene."
         self.label_text = tk.StringVar()
         
-        # Running all tests in succession?
-        # TODO add this to config file
         self.run_all_tests_bool = False
         
         # resizable with following code commented out
@@ -87,11 +85,11 @@ class GUIWindow():
 
 
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=1300-225, height=700)
+        self.master_frame = tk.Frame(self.master_window, width=1300-225, height=800)
         self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
 
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 225, height=700)
+        sidebar_frame = tk.Frame(self.master_window, width = 225, height=800)
         sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
 
 
@@ -210,6 +208,7 @@ class GUIWindow():
 
     def run_all_tests(self, test_idx):
         self.running_all_idx = test_idx
+        self.current_test_index = test_idx
         self.run_all_tests_bool = True
 
         test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
@@ -383,6 +382,7 @@ class GUIWindow():
 
     def return_to_current_test(self):
         self.current_test_index -= 1
+        self.running_all_idx -= 1
         self.set_frame_test(self.current_test_index)
 
         self.data_holder.setTestIdx(self.current_test_index)
@@ -411,8 +411,8 @@ class GUIWindow():
         
             if (self.running_all_idx < total_num_tests):
 
-                self.data_holder.setTestIdx(self.current_test_index)
                 self.current_test_index += 1
+                self.data_holder.setTestIdx(self.running_all_idx)
                 
                 gui_cfg = self.data_holder.getGUIcfg()
                 test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)

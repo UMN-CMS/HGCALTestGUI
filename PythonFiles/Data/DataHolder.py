@@ -125,10 +125,6 @@ class DataHolder():
 
             self.total_test_num = self.total_test_num + 1
     
-        self.gui_cfg.setTestIndex(1)
-
-        self.current_test_idx = self.gui_cfg.getTestIndex()
-
 
     #################################################
 
@@ -315,7 +311,9 @@ class DataHolder():
             print(str(info_dict) + '\r\n')
             json.dump(info_dict, outfile)
 
-        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
+        print(index)
+        print(self.index_gui_to_db[self.data_dict['tests_run'][index]])
+        #self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
@@ -341,15 +339,14 @@ class DataHolder():
 
         test_names = self.gui_cfg.getTestNames()
 
-        current_test_idx = self.gui_cfg.getTestIndex()
-        print("current_test_idx: {}\r\n".format(current_test_idx))
+        print("current_test_idx: {}\r\n".format(self.current_test_idx))
 
-        test_type = test_names[current_test_idx]
+        test_type = test_names[self.current_test_idx]
 
-        with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
+        with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[self.current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
-        self.data_dict['test{}_completed'.format(current_test_idx)] = True
-        self.data_dict['test{}_pass'.format(current_test_idx)] = json_dict["pass"]
+        self.data_dict['test{}_completed'.format(self.current_test_idx)] = True
+        self.data_dict['test{}_pass'.format(self.current_test_idx)] = json_dict["pass"]
 
         # Updates the lists
         for i in range(self.gui_cfg.getNumTest()):
@@ -357,7 +354,7 @@ class DataHolder():
             self.data_lists['test_completion'][i] = self.data_dict['test{}_completed'.format(i)]
         
         if self.gui_cfg.get_if_use_DB():
-            self.send_to_DB(current_test_idx)
+            self.send_to_DB(self.current_test_idx)
 
         logger.info("DataHolder: Test results have been saved")
 
@@ -391,7 +388,6 @@ class DataHolder():
     def setTestIdx(self, test_idx):
         
         self.current_test_idx = test_idx
-        self.gui_cfg.setTestIndex(self.current_test_idx)
 
     def getNumTest(self):
         return self.gui_cfg.getNumTest()
@@ -474,9 +470,6 @@ class DataHolder():
 
         logger.info("DataHolder: DataHolder Information has been reset for a new test.")        
 
-        self.gui_cfg.setTestIndex(1)
-
-        self.current_test_idx = self.gui_cfg.getTestIndex()
 
     ################################################
 

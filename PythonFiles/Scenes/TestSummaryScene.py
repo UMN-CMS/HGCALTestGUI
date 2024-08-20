@@ -32,7 +32,7 @@ class TestSummaryScene(ttk.Frame):
         self.create_style(parent)
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width=1300-213, height=700)
+        super().__init__(master_frame, width=1300-213, height=800)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -339,11 +339,14 @@ class TestSummaryScene(ttk.Frame):
 
             self.JSON_popup.grab_set()
             self.JSON_popup.attributes('-topmost', 'true') 
+            self.JSON_popup.grid_rowconfigure(0, weight=1)
+            self.JSON_popup.grid_columnconfigure(0, weight=1)
+            self.JSON_popup.grid_propagate()
 
             # Creating a Frame For Console Output
-            frm_JSON = ttk.Frame(self.JSON_popup, width = 500, height = 300, bg = 'green')
+            frm_JSON = ttk.Frame(self.JSON_popup, width = 500, height = 300)
             frm_JSON.pack_propagate(0)
-            frm_JSON.pack()
+            frm_JSON.grid(row=0, column=0, sticky='nsew')
 
             # Placing an entry box in the frm_console
             self.JSON_entry_box = tk.Text(
@@ -354,6 +357,7 @@ class TestSummaryScene(ttk.Frame):
                 )
             self.JSON_entry_box.pack(anchor = 'center', fill=tk.BOTH, expand=1)
 
+            print(JSON_String)
             current_JSON_file = open(JSON_String)
             current_JSON_data = json.load(current_JSON_file)
 
@@ -369,6 +373,7 @@ class TestSummaryScene(ttk.Frame):
             
             current_JSON_file.close()   
         except Exception as e:
+            print(e)
             logger.debug(e)
             logger.warning("TestSummaryScene: More Info popup has failed to be created.")
 
@@ -397,18 +402,6 @@ class TestSummaryScene(ttk.Frame):
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
         self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], names[test_idx].replace(" ", "").replace("/", "")))
-
-    def btn_more_info1_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_GenRes_JSON.json".format(PythonFiles.__path__[0]))
-
-    def btn_more_info2_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_IDRes_JSON.json".format(PythonFiles.__path__[0]))
-
-    def btn_more_info3_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_IIC_JSON.json".format(PythonFiles.__path__[0]))
-    
-    def btn_more_info4_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_BERT_JSON.json".format(PythonFiles.__path__[0]))
 
     #################################################
 
