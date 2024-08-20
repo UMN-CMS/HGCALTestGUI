@@ -114,7 +114,7 @@ class TesterComponentScene(ttk.Frame):
         self.master_frame = master_frame
         self.parent = parent
         
-        super().__init__(self.master_frame, width = 1105, height = 850)
+        super().__init__(self.master_frame, width = 1105, height = 800)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)

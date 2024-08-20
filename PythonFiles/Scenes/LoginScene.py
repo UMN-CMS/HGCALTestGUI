@@ -26,7 +26,7 @@ class LoginScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
 
-        super().__init__(master_frame, width=1300-225, height=700)
+        super().__init__(master_frame, width=1300-225, height=800)
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)

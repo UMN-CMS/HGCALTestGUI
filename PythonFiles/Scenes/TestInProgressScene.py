@@ -21,7 +21,7 @@ class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
-        super().__init__(master_frame, width=1300-213, height = 700)
+        super().__init__(master_frame, width=1300-213, height = 800)
 
         self.create_style(parent)
         self.queue = queue

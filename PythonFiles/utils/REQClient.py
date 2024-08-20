@@ -96,6 +96,7 @@ class REQClient():
             print("No remote_ip specified, please modify config")
 
         debug_msg = "REQClient: Sending request to REPServer for: " + self.desired_test
+        print(debug_msg)
         logger.debug(debug_msg)
         
         # Tell the server what test to run

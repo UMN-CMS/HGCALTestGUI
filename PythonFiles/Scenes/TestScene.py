@@ -25,7 +25,7 @@ class TestScene(ttk.Frame):
     #################################################
 
     def __init__(self, parent, master_frame, data_holder, test_name, test_description_short, test_description_long, queue, conn_trigger, test_idx):
-        super().__init__(master_frame, width=1300-213, height = 700)
+        super().__init__(master_frame, width=1300-213, height = 800)
         self.queue = queue
         self.conn_trigger = conn_trigger
         self.test_name = test_name
@@ -202,8 +202,6 @@ class TestScene(ttk.Frame):
        
         _parent.run_all_tests(self.test_idx) 
         
-
-    
 
     #################################################
 
