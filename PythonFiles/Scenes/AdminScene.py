@@ -282,7 +282,7 @@ class Popup3():
     # Function to make retry or continue window if the test fails
     def confirm_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("AdminTools: Teststand info is being specified.")
+        logger.info("AdminTools: Tester component info is being updated.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Select Test Stand Type") 

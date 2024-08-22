@@ -12,13 +12,14 @@ sys.path.append("..")
 from PythonFiles.GUIWindow import GUIWindow
 import socket
 import logging
+import logging.handlers
 import yaml
 
 
 # Creates a main function to initialize the GUI
 def main():
     
-    logging.FileHandler(guiLogPath + "visual_gui.log", mode='a')
+    logging.handlers.TimedRotatingFileHandler(guiLogPath + "visual_gui.log", when="midnight", interval=1)
     
     filepath = os.path.dirname(os.path.abspath(__file__))
     print( "Current path is: %s" % (filepath))

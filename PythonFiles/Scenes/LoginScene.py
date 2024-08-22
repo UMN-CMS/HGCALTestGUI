@@ -146,7 +146,6 @@ class LoginScene(ttk.Frame):
             self.data_holder.set_user_ID(self.user_selected.get())
             # Changes frame to scan_frame
             _parent.set_frame_scan_frame()
-            logger.info("LoginScene: Submit button was selected. End of method")
         else:
             pass
     
@@ -165,7 +164,6 @@ class LoginScene(ttk.Frame):
 
     # A function to pack the submit button
     def show_submit_button(self):
-        logger.info("LoginScene: User has been selected.")
         self.btn_submit.config(state = 'active')
     
     #################################################

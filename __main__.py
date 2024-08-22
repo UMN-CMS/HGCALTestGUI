@@ -26,6 +26,7 @@ from PythonFiles.utils.LocalHandler import LocalHandler
 from PythonFiles.utils.SSHHandler import SSHHandler
 import sys
 import logging
+import logging.handlers
 import yaml
 from pathlib import Path
 
@@ -33,7 +34,7 @@ from pathlib import Path
 logger = logging.getLogger('HGCALTestGUI')
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
-fh = logging.FileHandler(guiLogPath)
+fh = logging.handlers.TimedRotatingFileHandler(guiLogPath, when="midnight", interval=1)
 fh.setLevel(logging.DEBUG)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
@@ -115,6 +116,7 @@ def run(board_cfg, curpath, host_cfg):
         conn_trigger_Handler.close()
     except:
         print("Pipe close is unnecessary.")
+        logger.debug("Pipe close is unnecessary.")
 
     try:
         # Cleans up the SUBClient process
@@ -122,6 +124,7 @@ def run(board_cfg, curpath, host_cfg):
         process_Handler.kill()
     except:
         print("Terminate is unnecessary.")
+        logger.debug("Terminate is unnecessary.")
         pass
 
 
@@ -138,8 +141,8 @@ if __name__ == "__main__":
         if sys.argv[1] is not None:
             config_path = sys.argv[1]
             print(config_path)
+            logger.debug(config_path)
     except:
-        print("Opting for custom configuration setup called below")
         config_path = None
 
     try:
@@ -152,10 +155,13 @@ if __name__ == "__main__":
             host_path = None
 
     curpath = Path(__file__).parent.absolute()
-    print( "Current path is: %s" % (curpath))
+    print("Current path is: %s" % curpath)
+    logger.debug("Current path is: %s" % curpath)
 
     node = socket.gethostname()
     print(socket.gethostname())
+    logger.debug(socket.gethostname())
+
     ld_wagon_computers = [
         "cmsfactory4.cmsfactorynet",
         "cmsfactory5.cmsfactorynet",
