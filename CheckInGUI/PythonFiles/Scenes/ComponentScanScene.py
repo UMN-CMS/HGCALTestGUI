@@ -74,8 +74,8 @@ class ComponentScanScene(ttk.Frame):
 
         self.ent_full.config(state = 'normal')
 
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
+        print("\nComponentScanScene: Beginning scan...\n")
+        logging.info("ComponentScanScene: Beginning scan...")
         self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -100,15 +100,15 @@ class ComponentScanScene(ttk.Frame):
                 break
 
             elif self.EXIT_CODE:
-                logging.info("ScanScene: Exit code received. Terminating processes.")
+                logging.info("ComponentScanScene: Exit code received. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logging.info("ScanScene: Processes terminated successfully.")
+                logging.info("ComponentScanScene: Processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)
             
-        logging.info("ScanScene: Scan complete.")
+        logging.info("ComponentScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -121,7 +121,7 @@ class ComponentScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logging.info("ScanScene: Frame has been created.")
+        logging.info("ComponentScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
@@ -297,7 +297,7 @@ class ComponentScanScene(ttk.Frame):
     # Function for the log out button
     def btn_logout_action(self, _parent):
         
-        logging.debug("ScanScene: Closing the scanner from the logout button action.")
+        logging.debug("ComponentScanScene: Closing the scanner from the logout button action.")
         self.EXIT_CODE = 1 
         self.listener.terminate()
         self.scanner.terminate()
@@ -354,10 +354,10 @@ class ComponentScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logging.info("ScanScene: Terminating scanner proceses.")
+        logging.info("ComponentScanScene: Terminating scanner proceses.")
         try:
             self.scanner.kill()
             self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ScanScene: Processes could not be terminated.")
+            logging.info("ComponentScanScene: Processes could not be terminated.")

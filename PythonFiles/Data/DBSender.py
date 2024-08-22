@@ -1,6 +1,7 @@
 import requests
 import json
 import socket
+import logging
 # from read_barcode import read_barcode
 
 # python scripts run from here are on the machine that contains the server and database
@@ -73,7 +74,7 @@ class DBSender():
                 # both Wagon and Engine scripts run the command for both databases
                 r = requests.post('{}/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
-                print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logging.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
 
         # If not using the database, use this...

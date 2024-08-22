@@ -99,10 +99,14 @@ class DataHolder():
 
         self.engine_tester_info = {
                 'ZCU': None,
-                'East Interposer': None,
-                'West Interposer': None,
                 'Test Bridge 1': None,
                 'Test Bridge 2': None,
+                'VTRX 1': None,
+                'VTRX 2': None,
+                'HD Interposer': None,
+                'East Interposer': None,
+                'West Interposer': None,
+                'Major Type': None,
                 }
 
        
@@ -168,9 +172,10 @@ class DataHolder():
         is_new_board = self.data_sender.is_new_board(full)
         
         if is_new_board == True:
-            pass
+            logger.info("DataHolder: Board is new")
 
         else:
+            logger.info("DataHolder: Board is not new")
             # if the board is not new, this returns the previous testing information on the board
             prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
@@ -203,7 +208,7 @@ class DataHolder():
             self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
-        logger.info("DataHolder: Full ID has been set.")
+        logger.info("DataHolder: Full ID has been set to {}.".format(full))
 
 
     def update_location(self, full):
@@ -219,35 +224,44 @@ class DataHolder():
     #################################################
 
     def attempt_admin_access(self, password):
+        logger.info("AdminScene: Attempting admin access.")
         admin_connected = self.data_sender.attempt_admin_access(password)
         if admin_connected == True:
+            logger.info("AdminScene: Admin access was successful")
             self.admin = True
             self.password = password
+        else:
+            logger.info("AdminScene: Admin access was unsuccessful")
 
     def upload_test_stand_info(self):
         if self.tester_type == 'Wagon':
             info_dict = {'kria': self.wagon_tester_info['Kria'],
-                    'tester': self.wagon_tester_info['Tester'],
-                    'interposer': self.wagon_tester_info['Interposer'],
-                    'interposer_type': self.wagon_tester_info['interposer_type'],
-                    'wheel_1': self.wagon_tester_info['Wagon Wheel 1'],
-                    'wheel_2': self.wagon_tester_info['Wagon Wheel 2'],
-                    'wheel_3': self.wagon_tester_info['Wagon Wheel 3'],
-                    'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
-                    'test_stand': self.data_dict['test_stand'],
-                    }
+                'tester': self.wagon_tester_info['Tester'],
+                'interposer': self.wagon_tester_info['Interposer'],
+                'interposer_type': self.wagon_tester_info['interposer_type'],
+                'wheel_1': self.wagon_tester_info['Wagon Wheel 1'],
+                'wheel_2': self.wagon_tester_info['Wagon Wheel 2'],
+                'wheel_3': self.wagon_tester_info['Wagon Wheel 3'],
+                'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
+                'test_stand': self.data_dict['test_stand'],
+                }
             wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
             db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
             info_dict = {'ZCU': self.engine_tester_info['ZCU'],
-                    'east_interposer': self.engine_tester_info['East Interposer'],
-                    'west_interposer': self.engine_tester_info['West Interposer'],
-                    'bridge_1': self.engine_tester_info['Test Bridge 1'],
-                    'bridge_2': self.engine_tester_info['Test Bridge 2'],
+                'east_interposer': self.engine_tester_info['East Interposer'],
+                'west_interposer': self.engine_tester_info['West Interposer'],
+                'hd_interposer': self.engine_tester_info['HD Interposer'],
+                'bridge_1': self.engine_tester_info['Test Bridge 1'],
+                'bridge_2': self.engine_tester_info['Test Bridge 2'],
+                'vtrx_1': self.engine_tester_info['VTRX 1'],
+                'vtrx_2': self.engine_tester_info['VTRX 2'],
                 'test_stand': self.data_dict['test_stand'],
                 }
             engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
             db_url = engine_cfg['DBInfo']['baseURL']
+
+        logger.info("DataHolder: Setting tester configuration")
         self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
 
     def set_component_info(self, label, working, comments):
@@ -261,6 +275,7 @@ class DataHolder():
             engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
             db_url = engine_cfg['DBInfo']['baseURL']
 
+        logger.info("DataHolder: Setting tester component information")
         self.data_sender.set_component_info(info_dict, db_url)
 
     #################################################
@@ -311,9 +326,7 @@ class DataHolder():
             print(str(info_dict) + '\r\n')
             json.dump(info_dict, outfile)
 
-        print(index)
-        print(self.index_gui_to_db[self.data_dict['tests_run'][index]])
-        #self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
+        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
@@ -468,7 +481,7 @@ class DataHolder():
 
             self.total_test_num = self.total_test_num + 1
 
-        logger.info("DataHolder: DataHolder Information has been reset for a new test.")        
+        logger.info("DataHolder: DataHolder Information has been reset for a new board.")        
 
 
     ################################################

@@ -28,6 +28,7 @@ class LocalHandler:
         while True:
             print("New PUB proc")
             print("waiting for trigger request")
+            logger.info("New PUB proc")
             request = json.loads(conn_trigger.recv())
             process_PUB = mp.Process(target = self.task_local, args=(conn_pub,q))
             process_PUB.start()
@@ -38,14 +39,17 @@ class LocalHandler:
                 test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
                 print("New test proc")
+                logger.info("New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(conn_test, gui_cfg, desired_test, test_info))
                 self.process_test.start()
 
                 # Hold until test finish
                 print("Joining test proc")
+                logger.info("Joining test proc")
                 self.process_test.join()
 
                 print("Terminate PUB proc")
+                logger.info("Terminate PUB proc")
                 process_PUB.terminate()
 
 
@@ -54,39 +58,28 @@ class LocalHandler:
             conn_test.close()
 
         except Exception as e:
-            print("PUB and test pipe could not be closed: {}".format(e))
+            logging.error("PUB and test pipe could not be closed: {}".format(e))
 
         try:
             process_PUB.terminate()
         except Exception as e:
-            print("PUB and test process could not be terminated: {}".format(e))
+            logging.error("PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, conn, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
         #try:
         while 1 > 0:
             prints = conn.recv()
-            logging.info("Print statement received.")
-            logging.info("Testing if print statement is 'Done.'")
             if prints == "Done.":
-                logging.info("String variable prints = 'Done.'")
                 prints = 'print ; ' + str(prints)
-                logging.info("'print' topic added to the prints variable.")
                 q.put(prints)
-                logging.info("Sent final print statement.")
-                logging.info("Waiting for JSON on Pipe")
+
                 json = queue.get()
-                logging.info("JSON receieved.")
                 json = 'JSON ; ' + str(json)
-                logging.info("JSON topic added to json string")
                 q.put(str(json))
-                logging.info("JSON sent.")
             else:
                 prints = 'print ; ' + str(prints)
-                logging.info(prints)
-                logging.info("'print' topic added to prints variable.")
                 q.put(prints)
-                logging.info("Sent print statement.")
             
         logging.info("Loop has been broken.")
         #except:
