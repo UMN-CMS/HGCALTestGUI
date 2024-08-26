@@ -121,12 +121,19 @@ class DBSender():
             else:
                 raise "Image Directory is too full, please upload and delete images."
             
+
     def upload_local_board(self, path, full_id, view)
         image = Image.open(path)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
         encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
+
+        lines = r.text.split('\n')
+
+        for l in lines:
+            if 'File received successfully!' in l:
+                os.remove(path)
 
 
 
