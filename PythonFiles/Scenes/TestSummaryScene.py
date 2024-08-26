@@ -126,7 +126,7 @@ class TestSummaryScene(ttk.Frame):
         ##########
 
         self.mycanvas = tk.Canvas(self)
-        self.viewingFrame = ttk.Frame(self.mycanvas, width = 802)
+        self.viewingFrame = ttk.Frame(self.mycanvas)
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
@@ -135,7 +135,7 @@ class TestSummaryScene(ttk.Frame):
     
 
         self.canvas_window = self.mycanvas.create_window((0,0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
-        self.viewingFrame.pack(fill='both', expand=True)
+        #self.viewingFrame.pack(fill='both', expand=True)
 
 
         self.viewingFrame.columnconfigure(0, weight = 1)
@@ -143,14 +143,12 @@ class TestSummaryScene(ttk.Frame):
         self.viewingFrame.columnconfigure(2, weight = 1)
         self.viewingFrame.columnconfigure(3, weight = 1)
         self.rowconfigure(3, weight = 1)
-        """
-        self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
-        self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
-        """
+
+        self.mycanvas.bind('<Configure>', self.onCanvasConfigure)
+        self.viewingFrame.bind('<Configure>', self.onFrameConfigure)
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
-        #self.onFrameConfigure(None)
  
 
         
@@ -234,30 +232,17 @@ class TestSummaryScene(ttk.Frame):
         self.create_retest_more_info_btns(parent)
         
 
-        #self.viewingFrame.update_idletasks()
-        #self.mycanvas.update_idletasks()        
-
-        new_width = self.viewingFrame.winfo_reqwidth()
-        new_height = self.viewingFrame.winfo_reqheight()
-
-        self.mycanvas.configure(width = new_width, height = new_height)      
-
-        #self.scrollerFrame.grid(row = 2, column = 1, columnspan = 4)
-
         logger.debug("TestSummaryScene: Table finished update.")     
 
     #################################################
     #################################################
 
     def onFrameConfigure(self, event):
-        '''Reset the scroll region to encompass the inner frame'''
-        self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
-    """
+        self.mycanvas.configure(scrollregion=self.mycanvas.bbox('all'))
+
     def onCanvasConfigure(self, event):
-        '''Reset the canvas window to encompass inner frame when required'''
-        canvas_width = event.width
-        self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
-    """
+        self.mycanvas.itemconfig(self.canvas_window, width=event.width)
+
 
     def onMouseWheel(self, event):                                                  # cross platform scroll wheel event
         if event.num == 4:
