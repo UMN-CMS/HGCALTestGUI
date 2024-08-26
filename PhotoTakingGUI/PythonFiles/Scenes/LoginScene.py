@@ -98,7 +98,7 @@ class LoginScene(ttk.Frame):
             )
 
 
-        self.btn_submit.pack(pady = (0,25))
+        self.btn_submit.pack(pady = (0,20))
         self.btn_submit.config(state = 'disabled', width = 12)
         
         # Creating the add user button
@@ -107,8 +107,15 @@ class LoginScene(ttk.Frame):
             text="Add User",
             command= lambda:  self.btn_add_user_action(parent)
             )
-        self.btn_add_user.pack(pady=50)
+        self.btn_add_user.pack(pady=20)
         self.btn_add_user.config(width = 12)
+
+        self.btn_upload_photos = ttk.Button(
+            self,
+            text="Upload Locally Saved Images",
+            command = lambda: self.btn_upload_action(parent)
+            )
+        self.btn_upload_photos.pack(pady=20)
 
         # Creating the help button
         self.btn_help = ttk.Button(
@@ -117,7 +124,7 @@ class LoginScene(ttk.Frame):
             command = lambda: self.help_action(parent)
         )   
         self.btn_help.config(width = 12)
-        self.btn_help.pack(anchor = 's', padx = 10, pady = 25) 
+        self.btn_help.pack(anchor = 's', padx = 10, pady = 20) 
 
 
         # Forces frame to stay the size of the main_window
@@ -154,7 +161,9 @@ class LoginScene(ttk.Frame):
 
     #################################################
 
-    # To be given commands later, for now it is a dummy function
+    def btn_upload_action(self, _parent):
+        _parent.set_frame_upload_local_photos()
+
     def btn_add_user_action(self, _parent):
         _parent.set_frame_add_user_frame()
     

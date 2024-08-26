@@ -144,6 +144,9 @@ class DataHolder():
         text = self.data_sender.update_location(full, 'Visual Inspection')
         print(text)
 
+    def upload_local_boards(self, board_list):
+        for path, sn, view in board_list:
+            self.data_sender.upload_local_board(path, sn, view)
 
     ##################################################
 
