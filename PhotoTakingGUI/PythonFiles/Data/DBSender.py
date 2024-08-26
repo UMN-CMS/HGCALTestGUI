@@ -2,6 +2,8 @@ import requests
 import json
 import socket
 import base64
+import os
+from PIL import Image
 
 from io import BytesIO
 # from read_barcode import read_barcode
@@ -106,10 +108,26 @@ class DBSender():
                 saved_image = True
 
         if saved_image == False:
-            print("Failed to save image, opting for local file storage...")
-            image.save("{}/PythonFiles/Images/{}_{}.png".format(self.main_path, full_id, view))
-            print("Image saved to local disk successfully.")
-                
+            total_size = 0
+            for dirpath, dirnames, filenames in os.walk("{}/PythonFiles/Images".format(self.main_path)):
+                for f in filenames:
+                    fp = os.path.join(dirpath, f)
+                    total_size += os.path.getsize(fp)
+            print("Image directory size is %s megabytes" % (total_size/1000000))
+            if total_size < 5000000000:
+                print("Failed to save image, opting for local file storage...")
+                image.save("{}/PythonFiles/Images/{}_{}.png".format(self.main_path, full_id, view))
+                print("Image saved to local disk successfully.")
+            else:
+                raise "Image Directory is too full, please upload and delete images."
+            
+    def upload_local_board(self, path, full_id, view)
+        image = Image.open(path)
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        encodedImage = base64.b64encode(buffered.getvalue())
+        r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
+
 
 
     # Returns a dictionary of booleans
