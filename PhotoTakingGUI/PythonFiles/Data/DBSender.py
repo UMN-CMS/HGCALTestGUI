@@ -102,6 +102,7 @@ class DBSender():
 
         lines = r.text.split('\n')
 
+        saved_image = False
         for l in lines:
             if 'File received successfully!' in l:
                 saved_image = True
