@@ -107,6 +107,14 @@ Test:
     name: Fast Command quality
     required: 1
 
+  - TestClass: TestEyeOpening
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: Test the size of the eye opening to determine if it sufficiently large
+    desc_short: Check size of eye opening
+    name: Eye-Opening Size
+    required: 1
+
   - TestClass: TestElinkUp
     TestPath: /home/test_server/test_code/engine_tests
     TestScript: test_links.py
