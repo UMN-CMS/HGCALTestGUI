@@ -112,7 +112,7 @@ Test:
     TestScript: test_links.py
     desc_long: Test the size of the eye opening to determine if it sufficiently large
     desc_short: Check size of eye opening
-    name: Eye-Opening Size
+    name: Eye Opening
     required: 1
 
   - TestClass: TestElinkUp
