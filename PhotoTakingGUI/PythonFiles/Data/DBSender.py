@@ -122,7 +122,7 @@ class DBSender():
                 raise "Image Directory is too full, please upload and delete images."
             
 
-    def upload_local_board(self, path, full_id, view)
+    def upload_local_board(self, path, full_id, view):
         image = Image.open(path)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
