@@ -1,6 +1,5 @@
 %define version %{getenv:GUI_VERSION}
 %define release %{getenv:GUI_RELEASE}
-
 Name:         HGCALTestGUI
 
 Version:	%{version}
@@ -29,6 +28,7 @@ cp Configs/LD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/HD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/LD_Wagon_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp hgcal_test_gui $RPM_BUILD_ROOT/%{_bindir}
+cd $RPM_BUILD_ROOT/opt/HGCALTestGUI
 
 %clean
 rm -rf $RPM_BUILD_ROOT

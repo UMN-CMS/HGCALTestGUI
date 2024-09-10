@@ -1,3 +1,5 @@
+shopt -s globstar
+
 : ${BUILDDIR:=BUILD}
 : ${GUI_VERSION:=0.0.1}
 : ${GUI_RELEASE:=NORELEASE}
@@ -7,14 +9,23 @@ BNAME=$(basename $CWD)
 
 rm -fr "$BUILDDIR"
 mkdir -p "${BUILDDIR}"/{RPMS,SOURCES,SPECS,SRPMS,BUILD}
-pushd $PWD
-cd ..
-tar cf $CWD/$BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar \
-    $BNAME/PythonFiles $BNAME/__main__.py 
 
-popd
-tar uf $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar \
-    Configs
+rm -rf HGCALTestGUI
+mkdir HGCALTestGUI
+cp __main__.py HGCALTestGUI
+cp -r PythonFiles HGCALTestGUI
+
+for f in HGCALTestGUI/**/*.py; do
+    sed -i '1,1{/^#!/d}' "$f"
+done
+
+tar cf \
+    $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar \
+    -X $CWD/.gitignore \
+    HGCALTestGUI/PythonFiles HGCALTestGUI/__main__.py  
+
+tar uf $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar Configs
+tar uf $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar requirements.txt
 
 tmp=$(mktemp -d)
 pushd $PWD
@@ -38,6 +49,8 @@ popd
 gzip $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar 
 
 cp gui.spec $BUILDDIR/SPECS
+
+
 
 
 
