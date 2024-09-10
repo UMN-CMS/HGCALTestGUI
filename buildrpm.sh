@@ -37,7 +37,7 @@ DEFAULT_CONFIG_PATH="/etc/HGCALTestGUI/active.yaml"
 if [[ -e \$DEFAULT_CONFIG_PATH ]]; then
    CONFIGFILE="\$DEFAULT_CONFIG_PATH"
 else
-   CONFIGFILE="/etc/HGCALTestGui/\$1_cfg.yaml"
+   CONFIGFILE="/etc/HGCALTestGUI/\$1_cfg.yaml"
 fi
 python3 /opt/HGCALTestGUI/__main__.py "\$CONFIGFILE"
 
