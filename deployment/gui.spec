@@ -23,11 +23,15 @@ HGCAL Test GUI Build
 mkdir -p $RPM_BUILD_ROOT/opt
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/HGCALTestGUI
 cp -r HGCALTestGUI $RPM_BUILD_ROOT/opt
 cp Configs/LD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/HD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/LD_Wagon_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp hgcal_test_gui $RPM_BUILD_ROOT/%{_bindir}
+cp hgcal_test_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
+cp application_icon.desktop $RPM_BUILD_ROOT/%{_datadir}/HGCALTestGUI
 cd $RPM_BUILD_ROOT/opt/HGCALTestGUI
 
 %clean
@@ -35,5 +39,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 /opt/HGCALTestGUI
-%{_sysconfdir}/HGCALTestGUI
+%{_sysconfdir}/HGCALTestGUI/
 %{_bindir}/hgcal_test_gui
+%{_datadir}/applications/hgcal_test_gui.desktop
+%{_datadir}/HGCALTestGUI/
