@@ -6,7 +6,7 @@ Version:	%{version}
 Release:	%{release}
 
 Summary:        HGCAL Testing GUI
-BuildArch:      noarch
+BuildArch:      x86_64
 
 License:       GPL
 Source0:       HGCALTestGUI-%{version}-%{release}.tar.gz
