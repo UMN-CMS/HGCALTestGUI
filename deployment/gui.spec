@@ -11,13 +11,19 @@ BuildArch:      noarch
 License:       GPL
 Source0:       HGCALTestGUI-%{version}-%{release}.tar.gz
 
-Requires:      python3
+Requires:      python3 zebra-scanner-corescanner 
+BuildRequires: zebra-scanner-corescanner zebra-scanner-devel zebra-scanner-javapos
 
 %description
 HGCAL Test GUI Build
 
 %prep
 %setup -q -n HGCALTestGUI-%{version}-%{release} -c
+
+%build
+cd HGCALTestGUI/PythonFiles/Scanner
+make clean
+make
 
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
@@ -31,7 +37,7 @@ cp Configs/HD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/LD_Wagon_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp hgcal_test_gui $RPM_BUILD_ROOT/%{_bindir}
 cp hgcal_test_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
-cp application_icon.desktop $RPM_BUILD_ROOT/%{_datadir}/HGCALTestGUI
+cp application_icon.png $RPM_BUILD_ROOT/%{_datadir}/HGCALTestGUI
 cd $RPM_BUILD_ROOT/opt/HGCALTestGUI
 
 %clean

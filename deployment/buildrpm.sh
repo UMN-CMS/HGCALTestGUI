@@ -58,11 +58,16 @@ chmod a+x hgcal_test_gui
 tar uf $CWD/$BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar hgcal_test_gui
 tar uf $CWD/$BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar hgcal_test_gui.desktop
 popd
-tar uf $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar deployment/application_icon.png
+
+pushd $PWD
+echo "$PWD"
+cd deployment
+tar uf $CWD/$BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar application_icon.png
+popd
 
 gzip $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar 
 
-cp gui.spec $BUILDDIR/SPECS
+cp deployment/gui.spec $BUILDDIR/SPECS
 
 
 
