@@ -12,7 +12,7 @@ License:       GPL
 Source0:       HGCALTestGUI-%{version}-%{release}.tar.gz
 
 Requires:      python3 zebra-scanner-corescanner 
-BuildRequires: zebra-scanner-corescanner zebra-scanner-devel zebra-scanner-javapos
+BuildRequires: zebra-scanner-corescanner, zebra-scanner-devel
 
 %description
 HGCAL Test GUI Build
