@@ -19,6 +19,11 @@ HGCAL Test GUI Build
 %prep
 %setup -q -n HGCALTestGUI-%{version}-%{release} -c
 
+%build
+cd HGCALTestGUI/PythonFiles/Scanner
+make clean
+make
+
 %install
 mkdir -p $RPM_BUILD_ROOT/opt
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
