@@ -1,9 +1,10 @@
 ---
 DBInfo:
+  admin: FactoryInserter
   baseURL: http://cmslab1.spa.umn.edu/Factory/WagonDB
-  inserter: WagonDBInserter
-  name: WagonDB
-  reader: WagonDBReadUser
+  inserter: FactoryInserter
+  name: WagonDB_PRO
+  reader: FactoryReadUser
   use_database: true
 GUIType: Wagon
 SerialCheckSafe: true

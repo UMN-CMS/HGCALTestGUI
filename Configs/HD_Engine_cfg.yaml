@@ -11,11 +11,11 @@ Board_type:
     type_sn: '100310'
 
 DBInfo:
-  admin: EngineDBInserter
+  admin: FactoryInserter
   baseURL: http://cmslab1.spa.umn.edu/Factory/EngineDB
-  inserter: EngineDBInserter
-  name: EngineDB
-  reader: EngineDBReadUser
+  inserter: FactoryInserter
+  name: EngineDB_PRO
+  reader: FactoryReadUser
   use_database: true
 
 
