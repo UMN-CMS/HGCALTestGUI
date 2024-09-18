@@ -63,7 +63,7 @@ class GUIWindow():
         self.master_window.title("HGCAL Test Window")
 
         # Creates the size of the window
-        self.master_window.geometry("1300x800+25+100")
+        self.master_window.geometry("1400x900+25+100")
         self.master_window.pack_propagate(1) 
 
         #resizing master_frame, keeping sidebar same width
@@ -85,11 +85,11 @@ class GUIWindow():
 
 
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=1300-225, height=800)
+        self.master_frame = tk.Frame(self.master_window, width=1400-225, height=900)
         self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
 
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 225, height=800)
+        sidebar_frame = tk.Frame(self.master_window, width = 225, height=900)
         sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
 
 
