@@ -171,7 +171,7 @@ class SidebarScene(ttk.Frame):
             #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row = 14, pady = btn_pady)
+        self.btn_summary.grid(column = 0, row = 4 + self.data_holder.getNumTest(), pady = btn_pady)
 
         
         self.report_btn = ttk.Button(
@@ -183,7 +183,7 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.report_bug(_parent)
             )
-        self.report_btn.grid(column = 0, row = 15, pady = (btn_pady, 235))
+        self.report_btn.grid(column = 0, row = 5 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
 
 
