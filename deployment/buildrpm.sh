@@ -48,7 +48,7 @@ EOF
 cat <<EOF > hgcal_test_gui.desktop
 [Desktop Entry]
 Type=Application
-Terminal=False
+Terminal=True
 Name=HGCAL Test GUI
 Icon=/usr/share/HGCALTestGUI/application_icon.png
 Exec=/usr/bin/hgcal_test_gui 
