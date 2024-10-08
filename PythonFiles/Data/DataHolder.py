@@ -3,6 +3,7 @@ import json, logging, socket, PythonFiles, copy, os
 import requests
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
+from pathlib import Path
 import yaml
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
@@ -16,6 +17,8 @@ class DataHolder():
 
     # List of the variables being held by data holder
     def __init__(self, gui_cfg):
+
+        (Path.home() / "JSONFiles").mkdir(exist_ok=True, parents=True)
         
         # Object for taking care of instantiation for different test types
         self.gui_cfg = gui_cfg
@@ -293,10 +296,10 @@ class DataHolder():
             if self.data_lists['test_results'][i]:
                 temp = 1
             info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
-            with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
+            with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
                 print(info_dict)
                 json.dump(info_dict, outfile)
-            self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]))
+            self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())))
             #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
         logger.info("DataHolder: All results sent to database.")
     #################################################
@@ -309,7 +312,7 @@ class DataHolder():
         file_path_list = []
 
         for name in test_names:
-            file_path_list.append("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], name.replace(" ", "").replace("/", "")))
+            file_path_list.append("{}/JSONFiles/Current_{}_JSON.json".format(str(Path.home().absolute()), name.replace(" ", "").replace("/", "")))
             
         # Converts self.test_results[index] into 1/0 instead of bool       
         temp = 0
@@ -322,11 +325,11 @@ class DataHolder():
         else:
             info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
-        with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
+        with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
             print(str(info_dict) + '\r\n')
             json.dump(info_dict, outfile)
 
-        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), file_path_list[index])
+        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
     #################################################
@@ -356,7 +359,7 @@ class DataHolder():
 
         test_type = test_names[self.current_test_idx]
 
-        with open("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], test_names[self.current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
+        with open("{}/JSONFiles/Current_{}_JSON.json".format(str(Path.home().absolute()), test_names[self.current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
             json.dump(json_dict['data'], file)
         self.data_dict['test{}_completed'.format(self.current_test_idx)] = True
         self.data_dict['test{}_pass'.format(self.current_test_idx)] = json_dict["pass"]
