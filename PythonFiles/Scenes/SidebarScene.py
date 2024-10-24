@@ -275,20 +275,20 @@ class SidebarScene(ttk.Frame):
 
     def restart_server(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
-        r = requests.get('http://{}/stop/server'.format(handler['serverpath']))
+        r = requests.get('http://{}:8899/stop/server'.format(handler['remoteip']))
         print(r.text)
         time.sleep(1)
-        r = requests.get('http://{}/start/server'.format(handler['serverpath']))
+        r = requests.get('http://{}:8899/start/server'.format(handler['remoteip']))
         print(r.text)
 
     def reload_firmware(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
-        r = requests.get('http://{}/start/reloadfw'.format(handler['serverpath']))
+        r = requests.get('http://{}:8899/start/reloadfw'.format(handler['remoteip']))
         print(r.text)
 
     def reset_power(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
-        r = requests.get('http://{}/start/cycle_kconn_pwr'.format(handler['serverpath']))
+        r = requests.get('http://{}:8899/start/cycle_kconn_pwr'.format(handler['remoteip']))
         print(r.text)
 
     def btn_test_action(self, _parent, test_idx):
