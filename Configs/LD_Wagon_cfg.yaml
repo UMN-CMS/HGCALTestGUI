@@ -10,7 +10,7 @@ GUIType: Wagon
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
-TestHandler: {name: ZMQ, localip: <localip>, remoteip: 192.168.140.22, username: <username>, serverpath: "cmstester5:8899", serverscript: <serverscript>}
+TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
 Test:
 - TestClass: ADC
