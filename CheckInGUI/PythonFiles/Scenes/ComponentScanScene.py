@@ -39,6 +39,8 @@ class ComponentScanScene(ttk.Frame):
         self.create_style(parent)
 
         self.EXIT_CODE = 0
+        
+        self.is_checking = False
         # Runs the initilize_GUI function, which actually creates the frame
         # params are the same as defined above
         self.initialize_GUI(parent, master_frame)
@@ -55,60 +57,27 @@ class ComponentScanScene(ttk.Frame):
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
     # can see more scanner documentation in the Visual Inspection GUI
-    def scan_QR_code(self, master_window):
+    def check_for_ldo(self):
+        if not self.is_checking:
+            return
 
-        #self.EXIT_CODE = 0
-        
-        self.ent_full.config(state = 'normal')
-        self.ent_full.delete(0,END)
-        self.master_window = master_window
-        self.hide_rescan_button()
-
-        #sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
-
-        from ..Scanner.python.get_barcodes import scan, listen, parse_xml
-
-        manager = mp.Manager()
-        full_id = manager.list()
-        print(full_id)
-
-        self.ent_full.config(state = 'normal')
-
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
-        self.scanner = scan(self.parent.main_path)
-        self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
-
-        self.listener.start()
-               
-        while 1 > 0:
-
-            try:
-                self.master_window.update()
-            except:
-                pass
-            if not len(full_id) == 0:
-                self.data_holder.set_full_ID( parse_xml(full_id[0]))
-
-                self.listener.terminate()
-                self.scanner.terminate()
-               
-                self.ent_full.delete(0,END)
-                self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
-                self.ent_full.config(state = 'disabled')
-                self.show_rescan_button()
-                break
-
-            elif self.EXIT_CODE:
-                logging.info("ScanScene: Exit code received. Terminating processes.")
-                self.listener.terminate()
-                self.scanner.terminate()
-                logging.info("ScanScene: Processes terminated successfully.")
-                break
-            else:
-                time.sleep(.01)
+        got_code = self.data_holder.check_for_ldo()
+        if got_code:
+            self.stop()
+        else:
+            self.master_window.after(1, self.check_for_ldo())
             
-        logging.info("ScanScene: Scan complete.")
+
+
+    def start(self):
+        self.is_checking = True
+        self.master_window.after(1, self.check_for_ldo())
+
+
+    def stop(self, master_window):
+        self.is_checking = False
+        self.btn_submit_action(self.parent)
+
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -146,23 +115,24 @@ class ComponentScanScene(ttk.Frame):
         # creates a Label Variable, different customization options
         self.lbl_check = ttk.Label(
             master = Scan_Board_Prompt_Frame,
-            text = 'Scan Engine Components',
+            text = 'Scan the LDO',
             font = ('Arial', 40)
         )
         self.lbl_check.pack(padx = 50, pady = 50)
  
         self.lbl_scan = ttk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Scan the LDO",
+            text = "Scan QR Code to open Webapp",
             font = ('Arial', 24)
         )
         self.lbl_scan.pack(padx = 50, pady = 25)
 
+        qr_code = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        qr_code = iTK.PhotoImage(qr_code)
         # Create a label to label the entry box
         lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
-            text = "Full ID:",
-            font = ('Arial', 24)
+            image = qr_code
         )
         lbl_full.pack(padx = 20)
 
@@ -189,21 +159,10 @@ class ComponentScanScene(ttk.Frame):
             sv=user_text: self.show_submit_button()
             )
 
-        # Rescan button creation
-        self.btn_rescan = ttk.Button(
-            Scan_Board_Prompt_Frame,
-            text="Rescan",
-            #padx = 20,
-            #pady =10,
-            #relief = tk.RAISED,
-            command = lambda:  self.scan_QR_code(self.master_window)
-            )
-        self.btn_rescan.pack(pady=30)
-
         # Submit button creation
         self.btn_submit = ttk.Button(
             Scan_Board_Prompt_Frame,
-            text="Submit",
+            text="Cancel",
             #padx = 20,
             #pady = 10,
             #relief = tk.RAISED,
@@ -280,7 +239,7 @@ class ComponentScanScene(ttk.Frame):
         
         self.EXIT_CODE = 1 
         
-        self.data_holder.add_component(self.ent_full.get())
+        #self.data_holder.add_component(self.ent_full.get())
 
         _parent.set_frame_inspection_frame()
 

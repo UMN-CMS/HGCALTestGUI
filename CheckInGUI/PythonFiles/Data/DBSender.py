@@ -70,8 +70,10 @@ class DBSender():
     # Returns an acceptable list of usernames from the database
     def get_usernames(self):
         if (self.use_database):
-            r = requests.get('{}/get_usernames.py'.format(self.db_url))
+            url = '{}/get_usernames.py'.format(self.db_url)
+            r = requests.get(url)
             lines = r.text.split('\n')
+            print(lines)
 
             begin = lines.index("Begin") + 1
             end = lines.index("End")
@@ -126,7 +128,7 @@ class DBSender():
     
     # Posts a new board with passed in full id
     def add_new_board(self, full, user_id, comments, manufacturer):
-        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer, "location" :"UMN Check-in Station"})
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
         
         try:
@@ -168,17 +170,36 @@ class DBSender():
         begin = lines.index("Begin") + 1
         end = lines.index("End")
 
+        in_id = lines[end+1][1:lines[end+1].find(",")]
+
 
         for i in range(begin, end): 
             
             if lines[i] == "True":
-                return True
+                return True, None
             elif lines[i] == "False":
-                return False
+                return False, in_id
+
+    def check_for_ldo(self, engine):
+        r = requests.post('{}/check_for_ldo.py'.format(self.db_url), data={"full_id": str(full)})
+
+        try:
+            lines = r.text.split('\n')
+
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+
+            for i in range(begin, end):     
+                got_code = lines[i]
+
+        except:
+            got_code = None
+
+        return got_code
+
 
     def get_manufacturers(self):
         r = requests.post('{}/get_manufacturers.py'.format(self.db_url))
- 
         lines = r.text.split('\n')
    
         begin = lines.index("Begin") + 1
