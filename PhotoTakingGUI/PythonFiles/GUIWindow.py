@@ -13,6 +13,7 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
+from PythonFiles.Scenes.LocalUploadScene import LocalUploadScene
 from PythonFiles.update_config import update_config
 from PythonFiles.Scenes.CameraScene import CameraScene
 import logging
@@ -37,7 +38,7 @@ class GUIWindow():
         global master_window
         master_window = tk.Tk()
 
-        master_window.title("Visual Inspection Window")
+        master_window.title("Photo Taking Window")
 
         # Creates the size of the window and disables resizing
         master_window.geometry("1350x850+25+100")
@@ -70,7 +71,7 @@ class GUIWindow():
         self.gui_cfg = GUIConfig(board_cfg)
 
         # Creates the "Storage System" for the data during testing
-        self.data_holder = DataHolder(self.gui_cfg)
+        self.data_holder = DataHolder(self.gui_cfg, self.main_path)
 
         # Creates a static image for camera to replace
         blank_image = "EnginePhoto.png"
@@ -86,6 +87,9 @@ class GUIWindow():
 
         self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
         self.post_scan_frame.grid(row=0, column=0, sticky='nsew')
+
+        self.local_upload_frame = LocalUploadScene(self, master_frame, self.data_holder)
+        self.local_upload_frame.grid(row=0, column=0, sticky='nsew')
 
         self.login_frame = LoginScene(self, master_frame, self.data_holder)
         self.login_frame.grid(row=0, column=0, sticky='nsew')
@@ -230,6 +234,12 @@ class GUIWindow():
 
     def set_frame_splash_frame(self):
         self.set_frame(self.splash_frame)
+
+    #################################################
+
+    def set_frame_upload_local_photos(self):
+        self.set_frame(self.local_upload_frame)
+        self.local_upload_frame.get_local_boards(self)
 
     #################################################
 

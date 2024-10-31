@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 import json, logging, socket, PythonFiles, copy, os
 import requests
 from PythonFiles.Data.DBSender import DBSender
@@ -12,13 +12,14 @@ class DataHolder():
     #################################################
 
     # List of the variables being held by data holder
-    def __init__(self, gui_cfg):
+    def __init__(self, gui_cfg, main_path):
 
         # Object for taking care of instantiation for different test types
         self.gui_cfg = gui_cfg
+        self.main_path = main_path
 
         # Object that sends information to the database
-        self.data_sender = DBSender(gui_cfg)
+        self.data_sender = DBSender(gui_cfg, main_path)
 
         # dictionary to store data
         self.data_dict = {
@@ -117,7 +118,7 @@ class DataHolder():
         new_cfg = update_config(full)
         self.gui_cfg = new_cfg
         self.data_holder_new_test()
-        self.data_sender = DBSender(self.gui_cfg)
+        self.data_sender = DBSender(self.gui_cfg, self.main_path)
         self.num_modules = int(full[5]) + 1
         logging.info("DataHolder: Full ID has been set.")
 
@@ -143,6 +144,9 @@ class DataHolder():
         text = self.data_sender.update_location(full, 'Visual Inspection')
         print(text)
 
+    def upload_local_boards(self, board_list):
+        for path, sn, view in board_list:
+            self.data_sender.upload_local_board(path, sn, view)
 
     ##################################################
 

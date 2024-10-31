@@ -38,7 +38,7 @@ class PostScanScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        super().__init__(self.master_frame, width = 1300-213, height = 700)
+        super().__init__(self.master_frame, width = 1300-213, height = 800)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -64,7 +64,6 @@ class PostScanScene(ttk.Frame):
         self.create_style(parent)
 
         logger.debug("PostScanScene: Destroying old widgets on the PostScanScene.")
-        print("PostScanScene: Destroying old widgets on the PostScanScene.")
         
         try:
             for widget in self.winfo_children():
@@ -174,7 +173,7 @@ class PostScanScene(ttk.Frame):
                     self.lbl_res.grid(row=2, column=1)
 
             except Exception as e:
-                print(e)
+                logging.error(e)
                 self.lbl_full = ttk.Label(
                         self, 
                         text = 'Error, No Results',

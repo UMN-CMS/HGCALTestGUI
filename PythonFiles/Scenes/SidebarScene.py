@@ -10,7 +10,8 @@ import logging
 import PythonFiles
 import os
 import platform
-
+import requests
+import time
 
 
 
@@ -171,19 +172,41 @@ class SidebarScene(ttk.Frame):
             #font = btn_font,
             command = lambda: self.btn_summary_action(_parent)
             )
-        self.btn_summary.grid(column = 0, row = 14, pady = btn_pady)
+        self.btn_summary.grid(column = 0, row = 4 + self.data_holder.getNumTest(), pady = btn_pady)
 
         
         self.report_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
-            text = 'Report Bug',
+            text = 'Restart Server',
             #height = btn_height,
             width = btn_width,
             #font = ('Kozuka Gothic Pr6N L', 8),
-            command = lambda: self.report_bug(_parent)
+            command = lambda: self.restart_server(_parent)
             )
-        self.report_btn.grid(column = 0, row = 15, pady = (btn_pady, 235))
+        self.report_btn.grid(column = 0, row = 5 + self.data_holder.getNumTest(), pady = btn_pady)
+        
+        self.report_btn = ttk.Button(
+            self.viewingFrame, 
+            #pady = btn_pady,
+            text = 'Reload Firmware',
+            #height = btn_height,
+            width = btn_width,
+            #font = ('Kozuka Gothic Pr6N L', 8),
+            command = lambda: self.reload_firmware(_parent)
+            )
+        self.report_btn.grid(column = 0, row = 6 + self.data_holder.getNumTest(), pady = (btn_pady))
+        
+        self.report_btn = ttk.Button(
+            self.viewingFrame, 
+            #pady = btn_pady,
+            text = 'Reset Power',
+            #height = btn_height,
+            width = btn_width,
+            #font = ('Kozuka Gothic Pr6N L', 8),
+            command = lambda: self.reset_power(_parent)
+            )
+        self.report_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
 
 
@@ -249,6 +272,24 @@ class SidebarScene(ttk.Frame):
 
     def report_bug(self, _parent):
         _parent.report_bug(self)
+
+    def restart_server(self, _parent):
+        handler = _parent.gui_cfg.getTestHandler()
+        r = requests.get('http://{}:8899/stop/server'.format(handler['remoteip']))
+        print(r.text)
+        time.sleep(1)
+        r = requests.get('http://{}:8899/start/server'.format(handler['remoteip']))
+        print(r.text)
+
+    def reload_firmware(self, _parent):
+        handler = _parent.gui_cfg.getTestHandler()
+        r = requests.get('http://{}:8899/start/reloadfw'.format(handler['remoteip']))
+        print(r.text)
+
+    def reset_power(self, _parent):
+        handler = _parent.gui_cfg.getTestHandler()
+        r = requests.get('http://{}:8899/start/cycle_kconn_pwr'.format(handler['remoteip']))
+        print(r.text)
 
     def btn_test_action(self, _parent, test_idx):
         print("\nSideBarScene.btn_test_action.test_idx: ", test_idx)

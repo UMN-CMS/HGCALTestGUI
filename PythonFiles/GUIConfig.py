@@ -78,17 +78,6 @@ class GUIConfig():
 
     ################################
     
-    # Necessary to be stored for the current test
-    # This allows for more advanced test navigation
-
-    def setTestIndex(self, idx):
-        self.current_idx = idx
-
-    def getTestIndex(self):
-        return self.current_idx
-
-    ################################
-    
     # Returns the names for the physical tests from config
     def getPhysicalNames(self):
         try:

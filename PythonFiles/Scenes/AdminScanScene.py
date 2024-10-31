@@ -46,7 +46,7 @@ class AdminScanScene(ttk.Frame):
 
         self.parent = parent
 
-        super().__init__(self.master_frame, width=1300-213, height = 700)
+        super().__init__(self.master_frame, width=1300-213, height = 800)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -89,7 +89,7 @@ class AdminScanScene(ttk.Frame):
 
             self.ent_full.config(state = 'normal')
 
-            logger.info("ScanScene: Beginning scan...")
+            logger.info("AdminScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -114,20 +114,20 @@ class AdminScanScene(ttk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logger.info("ScanScene: Exit code received. Terminating processes.")
+                    logger.info("AdminScanScene: Exit code received. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("ScanScene: Processes terminated successfully.")
+                    logger.info("AdminScanScene: Processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
                 
-            logger.info("ScanScene: Scan complete.")
+            logger.info("AdminScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent):
 
-        logger.info("ScanScene: Frame has been created.")
+        logger.info("AdminScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
@@ -374,14 +374,14 @@ class AdminScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logger.info("ScanScene: Terminating scanner proceses.")
+        logger.info("AdminScanScene: Terminating scanner proceses.")
         try:
             if self.use_scanner:
                 self.scanner.kill()
                 self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logger.info("ScanScene: Processes could not be terminated.")
+            logger.info("AdminScanScene: Processes could not be terminated.")
 
 
 ##########################################################

@@ -32,7 +32,7 @@ class TestSummaryScene(ttk.Frame):
         self.create_style(parent)
         # Call to the super class's constructor
         # Super class is the tk.Frame class
-        super().__init__(master_frame, width=1300-213, height=700)
+        super().__init__(master_frame, width=1300-213, height=800)
         
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
@@ -126,7 +126,7 @@ class TestSummaryScene(ttk.Frame):
         ##########
 
         self.mycanvas = tk.Canvas(self)
-        self.viewingFrame = ttk.Frame(self.mycanvas, width = 802)
+        self.viewingFrame = ttk.Frame(self.mycanvas)
         self.scroller = ttk.Scrollbar(self, orient="vertical", command=self.mycanvas.yview)
         self.mycanvas.configure(yscrollcommand=self.scroller.set)
 
@@ -135,7 +135,7 @@ class TestSummaryScene(ttk.Frame):
     
 
         self.canvas_window = self.mycanvas.create_window((0,0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
-        self.viewingFrame.pack(fill='both', expand=True)
+        #self.viewingFrame.pack(fill='both', expand=True)
 
 
         self.viewingFrame.columnconfigure(0, weight = 1)
@@ -143,14 +143,12 @@ class TestSummaryScene(ttk.Frame):
         self.viewingFrame.columnconfigure(2, weight = 1)
         self.viewingFrame.columnconfigure(3, weight = 1)
         self.rowconfigure(3, weight = 1)
-        """
-        self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
-        self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
-        """
+
+        self.mycanvas.bind('<Configure>', self.onCanvasConfigure)
+        self.viewingFrame.bind('<Configure>', self.onFrameConfigure)
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
-        #self.onFrameConfigure(None)
  
 
         
@@ -234,30 +232,17 @@ class TestSummaryScene(ttk.Frame):
         self.create_retest_more_info_btns(parent)
         
 
-        #self.viewingFrame.update_idletasks()
-        #self.mycanvas.update_idletasks()        
-
-        new_width = self.viewingFrame.winfo_reqwidth()
-        new_height = self.viewingFrame.winfo_reqheight()
-
-        self.mycanvas.configure(width = new_width, height = new_height)      
-
-        #self.scrollerFrame.grid(row = 2, column = 1, columnspan = 4)
-
         logger.debug("TestSummaryScene: Table finished update.")     
 
     #################################################
     #################################################
 
     def onFrameConfigure(self, event):
-        '''Reset the scroll region to encompass the inner frame'''
-        self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
-    """
+        self.mycanvas.configure(scrollregion=self.mycanvas.bbox('all'))
+
     def onCanvasConfigure(self, event):
-        '''Reset the canvas window to encompass inner frame when required'''
-        canvas_width = event.width
-        self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
-    """
+        self.mycanvas.itemconfig(self.canvas_window, width=event.width)
+
 
     def onMouseWheel(self, event):                                                  # cross platform scroll wheel event
         if event.num == 4:
@@ -339,11 +324,14 @@ class TestSummaryScene(ttk.Frame):
 
             self.JSON_popup.grab_set()
             self.JSON_popup.attributes('-topmost', 'true') 
+            self.JSON_popup.grid_rowconfigure(0, weight=1)
+            self.JSON_popup.grid_columnconfigure(0, weight=1)
+            self.JSON_popup.grid_propagate()
 
             # Creating a Frame For Console Output
-            frm_JSON = ttk.Frame(self.JSON_popup, width = 500, height = 300, bg = 'green')
+            frm_JSON = ttk.Frame(self.JSON_popup, width = 500, height = 300)
             frm_JSON.pack_propagate(0)
-            frm_JSON.pack()
+            frm_JSON.grid(row=0, column=0, sticky='nsew')
 
             # Placing an entry box in the frm_console
             self.JSON_entry_box = tk.Text(
@@ -354,6 +342,7 @@ class TestSummaryScene(ttk.Frame):
                 )
             self.JSON_entry_box.pack(anchor = 'center', fill=tk.BOTH, expand=1)
 
+            print(JSON_String)
             current_JSON_file = open(JSON_String)
             current_JSON_data = json.load(current_JSON_file)
 
@@ -369,6 +358,7 @@ class TestSummaryScene(ttk.Frame):
             
             current_JSON_file.close()   
         except Exception as e:
+            print(e)
             logger.debug(e)
             logger.warning("TestSummaryScene: More Info popup has failed to be created.")
 
@@ -397,18 +387,6 @@ class TestSummaryScene(ttk.Frame):
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
         self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], names[test_idx].replace(" ", "").replace("/", "")))
-
-    def btn_more_info1_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_GenRes_JSON.json".format(PythonFiles.__path__[0]))
-
-    def btn_more_info2_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_IDRes_JSON.json".format(PythonFiles.__path__[0]))
-
-    def btn_more_info3_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_IIC_JSON.json".format(PythonFiles.__path__[0]))
-    
-    def btn_more_info4_action(self, _parent):
-        self.create_JSON_popup("{}/JSONFiles/Current_BERT_JSON.json".format(PythonFiles.__path__[0]))
 
     #################################################
 

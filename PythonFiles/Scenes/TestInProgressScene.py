@@ -21,7 +21,7 @@ class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
-        super().__init__(master_frame, width=1300-213, height = 700)
+        super().__init__(master_frame, width=1300-213, height = 800)
 
         self.create_style(parent)
         self.queue = queue
@@ -165,9 +165,9 @@ class TestInProgressScene(ttk.Frame):
                 master_window.update()
                 if not queue.empty():    
                     information_received = True
-                    logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
                     print(text)
+                    logger.info(text)
                     ent_console.insert(tk.END, text.strip('\r\n'))
                     # need this twice since the first one is stripped from the original text
                     ent_console.insert(tk.END, "\n")
@@ -176,12 +176,14 @@ class TestInProgressScene(ttk.Frame):
 
                     if "Done." in text:
                         print('Stopping Progress Bar\r\n')
+                        logger.info("TestInProgressScene: Stopping Progress Bar.")
                         self.progressbar.stop()
 
                     if "Exit." in text:
                         self.progressbar.stop()
                         time.sleep(1)
                         parent.test_error_popup("Unable to run test")
+                        logger.info("TestInProgressScene: Unable to run test.")
                         break
 
                     if "Results received successfully." in text:
@@ -191,14 +193,17 @@ class TestInProgressScene(ttk.Frame):
                         self.data_holder.update_from_json_string(message) 
                         
                         logger.info("TestInProgressScene: JSON Received.")
+                        logger.info(message)
                         FinishedTestPopup(parent, self.data_holder, queue)
 
                     if "Closing Test Window." in text:
+                        logger.info("TestInProgressScene: ending loop")
                         try:
                             master_window.update()
                         except Exception as e:
                             print("\nTestInProgressScene: Unable to update master_window\n")
                             print("Exception: ", e)
+                            logger.info(e)
 
                         time.sleep(0.02)
                         break
@@ -271,7 +276,7 @@ class FinishedTestPopup():
     # Function to enter password for admin access
     def finished_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("PasswordPopup: Prompting the user for the admin password")
+        logger.info("TestInProgressScene: Test Finished")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Test Completed") 
