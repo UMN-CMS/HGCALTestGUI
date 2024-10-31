@@ -56,29 +56,31 @@ class ScanScene(ttk.Frame):
     # Needs to be updated to run the read_barcode function in the original GUI
     # can see more scanner documentation in the Visual Inspection GUI
     def scan_QR_code(self, master_window):
+        self.EXIT_CODE = 0
         
         self.ent_full.config(state = 'normal')
         self.ent_full.delete(0,END)
         self.master_window = master_window
         self.hide_rescan_button()
-
-        #sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
+        sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
         from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 
         manager = mp.Manager()
         full_id = manager.list()
         print(full_id)
+        print("AT START OF SCANNER SCENE PROXY LIST IS")
+        print(full_id)
 
         self.ent_full.config(state = 'normal')
 
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
+        logger.info("ScanScene: Beginning scan...")
+        print("ScanScene: Beginning scan...")
         self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
         self.listener.start()
-               
+            
         while 1 > 0:
 
             try:
@@ -86,27 +88,30 @@ class ScanScene(ttk.Frame):
             except:
                 pass
             if not len(full_id) == 0:
-                self.data_holder.set_full_ID( parse_xml(full_id[0]))
+                print("I HAVE SUCCESSFULLY SCANNED A BARCODE")
+                label = parse_xml(full_id[0])
+                print(f"THE LABEL IS {label} ")
 
                 self.listener.terminate()
                 self.scanner.terminate()
-               
+            
                 self.ent_full.delete(0,END)
-                self.ent_full.insert(0, str(self.data_holder.get_full_ID()))
+                self.ent_full.insert(0, str(label))
                 self.ent_full.config(state = 'disabled')
                 self.show_rescan_button()
                 break
 
-            elif self.EXIT_CODE:
-                logging.info("ScanScene: Exit code received. Terminating processes.")
+            elif self.EXIT_CODE != 0:
+                print("EXITING WITH EXIT CODE")
+                logger.info("ScanScene: Exit code received. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logging.info("ScanScene: Processes terminated successfully.")
+                logger.info("ScanScene: Processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)
-            
-        logging.info("ScanScene: Scan complete.")
+                
+        logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -168,13 +173,13 @@ class ScanScene(ttk.Frame):
         global ent_full
         
         # Creating intial value in entry box
-        user_text = tk.StringVar(self)
+        self.user_text = tk.StringVar(self)
         
         # Creates an entry box
         self.ent_full = tk.Entry(
             Scan_Board_Prompt_Frame,
             font = ('Arial', 16),
-            textvariable= user_text, 
+            textvariable= self.user_text, 
             )
         self.ent_full.pack(padx = 50, pady = 25)
 
@@ -215,13 +220,21 @@ class ScanScene(ttk.Frame):
         self.ent_com.pack(padx = 50)
 
         # Traces an input to show the submit button once text is inside the entry box
-        user_text.trace(
+        self.user_text.trace(
             "w", 
             lambda name, 
             index, 
             mode, 
-            sv=user_text: self.show_submit_button()
+            sv=self.user_text: self.show_submit_button()
             )
+
+        self.manuf_selected.trace(
+            "w",
+            lambda name, 
+            index, 
+            mode,
+            sv=self.manuf_selected: self.show_submit_button_manu()
+        )
 
         # Rescan button creation
         self.btn_rescan = ttk.Button(
@@ -321,8 +334,21 @@ class ScanScene(ttk.Frame):
 
         self.data_holder.set_manufacturer_id(self.manuf_selected.get())
 
-        self.data_holder.check_if_new_board()
+        in_id = self.data_holder.check_if_new_board()
+
+        if in_id == None:
+            self.label_major['text'] = 'Could not upload board'
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            self.btn_submit["state"] = "disabled"
+            return
         self.data_holder.update_location(self.ent_full.get())
+        # FIXME REPLACE THIS WHEN DATABASE PERISSIONS ARE FIXED
+        #FIXME 
+        # FIXME
 
         if self.data_holder.data_dict['prev_results'] != '':
             _parent.set_frame_postscan()
@@ -335,7 +361,6 @@ class ScanScene(ttk.Frame):
             else: 
                 print('Error: Please scan a Wagon or an Engine.')
 
-        self.EXIT_CODE = 0
 
         
     def get_submit_action(self):
@@ -363,7 +388,69 @@ class ScanScene(ttk.Frame):
     # Function to activate the submit button
     def show_submit_button(self):
         self.data_holder.decode_label(self.ent_full.get())
-        self.btn_submit["state"] = "active"
+
+        if self.manuf_selected.get() == 'None':
+            self.label_major['text'] = 'Please select manufacturer to continue'
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            self.btn_submit["state"] = "disabled"
+            return
+        elif self.user_text.get() == '':
+            self.btn_submit['state'] = 'disabled'
+            self.label_major['text'] = 'Please scan barcode to continue'
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            return
+
+        else:
+            self.btn_submit["state"] = "active"
+        
+        try:
+            self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
+            self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
+            self.label_sn['text'] = 'Serial Number: ' + self.data_holder.label_info['SN']
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+        except TypeError:
+            self.label_major['text'] = ''
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_major.update()
+            self.label_sub.update()
+            self.label_sn.update()
+    
+    def show_submit_button_manu(self):
+        self.data_holder.decode_label(self.ent_full.get())
+
+        if self.manuf_selected.get() == 'None':
+            self.label_major['text'] = 'Please select manufacturer to continue'
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            self.btn_submit["state"] = "disabled"
+            return
+
+        elif self.user_text.get() == '':
+            self.btn_submit['state'] = 'disabled'
+            self.label_major['text'] = 'Please scan barcode to continue'
+            self.label_sub['text'] = ''
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            return
+        else:
+            self.btn_submit["state"] = "active"
+        
         try:
             self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
             self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']

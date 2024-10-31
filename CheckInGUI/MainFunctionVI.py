@@ -41,8 +41,16 @@ def main():
     engine_GUI_computers = [ 
 
     ]   
+    
+    try:
+        if sys.argv[1] is not None:
+            config_path = sys.argv[1]
+            print(config_path)
+    except:
+        print("Opting for custom configuration setup called below")
+        config_path = "{}/Configs/Wagon_cfg.yaml".format(filepath)
 
-    masterCfg = import_yaml("{}/Configs/Wagon_cfg.yaml".format(filepath))
+    masterCfg = import_yaml(config_path)
 
     board_cfg = masterCfg
 
