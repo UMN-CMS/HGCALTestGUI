@@ -128,37 +128,15 @@ class ComponentScanScene(ttk.Frame):
         )
         self.lbl_scan.pack(padx = 50, pady = 25)
 
-        qr_code = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        qr_code = Image.open("{}/Images/LDO_QRcode.png".format(PythonFiles.__path__[0]))
         qr_code = iTK.PhotoImage(qr_code)
         # Create a label to label the entry box
         lbl_full = ttk.Label(
             Scan_Board_Prompt_Frame,
             image = qr_code
         )
+        lbl_full.image = qr_code
         lbl_full.pack(padx = 20)
-
-        # Entry for the full id to be displayed. Upon Scan, update and disable?
-        global ent_full
-        
-        # Creating intial value in entry box
-        user_text = tk.StringVar(self)
-        
-        # Creates an entry box
-        self.ent_full = tk.Entry(
-            Scan_Board_Prompt_Frame,
-            font = ('Arial', 16),
-            textvariable= user_text, 
-            )
-        self.ent_full.pack(padx = 50, pady = 25)
-
-        # Traces an input to show the submit button once text is inside the entry box
-        user_text.trace(
-            "w", 
-            lambda name, 
-            index, 
-            mode, 
-            sv=user_text: self.show_submit_button()
-            )
 
         # Submit button creation
         self.btn_submit = ttk.Button(

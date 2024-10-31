@@ -71,8 +71,8 @@ class DBSender():
         if (self.use_database):
 
             try:
-                # both Wagon and Engine scripts run the command for both databases
-                r = requests.post('{}/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/../WagonDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/../EngineDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 logging.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 

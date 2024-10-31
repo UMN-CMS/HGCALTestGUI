@@ -146,7 +146,6 @@ class GUIWindow():
         self.component_scan_frame.is_current_scene = True
         self.component_scan_frame.update()
         self.set_frame(self.component_scan_frame)
-        self.component_scan_frame.scan_QR_code(master_window)
         logging.debug("GUIWindow: the frame has been set to component_frame.")
             
     #################################################
