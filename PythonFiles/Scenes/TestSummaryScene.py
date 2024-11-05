@@ -10,6 +10,7 @@ from matplotlib.pyplot import table
 from pyparsing import col
 import PythonFiles
 import os
+from pathlib import Path
 
 #################################################################################
 
@@ -386,7 +387,7 @@ class TestSummaryScene(ttk.Frame):
 
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
-        self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(PythonFiles.__path__[0], names[test_idx].replace(" ", "").replace("/", "")))
+        self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(Path.home(), names[test_idx].replace(" ", "").replace("/", "")))
 
     #################################################
 
