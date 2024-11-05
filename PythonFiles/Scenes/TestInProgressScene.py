@@ -194,9 +194,9 @@ class TestInProgressScene(ttk.Frame):
                         
                         logger.info("TestInProgressScene: JSON Received.")
                         logger.info(message)
-                        FinishedTestPopup(parent, self.data_holder, queue)
-
-                    if "Closing Test Window." in text:
+#                        FinishedTestPopup(parent, self.data_holder, queue)
+#
+#                    if "Closing Test Window." in text:
                         logger.info("TestInProgressScene: ending loop")
                         try:
                             master_window.update()
@@ -273,7 +273,6 @@ class FinishedTestPopup():
 
     #################################################
 
-    # Function to enter password for admin access
     def finished_popup(self, data_holder):
         self.data_holder = data_holder
         logger.info("TestInProgressScene: Test Finished")
