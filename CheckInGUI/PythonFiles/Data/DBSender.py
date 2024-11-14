@@ -182,7 +182,7 @@ class DBSender():
                 return False, in_id
 
     def check_for_ldo(self, engine):
-        r = requests.post('{}/check_for_ldo.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/check_for_ldo.py'.format(self.db_url), data={"full_id": str(engine)})
 
         try:
             lines = r.text.split('\n')

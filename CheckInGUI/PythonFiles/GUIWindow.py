@@ -39,6 +39,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
+        self.master_window = master_window
         master_window.title("Board Check In and Inspection")
 
         # Creates the size of the window and disables resizing
@@ -145,6 +146,7 @@ class GUIWindow():
     def set_frame_component_frame(self):
         self.component_scan_frame.is_current_scene = True
         self.component_scan_frame.update()
+        self.component_scan_frame.start()
         self.set_frame(self.component_scan_frame)
         logging.debug("GUIWindow: the frame has been set to component_frame.")
             

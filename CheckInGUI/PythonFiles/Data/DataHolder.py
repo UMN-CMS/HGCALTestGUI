@@ -126,7 +126,7 @@ class DataHolder():
         self.label_info = self.data_sender.decode_label(full_id)
 
     def check_for_ldo(self):
-        got_code = self.data_sender.check_for_ldo(self.get_full_ID)
+        got_code = self.data_sender.check_for_ldo(self.get_full_ID())
         return got_code
 
     #################################################

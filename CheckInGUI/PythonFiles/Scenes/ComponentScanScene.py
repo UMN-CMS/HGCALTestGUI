@@ -62,19 +62,19 @@ class ComponentScanScene(ttk.Frame):
             return
 
         got_code = self.data_holder.check_for_ldo()
-        if got_code:
+        if got_code is not None and got_code != "None":
             self.stop()
         else:
-            self.master_window.after(1, self.check_for_ldo())
+            self.parent.master_window.after(1, self.check_for_ldo)
             
 
 
     def start(self):
         self.is_checking = True
-        self.master_window.after(1, self.check_for_ldo())
+        self.parent.master_window.after(1, self.check_for_ldo)
 
 
-    def stop(self, master_window):
+    def stop(self):
         self.is_checking = False
         self.btn_submit_action(self.parent)
 
