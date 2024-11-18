@@ -332,6 +332,8 @@ class DataHolder():
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
+        self.data_dict['comments'] = '_'
+
     #################################################
 
     def get_all_users(self):
@@ -363,7 +365,9 @@ class DataHolder():
             json.dump(json_dict['data'], file)
         self.data_dict['test{}_completed'.format(self.current_test_idx)] = True
         self.data_dict['test{}_pass'.format(self.current_test_idx)] = json_dict["pass"]
-
+        comments = json_dict.get('comments', '_')
+        self.data_dict['comments'] = comments
+        
         # Updates the lists
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'][i] = self.data_dict['test{}_pass'.format(i)]
