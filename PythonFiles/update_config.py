@@ -18,11 +18,11 @@ def loadConfig(cfg_type):
 def update_config(full_id):
     if full_id[3:5] == 'WW' or full_id[3:5] == 'WE':
         cfg_type =  "LD_Wagon"
-    if full_id[3:5] == 'WH':
+    elif full_id[3:5] == 'WH':
         cfg_type =  "HD_Wagon"
-    if full_id[3:5] == 'EL':
+    elif full_id[3:5] == 'EL':
         cfg_type =  "LD_Engine"
-    if full_id[3:5] == 'EH':
+    elif full_id[3:5] == 'EH':
         cfg_type =  "HD_Engine"
     else:
         cfg_type =  "LD_Wagon"
