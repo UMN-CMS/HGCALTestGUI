@@ -93,8 +93,13 @@ class SidebarScene(ttk.Frame):
         self.s.theme_use('awdark')
 
     #################################################
+
+    def clean_up_btns(self):
+        for btn in self.all_btns:
+            btn.destroy()
+
     def update_sidebar(self, _parent):
-        
+       
         logger.info("SidebarScene: The sidebar has been updated.")
 
                 # Variables for easy button editing
@@ -174,8 +179,7 @@ class SidebarScene(ttk.Frame):
             )
         self.btn_summary.grid(column = 0, row = 4 + self.data_holder.getNumTest(), pady = btn_pady)
 
-        
-        self.report_btn = ttk.Button(
+        self.restart_server_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
             text = 'Restart Server',
@@ -184,9 +188,9 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.restart_server(_parent)
             )
-        self.report_btn.grid(column = 0, row = 5 + self.data_holder.getNumTest(), pady = btn_pady)
+        self.restart_server_btn.grid(column = 0, row = 5 + self.data_holder.getNumTest(), pady = btn_pady)
         
-        self.report_btn = ttk.Button(
+        self.reload_firmware_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
             text = 'Reload Firmware',
@@ -195,9 +199,9 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.reload_firmware(_parent)
             )
-        self.report_btn.grid(column = 0, row = 6 + self.data_holder.getNumTest(), pady = (btn_pady))
+        self.reload_firmware_btn.grid(column = 0, row = 6 + self.data_holder.getNumTest(), pady = (btn_pady))
         
-        self.report_btn = ttk.Button(
+        self.reset_power_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
             text = 'Reset Power',
@@ -206,9 +210,9 @@ class SidebarScene(ttk.Frame):
             #font = ('Kozuka Gothic Pr6N L', 8),
             command = lambda: self.reset_power(_parent)
             )
-        self.report_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
+        self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
-
+        self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
 
         # List for creating check marks with for loop
         self.list_of_pass_fail = self.data_holder.data_lists['test_results']
@@ -301,11 +305,13 @@ class SidebarScene(ttk.Frame):
     #################################################
 
     def disable_all_btns(self):
-        self.btn_login.config(state = 'disabled')
-        self.btn_scan.config(state = 'disabled')
-        for btn in self.test_btns:
+        for btn in self.all_btns:
             btn.config(state = 'disabled')
-        self.btn_summary.config(state = 'disabled')
+        #self.btn_login.config(state = 'disabled')
+        #self.btn_scan.config(state = 'disabled')
+        #for btn in self.test_btns:
+        #    btn.config(state = 'disabled')
+        #self.btn_summary.config(state = 'disabled')
 
     #################################################
 

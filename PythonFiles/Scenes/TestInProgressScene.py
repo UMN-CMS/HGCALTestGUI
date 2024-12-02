@@ -42,13 +42,13 @@ class TestInProgressScene(ttk.Frame):
     ##################################################
 
     # A function for the stop button
-    def btn_stop_action(self, _parent):
-        self.window_closed = True
-        _parent.go_to_next_test()
+    #def btn_stop_action(self, _parent):
+    #    self.window_closed = True
+    #    _parent.go_to_next_test()
 
-        
-        # Destroys the console window
-        self.console_destroy()
+    #    
+    #    # Destroys the console window
+    #    self.console_destroy()
         
     #################################################    
 
@@ -103,6 +103,11 @@ class TestInProgressScene(ttk.Frame):
             orient = 'horizontal',
             mode = 'indeterminate', length = 350)
         self.progressbar.pack(padx = 50)
+        self.stop_txt = ttk.Label(self,
+            text='Waiting for test to finish...',
+            font=('Arial', 15)
+        )
+        self.stop_txt.pack_forget()
         # A Button To Stop the Progress Bar and Progress Forward (Temporary until we link to actual progress)
         btn_stop = ttk.Button(
             self, 
@@ -119,10 +124,14 @@ class TestInProgressScene(ttk.Frame):
 
     # A function for the stop button
     def btn_stop_action(self, _parent):
-        _parent.return_to_current_test()
+        #_parent.return_to_current_test()
         self.progressbar.stop()
+        self.stop_txt.pack(padx=0, pady=50)
+        _parent.stop_tests()
         #self.queue.put('Stop')
 
+    def remove_stop_txt(self):
+        self.stop_txt.pack_forget()
 
     # Goes to the next scene after the progress scene is complete
     def go_to_next_frame(self, _parent):
@@ -189,7 +198,6 @@ class TestInProgressScene(ttk.Frame):
                     if "Results received successfully." in text:
                     
                         message =  self.conn.recv()
-                        print(message)   
                         self.data_holder.update_from_json_string(message) 
                         
                         logger.info("TestInProgressScene: JSON Received.")
