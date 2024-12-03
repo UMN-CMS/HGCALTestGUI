@@ -320,16 +320,17 @@ class DataHolder():
             temp = 1 
 
 
-        if self.config_id:
-            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
-        else:
-            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        #if self.config_id:
+        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
+        #else:
+        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
-        with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
-            print(str(info_dict) + '\r\n')
-            json.dump(info_dict, outfile)
+        #with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
+        #    print(str(info_dict) + '\r\n')
+        #    json.dump(info_dict, outfile)
 
-        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
+        #self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
+        self.data_sender.add_test_json(file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
         self.data_dict['comments'] = '_'
@@ -362,7 +363,7 @@ class DataHolder():
         test_type = test_names[self.current_test_idx]
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(str(Path.home().absolute()), test_names[self.current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
-            json.dump(json_dict['data'], file)
+            json.dump(json_dict, file)
         self.data_dict['test{}_completed'.format(self.current_test_idx)] = True
         self.data_dict['test{}_pass'.format(self.current_test_idx)] = json_dict["pass"]
         comments = json_dict.get('comments', '_')
