@@ -1,0 +1,24 @@
+---
+DBInfo:
+  admin: FactoryInserter
+  baseURL: http://cmslab1.spa.umn.edu/Factory/WagonDB
+  inserter: FactoryInserter
+  name: WagonDB_PRO
+  reader: FactoryReadUser
+  use_database: true
+
+GUIType: Wagon
+SerialCheckSafe: true
+
+#TestHandler: {name: Local, remoteip: localhost}
+#TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
+TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+
+Test:
+- TestClass: X
+  TestPath: X
+  TestScript: X
+  desc_long: Test for zipper boards.
+  desc_short: Test for zipper boards.
+  name: Zipper Test
+  required: 0
