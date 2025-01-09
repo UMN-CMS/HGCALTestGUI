@@ -28,7 +28,7 @@ class AddUserScene(ttk.Frame):
     #################################################
 
     def __init__(self, parent, master_frame, data_holder):
-        super().__init__(master_frame, width=1300-213, height=700)
+        super().__init__(master_frame, width=1300-213, height=800)
         logger.info("AddUserScene: Frame has been created.")
         self.data_holder = data_holder
         self.create_style(parent)

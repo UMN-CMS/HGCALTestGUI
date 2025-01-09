@@ -32,6 +32,7 @@ class AddUserScene(ttk.Frame):
         self.create_style(parent)
         self.update_frame(parent)
         self.create_style(parent)
+        self.parent = parent
 
     def create_style(self, _parent):
         
@@ -196,7 +197,7 @@ class ConfirmPopup():
              #height = 2,
              text = "Cancel", 
              #relief = tk.RAISED,
-             font = ('Arial', 12),
+        #     font = ('Arial', 12),
              command = lambda: self.cancel_function()
              )
         btn_retry.grid(column = 0, row = 1)
@@ -207,7 +208,7 @@ class ConfirmPopup():
             #height = 2,
             text = "Confirm",
             #relief = tk.RAISED,
-            font = ('Arial', 12),
+         #   font = ('Arial', 12),
             command = lambda: self.continue_function(self.parent)
         )
         btn_continue.grid(column = 1, row = 1)

@@ -158,7 +158,6 @@ class LoginScene(ttk.Frame):
 
     # A function to pack the submit button
     def show_submit_button(self):
-        logging.info("LoginScene: User has been selected.")
         self.btn_submit.config(state = 'active')
     
     #################################################

@@ -12,6 +12,7 @@ sys.path.append("..")
 from PythonFiles.GUIWindow import GUIWindow
 import socket
 import logging
+import logging.handlers
 import yaml
 from pathlib import Path
 
@@ -19,13 +20,16 @@ from pathlib import Path
 # Creates a main function to initialize the GUI
 def main():
     
-    logging.FileHandler(guiLogPath + "visual_gui.log", mode='a')
+    logging.handlers.TimedRotatingFileHandler(guiLogPath + "visual_gui.log", when="midnight", interval=1)
     
     filepath = os.path.dirname(os.path.abspath(__file__))
-    print( "Current path is: %s" % (filepath))
+    print("Current path is: %s" % filepath)
+    logging.debug("Current path is: %s" % filepath)
 
     node = socket.gethostname()
     print(socket.gethostname())
+    logging.debug(socket.gethostname())
+
     wagon_GUI_computers = [ 
         "cmsfactory1.cmsfactorynet",
         "cmsfactory2.cmsfactorynet",
@@ -37,8 +41,16 @@ def main():
     engine_GUI_computers = [ 
 
     ]   
+    
+    try:
+        if sys.argv[1] is not None:
+            config_path = sys.argv[1]
+            print(config_path)
+    except:
+        print("Opting for custom configuration setup called below")
+        config_path = "{}/Configs/Wagon_cfg.yaml".format(filepath)
 
-    masterCfg = import_yaml("{}/Configs/Wagon_cfg.yaml".format(filepath))
+    masterCfg = import_yaml(config_path)
 
     board_cfg = masterCfg
 

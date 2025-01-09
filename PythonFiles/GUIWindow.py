@@ -57,13 +57,13 @@ class GUIWindow():
         self.current_test_index = 0
         self.gui_cfg = GUIConfig(board_cfg)
         self.main_path = main_path
-                             
+
         # Create the window named "self.master_window"
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
 
         # Creates the size of the window
-        self.master_window.geometry("1300x700+25+100")
+        self.master_window.geometry("1400x900+25+100")
         self.master_window.pack_propagate(1) 
 
         #resizing master_frame, keeping sidebar same width
@@ -75,8 +75,6 @@ class GUIWindow():
         self.all_text = "No help available for this scene."
         self.label_text = tk.StringVar()
         
-        # Running all tests in succession?
-        # TODO add this to config file
         self.run_all_tests_bool = False
         
         # resizable with following code commented out
@@ -87,11 +85,11 @@ class GUIWindow():
 
 
         # Creates and packs a frame that exists on top of the master_frame
-        self.master_frame = tk.Frame(self.master_window, width=1300-225, height=700)
+        self.master_frame = tk.Frame(self.master_window, width=1400-225, height=900)
         self.master_frame.grid(column = 1, row = 0, columnspan = 4, sticky="nsew")
 
         # Creates a frame to house the sidebar on self.master_window
-        sidebar_frame = tk.Frame(self.master_window, width = 225, height=700)
+        sidebar_frame = tk.Frame(self.master_window, width = 225, height=900)
         sidebar_frame.grid(column = 0 , row = 0, sticky="nsw")
 
 
@@ -192,8 +190,6 @@ class GUIWindow():
             self.test_frames.append(TestScene(self, self.master_frame, self.data_holder, test["name"], test["desc_short"], test["desc_long"], queue, self.conn_trigger, test_idx))
             self.test_frames[test_idx + offset].grid(row=0, column=0, sticky='nsew')
 
-        print("\ntest_frames len: ", len(self.test_frames))
-
 
     #################################################
 
@@ -204,19 +200,21 @@ class GUIWindow():
             return
         new_cfg = update_config(full)
         self.gui_cfg = new_cfg
+        logging.debug("Updated the GUI configuration.")
 
     #################################################
 
 
-    def run_all_tests(self, test_idx):
-        self.running_all_idx = test_idx
+    def run_all_tests(self):
+        logging.info("Run all tests method has been selected.")
+        self.running_all_idx = 0
+        self.current_test_index = 0
+        self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
 
         test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
-
-        print("Confirm button sending test{}".format(self.running_all_idx))
 
         
 
@@ -239,6 +237,8 @@ class GUIWindow():
     def set_frame_admin_scan(self):
         self.component_index = 0
         print('Component Index: ' + str(self.component_index))
+        logging.info('Component Index: ' + str(self.component_index))
+
         self.admin_scan_frame.is_current_scene = True
         self.admin_scan_frame.update_frame(self, self.component_index)
         self.set_frame(self.admin_scan_frame)
@@ -249,6 +249,8 @@ class GUIWindow():
     def next_frame_admin_scan(self):
         self.component_index += 1
         print('Component Index: ' + str(self.component_index))
+        logging.info('Component Index: ' + str(self.component_index))
+
         if self.data_holder.tester_type == 'Wagon':
             if self.component_index < 3+int(self.data_holder.wagon_tester_info['num_wagon_wheels']):
                 self.admin_scan_frame.update_frame(self, self.component_index)
@@ -259,16 +261,29 @@ class GUIWindow():
             else:
                 finished_Popup(self, self.data_holder)
                 print(self.data_holder.wagon_tester_info)
+                logging.info(self.data_holder.wagon_tester_info)
+
                 self.data_holder.upload_test_stand_info()
                 self.set_frame_login_frame()
 
         if self.data_holder.tester_type == 'Engine':
-            if self.component_index < 5:
+            if self.component_index == 5:
+                if self.data_holder.engine_tester_info["Major Type"] == "LD":
+                    self.component_index += 1
+
+            if self.component_index == 6:
+                if self.data_holder.engine_tester_info["Major Type"] == "HD":
+                    self.component_index = 10
+
+
+            if self.component_index < 8:
                 self.admin_scan_frame.update_frame(self, self.component_index)
                 self.admin_scan_frame.scan_QR_code(self.master_window)
             else:
                 finished_Popup(self, self.data_holder)
                 print(self.data_holder.engine_tester_info)
+                logging.info(self.data_holder.engine_tester_info)
+
                 self.data_holder.upload_test_stand_info()
                 self.set_frame_login_frame()
 
@@ -287,6 +302,7 @@ class GUIWindow():
 
     def set_frame_login_frame(self):  
 
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)        
@@ -351,26 +367,24 @@ class GUIWindow():
     #################################################
 
     def set_frame_test(self, test_idx):
-        print("test_idx", test_idx)
+        self.current_test_index = test_idx
         self.data_holder.setTestIdx(test_idx)
 
         selected_test_frame = self.test_frames[test_idx]
         print("Setting frame to test {}".format(test_idx))
-        #selected_test_frame.update_frame(self)
-        #print("Frame updated!")
         
         self.set_frame(selected_test_frame)
-        print("Frame set!")
 
         logging.debug("GUIWindow: The frame has been set to test {}.".format(test_idx))
 
     #################################################
 
     def set_frame_test_in_progress(self, queue):
+        self.test_in_progress_frame.remove_stop_txt()
         self.set_frame(self.test_in_progress_frame)
         
         logging.debug("GUIWindow: The frame has been set to test_in_progress_frame.")
-        #self.sidebar.disable_all_btns()
+        self.sidebar.disable_all_btns()
         passed = self.test_in_progress_frame.begin_update(self.master_window, queue, self)
         self.go_to_next_test()   
 
@@ -383,6 +397,7 @@ class GUIWindow():
 
     def return_to_current_test(self):
         self.current_test_index -= 1
+        self.running_all_idx -= 1
         self.set_frame_test(self.current_test_index)
 
         self.data_holder.setTestIdx(self.current_test_index)
@@ -390,6 +405,7 @@ class GUIWindow():
     def go_to_next_test(self):
             
         # Updates the sidebar every time the frame is set
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
 
         total_num_tests = self.data_holder.total_test_num
@@ -400,7 +416,6 @@ class GUIWindow():
         if not self.run_all_tests_bool:        
 
             if (self.current_test_index < total_num_tests):
-                print(self.current_test_index)
                 self.set_frame_test(self.current_test_index)
                 self.current_test_index += 1
             else:
@@ -411,14 +426,12 @@ class GUIWindow():
         
             if (self.running_all_idx < total_num_tests):
 
-                self.data_holder.setTestIdx(self.current_test_index)
                 self.current_test_index += 1
+                self.data_holder.setTestIdx(self.running_all_idx)
                 
                 gui_cfg = self.data_holder.getGUIcfg()
                 test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
                 self.set_frame_test_in_progress(self.queue)
-
-                print("Confirm button sending test{}".format(self.running_all_idx))
             
 
             else: 
@@ -441,9 +454,11 @@ class GUIWindow():
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
             print("no bind function")
+            logging.info("No bind function for " + str(_frame))
  
 
         # Updates the sidebar every time the frame is set
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
 
         # If frame is test_in_progress frame, disable the close program button
@@ -483,13 +498,9 @@ class GUIWindow():
         #############################################################################
         #                        End Button Visibility Code                         #
         #############################################################################
-        
-        logging.debug("GUIWindow: Sidebar buttons have been updated.")
 
         # Raises the passed in frame to be the current frame
         _frame.tkraise()
-
-        logging.info("GUIWindow: The frame has been raised.")
 
         self.set_help_text(_frame)
 
@@ -799,6 +810,10 @@ class GUIWindow():
 
     #################################################
 
+    # Function for stopping tests gracefully
+    def stop_tests(self):
+        #self.sidebar.disable_all_btns()
+        self.run_all_tests_bool = False
 
     # Called when the yes button is pressed to destroy both windows
     def destroy_function(self):

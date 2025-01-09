@@ -1,6 +1,8 @@
 import requests
 import json
 import socket
+import logging
+from pathlib import Path
 # from read_barcode import read_barcode
 
 # python scripts run from here are on the machine that contains the server and database
@@ -70,10 +72,10 @@ class DBSender():
         if (self.use_database):
 
             try:
-                # both Wagon and Engine scripts run the command for both databases
-                r = requests.post('{}/add_tester2.py', data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/../WagonDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/../EngineDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
-                print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logging.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
 
         # If not using the database, use this...
@@ -231,10 +233,20 @@ class DBSender():
             return lines[i]
         
 
-    def add_test_json(self, json_file, datafile_name):
-        load_file = open(json_file)
-        results = json.load(load_file)        
-        load_file.close()
+    def add_test_json(self, json_file):
+        
+        with open(json_file) as load_file:
+            results = json.load(load_file)        
+
+        test_attach = results.pop('data', None)
+        datafile_name = "{}/JSONFiles/sending.json".format(str(Path.home().absolute()))
+
+        results['test_type'] = results['name']
+        results['full_id'] = results['board_sn']
+        results['successful'] = int(results['pass'])
+
+        with open(datafile_name, 'w') as datafile:
+            json.dump(test_attach, datafile)
 
         datafile = open(datafile_name, "rb")        
 
@@ -243,8 +255,24 @@ class DBSender():
 
         if (self.use_database):
             r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
+            print(r.text)
         else:
             pass
+
+    #def add_test_json(self, json_file, datafile_name):
+    #    load_file = open(json_file)
+    #    results = json.load(load_file)        
+    #    load_file.close()
+
+    #    datafile = open(datafile_name, "rb")        
+
+    #    attach_data = {'attach1': datafile}
+    #    #print("Read from json file:", results)
+
+    #    if (self.use_database):
+    #        r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
+    #    else:
+    #        pass
 
  # Returns a list of all different types of tests
     def get_test_list(self):

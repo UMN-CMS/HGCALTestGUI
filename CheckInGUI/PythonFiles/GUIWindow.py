@@ -39,6 +39,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
+        self.master_window = master_window
         master_window.title("Board Check In and Inspection")
 
         # Creates the size of the window and disables resizing
@@ -129,6 +130,7 @@ class GUIWindow():
             return
         new_cfg = update_config(full)
         self.gui_cfg = new_cfg
+        logging.debug("Updated the GUI configuration.")
 
     ################################################
 
@@ -136,8 +138,7 @@ class GUIWindow():
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)    
         
-        logging.debug("guiwindow: the frame has been set to login_frame.")
-        logging.debug("guiwindow: conclusion of the 'set_frame_login_frame(self)' method")
+        logging.debug("GUIWindow: the frame has been set to login_frame.")
 
 
     #################################################
@@ -145,8 +146,9 @@ class GUIWindow():
     def set_frame_component_frame(self):
         self.component_scan_frame.is_current_scene = True
         self.component_scan_frame.update()
+        self.component_scan_frame.start()
         self.set_frame(self.component_scan_frame)
-        self.component_scan_frame.scan_QR_code(master_window)
+        logging.debug("GUIWindow: the frame has been set to component_frame.")
             
     #################################################
     
@@ -155,12 +157,14 @@ class GUIWindow():
         self.scan_frame.update()
         self.set_frame(self.scan_frame)
         self.scan_frame.scan_QR_code(master_window)
+        logging.debug("GUIWindow: the frame has been set to scan_frame.")
    
      #################################################
 
     def set_frame_inspection_frame(self):
         self.inspection_frame.update_frame(self)
         self.set_frame(self.inspection_frame)
+        logging.debug("GUIWindow: the frame has been set to inspection_frame.")
 
     #################################################
 
@@ -168,6 +172,7 @@ class GUIWindow():
 
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
+        logging.debug("GUIWindow: the frame has been set to postscan_frame.")
 
     #################################################
 
@@ -180,9 +185,11 @@ class GUIWindow():
     def set_frame_summary(self):
         self.summary_frame.update_frame()
         self.set_frame(self.summary_frame)
+        logging.debug("GUIWindow: the frame has been set to summary_frame.")
 
     def set_frame_add_user_frame(self):
         self.set_frame(self.add_user_frame)
+        logging.debug("GUIWindow: the frame has been set to add_user_frame.")
 
     #################################################
 
@@ -199,6 +206,7 @@ class GUIWindow():
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
             print("no bind function")
+            logging.info("No bind function for " + str(_frame))
             
 
         # Hides the submit button on scan frame until an entry is given to the computer

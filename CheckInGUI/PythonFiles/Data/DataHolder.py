@@ -98,9 +98,10 @@ class DataHolder():
         full = self.get_full_ID()
         user = self.data_dict['user_ID']
         #returns true if the board is new, false if not
-        is_new_board = self.data_sender.is_new_board(full)
+        is_new_board, in_id = self.data_sender.is_new_board(full)
         print('Is new board?')
         print(is_new_board)
+        print(in_id)
         comments = self.data_dict['comments']
         self.data_dict['is_new_board'] = is_new_board
         
@@ -117,9 +118,16 @@ class DataHolder():
             else:
                 self.data_dict['test_names'] = None
                 self.data_dict['prev_results'] = 'No tests have been run on this board.'
+            self.data_dict['in_id'] = in_id
+
+        return self.data_dict['in_id']
 
     def decode_label(self, full_id):
         self.label_info = self.data_sender.decode_label(full_id)
+
+    def check_for_ldo(self):
+        got_code = self.data_sender.check_for_ldo(self.get_full_ID())
+        return got_code
 
     #################################################
 

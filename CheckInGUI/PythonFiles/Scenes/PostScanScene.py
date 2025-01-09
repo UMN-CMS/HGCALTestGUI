@@ -166,6 +166,7 @@ class PostScanScene(ttk.Frame):
                 self.lbl_res.grid(row=2, column=1)
 
         except Exception as e:
+            logger.error(e)
             print(e)
             self.lbl_err = ttk.Label(
                     self, 

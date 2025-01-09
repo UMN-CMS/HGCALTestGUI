@@ -21,7 +21,7 @@ class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
         logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
-        super().__init__(master_frame, width=1300-213, height = 700)
+        super().__init__(master_frame, width=1300-213, height = 800)
 
         self.create_style(parent)
         self.queue = queue
@@ -42,13 +42,13 @@ class TestInProgressScene(ttk.Frame):
     ##################################################
 
     # A function for the stop button
-    def btn_stop_action(self, _parent):
-        self.window_closed = True
-        _parent.go_to_next_test()
+    #def btn_stop_action(self, _parent):
+    #    self.window_closed = True
+    #    _parent.go_to_next_test()
 
-        
-        # Destroys the console window
-        self.console_destroy()
+    #    
+    #    # Destroys the console window
+    #    self.console_destroy()
         
     #################################################    
 
@@ -103,6 +103,11 @@ class TestInProgressScene(ttk.Frame):
             orient = 'horizontal',
             mode = 'indeterminate', length = 350)
         self.progressbar.pack(padx = 50)
+        self.stop_txt = ttk.Label(self,
+            text='Waiting for test to finish...',
+            font=('Arial', 15)
+        )
+        self.stop_txt.pack_forget()
         # A Button To Stop the Progress Bar and Progress Forward (Temporary until we link to actual progress)
         btn_stop = ttk.Button(
             self, 
@@ -119,10 +124,14 @@ class TestInProgressScene(ttk.Frame):
 
     # A function for the stop button
     def btn_stop_action(self, _parent):
-        _parent.return_to_current_test()
+        #_parent.return_to_current_test()
         self.progressbar.stop()
+        self.stop_txt.pack(padx=0, pady=50)
+        _parent.stop_tests()
         #self.queue.put('Stop')
 
+    def remove_stop_txt(self):
+        self.stop_txt.pack_forget()
 
     # Goes to the next scene after the progress scene is complete
     def go_to_next_frame(self, _parent):
@@ -165,9 +174,9 @@ class TestInProgressScene(ttk.Frame):
                 master_window.update()
                 if not queue.empty():    
                     information_received = True
-                    logger.info("TestInProgressScene: Waiting for queue objects...")
                     text = queue.get()
                     print(text)
+                    logger.info(text)
                     ent_console.insert(tk.END, text.strip('\r\n'))
                     # need this twice since the first one is stripped from the original text
                     ent_console.insert(tk.END, "\n")
@@ -176,29 +185,33 @@ class TestInProgressScene(ttk.Frame):
 
                     if "Done." in text:
                         print('Stopping Progress Bar\r\n')
+                        logger.info("TestInProgressScene: Stopping Progress Bar.")
                         self.progressbar.stop()
 
                     if "Exit." in text:
                         self.progressbar.stop()
                         time.sleep(1)
                         parent.test_error_popup("Unable to run test")
+                        logger.info("TestInProgressScene: Unable to run test.")
                         break
 
                     if "Results received successfully." in text:
                     
                         message =  self.conn.recv()
-                        print(message)   
                         self.data_holder.update_from_json_string(message) 
                         
                         logger.info("TestInProgressScene: JSON Received.")
-                        FinishedTestPopup(parent, self.data_holder, queue)
-
-                    if "Closing Test Window." in text:
+                        logger.info(message)
+#                        FinishedTestPopup(parent, self.data_holder, queue)
+#
+#                    if "Closing Test Window." in text:
+                        logger.info("TestInProgressScene: ending loop")
                         try:
                             master_window.update()
                         except Exception as e:
                             print("\nTestInProgressScene: Unable to update master_window\n")
                             print("Exception: ", e)
+                            logger.info(e)
 
                         time.sleep(0.02)
                         break
@@ -268,10 +281,9 @@ class FinishedTestPopup():
 
     #################################################
 
-    # Function to enter password for admin access
     def finished_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("PasswordPopup: Prompting the user for the admin password")
+        logger.info("TestInProgressScene: Test Finished")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Test Completed") 
