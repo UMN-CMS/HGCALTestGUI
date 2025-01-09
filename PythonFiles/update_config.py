@@ -20,6 +20,8 @@ def update_config(full_id):
         cfg_type =  "LD_Wagon"
     elif full_id[3:5] == 'WH':
         cfg_type =  "HD_Wagon"
+    elif full_id[3:5] == 'ZP':
+        cfg_type =  "Zipper"
     elif full_id[3:5] == 'EL':
         cfg_type =  "LD_Engine"
     elif full_id[3:5] == 'EH':
