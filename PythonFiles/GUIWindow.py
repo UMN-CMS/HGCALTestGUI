@@ -57,7 +57,7 @@ class GUIWindow():
         self.current_test_index = 0
         self.gui_cfg = GUIConfig(board_cfg)
         self.main_path = main_path
-                             
+
         # Create the window named "self.master_window"
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
@@ -205,10 +205,11 @@ class GUIWindow():
     #################################################
 
 
-    def run_all_tests(self, test_idx):
+    def run_all_tests(self):
         logging.info("Run all tests method has been selected.")
-        self.running_all_idx = test_idx
-        self.current_test_index = test_idx
+        self.running_all_idx = 0
+        self.current_test_index = 0
+        self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
 
         test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
@@ -301,6 +302,7 @@ class GUIWindow():
 
     def set_frame_login_frame(self):  
 
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)        
@@ -378,10 +380,11 @@ class GUIWindow():
     #################################################
 
     def set_frame_test_in_progress(self, queue):
+        self.test_in_progress_frame.remove_stop_txt()
         self.set_frame(self.test_in_progress_frame)
         
         logging.debug("GUIWindow: The frame has been set to test_in_progress_frame.")
-        #self.sidebar.disable_all_btns()
+        self.sidebar.disable_all_btns()
         passed = self.test_in_progress_frame.begin_update(self.master_window, queue, self)
         self.go_to_next_test()   
 
@@ -402,6 +405,7 @@ class GUIWindow():
     def go_to_next_test(self):
             
         # Updates the sidebar every time the frame is set
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
 
         total_num_tests = self.data_holder.total_test_num
@@ -454,6 +458,7 @@ class GUIWindow():
  
 
         # Updates the sidebar every time the frame is set
+        self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
 
         # If frame is test_in_progress frame, disable the close program button
@@ -805,6 +810,10 @@ class GUIWindow():
 
     #################################################
 
+    # Function for stopping tests gracefully
+    def stop_tests(self):
+        #self.sidebar.disable_all_btns()
+        self.run_all_tests_bool = False
 
     # Called when the yes button is pressed to destroy both windows
     def destroy_function(self):

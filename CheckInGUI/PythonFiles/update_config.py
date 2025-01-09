@@ -13,7 +13,7 @@ def update_config(full_id):
         print('Changed board config to Wagon')
         board_cfg = masterCfg
 
-    if full_id[3] == 'E':
+    elif full_id[3] == 'E':
         #from TestConfigs.Engine_cfg import masterCfg
         masterCfg = import_yaml(open(Path(__file__).parent.parent / "Configs/Engine_cfg.yaml"))
         print(masterCfg)

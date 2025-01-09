@@ -131,10 +131,10 @@ Test:
     name: EClock Rates
     required: 1
 
-  #- TestClass: CrossoverLink
-  #  TestPath: /home/test_server/test_code/engine_tests
-  #  TestScript: test_links.py
-  #  desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
-  #  desc_short: Check the quality of the crossover links
-  #  name: Crossover link quality
-  #  required: 1
+  - TestClass: CrossoverLink
+    TestPath: /home/test_server/test_code/engine_tests
+    TestScript: test_links.py
+    desc_long: PRBS validation from and back to ZCU. Check bit error rate below threshold.
+    desc_short: Check the quality of the crossover links
+    name: Crossover link quality
+    required: 1

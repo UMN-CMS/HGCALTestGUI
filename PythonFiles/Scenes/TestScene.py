@@ -160,15 +160,15 @@ class TestScene(ttk.Frame):
             )
         btn_confirm.pack(anchor = 'center', pady = 5)
 
-        if (self.test_idx == 0):
+        #if (self.test_idx == 0):
 
-            # Create a button for confirming test
-            run_all_btn = ttk.Button(
-                frm_logout, 
-                text = "Run All Tests",
-                command = lambda:self.run_all_action(parent),
-                )
-            run_all_btn.pack(anchor = 'center', pady = 5)
+        # Create a button for confirming test
+        run_all_btn = ttk.Button(
+            frm_logout, 
+            text = "Run All Tests",
+            command = lambda:self.run_all_action(parent),
+            )
+        run_all_btn.pack(anchor = 'center', pady = 5)
 
 
         # Create a rescan button
@@ -200,7 +200,7 @@ class TestScene(ttk.Frame):
 
     def run_all_action(self, _parent):
        
-        _parent.run_all_tests(self.test_idx) 
+        _parent.run_all_tests() 
         
 
     #################################################
