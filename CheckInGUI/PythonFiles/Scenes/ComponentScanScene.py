@@ -59,19 +59,19 @@ class ComponentScanScene(ttk.Frame):
     # can see more scanner documentation in the Visual Inspection GUI
     def check_for_ldo(self):
         if not self.is_checking:
-            return
+            return 
 
         got_code = self.data_holder.check_for_ldo()
         if got_code is not None and got_code != "None":
             self.stop()
         else:
-            self.parent.master_window.after(1, self.check_for_ldo)
+            self.parent.master_window.after(1000, self.check_for_ldo)
             
 
 
     def start(self):
         self.is_checking = True
-        self.parent.master_window.after(1, self.check_for_ldo)
+        self.parent.master_window.after(1000, self.check_for_ldo)
 
 
     def stop(self):
