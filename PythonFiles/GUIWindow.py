@@ -63,7 +63,10 @@ class GUIWindow():
         self.master_window.title("HGCAL Test Window")
 
         # Creates the size of the window
-        self.master_window.geometry("1400x900+25+100")
+        width = self.master_window.winfo_screenwidth()
+        height = self.master_window.winfo_screenheight()
+
+        self.master_window.geometry("{}x{}".format(width, height))
         self.master_window.pack_propagate(1) 
 
         #resizing master_frame, keeping sidebar same width
