@@ -13,42 +13,34 @@ TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS"
   #TestHandler: {name: ZMQ, localip: <localip>, remoteip: 192.168.140.22, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
 Test:
-- TestClass: ADC
+- TestClass: TestEconTtoEngine
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_adc_self_test.py
-  desc_long: Checking all ADCs to see if they are running as expected before running any tests
-  desc_short: ADC interal test
-  name: ADC Self Test
+  TestScript: test_econ_links.py
+  desc_long: 
+  desc_short: 
+  name: ECON-T Elinks To Engine
   required: 1
-- TestClass: gen_resist_test
+- TestClass: TestEconTtoEngine
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_gen_res.py
-  desc_long: Test must be completed before attempting to measure ID resistor
-  desc_short: Measure resistance of analog lines
-  name: Resistance Measurement
+  TestScript: test_econ_links.py
+  desc_long: 
+  desc_short: 
+  name: ECON-D Elinks To Engine
   required: 1
-- TestClass: id_resist_test
+- TestClass: TestEconTtoEngine
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_id_res.py
-  desc_long: Must be completed after the general resistance measurement
-  desc_short: Measure resistance of ID resistor
-  name: ID Resistor Measurement
+  TestScript: test_econ_links.py
+  desc_long: 
+  desc_short: 
+  name: ECON-T Elinks From Module
   required: 1
-- TestClass: IIC_Check
+- TestClass: TestEconTtoEngine
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_iic_check.py
-  desc_long: Test must be completed before BERT for wagon wheel configuration
-  desc_short: Check I2C read/write along wagon
-  name: I2C Read/Write
+  TestScript: test_econ_links.py
+  desc_long: 
+  desc_short: 
+  name: ECON-D Elinks From Module
   required: 1
-- TestClass: BERT
-  TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_bert.py
-  desc_long: Needs to be completed after I2C check in order to set up wagon wheel
-  desc_short: Determine quality of data transmission
-  name: Bit Error Rate Test
-  required: 1
-UsingScanner: true
 InspectionTest:
 - TestClass: Inspection
   name: Inspection1
