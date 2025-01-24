@@ -7,10 +7,12 @@ DBInfo:
   reader: FactoryReadUser
   use_database: true
 GUIType: Wagon
+UsingScanner: true
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
-TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
-  #TestHandler: {name: ZMQ, localip: <localip>, remoteip: 192.168.140.22, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+#TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
+TestHandler: {name: ZMQ, localip: <localip>, remoteip: umn-zcu102-d, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+
 PhysicalTest: []
 Test:
 - TestClass: TestEconTtoEngine
