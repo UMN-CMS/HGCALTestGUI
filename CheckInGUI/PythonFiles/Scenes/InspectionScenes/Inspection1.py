@@ -236,7 +236,6 @@ class Inspection1(ttk.Frame):
 
     #################################################
 
-    # Confirm button action takes the user to the camera scene scene
     def btn_confirm_action(self, _parent):
         
         self.update_data_holder()

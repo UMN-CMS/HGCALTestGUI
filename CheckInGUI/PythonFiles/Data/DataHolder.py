@@ -195,6 +195,10 @@ class DataHolder():
 
         self.data_dict['inspection_completed'] = True
         self.data_dict['inspection_pass'] = int(passed)
+        got_code = self.check_for_ldo()
+        if got_code is None or got_code == "None":
+            self.data_dict['inspection_pass'] = 0
+
         self.data_dict['data'] = self.inspection_data
 
         logging.info("DataHolder: Test results have been saved")
