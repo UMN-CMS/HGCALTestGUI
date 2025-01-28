@@ -101,6 +101,7 @@ class DBSender():
         encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
 
+        print(r.text)
         lines = r.text.split('\n')
 
         saved_image = False
@@ -123,7 +124,7 @@ class DBSender():
                 raise "Image Directory is too full, please upload and delete images."
             
 
-    def upload_local_board(self, path, full_id, view)
+    def upload_local_board(self, path, full_id, view):
         image = Image.open(path)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
@@ -143,6 +144,7 @@ class DBSender():
     def get_previous_test_results(self, full_id):
 
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
+        print(r.text)
 
         lines = r.text.split('\n')
 
@@ -174,8 +176,10 @@ class DBSender():
     # Posts a new board with passed in full id
     # this is only called if the full id isn't recognized by is_new_board
     def add_new_board(self, full, user_id, comments):
-        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full)})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': "None"})
+        print(r.text)
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
+        print(r.text)
 
 
         try:

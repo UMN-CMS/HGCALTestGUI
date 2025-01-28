@@ -119,7 +119,12 @@ class DataHolder():
         self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg, self.main_path)
-        self.num_modules = int(full[5]) + 1
+        
+        try:
+            self.num_modules = int(full[5]) + 1
+        except ValueError:
+            self.num_modules = 0
+
         logging.info("DataHolder: Full ID has been set.")
 
     def save_image(self):
@@ -142,7 +147,7 @@ class DataHolder():
     # sets the boards location in the database to the current test stand
     def update_location(self, full):
         text = self.data_sender.update_location(full, 'Visual Inspection')
-        print(text)
+        print('text')
 
     def upload_local_boards(self, board_list):
         for path, sn, view in board_list:

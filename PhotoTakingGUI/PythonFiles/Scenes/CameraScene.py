@@ -135,18 +135,6 @@ class CameraScene(ttk.Frame):
         if self.photo_packed == True:
             self.Engine_label.destroy() 
             self.photo_packed = False
-
-            # adds text saying to flip the board over if it's the first time the bottom picture is being taken
-            if self.parent.retake == True:
-                pass
-            else: 
-                self.flip_label = ttk.Label(
-                    master = self,
-                    text = 'Flip Board Over',
-                    font = ('Arial', 20),
-            )
-                self.flip_label.pack()
-                self.flip = True
             
 
         # Prevents the camera from being started twice
@@ -185,6 +173,23 @@ class CameraScene(ttk.Frame):
         self.desc_label_text.set(updated_title)
         self.long_desc_label_text.set(updated_description)
 
+        if self.flip == True:
+            self.flip_label.destroy()
+            self.flip_label = False
+
+        # adds text saying to flip the board over if it's the first time the bottom picture is being taken
+        if self.parent.retake == True:
+            pass
+        elif updated_title == 'Bottom': 
+            self.flip_label = ttk.Label(
+                master = self,
+                text = 'Flip Board Over',
+                font = ('Arial', 20),
+        )
+            self.flip_label.pack()
+            self.flip = True
+
+
     #################################################
 
     # Saves a picture of the currently shown camera
@@ -218,11 +223,15 @@ class CameraScene(ttk.Frame):
         # this doesn't affect the size of the actual image that goes into the Database
         width = int(self.image.size[0]*(800/self.image.size[1]))
         self.Engine_image = self.image.resize((width, 800), PIL.Image.Resampling.LANCZOS)
+        if width > 1000:
+            height = int(self.image.size[1]*(1000/self.image.size[0]))
+            self.Engine_image = self.image.resize((1000, height), PIL.Image.Resampling.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
         # if the flip prompt exists, destroy it
         if self.flip == True:
             self.flip_label.destroy()
+            self.flip = False
 
         # if there isn't an image currently displayed, add one
         if self.photo_packed == False:
