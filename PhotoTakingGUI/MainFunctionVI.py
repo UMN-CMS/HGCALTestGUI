@@ -37,8 +37,15 @@ def main():
     engine_GUI_computers = [ 
 
     ]   
-   
-    masterCfg = import_yaml("{}/Configs/Wagon_cfg.yaml".format(filepath))
+
+    try:
+        config_path = sys.argv[1]
+    except:
+        print("No config path given, defaulting to Wagon mode")
+        config_path = "{}/Configs/Wagon_cfg.yaml".format(filepath)
+
+    print(config_path)
+    masterCfg = import_yaml(config_path)
 
     board_cfg = masterCfg
 
