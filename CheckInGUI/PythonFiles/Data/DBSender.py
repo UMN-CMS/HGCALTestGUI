@@ -1,8 +1,10 @@
 import requests
+import logging
 import json
 import socket
 # from read_barcode import read_barcode
 
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 class DBSender():
 

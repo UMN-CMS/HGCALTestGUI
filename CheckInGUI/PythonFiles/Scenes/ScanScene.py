@@ -354,7 +354,7 @@ class ScanScene(ttk.Frame):
             _parent.set_frame_postscan()
             
         else:
-            if self.ent_full.get()[3] == 'W':
+            if self.ent_full.get()[3] in ('W', 'Z'):
                 _parent.set_frame_inspection_frame()
             elif self.ent_full.get()[3] == 'E':
                 _parent.set_frame_component_frame()
