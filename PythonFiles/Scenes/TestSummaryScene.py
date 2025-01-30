@@ -46,7 +46,7 @@ class TestSummaryScene(ttk.Frame):
         self.data_holder = data_holder
 
         # Instantiates an updated table with the current data
-        self.create_updated_table(parent)
+        #self.create_updated_table(parent)
 
         self.parent = parent
 
@@ -92,9 +92,11 @@ class TestSummaryScene(ttk.Frame):
         logger.debug("TestSummaryScene: Table is being updated.")        
         
         self.list_of_tests =self.data_holder.getPhysicalNames() + self.data_holder.getTestNames()
-        self.list_of_table_labels = ["Test Name", "Test Status", "Pass/Fail", "Actions"]
+        self.list_of_table_labels = ["Test Name", "Test Status", "Actions"]
         self.list_of_completed_tests = self.data_holder.data_lists['physical_completion'] +  self.data_holder.data_lists['test_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['physical_results'] + self.data_holder.data_lists['test_results']
+
+        self.test_results = self.data_holder.get_test_results()
 
         
         #Checks for duplicate test names, which cause problems with saving the json files
@@ -164,70 +166,108 @@ class TestSummaryScene(ttk.Frame):
                     font=('Arial', 24, "bold")
                     )
             _label.grid(row= 3, column=index, sticky='nsew', padx = 15, pady = 15)
-            
 
-        # Adds the test names to the first column
-        for index in range(len(self.list_of_tests)):
+        Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
+        Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
+        Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
+        Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
+        Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
+        notrun_Image = Image.open("{}/Images/not_yet_run.png".format(PythonFiles.__path__[0]))
+        notrun_Image = notrun_Image.resize((50,50), Image.LANCZOS)
+        notrun_PhotoImage = iTK.PhotoImage(notrun_Image)
+
+        for index,key in enumerate(self.list_of_tests):
             _label= ttk.Label(
                     self.viewingFrame, 
-                    text = self.list_of_tests[index], 
+                    text = key, 
                     #relief = 'ridge', 
                     width=25, 
                     #height=3, 
                     font=('Arial', 16)
                     )
             _label.grid(row=index + 5, column=0, sticky='nsew', padx = 15, pady = 15)
-        
-
-
-        # Create Labels that tell whether or not a test was completed
-        for index in range(len(self.list_of_completed_tests)):
-            
-            # Instantiates a Label
-            _label = ttk.Label(
-                        self.viewingFrame,
-                        width=25, 
-                        font=('Arial',16)
-                        )
-
-            # if the test is completed, set the label to "Complete"
-            if (self.list_of_completed_tests[index]):
-                _label.config(
-                        text = "COMPLETED",
-                        justify = "center"
-                        )
-            # else, set the label to "Unfinished"
-            else:
-                _label.config(
-                        text = "UNFINISHED",
-                        justify = "center"
-                        )
-
-            # Puts the completed/unfinished label into the table       
-            _label.grid(row=index + 5, column=1, sticky="ew", padx = 10, pady = 15)
-
-
-        # Adds the Image as to whether the test was completed or not
-        for index in range(len(self.list_of_pass_fail)):
-            if(self.list_of_pass_fail[index]):
-                # Create a photoimage object of the QR Code
-                Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
-                Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
-                Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
+            if self.test_results[key] == 'Passed':
                 GreenCheck_Label = ttk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=75)
                 GreenCheck_Label.image = Green_Check_PhotoImage
 
-                GreenCheck_Label.grid(row=index + 5, column=2, pady = 15)
+                GreenCheck_Label.grid(row=index + 5, column=1, pady = 15)
 
-            else:
-                # Create a photoimage object of the QR Code
-                Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
-                Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
-                Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
+            elif self.test_results[key] == 'Failed':
                 RedX_Label = ttk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=75)
                 RedX_Label.image = Red_X_PhotoImage
 
-                RedX_Label.grid(row=index + 5, column=2, pady = 15)
+                RedX_Label.grid(row=index + 5, column=1, pady = 15)
+            else:
+                notrun_Label = ttk.Label(self.viewingFrame, image=notrun_PhotoImage, width=75)
+                notrun_Label.image = notrun_PhotoImage
+
+                notrun_Label.grid(row=index + 5, column=1, pady = 15)
+            
+            
+
+        ## Adds the test names to the first column
+        #for index in range(len(self.list_of_tests)):
+        #    _label= ttk.Label(
+        #            self.viewingFrame, 
+        #            text = self.list_of_tests[index], 
+        #            #relief = 'ridge', 
+        #            width=25, 
+        #            #height=3, 
+        #            font=('Arial', 16)
+        #            )
+        #    _label.grid(row=index + 5, column=0, sticky='nsew', padx = 15, pady = 15)
+        #
+
+
+        ## Create Labels that tell whether or not a test was completed
+        #for index in range(len(self.list_of_completed_tests)):
+        #    
+        #    # Instantiates a Label
+        #    _label = ttk.Label(
+        #                self.viewingFrame,
+        #                width=25, 
+        #                font=('Arial',16)
+        #                )
+
+        #    # if the test is completed, set the label to "Complete"
+        #    if (self.list_of_completed_tests[index]):
+        #        _label.config(
+        #                text = "COMPLETED",
+        #                justify = "center"
+        #                )
+        #    # else, set the label to "Unfinished"
+        #    else:
+        #        _label.config(
+        #                text = "UNFINISHED",
+        #                justify = "center"
+        #                )
+
+        #    # Puts the completed/unfinished label into the table       
+        #    _label.grid(row=index + 5, column=1, sticky="ew", padx = 10, pady = 15)
+
+
+        ## Adds the Image as to whether the test was completed or not
+        #for index in range(len(self.list_of_pass_fail)):
+        #    if(self.list_of_pass_fail[index]):
+        #        # Create a photoimage object of the QR Code
+        #        Green_Check_Image = Image.open("{}/Images/GreenCheckMark.png".format(PythonFiles.__path__[0]))
+        #        Green_Check_Image = Green_Check_Image.resize((50,50), Image.LANCZOS)
+        #        Green_Check_PhotoImage = iTK.PhotoImage(Green_Check_Image)
+        #        GreenCheck_Label = ttk.Label(self.viewingFrame, image=Green_Check_PhotoImage, width=75)
+        #        GreenCheck_Label.image = Green_Check_PhotoImage
+
+        #        GreenCheck_Label.grid(row=index + 5, column=2, pady = 15)
+
+        #    else:
+        #        # Create a photoimage object of the QR Code
+        #        Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
+        #        Red_X_Image = Red_X_Image.resize((50,50), Image.LANCZOS)
+        #        Red_X_PhotoImage = iTK.PhotoImage(Red_X_Image)
+        #        RedX_Label = ttk.Label(self.viewingFrame, image=Red_X_PhotoImage, width=75)
+        #        RedX_Label.image = Red_X_PhotoImage
+
+        #        RedX_Label.grid(row=index + 5, column=2, pady = 15)
 
 
         self.create_retest_more_info_btns(parent)
@@ -275,9 +315,9 @@ class TestSummaryScene(ttk.Frame):
         retests = []
         more_infos = []
 
-        for i in range(self.data_holder.getNumTest() + self.data_holder.getNumPhysicalTest()):
+        for i in range(len(self.list_of_tests)):
             rows.append(ttk.Frame(self.viewingFrame))
-            rows[i].grid(column = 3, row = i + 5)
+            rows[i].grid(column = 2, row = i + 5)
 
             retests.append(ttk.Button(
                     rows[i], 
