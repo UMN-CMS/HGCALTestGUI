@@ -1,7 +1,7 @@
 shopt -s globstar
 
 : ${BUILDDIR:=BUILD}
-: ${GUI_VERSION:=0.0.2}
+: ${GUI_VERSION:=0.0.3}
 : ${GUI_RELEASE:=NORELEASE}
 
 CWD=$PWD
