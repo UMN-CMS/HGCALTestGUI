@@ -40,6 +40,9 @@ class SidebarScene(ttk.Frame):
         self.Red_X_Image = Image.open("{}/Images/RedX.png".format(PythonFiles.__path__[0]))
         self.Red_X_Image = self.Red_X_Image.resize((50,50), Image.LANCZOS)
         self.Red_X_PhotoImage = iTK.PhotoImage(self.Red_X_Image)
+        self.notrun_Image = Image.open("{}/Images/not_yet_run.png".format(PythonFiles.__path__[0]))
+        self.notrun_Image = self.notrun_Image.resize((50,50), Image.LANCZOS)
+        self.notrun_PhotoImage = iTK.PhotoImage(self.notrun_Image)
         
 
         ############        
@@ -215,23 +218,29 @@ class SidebarScene(ttk.Frame):
         self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
 
         # List for creating check marks with for loop
+        self.list_of_completion = self.data_holder.data_lists['test_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['test_results']
 
 
 
         # For loop to create checkmarks based on pass/fail
         for index in range(len(self.list_of_pass_fail)):
-            if(self.list_of_pass_fail[index] == True):
-                # Create a photoimage object of the QR Code
-                GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')
-                GreenCheck_Label.image = self.Green_Check_PhotoImage
-                GreenCheck_Label.grid(row=index + original_offset , column=1, padx = btn_padx)
+            if self.list_of_completion[index] == True:
+                if(self.list_of_pass_fail[index] == True):
+                    # Create a photoimage object of the QR Code
+                    GreenCheck_Label = tk.Label(self.viewingFrame, image=self.Green_Check_PhotoImage, width=50, height=50, bg = '#33393b')
+                    GreenCheck_Label.image = self.Green_Check_PhotoImage
+                    GreenCheck_Label.grid(row=index + original_offset , column=1, padx = btn_padx)
 
+                else:
+                    # Create a photoimage object of the QR Code
+                    RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#33393b')
+                    RedX_Label.image = self.Red_X_PhotoImage
+                    RedX_Label.grid(row=index + original_offset , column=1, padx = btn_padx)
             else:
-                # Create a photoimage object of the QR Code
-                RedX_Label = tk.Label(self.viewingFrame, image=self.Red_X_PhotoImage, width=50, height=50, bg = '#33393b')
-                RedX_Label.image = self.Red_X_PhotoImage
-                RedX_Label.grid(row=index + original_offset , column=1, padx = btn_padx)
+                notrun_Label = tk.Label(self.viewingFrame, image=self.notrun_PhotoImage, width=50, height=50, bg = '#33393b')
+                notrun_Label.image = self.notrun_PhotoImage
+                notrun_Label.grid(row=index + original_offset , column=1, padx = btn_padx)
 
         self.physical_pass_fail = self.data_holder.data_lists['physical_results']
         
