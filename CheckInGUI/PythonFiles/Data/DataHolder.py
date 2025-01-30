@@ -195,9 +195,11 @@ class DataHolder():
 
         self.data_dict['inspection_completed'] = True
         self.data_dict['inspection_pass'] = int(passed)
-        got_code = self.check_for_ldo()
-        if got_code is None or got_code == "None":
-            self.data_dict['inspection_pass'] = 0
+        fid = self.get_full_ID()
+        if "320EL" in fid or "320EH" in fid:
+            got_code = self.check_for_ldo()
+            if got_code is None or got_code == "None":
+                self.data_dict['inspection_pass'] = 0
 
         self.data_dict['data'] = self.inspection_data
 
