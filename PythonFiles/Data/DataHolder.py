@@ -191,6 +191,15 @@ class DataHolder():
     def decode_label(self, full_id):
         self.label_info = self.data_sender.decode_label(full_id)
 
+    def get_test_results(self):
+        prev_results, test_names = self.data_sender.get_previous_test_results(self.get_full_ID())
+        res_dict = {}
+        for n in test_names:
+            res_dict[n] = []
+        for idx,el in enumerate(prev_results):
+            res_dict[el[0]] = el[1]
+        return res_dict
+
 
     #################################################
 
