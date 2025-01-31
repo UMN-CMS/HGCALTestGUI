@@ -69,9 +69,5 @@ gzip $BUILDDIR/SOURCES/HGCALTestGUI-${GUI_VERSION}-${GUI_RELEASE}.tar
 
 cp deployment/gui.spec $BUILDDIR/SPECS
 
-
-
-
-
 rpmbuild --define "_topdir $(realpath BUILD)" -ba BUILD/SPECS/gui.spec
 
