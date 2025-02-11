@@ -30,5 +30,5 @@ Test:
   TestScript: zip_bert_test.py
   desc_long: Measure quality of fast data transmission through zippers using CLK lines from Kria
   desc_short: BERT for zippers
-  name: Zipper Test
+  name: Zipper Bit Error Rate Test
   required: 1
