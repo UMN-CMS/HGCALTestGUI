@@ -1,13 +1,13 @@
 ---
 
 # Specify which board you want to test here
-GUIType: Engine
+GUIType: Demo
 
 # Specify if a scanner is used for barcodes
 UsingScanner: false
 
 # How the tests will be run (local, ssh, or ZMQ)
-TestHandler: ZMQ
+TestHandler: {name: Local, remoteip: localhost}
 
 # Order of tests matters here
 # This should be the same order that you want the tests to be run in
@@ -68,9 +68,12 @@ PhysicalTest:
 
 # TODO To be updated with new DB info
 DBInfo: 
-  use_database: true
+  use_database: false
   name: WagonDB
   reader: WagonDBReadUser
   inserter: WagonDBInserter
   baseURL: "http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB"
+
+People:
+  - Garrett
 ...
