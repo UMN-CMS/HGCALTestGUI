@@ -4,6 +4,7 @@
 GUIType: Demo
 
 # Specify if a scanner is used for barcodes
+SerialCheckSafe: false
 UsingScanner: false
 
 # How the tests will be run (local, ssh, or ZMQ)
@@ -15,7 +16,7 @@ TestHandler: {name: Local, remoteip: localhost}
 # TestClass, TestScript, and TestPath fields will be used to write the REPserver script
 # TestPath should be in reference to the testing home directory
 Test: 
-- name: Normal Temp Pretest
+- name: Normal Pretest
   required: true 
   desc_short: Pretest of engines in thermal tester
   desc_long: Ensuring that all engines are properly seated and connected before changing thermal temps. 
@@ -39,7 +40,8 @@ Test:
   TestScript: wagon_rtd.py
 
 
-- name: Normal Temp Posttest
+
+- name: Normal Posttest
   required: true 
   desc_short: Test engines after return to normal temperatures
   desc_long: Ensuring that all engines can withstand the return from thermal temperatures
@@ -51,16 +53,16 @@ Test:
   TestScript: wagon_rtd.py
 
 
-
-PhysicalTest: 
-- name: SAMPLE test 
-  required: true 
-  desc_short: Some short description of the test
-  desc_long: Long description of the test
-  criteria: 
-  - first testing criteria
-  - second testing criteria
-  - third testing criteria                
+PhysicalTest: []
+# PhysicalTest: 
+# - name: Blank Test
+#   required: false 
+#   desc_short: Some short description of the test
+#   desc_long: Long description of the test
+#   criteria: 
+#   - first testing criteria
+#   - second testing criteria
+#   - third testing criteria                
 
 
 # Information for sending and receiving data to/from the database
