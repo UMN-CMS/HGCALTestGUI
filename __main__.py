@@ -8,7 +8,10 @@ import os
 from pathlib import Path
 from PythonFiles.utils.helper import get_logging_path
 
-guiLogPath = "{}".format(get_logging_path())
+# guiLogPath = "{}".format(get_logging_path())
+# TODO REMOVE HARD CODE
+guiLogPath = "E:/Bethel/CMS/HGCAL_Code/HGCALTestGUI/GUILogs/testgui.log"
+
 guiLogDir = "/".join(guiLogPath.split("/")[:-1])
 print("Writing log file to {}".format(guiLogPath))
 
