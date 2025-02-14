@@ -18,6 +18,7 @@ from PythonFiles.Scenes.ScanScene import ScanScene
 from PythonFiles.TestFailedPopup import TestFailedPopup
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.TestScene import *
+from PythonFiles.Scenes.PhysicalScenes.Inspection1 import *
 from PythonFiles.Scenes.TestInProgressScene import TestInProgressScene
 from PythonFiles.Data.DataHolder import DataHolder
 from PythonFiles.Scenes.SplashScene import SplashScene
