@@ -1,0 +1,76 @@
+---
+
+# Specify which board you want to test here
+GUIType: Engine
+
+# Specify if a scanner is used for barcodes
+UsingScanner: false
+
+# How the tests will be run (local, ssh, or ZMQ)
+TestHandler: ZMQ
+
+# Order of tests matters here
+# This should be the same order that you want the tests to be run in
+# Number of test will also be decided by this list so don't miss any 
+# TestClass, TestScript, and TestPath fields will be used to write the REPserver script
+# TestPath should be in reference to the testing home directory
+Test: 
+- name: Normal Temp Pretest
+  required: true 
+  desc_short: Pretest of engines in thermal tester
+  desc_long: Ensuring that all engines are properly seated and connected before changing thermal temps. 
+  # TODO: What test class?
+  TestClass: gen_resist_test 
+  # TODO: What test path?
+  TestPath: /home/HGCAL_dev/sw 
+  # TODO: What test script?
+  TestScript: wagon_rtd.py
+
+
+- name: Low Temp Testing
+  required: true 
+  desc_short: Low temp test of engines in thermal tester
+  desc_long: Ensuring that all engines can withstand thermal temperatures
+  # TODO: What test class?
+  TestClass: gen_resist_test 
+  # TODO: What test path?
+  TestPath: /home/HGCAL_dev/sw 
+  # TODO: What test script?
+  TestScript: wagon_rtd.py
+
+
+- name: Normal Temp Posttest
+  required: true 
+  desc_short: Test engines after return to normal temperatures
+  desc_long: Ensuring that all engines can withstand the return from thermal temperatures
+  # TODO: What test class?
+  TestClass: gen_resist_test 
+  # TODO: What test path?
+  TestPath: /home/HGCAL_dev/sw 
+  # TODO: What test script?
+  TestScript: wagon_rtd.py
+
+
+
+PhysicalTest: 
+- name: SAMPLE test 
+  required: true 
+  desc_short: Some short description of the test
+  desc_long: Long description of the test
+  criteria: 
+  - first testing criteria
+  - second testing criteria
+  - third testing criteria                
+
+
+# Information for sending and receiving data to/from the database
+# Needs to be different based on board type
+
+# TODO To be updated with new DB info
+DBInfo: 
+  use_database: true
+  name: WagonDB
+  reader: WagonDBReadUser
+  inserter: WagonDBInserter
+  baseURL: "http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB"
+...
