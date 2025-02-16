@@ -35,6 +35,9 @@ from PythonFiles.update_config import update_config
 import webbrowser
 import sys
 
+#TODO Edit later
+from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
+
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.GUIWindow')
@@ -159,6 +162,10 @@ class GUIWindow():
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
 
+        self.TODO_frame = ThermalTestConfigScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+        self.TODO_frame.grid(row=0, column=0, sticky='nsew')
+
+        
         self.master_window.mainloop()
        
     def log_callback_exception(self, exc_type, exc_value, exc_traceback):
@@ -191,6 +198,7 @@ class GUIWindow():
 
             self.test_frames.append(TestScene(self, self.master_frame, self.data_holder, test["name"], test["desc_short"], test["desc_long"], queue, self.conn_trigger, test_idx))
             self.test_frames[test_idx + offset].grid(row=0, column=0, sticky='nsew')
+
 
 
     #################################################
@@ -388,6 +396,17 @@ class GUIWindow():
         
         self.set_frame(selected_test_frame)
 
+        logging.debug("GUIWindow: The frame has been set to test {}.".format(test_idx))
+
+    #################################################    
+    
+    def TODO_set_trial_frame(self):
+        
+        logging.debug("GUIWindow: TODO Trying to set trial frame.")
+        print("GUIWINDOW")
+        self.set_frame(self.TODO_frame)
+        logging.debug("GUIWindow: TODO Completed the set of trial frame.")
+
     #################################################
 
     def set_frame_test_in_progress(self, queue):
@@ -521,6 +540,7 @@ class GUIWindow():
 
         # Raises the passed in frame to be the current frame
         _frame.tkraise()
+        print("GUIWINDOW: Raised {} frame".format(_frame))
 
         self.set_help_text(_frame)
 
