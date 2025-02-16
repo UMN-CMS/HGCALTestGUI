@@ -111,31 +111,35 @@ class DBSender():
     # Whether or not DB has passing results 
     def get_previous_test_results(self, full_id):
    
-        r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
-        
-        lines = r.text.split('\n')
+        if (self.use_database):
+            r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
+            
+            lines = r.text.split('\n')
 
-        begin1 = lines.index("Begin1") + 1
-        end1 = lines.index("End1")
-        begin2 = lines.index("Begin2") + 1
-        end2 = lines.index("End2")
-        begin3 = lines.index("Begin3") + 1
-        end3 = lines.index("End3")
+            begin1 = lines.index("Begin1") + 1
+            end1 = lines.index("End1")
+            begin2 = lines.index("Begin2") + 1
+            end2 = lines.index("End2")
+            begin3 = lines.index("Begin3") + 1
+            end3 = lines.index("End3")
 
-        tests_run = []
-        outcomes = []
-        poss_tests = []
+            tests_run = []
+            outcomes = []
+            poss_tests = []
 
-        for i in range(begin1, end1):
-            tests_run.append(lines[i])
-        for i in range(begin2, end2):
-            outcomes.append(lines[i])
-        for i in range(begin3, end3):
-            poss_tests.append(lines[i])
+            for i in range(begin1, end1):
+                tests_run.append(lines[i])
+            for i in range(begin2, end2):
+                outcomes.append(lines[i])
+            for i in range(begin3, end3):
+                poss_tests.append(lines[i])
 
-        tests_passed = []
-        for i in range(len(tests_run)):
-            tests_passed.append([tests_run[i], outcomes[i]])
+            tests_passed = []
+            for i in range(len(tests_run)):
+                tests_passed.append([tests_run[i], outcomes[i]])
+        else:
+            tests_passed = ["Test1", "Test2"]
+            poss_tests = ["Test1", "Test2", "Test3"]
 
         return tests_passed, poss_tests
     
@@ -163,16 +167,21 @@ class DBSender():
 
     def update_location(self, full, loc):
         loc = 'Last seen at ' + loc
-        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
+        
+        if (self.use_database):
+            r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
        
-        lines = r.text.split('\n')
-   
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
+            lines = r.text.split('\n')
+    
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
 
 
-        for i in range(begin, end): 
-            return lines[i]
+            for i in range(begin, end): 
+                return lines[i]
+            
+        else:
+            return("Blank location updated; not using database")
 
     def is_new_board(self, full):
         r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})

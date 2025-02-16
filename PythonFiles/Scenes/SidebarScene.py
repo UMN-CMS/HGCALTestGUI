@@ -105,7 +105,7 @@ class SidebarScene(ttk.Frame):
        
         logger.info("SidebarScene: The sidebar has been updated.")
 
-                # Variables for easy button editing
+        # Variables for easy button editing
         btn_height = 3
         btn_width = 18
         btn_pady = 12
@@ -215,7 +215,20 @@ class SidebarScene(ttk.Frame):
             )
         self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
-        self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
+        self.TODO_REMOVE_BTN = ttk.Button(
+            self.viewingFrame, 
+            #pady = btn_pady,
+            text = 'TODO',
+            #height = btn_height,
+            width = btn_width,
+            #font = ('Kozuka Gothic Pr6N L', 8),
+            command = lambda: self.TODO_new_scene(_parent)
+            )
+        self.TODO_REMOVE_BTN.grid(column = 0, row = 8 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
+
+
+
+        self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn, self.TODO_REMOVE_BTN]
 
         # List for creating check marks with for loop
         self.list_of_completion = self.data_holder.data_lists['test_completion']
@@ -307,6 +320,11 @@ class SidebarScene(ttk.Frame):
     def btn_test_action(self, _parent, test_idx):
         print("\nSideBarScene.btn_test_action.test_idx: ", test_idx)
         _parent.set_frame_test(test_idx)
+
+    def TODO_new_scene(self, _parent):
+        print("TODO: Remove later; setting trial scene")
+        _parent.TODO_set_trial_frame()
+
 
     def btn_summary_action(self, _parent):
         _parent.set_frame_test_summary()

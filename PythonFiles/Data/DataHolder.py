@@ -415,8 +415,7 @@ class DataHolder():
     ################################################
 
     # Tracking the test index in another place and propagating to the config
-    def setTestIdx(self, test_idx):
-        
+    def setTestIdx(self, test_idx): 
         self.current_test_idx = test_idx
 
     def getNumTest(self):

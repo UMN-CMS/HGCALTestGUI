@@ -7,11 +7,11 @@ from tkinter import messagebox
 import tkinter.font as font
 import logging
 logging.getLogger('PIL').setLevel(logging.WARNING)
-import PythonFiles
+# import PythonFiles
 import os
 
 # Importing Necessary Files
-from PythonFiles.utils.REQClient import REQClient
+# from PythonFiles.utils.REQClient import REQClient
 
 #################################################################################
 
@@ -20,19 +20,15 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestConfigSce
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating class for the window
-class ThermalTestConfigScence(ttk.Frame):
+class ThermalTestConfigScene(ttk.Frame):
 
     #################################################
 
-    def __init__(self, parent, master_frame, data_holder, test_name, test_description_short, test_description_long, queue, conn_trigger, test_idx):
+    def __init__(self, parent, master_frame, data_holder, queue, conn_trigger):
         super().__init__(master_frame, width=1300-213, height = 800)
         self.queue = queue
         self.conn_trigger = conn_trigger
-        self.test_name = test_name
-        self.test_description_short = test_description_short
-        self.test_description_long = test_description_long
         self.data_holder = data_holder
-        self.test_idx = test_idx
         self.parent = parent
         
         self.update_frame(parent)
@@ -49,7 +45,7 @@ class ThermalTestConfigScence(ttk.Frame):
         self.s.theme_use('awdark')
 
     def update_frame(self, parent):
-        logger.debug("ParentTestClass: A test frame has been updated.")
+        logger.debug("ParentTestClass: A ThermalTestConfigScene frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
         
@@ -86,44 +82,45 @@ class ThermalTestConfigScence(ttk.Frame):
             )
         lbl_full.pack(side = 'top', pady = 10)
 
+        # TODO Dynamically update dropdown menu
         engine_types = ["LD_Engines", "HD_Half_Engines", "HD_Full_Engines"]
         self.engine_type_selected = tk.StringVar(self)
         self.engine_type_selected.set("")
 
         # Creating the dropdown menu itself
         self.engine_dropdown = tk.OptionMenu(
-            self, 
-            self.user_selected, # Tells option menu to use the created initial value
+            frm_window, 
+            self.engine_type_selected, # Tells option menu to use the created initial value
             *engine_types # Tells the dropdown menu to use every index in the User_List list
             ) 
-        self.opt_user_dropdown.pack(pady=15)
-        self.opt_user_dropdown.config(width = 20)
+        self.engine_dropdown.pack(pady=15)
+        self.engine_dropdown.config(width = 20)
 
 
-        # Create a entry for the full id box
-        ent_full = tk.Entry(
-            frm_window, 
-            #font = font_scene
-            )
-        ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
-        ent_full.pack(side = 'top', pady = 10)
-        ent_full.config(state = "disabled")
+        # # Create a entry for the full id box
+        # ent_full = tk.Entry(
+        #     frm_window, 
+        #     #font = font_scene
+        #     )
+        # ent_full.insert(0, self.data_holder.data_dict['current_full_ID'])
+        # ent_full.pack(side = 'top', pady = 10)
+        # ent_full.config(state = "disabled")
 
-        # Create a label for the test about to be run
-        lbl_test = ttk.Label(
-            frm_window, 
-            text = "Current Test: ", 
-            font = ('Arial', '24')
-            )
-        lbl_test.pack(side = 'top', pady = 10)
+        # # Create a label for the test about to be run
+        # lbl_test = ttk.Label(
+        #     frm_window, 
+        #     text = "Current Test: ", 
+        #     font = ('Arial', '24')
+        #     )
+        # lbl_test.pack(side = 'top', pady = 10)
 
-        # Create a entry for the test type
-        self.ent_test = tk.Entry(
-            frm_window, 
-            )
-        self.ent_test.pack(side = 'top', pady = 10)
-        self.ent_test.insert(0, self.test_name)
-        self.ent_test.config(state = "disabled")
+        # # Create a entry for the test type
+        # self.ent_test = tk.Entry(
+        #     frm_window, 
+        #     )
+        # self.ent_test.pack(side = 'top', pady = 10)
+        # self.ent_test.insert(0, self.test_name)
+        # self.ent_test.config(state = "disabled")
 
         # Create a label for confirming test
         lbl_confirm = ttk.Label(
@@ -133,24 +130,24 @@ class ThermalTestConfigScence(ttk.Frame):
             )
         lbl_confirm.pack(side = 'top', pady = 15)
 
-        self.lbl_desc_short = ttk.Label(
-            frm_window,
-            text = self.test_description_short,
-            wraplength = 500,
-            justify="center",
-            font = ('Arial', '24')
-            )
+        # self.lbl_desc_short = ttk.Label(
+        #     frm_window,
+        #     text = self.test_description_short,
+        #     wraplength = 500,
+        #     justify="center",
+        #     font = ('Arial', '24')
+        #     )
 
-        self.lbl_desc_short.pack(side = 'top', pady = 15)
+        # self.lbl_desc_short.pack(side = 'top', pady = 15)
 
-        self.lbl_desc = ttk.Label(
-            frm_window,
-            text = self.test_description_long,
-            wraplength = 800,
-            justify="center",
-            font = ('Arial', '24')
-            )
-        self.lbl_desc.pack(side = 'top', pady = 15)
+        # self.lbl_desc = ttk.Label(
+        #     frm_window,
+        #     text = self.test_description_long,
+        #     wraplength = 800,
+        #     justify="center",
+        #     font = ('Arial', '24')
+        #     )
+        # self.lbl_desc.pack(side = 'top', pady = 15)
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
