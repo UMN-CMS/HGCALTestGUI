@@ -39,6 +39,9 @@ import sys
 from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
 #TODO Edit later
 from PythonFiles.Scenes.ThermalTestCheckResultsScene import ThermalTestCheckResultsScene
+#TODO Edit later
+from PythonFiles.Scenes.ThermalTestBeginScene import ThermalTestBeginScene
+
 
 #################################################################################
 
@@ -164,7 +167,7 @@ class GUIWindow():
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
 
-        self.TODO_frame = ThermalTestCheckResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+        self.TODO_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
         self.TODO_frame.grid(row=0, column=0, sticky='nsew')
 
         
