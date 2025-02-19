@@ -15,12 +15,21 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestConfigScene')
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestCheckResultsScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
+# Define state options
+STATES = {
+    "ready": ("✔", "green"),
+    "failure": ("✖", "red"),
+    "warning": ("⚠", "orange"),
+    "excluded": ("__", "black"),
+    "waiting": ("...", "lightgray")
+}
+
 # Creating class for the window
-class ThermalTestConfigScene(ttk.Frame):
+class ThermalTestCheckResultsScene(ttk.Frame):
 
     #################################################
 
@@ -61,126 +70,123 @@ class ThermalTestConfigScene(ttk.Frame):
         # Create a label for the tester's name
         lbl_title = ttk.Label(
             frm_window, 
-            text = "Test Configuration", 
+            text = "Setup Check Results", 
             font = ('Arial', '28')
             )
         lbl_title.pack(side = 'top', pady = 10)
         
 
+        # Create a canvas for the rectangle
+        canvas = tk.Canvas(frm_window, width=700, height=200)
+        canvas.pack()
 
-        # Create a frame to contain the label, dropdown, and confirm button in a single row
-        frm_engine_selection = ttk.Frame(frm_window)
-        frm_engine_selection.pack(anchor='center', pady=10)
-
-        # Create a label for the engine type
-        lbl_full = ttk.Label(
-            frm_engine_selection, 
-            text="Engine Type: ", 
-            font=('Arial', '20')
-        )
-        lbl_full.pack(side='left', padx=5)
-
-        # Dynamically update dropdown menu
-        engine_types = ["LD_Engines", "HD_Half_Engines", "HD_Full_Engines"]
-        self.engine_type_selected = tk.StringVar(self)
-        self.engine_type_selected.set("")
-
-        # Creating the dropdown menu itself
-        self.engine_dropdown = tk.OptionMenu(
-            frm_engine_selection, 
-            self.engine_type_selected,  
-            *engine_types  
-        ) 
-        self.engine_dropdown.pack(side='left', padx=5)
-        self.engine_dropdown.config(width=20)
-
-        # Create "Confirm" button
-        btn_confirm = ttk.Button(
-            frm_engine_selection,
-            text="Confirm",
-            command=lambda: self.btn_confirm_engine_action(parent)
-        )
-        btn_confirm.pack(side='left', padx=5)
-
-
-
-
-
-        # Create a label for confirming test
-        lbl_active = ttk.Label(
-            frm_window, 
-            text = "Select active sites:", 
-            font = ('Arial', '24')
-            )
-        lbl_active.pack(side = 'top', pady = 15)
-
-        # Create a list of boolean values for the checkboxes
-        # TODO Replace this with actual boolean array values
-        checkbox_values = [False, True, False, False, True, False, False, True, False, False, True, False, True, False, False, True, False, True, False, True]
+        # Draw the rectangle
+        canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
 
 
         # Create a frame to hold the checkboxes
         checkbox_frame = ttk.Frame(frm_window)
         checkbox_frame.pack(pady=10)
 
-        # Loop to create 20 checkboxes (2 columns and 10 rows)
+        # Initialize states
+        # TODO Update these to fill dynamically
+        self.checkbox_states = [
+            "ready", "failure", "warning", "excluded", "waiting",
+            "failure", "ready", "waiting", "excluded", "warning",
+            "waiting", "ready", "excluded", "failure", "warning",
+            "ready", "waiting", "failure", "excluded", "warning"
+        ]
+
+        # TODO Find where to pull this information from
+        self.checkbox_labels = []
+        self.checkbox_vars = []
+
+
+        # Loop to create 20 visual checkboxes (2 columns, 10 rows)
         for i in range(20):
-            col = i // 10  # Determine which column (0 or 1)
-            row = i % 10   # Determine the row (0-9)
+            col = i // 10  # Determine column (0 or 1)
+            row = i % 10   # Determine row (0-9)
 
-            # Create the checkbox and label for each
-            chk_var = tk.BooleanVar()
-            chk_var.set(checkbox_values[i])
+            # Get the initial state from checkbox_states
+            initial_state = self.checkbox_states[i]
+            initial_text = STATES[initial_state][0]
+            initial_color = STATES[initial_state][1]
 
-            checkbox = ttk.Checkbutton(
-                checkbox_frame,
-                text=f"Item {i + 1}",  # Display the number next to the checkbox (1-indexed)
-                variable=chk_var
+            # Create a label as a clickable checkbox (icon)
+            state_label = ttk.Label(
+                checkbox_frame, 
+                text=initial_text, 
+                foreground=initial_color, 
+                font=("Arial", 18),
+                padding=2
             )
-            checkbox.grid(row=row, column=col, padx=10, pady=5, sticky="w")
+            state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
 
-            # Store the checkbox variable if you need to access the values later
-            checkbox_values[i] = chk_var
+            # Create a text label next to the state label (Item 1, Item 2, etc.)
+            text_label = ttk.Label(
+                checkbox_frame,
+                text=f"Item {i + 1}",
+                font=("Arial", 14)
+            )
+            text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
 
+            # Bind click event to toggle state
+            state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
 
-        # Create a frame for the select/deselect buttons
-        frm_select = ttk.Frame(frm_window)
-        # Create "Select All" button
-        btn_select_all = ttk.Button(
-            frm_select,
-            text="Select All",
-            command=lambda: self.btn_select_all_action(parent)
-        )
-        btn_select_all.pack(side='left', padx=10)
-
-        # Create "Deselect All" button
-        btn_deselect_all = ttk.Button(
-            frm_select,
-            text="Deselect All",
-            command=lambda: self.btn_deselect_all_action(parent)
-        )
-        btn_deselect_all.pack(side='left', padx=5)
-
-        frm_select.pack(anchor='center', pady=10)
-
+            # Store label reference
+            self.checkbox_labels.append(state_label)
 
 
         # Create a label for bottom text
         lbl_begin_text = ttk.Label(
             frm_window, 
-            text = "Once all engines are properly connected, click the button below to begin the setup check:", 
-            font = ('Arial', '20')
+            text = "Make any adjustments and rerun check on selected sites:", 
+            font = ('Arial', '14')
             )
-        lbl_begin_text.pack(side = 'top', pady = 25)
+        lbl_begin_text.pack(side = 'top', pady = 15)
+
+        # Create 20 checkboxes in a single row
+        checkbox_row_frame = ttk.Frame(frm_window)
+        
+        for i in range(20):
+            var = tk.BooleanVar()
+            self.checkbox_vars.append(var)
+
+            checkbox = ttk.Checkbutton(
+                checkbox_row_frame,
+                text=f"{i + 1}",
+                variable=var
+            )
+            checkbox.grid(row=0, column=i, padx=5, pady=5, sticky="w")  # Single row layout
+        checkbox_row_frame.pack(pady=10)
+
 
 
         # Create a logout button
-        btn_setup_check = ttk.Button(
+        btn_recheck = ttk.Button(
             frm_window, 
-            text = "Run Setup Check", 
+            text = "Recheck Selected Sites", 
             #relief = tk.RAISED, 
-            command = lambda: self.btn_setup_check_action(parent))
-        btn_setup_check.pack(anchor = 'center', pady = 5)
+            command = lambda: self.btn_recheck_selected_action(parent))
+        btn_recheck.pack(anchor = 'center', pady = 5)
+
+
+        # Create a label for bottom text
+        lbl_proceed_text = ttk.Label(
+            frm_window, 
+            text = "If everything is ready, proceed to the full test", 
+            font = ('Arial', '14')
+            )
+        lbl_proceed_text.pack(side = 'top', pady = 15)
+
+
+        # Create a logout button
+        btn_proceed = ttk.Button(
+            frm_window, 
+            text = "Proceed", 
+            #relief = tk.RAISED, 
+            command = lambda: self.btn_proceed_action(parent))
+        btn_proceed.pack(anchor = 'center', pady = 5)
 
 
 
@@ -243,10 +249,36 @@ class ThermalTestConfigScene(ttk.Frame):
 
     #################################################
 
+    # Function to toggle states on click
+    def toggle_state(self, label, index):
+        current_state = self.checkbox_states[index]
+        state_keys = list(STATES.keys())
+        new_state = state_keys[(state_keys.index(current_state) + 1) % len(STATES)]
+        
+        # Update state and label
+        self.checkbox_states[index] = new_state
+        label.config(text=STATES[new_state][0], foreground=STATES[new_state][1])
+
+    
+    
     def help_action(self, _parent):
         _parent.help_popup(self)
  
 
+    def btn_proceed_action(self, _parent):
+        
+        #TODO Complete
+        # _parent.btn_proceed_action(self)
+        pass 
+
+
+    def btn_recheck_selected_action(self, _parent):
+        
+        #TODO Complete
+        # _parent.btn_recheck_selected_action(self)
+        pass
+        
+    
     def btn_setup_check_action(self, _parent):
         
         #TODO Complete
