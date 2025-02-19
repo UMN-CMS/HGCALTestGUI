@@ -54,7 +54,7 @@ class ThermalTestCheckResultsScene(ttk.Frame):
         self.s.theme_use('awdark')
 
     def update_frame(self, parent):
-        logger.debug("ParentTestClass: A ThermalTestConfigScene frame has been updated.")
+        logger.debug("ParentTestClass: A ThermalTestCheckResultsScene frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
         
