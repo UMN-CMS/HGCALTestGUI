@@ -15,21 +15,13 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestCheckResultsScene')
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestInProgressScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
-# Define state options
-STATES = {
-    "ready": ("✔", "green"),
-    "failure": ("✖", "red"),
-    "warning": ("⚠", "orange"),
-    "excluded": ("__", "black"),
-    "waiting": ("...", "lightgray")
-}
 
 # Creating class for the window
-class ThermalTestCheckResultsScene(ttk.Frame):
+class ThermalTestInProgressScene(ttk.Frame):
 
     #################################################
 
@@ -54,7 +46,7 @@ class ThermalTestCheckResultsScene(ttk.Frame):
         self.s.theme_use('awdark')
 
     def update_frame(self, parent):
-        logger.debug("ParentTestClass: A ThermalTestCheckResultsScene frame has been updated.")
+        logger.debug("ParentTestClass: A ThermalTestInProgressScene frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
         
@@ -70,7 +62,7 @@ class ThermalTestCheckResultsScene(ttk.Frame):
         # Create a label for the tester's name
         lbl_title = ttk.Label(
             frm_window, 
-            text = "Setup Check Results", 
+            text = "Thermal Test in Progress", 
             font = ('Arial', '28')
             )
         lbl_title.pack(side = 'top', pady = 10)
@@ -83,110 +75,56 @@ class ThermalTestCheckResultsScene(ttk.Frame):
         # Draw the rectangle
         canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
 
-
-        # Create a frame to hold the checkboxes
-        checkbox_frame = ttk.Frame(frm_window)
-        checkbox_frame.pack(pady=10)
-
-        # Initialize states
-        # TODO Update these to fill dynamically
-        self.checkbox_states = [
-            "ready", "failure", "warning", "excluded", "waiting",
-            "failure", "ready", "waiting", "excluded", "warning",
-            "waiting", "ready", "excluded", "failure", "warning",
-            "ready", "waiting", "failure", "excluded", "warning"
-        ]
-
-        # TODO Find where to pull this information from
-        self.checkbox_labels = []
-        self.checkbox_vars = []
-
-
-        # Loop to create 20 visual checkboxes (2 columns, 10 rows)
-        for i in range(20):
-            col = i // 10  # Determine column (0 or 1)
-            row = i % 10   # Determine row (0-9)
-
-            # Get the initial state from checkbox_states
-            initial_state = self.checkbox_states[i]
-            initial_text = STATES[initial_state][0]
-            initial_color = STATES[initial_state][1]
-
-            # Create a label as a clickable checkbox (icon)
-            state_label = ttk.Label(
-                checkbox_frame, 
-                text=initial_text, 
-                foreground=initial_color, 
-                font=("Arial", 18),
-                padding=2
-            )
-            state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
-
-            # Create a text label next to the state label (Item 1, Item 2, etc.)
-            text_label = ttk.Label(
-                checkbox_frame,
-                text=f"Item {i + 1}",
-                font=("Arial", 14)
-            )
-            text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
-
-            # Bind click event to toggle state
-            state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
-
-            # Store label reference
-            self.checkbox_labels.append(state_label)
-
-
         # Create a label for bottom text
-        lbl_begin_text = ttk.Label(
+        lbl_wait_text = ttk.Label(
             frm_window, 
-            text = "Make any adjustments and rerun check on selected sites:", 
+            text = "Please wait, tests in progress...", 
             font = ('Arial', '14')
             )
-        lbl_begin_text.pack(side = 'top', pady = 15)
+        lbl_wait_text.pack(side = 'top', pady = 15)
 
-        # Create 20 checkboxes in a single row
-        checkbox_row_frame = ttk.Frame(frm_window)
-        
-        for i in range(20):
-            var = tk.BooleanVar()
-            self.checkbox_vars.append(var)
 
-            checkbox = ttk.Checkbutton(
-                checkbox_row_frame,
-                text=f"{i + 1}",
-                variable=var
-            )
-            checkbox.grid(row=0, column=i, padx=5, pady=5, sticky="w")  # Single row layout
-        checkbox_row_frame.pack(pady=10)
+        #------------------------------
+
+        # Create the countdown timer frame
+        self.frm_timer = ttk.Frame(frm_window, padding=10)
+        self.frm_timer.pack(side='top', pady=20)
+
+        # Create the label for approximate time remaining
+        lbl_approx_time = ttk.Label(self.frm_timer, text="Approximate time remaining:", font=("Arial", 15))
+        lbl_approx_time.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+
+        # Create a label to display the countdown timer
+        self.timer_label = ttk.Label(self.frm_timer, text="02:00:00", font=("Arial", 24), foreground="red")
+        self.timer_label.grid(row=1, column=0, columnspan=3, pady=10)
+
+        # Start the countdown from 2 hours (7200 seconds)
+        self.remaining_time = 7200
+        self.update_timer()
+
+
+
 
 
 
         # Create a logout button
-        btn_recheck = ttk.Button(
+        btn_stop_early = ttk.Button(
             frm_window, 
-            text = "Recheck Selected Sites", 
+            text = "Stop Test Early", 
             #relief = tk.RAISED, 
-            command = lambda: self.btn_recheck_selected_action(parent))
-        btn_recheck.pack(anchor = 'center', pady = 5)
-
-
-        # Create a label for bottom text
-        lbl_proceed_text = ttk.Label(
-            frm_window, 
-            text = "If everything is ready, proceed to the full test", 
-            font = ('Arial', '14')
-            )
-        lbl_proceed_text.pack(side = 'top', pady = 15)
+            command = lambda: self.btn_stop_early_action(parent))
+        btn_stop_early.pack(anchor = 'center', pady = 5)
 
 
         # Create a logout button
-        btn_proceed = ttk.Button(
+        btn_next = ttk.Button(
             frm_window, 
-            text = "Proceed", 
+            text = "Next", 
+            state="disabled",
             #relief = tk.RAISED, 
             command = lambda: self.btn_proceed_action(parent))
-        btn_proceed.pack(anchor = 'center', pady = 5)
+        btn_next.pack(anchor = 'center', pady = 5)
 
 
 
@@ -249,26 +187,37 @@ class ThermalTestCheckResultsScene(ttk.Frame):
 
     #################################################
 
-    # Function to toggle states on click
-    def toggle_state(self, label, index):
-        current_state = self.checkbox_states[index]
-        state_keys = list(STATES.keys())
-        new_state = state_keys[(state_keys.index(current_state) + 1) % len(STATES)]
-        
-        # Update state and label
-        self.checkbox_states[index] = new_state
-        label.config(text=STATES[new_state][0], foreground=STATES[new_state][1])
+    # Timer functionality
+    def update_timer(self):
+        # Updates the countdown timer every second.
+        if self.remaining_time > 0:
+            self.remaining_time -= 1
+            hours, remainder = divmod(self.remaining_time, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            self.timer_label.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
 
+            # Schedule the next update
+            self.after(1000, self.update_timer)
+        else:
+            self.timer_label.config(text="00:00:00", foreground="black")
+    
+    def set_timer(self, hours, minutes):
+        # Manually sets the countdown timer based on function parameters.
+        # Convert input to total seconds
+        self.remaining_time = (hours * 3600) + (minutes * 60)
+
+        # Update timer display immediately
+        self.update_timer()
     
     
     def help_action(self, _parent):
         _parent.help_popup(self)
  
 
-    def btn_proceed_action(self, _parent):
+    def btn_stop_early_action(self, _parent):
         
         #TODO Complete
-        # _parent.btn_proceed_action(self)
+        # _parent.btn_stop_early_action(self)
         pass 
 
 

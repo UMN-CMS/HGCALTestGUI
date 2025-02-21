@@ -36,9 +36,13 @@ import webbrowser
 #TODO Edit later
 from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
 #TODO Edit later
-from PythonFiles.Scenes.ThermalTestCheckResultsScene import ThermalTestCheckResultsScene
+from PythonFiles.Scenes.ThermalTestSetupResultsScene import ThermalTestSetupResultsScene
 #TODO Edit later
 from PythonFiles.Scenes.ThermalTestBeginScene import ThermalTestBeginScene
+#TODO Edit later
+from PythonFiles.Scenes.ThermalTestInProgressScene import ThermalTestInProgressScene
+#TODO Edit later
+from PythonFiles.Scenes.ThermalTestFinalResultsScene import ThermalTestFinalResultsScene
 
 
 #################################################################################
@@ -165,7 +169,7 @@ class GUIWindow():
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
 
-        self.TODO_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+        self.TODO_frame = ThermalTestSetupResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
         self.TODO_frame.grid(row=0, column=0, sticky='nsew')
 
         
