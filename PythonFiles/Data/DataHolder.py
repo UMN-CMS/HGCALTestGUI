@@ -414,6 +414,42 @@ class DataHolder():
 
     ################################################
 
+    def setOtherZippers(self, zips):
+
+        self.other_zippers = zips
+
+
+    def passOtherZippers(self):
+
+        placeholder = {
+            "name": None,
+            "board_sn": None,
+            "tester": self.data_dict['user_ID'],
+            "pass": True,
+            "data": {
+                "tested_sn": self.data_dict['current_full_ID']
+                },
+            "comments": "Passed by default"
+            }
+
+        for zipper in self.other_zippers:
+
+            self.update_location(zipper)
+
+            placeholder['board_sn'] = zipper
+
+            for test in self.gui_cfg.getTestNames():
+
+                placeholder['name'] = test
+
+                with open("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), "w") as outfile:
+                    json.dump(placeholder, outfile)
+
+                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())))
+
+
+    ################################################
+
     # Tracking the test index in another place and propagating to the config
     def setTestIdx(self, test_idx):
         
