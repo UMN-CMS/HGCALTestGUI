@@ -85,15 +85,27 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         # Initialize states
         # TODO Update these to fill dynamically
         self.checkbox_states = [
-            "ready", "failure", "warning", "excluded", "waiting",
-            "failure", "ready", "waiting", "excluded", "warning",
-            "waiting", "ready", "excluded", "failure", "warning",
-            "ready", "waiting", "failure", "excluded", "warning"
+            "ready", "failure", "warning", "excluded", "ready",
+            "failure", "ready", "ready", "excluded", "ready",
+            "ready", "ready", "excluded", "failure", "warning",
+            "ready", "ready", "failure", "excluded", "warning"
         ]
 
         # TODO Find where to pull this information from
         self.checkbox_labels = []
         self.checkbox_vars = []
+
+        key_frame = ttk.Frame(checkbox_frame, padding=10)
+        key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
+
+        # Key descriptions
+        key_descriptions = {
+            "ready": "Pass",
+            "failure": "Fail",
+            "warning": "Set aside for retesting",
+            "excluded": "Excluded from Test",
+            "waiting": "Waiting"
+        }
 
 
         # Loop to create 20 visual checkboxes (2 columns, 10 rows)
@@ -136,23 +148,94 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
 
 
-
+            # TODO Remove/update board status button binds on Final Results Scene
             # Bind click event to toggle state
-            state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
+            # state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
 
             # Store label reference
             self.checkbox_labels.append(state_label)
 
+        # Add labels to the key
+        for i, (state, description) in enumerate(key_descriptions.items()):
+            ttk.Label(
+                key_frame, 
+                text=f"{STATES[state][0]}  {description}",
+                foreground=STATES[state][1], 
+                font=("Arial", 14)
+            ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
 
-        # Create a label for bottom text
-        lbl_begin_text = ttk.Label(
-            frm_window, 
-            text = "Place passed engines in blue bin\nFailed engines in red bin\nEngines needing retests in gray bin", 
-            font = ('Arial', '14')
+
+
+        # # Create a label for bottom text
+        # lbl_begin_text = ttk.Label(
+        #     frm_window, 
+        #     text = "Place passed engines in blue bin\nFailed engines in red bin\nEngines needing retests in gray bin", 
+        #     font = ('Arial', '14')
+        #     )
+        # lbl_begin_text.pack(side = 'top', pady = (75, 15))
+
+        # Add labels to the key
+        for i, (state, description) in enumerate(key_descriptions.items()):
+            label = ttk.Label(
+                key_frame,
+                text=f"{STATES[state][0]}  {description}",
+                font=("Arial", 14)
             )
-        lbl_begin_text.pack(side = 'top', pady = (150, 15))
+            label.grid(row=i, column=0, padx=5, pady=3, sticky="w")
+            label.configure(foreground=STATES[state][1])  # Set symbol color
 
+        # Create a frame to hold the bottom text labels
+        lbl_frame = ttk.Frame(frm_window)
+        lbl_frame.pack(side="top", pady=(75, 15))
 
+        # Create labels for each line with colored symbols
+        lbl_pass = ttk.Label(
+            lbl_frame,
+            text=f"{STATES['ready'][0]} ",
+            font=("Arial", 14),
+            foreground=STATES["ready"][1]
+        )
+        lbl_pass.pack(side="top", anchor="w", padx=5)
+
+        lbl_pass_text = ttk.Label(
+            lbl_frame,
+            text="Place passed engines in blue bin",
+            font=("Arial", 14),
+            foreground="white"
+        )
+        lbl_pass_text.pack(side="top", anchor="w", padx=25)
+
+        lbl_fail = ttk.Label(
+            lbl_frame,
+            text=f"{STATES['failure'][0]} ",
+            font=("Arial", 14),
+            foreground=STATES["failure"][1]
+        )
+        lbl_fail.pack(side="top", anchor="w", padx=5)
+
+        lbl_fail_text = ttk.Label(
+            lbl_frame,
+            text="Failed engines in red bin",
+            font=("Arial", 14),
+            foreground="white"
+        )
+        lbl_fail_text.pack(side="top", anchor="w", padx=25)
+
+        lbl_retest = ttk.Label(
+            lbl_frame,
+            text=f"{STATES['warning'][0]} ",
+            font=("Arial", 14),
+            foreground=STATES["warning"][1]
+        )
+        lbl_retest.pack(side="top", anchor="w", padx=5)
+
+        lbl_retest_text = ttk.Label(
+            lbl_frame,
+            text="Engines needing retests in gray bin",
+            font=("Arial", 14),
+            foreground="white"
+        )
+        lbl_retest_text.pack(side="top", anchor="w", padx=25)
 
 
 
@@ -162,7 +245,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             text = "Finish", 
             #relief = tk.RAISED, 
             command = lambda: self.btn_finish_action(parent))
-        btn_finish.pack(anchor = 'center', pady = 5)
+        btn_finish.pack(anchor = 'center', pady = (25, 10))
 
 
 
