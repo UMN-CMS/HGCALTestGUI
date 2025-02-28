@@ -109,7 +109,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # TODO Find where to pull this information from
         self.checkbox_labels = []
         self.checkbox_vars = []
-        
+
         key_frame = ttk.Frame(checkbox_frame, padding=10)
         key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
 
@@ -299,6 +299,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def btn_proceed_action(self, _parent):
         
+        _parent.set_frame_thermal_begin()
         #TODO Complete
         # _parent.btn_proceed_action(self)
         pass 
