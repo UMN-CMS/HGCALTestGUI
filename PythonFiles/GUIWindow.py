@@ -350,12 +350,17 @@ class GUIWindow():
     #################################################
 
     def set_frame_scan_frame(self):
-
-        self.scan_frame.is_current_scene = True
-        self.set_frame(self.scan_frame)
-        self.scan_frame.scan_QR_code(self.master_window)
-        
-        logging.debug("GUIWindow: The frame has been set to scan_frame.")
+        print("\nTester_Type:", self.data_holder.tester_type)
+        if (self.data_holder.tester_type == 'Thermal'):
+            
+            self.set_frame(self.thermal_config_frame)
+            logging.debug("GUIWindow: set_frame_scan_frame has been bypassed, setting Thermal Config Frame")
+        else:
+            self.scan_frame.is_current_scene = True
+            self.set_frame(self.scan_frame)
+            self.scan_frame.scan_QR_code(self.master_window)
+            
+            logging.debug("GUIWindow: The frame has been set to scan_frame.")
 
 
     #################################################

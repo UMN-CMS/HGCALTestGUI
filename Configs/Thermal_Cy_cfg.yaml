@@ -1,7 +1,7 @@
 ---
 
 # Specify which board you want to test here
-GUIType: Demo
+GUIType: Thermal
 
 # Specify if a scanner is used for barcodes
 SerialCheckSafe: false

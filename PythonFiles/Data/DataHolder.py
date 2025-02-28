@@ -87,7 +87,9 @@ class DataHolder():
         self.admin = False
         self.password = None
 
-        self.tester_type = None
+        # TODO Initialize with correct value from config
+        self.tester_type = self.gui_cfg.getGUIType()
+
         self.wagon_tester_info = {
                 'Kria': None,
                 'Tester': None,
