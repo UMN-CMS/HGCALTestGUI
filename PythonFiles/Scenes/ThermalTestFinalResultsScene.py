@@ -327,9 +327,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
     def btn_finish_action(self, _parent):
         
-        #TODO Complete
-        # _parent.btn_finish_action(self)
-        pass 
+        _parent.set_frame_thermal_config()
 
 
 

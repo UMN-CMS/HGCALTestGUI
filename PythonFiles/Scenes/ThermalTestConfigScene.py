@@ -30,6 +30,11 @@ class ThermalTestConfigScene(ttk.Frame):
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
         self.parent = parent
+
+        # Create a list of boolean values for the checkboxes
+        # TODO Replace this with actual boolean array values
+        self.checkbox_values = [False, True, False, False, True, False, False, True, False, False, True, False, True, False, False, True, False, True, False, True]
+
         
         self.update_frame(parent)
 
@@ -114,9 +119,7 @@ class ThermalTestConfigScene(ttk.Frame):
             )
         lbl_active.pack(side = 'top', pady = 15)
 
-        # Create a list of boolean values for the checkboxes
-        # TODO Replace this with actual boolean array values
-        checkbox_values = [False, True, False, False, True, False, False, True, False, False, True, False, True, False, False, True, False, True, False, True]
+
 
 
         # Create a frame to hold the checkboxes
@@ -130,7 +133,7 @@ class ThermalTestConfigScene(ttk.Frame):
 
             # Create the checkbox and label for each
             chk_var = tk.BooleanVar()
-            chk_var.set(checkbox_values[i])
+            chk_var.set(self.checkbox_values[i])
 
             checkbox = ttk.Checkbutton(
                 checkbox_frame,
@@ -140,7 +143,7 @@ class ThermalTestConfigScene(ttk.Frame):
             checkbox.grid(row=row, column=col, padx=10, pady=5, sticky="w")
 
             # Store the checkbox variable if you need to access the values later
-            checkbox_values[i] = chk_var
+            self.checkbox_values[i] = chk_var
 
 
         # Create a frame for the select/deselect buttons
@@ -243,23 +246,30 @@ class ThermalTestConfigScene(ttk.Frame):
 
     #################################################
 
+    
+    
     def help_action(self, _parent):
         _parent.help_popup(self)
  
 
     def btn_setup_check_action(self, _parent):
         
-        #TODO Complete
-        # _parent.thermal_setup_check(self)
+        _parent.set_frame_thermal_setup_results()
+        #TODO Complete data logging from current scene
+
         pass
 
     def btn_select_all_action(self, _parent):
         
+        self.select_all_checkbox()
+
         #TODO Complete
         # _parent.select_all_bays(self)
         pass
 
     def btn_deselect_all_action(self, _parent):
+
+        self.deselect_all_checkbox()       
         
         #TODO Complete
         # _parent.deselect_all_bays(self)
@@ -276,6 +286,18 @@ class ThermalTestConfigScene(ttk.Frame):
        
         _parent.run_all_tests() 
         
+    # Since BooleanVar is linked to the checkboxes, updating it will instantly reflect on the GUI.
+    def select_all_checkbox(self):
+        # Set all checkbox values to True
+        for i in range(len(self.checkbox_values)):
+            self.checkbox_values[i].set(True)  # Update BooleanVar
+
+    # Since BooleanVar is linked to the checkboxes, updating it will instantly reflect on the GUI.
+    def deselect_all_checkbox(self):
+        for i in range(len(self.checkbox_values)):
+            self.checkbox_values[i].set(False)  # Update BooleanVar
+
+
 
     #################################################
 

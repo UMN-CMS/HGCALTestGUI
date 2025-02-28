@@ -121,9 +121,9 @@ class ThermalTestInProgressScene(ttk.Frame):
         btn_next = ttk.Button(
             frm_window, 
             text = "Next", 
-            state="disabled",
+            # state="disabled",
             #relief = tk.RAISED, 
-            command = lambda: self.btn_proceed_action(parent))
+            command = lambda: self.btn_next_action(parent))
         btn_next.pack(anchor = 'center', pady = 5)
 
 
@@ -221,36 +221,10 @@ class ThermalTestInProgressScene(ttk.Frame):
         pass 
 
 
-    def btn_recheck_selected_action(self, _parent):
-        
-        #TODO Complete
-        # _parent.btn_recheck_selected_action(self)
-        pass
-        
-    
-    def btn_setup_check_action(self, _parent):
-        
-        #TODO Complete
-        # _parent.thermal_setup_check(self)
-        pass
+    # Send to the next scene (thermal_final_results)
+    def btn_next_action(self, _parent):
+        _parent.set_frame_thermal_final_results()
 
-    def btn_select_all_action(self, _parent):
-        
-        #TODO Complete
-        # _parent.select_all_bays(self)
-        pass
-
-    def btn_deselect_all_action(self, _parent):
-        
-        #TODO Complete
-        # _parent.deselect_all_bays(self)
-        pass
-
-    def btn_confirm_engine_action(self, _parent):
-        
-        #TODO Complete
-        # _parent.confirm_engine_type(self)
-        pass
 
 
     def run_all_action(self, _parent):
