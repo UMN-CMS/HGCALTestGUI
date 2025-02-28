@@ -97,9 +97,21 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             "ready", "waiting", "failure", "excluded", "warning"
         ]
 
+        # Key descriptions
+        key_descriptions = {
+            "ready": "Ready",
+            "failure": "Connection Failure",
+            "warning": "Not Ready for Thermal Testing",
+            "excluded": "Excluded from Test",
+            "waiting": "Waiting"
+        }
+
         # TODO Find where to pull this information from
         self.checkbox_labels = []
         self.checkbox_vars = []
+        
+        key_frame = ttk.Frame(checkbox_frame, padding=10)
+        key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
 
 
         # Loop to create 20 visual checkboxes (2 columns, 10 rows)
@@ -146,6 +158,15 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
             # Store label reference
             self.checkbox_labels.append(state_label)
+
+        # Add labels to the key
+        for i, (state, description) in enumerate(key_descriptions.items()):
+            ttk.Label(
+                key_frame, 
+                text=f"{STATES[state][0]}  {description}",
+                foreground=STATES[state][1], 
+                font=("Arial", 14)
+            ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
 
 
         # Create a label for bottom text

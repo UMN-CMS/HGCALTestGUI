@@ -75,9 +75,17 @@ class ThermalTestBeginScene(ttk.Frame):
             anchor="w",
             justify="left"
             )
-        lbl_section1.pack(side = 'top', pady = 15)
+        lbl_section1.pack(side = 'top', pady = (15, 175))
         
-       
+        lbl_section2_title = ttk.Label(
+            frm_window, 
+            text = "Then, verify the following:", 
+            font = ('Arial', '24'),
+            anchor="w",
+            justify="center"
+            )
+        lbl_section2_title.pack(side = 'top', pady = (15, 10))
+        
         lbl_section2 = ttk.Label(
             frm_window, 
             text = "1. WAGON_TEST is displayed at the top of the thermal chamber screen \n 2. The rotameter indicator is at the top of the gauge", 

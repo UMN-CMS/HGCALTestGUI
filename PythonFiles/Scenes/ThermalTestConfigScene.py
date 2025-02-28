@@ -134,7 +134,7 @@ class ThermalTestConfigScene(ttk.Frame):
 
             checkbox = ttk.Checkbutton(
                 checkbox_frame,
-                text=f"Item {i + 1}",  # Display the number next to the checkbox (1-indexed)
+                text=f"{i + 1}",  # Display the number next to the checkbox (1-indexed)
                 variable=chk_var
             )
             checkbox.grid(row=row, column=col, padx=10, pady=5, sticky="w")
