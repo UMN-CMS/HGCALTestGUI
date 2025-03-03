@@ -740,7 +740,6 @@ class GUIWindow():
 
         #print("\nall_text: ", self.all_text)
 
-     
         self.label_text.set(self.all_text)
 
     #################################################

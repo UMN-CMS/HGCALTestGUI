@@ -134,7 +134,8 @@ class ThermalTestConfigScene(ttk.Frame):
             checkbox = ttk.Checkbutton(
                 checkbox_frame,
                 text=f"{i + 1}",  # Display the number next to the checkbox (1-indexed)
-                variable=chk_var
+                variable=chk_var,
+                command=lambda idx=i: self.checkbox_selected(idx)  # Pass index to function
             )
             checkbox.grid(row=row, column=col, padx=10, pady=5, sticky="w")
 
@@ -247,6 +248,19 @@ class ThermalTestConfigScene(ttk.Frame):
     def help_action(self, _parent):
         _parent.help_popup(self)
  
+    def checkbox_selected(self, idx):
+        simple_checkbox_values = []
+
+        for chk_var in self.checkbox_values:
+            value = chk_var.get() 
+            # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
+            simple_checkbox_values.append(value)  # Ensure proper boolean conversion
+
+        # print("simple_checkbox_values:", simple_checkbox_values)
+
+        # TODO return simple_checkbox_values to the dataholder
+
+
 
     def btn_setup_check_action(self, _parent):
         
@@ -263,12 +277,14 @@ class ThermalTestConfigScene(ttk.Frame):
     def btn_select_all_action(self, _parent):
         
         self.select_all_checkbox()
+        self.checkbox_selected(0)
 
         pass
 
     def btn_deselect_all_action(self, _parent):
 
-        self.deselect_all_checkbox()       
+        self.deselect_all_checkbox()
+        self.checkbox_selected(0)       
         
         pass
 
