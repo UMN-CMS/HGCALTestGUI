@@ -300,7 +300,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def get_setup_check_results(self):
         # print("checkbox_states", self.checkbox_states)    #for debugging
-        #TODO return to the dataholder for storage
+        # TODO return to the dataholder for storage
         return self.checkbox_states    
     
     def adj_checkbox_action(self, idx):
@@ -316,7 +316,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         print("simple_adj:", simple_adj)
 
-        #TODO Return to the dataholder
+        # TODO Return to the dataholder
         return simple_adj
  
     
@@ -328,39 +328,39 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def btn_proceed_action(self, _parent):
         
         _parent.set_frame_thermal_begin()
-        #TODO Complete
+        # TODO Complete
         # _parent.btn_proceed_action(self)
         pass 
 
 
     def btn_recheck_selected_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.btn_recheck_selected_action(self)
         pass
         
     
     def btn_setup_check_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.thermal_setup_check(self)
         pass
 
     def btn_select_all_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.select_all_bays(self)
         pass
 
     def btn_deselect_all_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.deselect_all_bays(self)
         pass
 
     def btn_confirm_engine_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.confirm_engine_type(self)
         pass
 

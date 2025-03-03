@@ -186,9 +186,7 @@ class ThermalTestBeginScene(ttk.Frame):
     def btn_start_full_test_action(self, _parent):
         
         _parent.set_frame_thermal_test_in_progress()
-        #TODO Complete
-        # _parent.btn_start_full_test_action(self)
-        pass
+
 
 
 

@@ -265,7 +265,7 @@ class ThermalTestConfigScene(ttk.Frame):
     def btn_setup_check_action(self, _parent):
         
         _parent.set_frame_thermal_setup_results()
-        #TODO Complete data logging from current scene
+        # TODO Complete data logging from current scene
 
         pass
 
