@@ -291,7 +291,13 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.checkbox_states[index] = new_state
         label.config(text=STATES[new_state][0], foreground=STATES[new_state][1])
 
-    
+        self.return_setup_check_results()
+
+
+    def return_setup_check_results(self):
+        # print("checkbox_states", self.checkbox_states)    #for debugging
+        #TODO return to the dataholder for storage
+        return self.checkbox_states    
     
     def help_action(self, _parent):
         _parent.help_popup(self)
