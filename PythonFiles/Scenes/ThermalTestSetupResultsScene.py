@@ -346,17 +346,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # _parent.thermal_setup_check(self)
         pass
 
-    def btn_select_all_action(self, _parent):
-        
-        # TODO Complete
-        # _parent.select_all_bays(self)
-        pass
-
-    def btn_deselect_all_action(self, _parent):
-        
-        # TODO Complete
-        # _parent.deselect_all_bays(self)
-        pass
 
     def btn_confirm_engine_action(self, _parent):
         
