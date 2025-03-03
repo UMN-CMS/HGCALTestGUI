@@ -97,6 +97,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             "ready", "waiting", "failure", "excluded", "warning"
         ]
 
+        self.adjustment_var = [True, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+
         # Key descriptions
         key_descriptions = {
             "ready": "Ready",
@@ -178,19 +180,21 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         lbl_begin_text.pack(side = 'top', pady = 15)
 
         # Create 20 checkboxes in a single row
-        checkbox_row_frame = ttk.Frame(frm_window)
+        adjustment_row_frame = ttk.Frame(frm_window)
         
         for i in range(20):
-            var = tk.BooleanVar()
-            self.checkbox_vars.append(var)
+            adj_var = tk.BooleanVar()
+            adj_var.set(self.adjustment_var[i])
+            self.adjustment_var[i] = adj_var
 
-            checkbox = ttk.Checkbutton(
-                checkbox_row_frame,
+            adj_checkbox = ttk.Checkbutton(
+                adjustment_row_frame,
                 text=f"{i + 1}",
-                variable=var
+                variable=adj_var,
+                command= lambda idx=i: self.adj_checkbox_action(idx)
             )
-            checkbox.grid(row=0, column=i, padx=5, pady=5, sticky="w")  # Single row layout
-        checkbox_row_frame.pack(pady=10)
+            adj_checkbox.grid(row=0, column=i, padx=5, pady=5, sticky="w")  # Single row layout
+        adjustment_row_frame.pack(pady=10)
 
 
 
@@ -291,13 +295,31 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.checkbox_states[index] = new_state
         label.config(text=STATES[new_state][0], foreground=STATES[new_state][1])
 
-        self.return_setup_check_results()
+        self.get_setup_check_results()
 
 
-    def return_setup_check_results(self):
+    def get_setup_check_results(self):
         # print("checkbox_states", self.checkbox_states)    #for debugging
         #TODO return to the dataholder for storage
         return self.checkbox_states    
+    
+    def adj_checkbox_action(self, idx):
+        self.get_adj_checkbox_action(idx)
+
+    def get_adj_checkbox_action(self, idx):
+        # print("adj_:", self.adjustment_var)
+        simple_adj = []
+
+        for adj_val in self.adjustment_var:
+            val = adj_val.get()
+            simple_adj.append(val)
+
+        print("simple_adj:", simple_adj)
+
+        #TODO Return to the dataholder
+        return simple_adj
+ 
+    
     
     def help_action(self, _parent):
         _parent.help_popup(self)
