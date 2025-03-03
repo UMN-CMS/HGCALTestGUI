@@ -33,15 +33,15 @@ from PythonFiles.Scenes.ComponentScanScene import TesterComponentScene
 from PythonFiles.update_config import update_config
 import webbrowser
 
-#TODO Edit later
+# TODO Edit later
 from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
-#TODO Edit later
+# TODO Edit later
 from PythonFiles.Scenes.ThermalTestSetupResultsScene import ThermalTestSetupResultsScene
-#TODO Edit later
+# TODO Edit later
 from PythonFiles.Scenes.ThermalTestBeginScene import ThermalTestBeginScene
-#TODO Edit later
+# TODO Edit later
 from PythonFiles.Scenes.ThermalTestInProgressScene import ThermalTestInProgressScene
-#TODO Edit later
+# TODO Edit later
 from PythonFiles.Scenes.ThermalTestFinalResultsScene import ThermalTestFinalResultsScene
 
 

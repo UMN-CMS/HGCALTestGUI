@@ -216,7 +216,7 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     def btn_stop_early_action(self, _parent):
         
-        #TODO Complete
+        # TODO Complete
         # _parent.btn_stop_early_action(self)
         pass 
 
