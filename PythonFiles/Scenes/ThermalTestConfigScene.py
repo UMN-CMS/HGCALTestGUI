@@ -34,7 +34,7 @@ class ThermalTestConfigScene(ttk.Frame):
         # Create a list of boolean values for the checkboxes
         # TODO Replace this with actual boolean array values
         self.checkbox_values = [False, True, False, False, True, False, False, True, False, False, True, False, True, False, False, True, False, True, False, True]
-
+        self.current_engine_selection = None
         
         self.update_frame(parent)
 
@@ -99,15 +99,11 @@ class ThermalTestConfigScene(ttk.Frame):
         self.engine_dropdown.pack(side='left', padx=5)
         self.engine_dropdown.config(width=20)
 
-        # Create "Confirm" button
-        btn_confirm = ttk.Button(
-            frm_engine_selection,
-            text="Confirm",
-            command=lambda: self.btn_confirm_engine_action(parent)
-        )
-        btn_confirm.pack(side='left', padx=5)
-
-
+        # Traces when the user selects an option in the dropdown menu
+        self.engine_type_selected.trace_add(
+            'write', 
+            lambda *args: self.dropdown_engine_selected()
+            )
 
 
 
@@ -259,27 +255,28 @@ class ThermalTestConfigScene(ttk.Frame):
 
         pass
 
+    def dropdown_engine_selected(self):
+        self.current_engine_selection = self.engine_type_selected.get()
+        print("ThermalTestConfigScene: engine_selected =", self.current_engine_selection)
+        logger.info("ThermalTestConfigScene: selected the {} engine from the dropdown".format(self.current_engine_selection))
+
     def btn_select_all_action(self, _parent):
         
         self.select_all_checkbox()
 
-        #TODO Complete
-        # _parent.select_all_bays(self)
         pass
 
     def btn_deselect_all_action(self, _parent):
 
         self.deselect_all_checkbox()       
         
-        #TODO Complete
-        # _parent.deselect_all_bays(self)
         pass
 
-    def btn_confirm_engine_action(self, _parent):
+    # def btn_confirm_engine_action(self, _parent):
         
-        #TODO Complete
-        # _parent.confirm_engine_type(self)
-        pass
+    #     print()
+
+    #     pass
 
 
     def run_all_action(self, _parent):
