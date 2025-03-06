@@ -329,9 +329,12 @@ class ScanScene(ttk.Frame):
         
         self.EXIT_CODE = 1 
         
+        print('GUI is slowing down when setting full ID')
         self.data_holder.set_full_ID(self.ent_full.get())
+        print('GUI is slowing down when setting comments')
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
 
+        print('GUI is slowing down when setting manufacturer ID')
         self.data_holder.set_manufacturer_id(self.manuf_selected.get())
 
         in_id = self.data_holder.check_if_new_board()
@@ -344,12 +347,12 @@ class ScanScene(ttk.Frame):
             self.label_sn.update()
             self.label_major.update()
             self.btn_submit["state"] = "disabled"
-            return
-        self.data_holder.update_location(self.ent_full.get())
-        # FIXME REPLACE THIS WHEN DATABASE PERISSIONS ARE FIXED
-        #FIXME 
-        # FIXME
 
+        print('GUI is slowing down when updating location')
+        self.data_holder.update_location(self.ent_full.get())
+     
+
+        print('GUI is slowing down when setting next frame')
         if self.data_holder.data_dict['prev_results'] != '':
             _parent.set_frame_postscan()
             

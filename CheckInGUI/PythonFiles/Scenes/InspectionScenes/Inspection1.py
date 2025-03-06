@@ -225,8 +225,8 @@ class Inspection1(ttk.Frame):
 
     # adds the visual inspection info to the data holder
     def update_data_holder(self):
-        for i, items in enumerate(self.tk_bools):
-            self.data_holder.get_check_dict(0)[i]['value'] = items.get()           
+        for i, item in enumerate(self.tk_bools):
+            self.data_holder.set_check_dict(i, item.get())
  
         self.data_holder.set_comment_dict(0, self.comment_box.get())  
         self.data_holder.add_inspection_to_comments()
