@@ -192,7 +192,7 @@ class DataHolder():
         self.label_info = self.data_sender.decode_label(full_id)
 
     def get_test_results(self):
-        prev_results, test_names = self.data_sender.get_previous_test_results(self.get_full_ID)
+        prev_results, test_names = self.data_sender.get_previous_test_results(self.get_full_ID())
         res_dict = {}
         for n in test_names:
             res_dict[n] = []
@@ -411,6 +411,42 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+
+    ################################################
+
+    def setOtherZippers(self, zips):
+
+        self.other_zippers = zips
+
+
+    def passOtherZippers(self):
+
+        placeholder = {
+            "name": None,
+            "board_sn": None,
+            "tester": self.data_dict['user_ID'],
+            "pass": True,
+            "data": {
+                "tested_sn": self.data_dict['current_full_ID']
+                },
+            "comments": "Passed by default"
+            }
+
+        for zipper in self.other_zippers:
+
+            self.update_location(zipper)
+
+            placeholder['board_sn'] = zipper
+
+            for test in self.gui_cfg.getTestNames():
+
+                placeholder['name'] = test
+
+                with open("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), "w") as outfile:
+                    json.dump(placeholder, outfile)
+
+                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())))
+
 
     ################################################
 

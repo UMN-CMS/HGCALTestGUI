@@ -15,6 +15,7 @@ from PythonFiles.GUIConfig import GUIConfig
 from PythonFiles.Scenes.SidebarScene import SidebarScene
 from PythonFiles.Scenes.LoginScene import LoginScene
 from PythonFiles.Scenes.ScanScene import ScanScene
+from PythonFiles.Scenes.ScanManyScene import ScanManyScene
 from PythonFiles.TestFailedPopup import TestFailedPopup
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.TestScene import *
@@ -121,6 +122,9 @@ class GUIWindow():
 
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
         self.scan_frame.grid(row=0, column=0, sticky = 'nsew')
+
+        self.scan_many_frame = ScanManyScene(self, self.master_frame, self.data_holder)        
+        self.scan_many_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
@@ -322,6 +326,15 @@ class GUIWindow():
         
         logging.debug("GUIWindow: The frame has been set to scan_frame.")
 
+    #################################################
+
+    def set_frame_scan_many_frame(self):
+
+        self.scan_many_frame.is_current_scene = True
+        self.set_frame(self.scan_many_frame)
+        self.scan_many_frame.scan_QR_code(self.master_window)
+        
+        logging.debug("GUIWindow: The frame has been set to scan_many_frame.")
 
     #################################################
 
