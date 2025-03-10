@@ -6,9 +6,11 @@ import tkinter.ttk as ttk
 from tkinter import messagebox
 import tkinter.font as font
 import logging
+from PythonFiles.utils.ConsoleRedirector import ConsoleRedirector
 logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
+import sys
 
 # Importing Necessary Files
 # from PythonFiles.utils.REQClient import REQClient
@@ -27,6 +29,10 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder, queue, conn_trigger):
         super().__init__(master_frame, width=1300-213, height = 800)
+        
+        self.console_text = None
+        self.original_stdout = sys.stdout  # Store the default stdout
+        
         self.queue = queue
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
@@ -68,12 +74,22 @@ class ThermalTestInProgressScene(ttk.Frame):
         lbl_title.pack(side = 'top', pady = 10)
         
 
-        # Create a canvas for the rectangle
-        canvas = tk.Canvas(frm_window, width=700, height=200)
-        canvas.pack()
+        # # Create the rectangle canvas
+        # canvas = tk.Canvas(frm_window, width=700, height=200)
+        # canvas.pack()
+        # canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
 
-        # Draw the rectangle
-        canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
+        # Create console display inside the window
+        self.create_console_window(frm_window)
+        print("ThermalTestInProgressScene: Console created.")
+        logger.info("ThermalTestInProgressScene: Successfully created console for output on GUI.")
+        
+
+        # Example print statements (These will appear in the Tkinter window)
+        print("Initializing system...")
+        print("Loading data...")
+        print("Process completed successfully!")
+
 
         # Create a label for bottom text
         lbl_wait_text = ttk.Label(
@@ -126,10 +142,6 @@ class ThermalTestInProgressScene(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda: self.btn_next_action(parent))
         btn_next.pack(anchor = 'center', pady = 5)
-
-
-
-
 
 
         # Create frame for logout button
@@ -187,6 +199,30 @@ class ThermalTestInProgressScene(ttk.Frame):
 
 
     #################################################
+    def create_console_window(self, frm_window):
+        # Create a frame to hold the console output and scrollbar
+        console_frame = tk.Frame(frm_window)
+        
+        # Create a Text widget for displaying console output
+        self.console_text = tk.Text(console_frame, width=85, height=30, wrap="word", state="disabled", bg="black", fg="white")
+        self.console_text.pack(side="left", fill="both", expand=True)
+
+        # Create a Scrollbar and attach it to the Text widget
+        scrollbar = tk.Scrollbar(console_frame, command=self.console_text.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.console_text.config(yscrollcommand=scrollbar.set)
+
+        console_frame.pack()
+
+
+        # Redirect sys.stdout to the Text widget
+        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
+        sys.stdout = ConsoleRedirector(self.console_text)
+        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
+        
+            
+
+
 
     # Timer functionality
     def update_timer(self):
@@ -195,6 +231,8 @@ class ThermalTestInProgressScene(ttk.Frame):
             self.remaining_time -= 1
             hours, remainder = divmod(self.remaining_time, 3600)
             minutes, seconds = divmod(remainder, 60)
+            if (seconds % 30 == 0):
+                print("Time:", hours, ":", minutes, ":", seconds)
             self.timer_label.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
 
             # Schedule the next update
@@ -237,6 +275,8 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     # Send to the next scene (thermal_final_results)
     def btn_next_action(self, _parent):
+        self.cancel_timer()
+        sys.stdout = self.original_stdout
         _parent.set_frame_thermal_final_results()
 
 
