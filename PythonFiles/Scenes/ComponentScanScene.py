@@ -20,8 +20,9 @@ logger = logging.getLogger('HGCAL_GUI')
 FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 
 # TODO REMOVE HARD CODE
-sample_filename = "E:/Bethel/CMS/HGCAL_Code/HGCALTestGUI/GUILogs/gui.log"
-logging.basicConfig(filename=sample_filename, filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logging.getLogger()
+
+logging.basicConfig(filename="/home/{}/GUILogs/scanner_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
