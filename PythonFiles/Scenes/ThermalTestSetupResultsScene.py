@@ -47,6 +47,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.parent = parent
         
         self.update_frame(parent)
+        sys.stdout = self.original_stdout
 
     #################################################
 
