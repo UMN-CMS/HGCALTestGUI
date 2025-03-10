@@ -33,15 +33,10 @@ from PythonFiles.Scenes.ComponentScanScene import TesterComponentScene
 from PythonFiles.update_config import update_config
 import webbrowser
 
-# TODO Edit later
 from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
-# TODO Edit later
 from PythonFiles.Scenes.ThermalTestSetupResultsScene import ThermalTestSetupResultsScene
-# TODO Edit later
 from PythonFiles.Scenes.ThermalTestBeginScene import ThermalTestBeginScene
-# TODO Edit later
 from PythonFiles.Scenes.ThermalTestInProgressScene import ThermalTestInProgressScene
-# TODO Edit later
 from PythonFiles.Scenes.ThermalTestFinalResultsScene import ThermalTestFinalResultsScene
 
 
@@ -460,12 +455,13 @@ class GUIWindow():
         logging.debug("GUIWindow: TODO Trying to set thermal test in progress frame.")
         self.thermal_in_progress_frame.update_frame(self)
         self.set_frame(self.thermal_in_progress_frame)
+
         logging.debug("GUIWindow: TODO Completed the set thermal test in progress frame.")
 
     def set_frame_thermal_setup_results(self):
         logging.debug("GUIWindow: TODO Trying to set thermal setup results frame.")
         # TODO Figure out if this needs a call to update_frame method
-        # self.thermal_setup_results_frame.update_frame(self)
+        self.thermal_setup_results_frame.update_frame(self)
         self.set_frame(self.thermal_setup_results_frame)
         logging.debug("GUIWindow: TODO Completed the set thermal setup results frame.")
 
