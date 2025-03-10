@@ -148,20 +148,21 @@ class GUIWindow():
         self.splash_frame = SplashScene(self, self.master_frame)
         self.splash_frame.grid(row=0, column=0, sticky = 'nsew')
 
-        self.thermal_in_progress_frame = ThermalTestInProgressScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.thermal_in_progress_frame.grid(row=0, column=0, sticky='nsew')
+        if (self.data_holder.tester_type == 'Thermal'):
+            self.thermal_in_progress_frame = ThermalTestInProgressScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_in_progress_frame.grid(row=0, column=0, sticky='nsew')
 
-        self.thermal_begin_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.thermal_begin_frame.grid(row=0, column=0, sticky='nsew')
+            self.thermal_begin_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_begin_frame.grid(row=0, column=0, sticky='nsew')
 
-        self.thermal_config_frame = ThermalTestConfigScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.thermal_config_frame.grid(row=0, column=0, sticky='nsew')
+            self.thermal_config_frame = ThermalTestConfigScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_config_frame.grid(row=0, column=0, sticky='nsew')
 
-        self.thermal_setup_results_frame = ThermalTestSetupResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.thermal_setup_results_frame.grid(row=0, column=0, sticky='nsew')
-        
-        self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.thermal_final_results_frame.grid(row=0, column=0, sticky='nsew')
+            self.thermal_setup_results_frame = ThermalTestSetupResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_setup_results_frame.grid(row=0, column=0, sticky='nsew')
+            
+            self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_final_results_frame.grid(row=0, column=0, sticky='nsew')
 
 
 
