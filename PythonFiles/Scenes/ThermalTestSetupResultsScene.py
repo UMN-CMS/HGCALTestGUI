@@ -341,6 +341,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def set_checkbox_states(self, checkbox_list):
         for index, state in checkbox_list:
             self.checkbox_states[index] = "{}".format(state)
+            
+            # Formatting the frontend label
+            label = self.checkbox_labels[index]
+            label.config(text=STATES[state][0], foreground=STATES[state][1])
 
         print("ThermalTestSetupResultsScene: completed set_checkbox_states:", self.checkbox_states)
 
