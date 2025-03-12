@@ -75,9 +75,6 @@ class SUBClient():
     # Responsible for listening for ZMQ messages from teststand
     def SUB_ZMQ(self, conn, queue, gui_cfg):
         
-        # TODO ZMQ Remove extra print statement
-        print("\n\nSUBClient_ZMQ:", gui_cfg)
-        
         
         grabbed_ip = gui_cfg["TestHandler"]["remoteip"]
         # Creates the zmq.Context object

@@ -104,13 +104,18 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Initialize states
         # TODO Update these to fill dynamically
         self.checkbox_states = [
-            "ready", "failure", "warning", "excluded", "waiting",
-            "failure", "ready", "waiting", "excluded", "warning",
-            "waiting", "ready", "excluded", "failure", "warning",
-            "ready", "waiting", "failure", "excluded", "warning"
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
         ]
 
-        self.adjustment_var = [True, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+        self.adjustment_var = [
+            False, False, False, False, False, 
+            False, False, False, False, False, 
+            False, False, False, False, False, 
+            False, False, False, False, False
+        ]
 
         # Key descriptions
         key_descriptions = {
@@ -331,6 +336,13 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         label.config(text=STATES[new_state][0], foreground=STATES[new_state][1])
 
         self.get_setup_check_results()
+
+    # For completely resetting the checkbox states from a list 
+    def set_checkbox_states(self, checkbox_list):
+        for index, state in checkbox_list:
+            self.checkbox_states[index] = "{}".format(state)
+
+        print("ThermalTestSetupResultsScene: completed set_checkbox_states:", self.checkbox_states)
 
 
     def get_setup_check_results(self):
