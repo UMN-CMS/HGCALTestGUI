@@ -15,42 +15,7 @@ TestHandler: {name: Local, remoteip: localhost}
 # Number of test will also be decided by this list so don't miss any 
 # TestClass, TestScript, and TestPath fields will be used to write the REPserver script
 # TestPath should be in reference to the testing home directory
-Test: 
-- name: Normal Pretest
-  required: true 
-  desc_short: Pretest of engines in thermal tester
-  desc_long: Ensuring that all engines are properly seated and connected before changing thermal temps. 
-  # TODO: What test class?
-  TestClass: gen_resist_test 
-  # TODO: What test path?
-  TestPath: /home/HGCAL_dev/sw 
-  # TODO: What test script?
-  TestScript: wagon_rtd.py
-
-
-- name: Low Temp Testing
-  required: true 
-  desc_short: Low temp test of engines in thermal tester
-  desc_long: Ensuring that all engines can withstand thermal temperatures
-  # TODO: What test class?
-  TestClass: gen_resist_test 
-  # TODO: What test path?
-  TestPath: /home/HGCAL_dev/sw 
-  # TODO: What test script?
-  TestScript: wagon_rtd.py
-
-
-
-- name: Normal Posttest
-  required: true 
-  desc_short: Test engines after return to normal temperatures
-  desc_long: Ensuring that all engines can withstand the return from thermal temperatures
-  # TODO: What test class?
-  TestClass: gen_resist_test 
-  # TODO: What test path?
-  TestPath: /home/HGCAL_dev/sw 
-  # TODO: What test script?
-  TestScript: wagon_rtd.py
+Test: []
 
 
 PhysicalTest: []
@@ -62,7 +27,19 @@ PhysicalTest: []
 #   criteria: 
 #   - first testing criteria
 #   - second testing criteria
-#   - third testing criteria                
+#   - third testing criteria     
+
+# TestHandler: {name: Local, remoteip: localhost}
+# TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
+# TODO ZMQ update to accurate hosts and IP addresses
+TestHandler: {
+  name: ZMQ, 
+  localip: "localhost", 
+  remoteip: "TEST_SERVER_IP_ADDRESS", 
+  username: "test_server", 
+  serverpath: <serverpath>, 
+  serverscript: <serverscript>
+  }
 
 
 # Information for sending and receiving data to/from the database
