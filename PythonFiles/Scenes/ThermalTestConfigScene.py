@@ -10,8 +10,8 @@ logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
 
-# Importing Necessary Files
-# from PythonFiles.utils.REQClient import REQClient
+# Importing Necessary Server Files
+from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
 #################################################################################
 
@@ -32,8 +32,20 @@ class ThermalTestConfigScene(ttk.Frame):
         self.parent = parent
 
         # Create a list of boolean values for the checkboxes
-        # TODO Replace this with actual boolean array values
-        self.checkbox_values = [False, True, False, False, True, False, False, True, False, False, True, False, True, False, False, True, False, True, False, True]
+        # TODO Verify this is correctly set up
+        self.checkbox_values = [
+                                False, False, False, False, False, 
+                                False, False, False, False, False, 
+                                False, False, False, False, False,
+                                False, False, False, False, False
+                                ]
+        self.bool_checkbox_values = [
+                                False, False, False, False, False, 
+                                False, False, False, False, False, 
+                                False, False, False, False, False,
+                                False, False, False, False, False
+                                ]
+        
         self.current_engine_selection = None
         
         self.update_frame(parent)
@@ -211,22 +223,22 @@ class ThermalTestConfigScene(ttk.Frame):
 
         #if (self.test_idx == 0):
 
-        # Create a button for confirming test
-        run_all_btn = ttk.Button(
-            frm_logout, 
-            text = "Run All Tests",
-            command = lambda:self.run_all_action(parent),
-            )
-        run_all_btn.pack(anchor = 'center', pady = 5)
+        # # Create a button for confirming test
+        # run_all_btn = ttk.Button(
+        #     frm_logout, 
+        #     text = "Run All Tests",
+        #     command = lambda:self.run_all_action(parent),
+        #     )
+        # run_all_btn.pack(anchor = 'center', pady = 5)
 
 
-        # Create a rescan button
-        btn_rescan = ttk.Button(
-            frm_logout, 
-            text = "Change Boards", 
-            #relief = tk.RAISED, 
-            command = lambda: self.btn_rescan_action(parent))
-        btn_rescan.pack(anchor = 'center', pady = 5)
+        # # Create a rescan button
+        # btn_rescan = ttk.Button(
+        #     frm_logout, 
+        #     text = "Change Boards", 
+        #     #relief = tk.RAISED, 
+        #     command = lambda: self.btn_rescan_action(parent))
+        # btn_rescan.pack(anchor = 'center', pady = 5)
 
         # Creating the help button
         btn_help = ttk.Button(
@@ -249,16 +261,26 @@ class ThermalTestConfigScene(ttk.Frame):
         _parent.help_popup(self)
  
     def checkbox_selected(self, idx):
-        simple_checkbox_values = []
+        self.gui_cfg = self.data_holder.getGUIcfg()
+        
+        self.bool_checkbox_values = []
 
         for chk_var in self.checkbox_values:
             value = chk_var.get() 
             # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
-            simple_checkbox_values.append(value)  # Ensure proper boolean conversion
+            self.bool_checkbox_values.append(value)  # Ensure proper boolean conversion
 
         # print("simple_checkbox_values:", simple_checkbox_values)
 
         # TODO return simple_checkbox_values to the dataholder
+        sending_REQ = ThermalREQClient(
+            self.gui_cfg, 
+            'submit_slots', 
+            self.bool_checkbox_values, 
+            self.data_holder.data_dict['current_full_ID'], 
+            self.data_holder.data_dict['user_ID'], 
+            self.conn_trigger
+            )
 
 
 
@@ -324,10 +346,14 @@ class ThermalTestConfigScene(ttk.Frame):
     def btn_confirm_action(self, _parent):
         self.gui_cfg = self.data_holder.getGUIcfg()
       
-        #try:
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-        #except Exception as e:
-        #    messagebox.showerror('Exception', e)
+        sending_REQ = ThermalREQClient(
+            self.gui_cfg, 
+            'submit_slots', 
+            self.bool_checkbox_values, 
+            self.data_holder.data_dict['current_full_ID'], 
+            self.data_holder.data_dict['user_ID'], 
+            self.conn_trigger
+            )
 
         _parent.set_frame_test_in_progress(self.queue)
         

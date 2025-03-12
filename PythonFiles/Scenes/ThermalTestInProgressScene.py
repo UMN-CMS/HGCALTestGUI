@@ -39,6 +39,8 @@ class ThermalTestInProgressScene(ttk.Frame):
         self.parent = parent
         
         self.update_frame(parent)
+
+        # Restore to default (in constructor)
         sys.stdout = self.original_stdout
 
     #################################################
