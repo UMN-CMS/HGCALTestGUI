@@ -35,6 +35,9 @@ class ThermalREQClient():
 
     # Ensures nothing happens on instantiantion
     def __init__(self, gui_cfg, desired_test, thermal_dict, full_id, tester, conn_trigger):
+        
+        print("ThermalREQClient: Initializing...")
+        
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]),"r") as openfile:
             grabbed_ip = openfile.read()[:-1]
         self.message = ""
@@ -90,7 +93,7 @@ class ThermalREQClient():
             remote_ip = gui_cfg.getTestHandler()["remoteip"]
 
             # Creates a socket to talk to the server
-            # print("Connecting to the testing server...")
+            print("ThermalREQClient: Connecting to the thermal testing server...")
             socket = context.socket(zmq.REQ)
             socket.connect("tcp://{ip_address}:5555".format(ip_address = remote_ip))
         except:
