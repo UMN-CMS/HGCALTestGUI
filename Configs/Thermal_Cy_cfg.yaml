@@ -8,7 +8,7 @@ SerialCheckSafe: false
 UsingScanner: false
 
 # How the tests will be run (local, ssh, or ZMQ)
-TestHandler: {name: Local, remoteip: localhost}
+# TestHandler: {name: Local, remoteip: localhost}
 
 # Order of tests matters here
 # This should be the same order that you want the tests to be run in
@@ -33,7 +33,7 @@ PhysicalTest: []
 # TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
 # TODO ZMQ update to accurate hosts and IP addresses
 TestHandler: {
-  name: Demo, 
+  name: Thermal, 
   localip: "localhost", 
   remoteip: "TEST_SERVER_IP_ADDRESS", 
   username: "test_server", 
