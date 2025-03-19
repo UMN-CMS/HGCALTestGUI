@@ -272,7 +272,14 @@ class ThermalTestConfigScene(ttk.Frame):
 
         # print("simple_checkbox_values:", simple_checkbox_values)
 
-        # TODO return simple_checkbox_values to the dataholder
+
+
+
+
+    def btn_setup_check_action(self, _parent):
+        
+        print("Sending REQ to ThermalREQClient...")
+        
         sending_REQ = ThermalREQClient(
             self.gui_cfg, 
             'submit_slots', 
@@ -281,10 +288,6 @@ class ThermalTestConfigScene(ttk.Frame):
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
             )
-
-
-
-    def btn_setup_check_action(self, _parent):
         
         _parent.set_frame_thermal_setup_results()
         # TODO Complete data logging from current scene
