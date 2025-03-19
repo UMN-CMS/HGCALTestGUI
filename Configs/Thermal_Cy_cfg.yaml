@@ -33,7 +33,7 @@ PhysicalTest: []
 # TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
 # TODO ZMQ update to accurate hosts and IP addresses
 TestHandler: {
-  name: Thermal, 
+  name: ThermalZMQ, 
   localip: "localhost", 
   remoteip: "TEST_SERVER_IP_ADDRESS", 
   username: "test_server", 
