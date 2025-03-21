@@ -219,9 +219,9 @@ class ThermalTestInProgressScene(ttk.Frame):
 
 
         # Redirect sys.stdout to the Text widget
-        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
-        sys.stdout = ConsoleRedirector(self.console_text)
-        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
+        print("ThermalTestInProgressScene: Sending console text to ThermalTestInProgressScene")
+        # sys.stdout = ConsoleRedirector(self.console_text)
+        print("ThermalTestInProgressScene: Sent console text to ThermalTestInProgressScene")
         
             
 
