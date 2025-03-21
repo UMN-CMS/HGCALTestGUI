@@ -395,7 +395,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         sending_REQ = ThermalREQClient(
             gui_cfg, 
             'submit_slots', 
-            self.bool_checkbox_values, 
+            self.adjustment_var, 
             self.data_holder.data_dict['current_full_ID'], 
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
@@ -438,6 +438,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
       
         #try:
+        # TODO What is this supposed to be now that it's thermal?
         test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
