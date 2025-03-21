@@ -81,6 +81,7 @@ class ThermalREQClient():
         conn_trigger.send(trigger_message)
 
     def ThermalZMQClient(self, gui_cfg, desired_test, thermal_dict, serial, tester):
+
         sending_msg = f"{desired_test};{thermal_dict};{tester}"
 
         print("\nsending_msg:", sending_msg, "\n")

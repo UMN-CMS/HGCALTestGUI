@@ -378,7 +378,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             val = adj_val.get()
             simple_adj.append(val)
 
-        print("simple_adj:", simple_adj)
+        # print("simple_adj:", simple_adj)
 
         # TODO Return to the dataholder
         return simple_adj
