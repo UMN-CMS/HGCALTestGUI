@@ -41,6 +41,14 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, conn_trigger):
         super().__init__(master_frame, width=1300-213, height = 800)
         
+        self.naming_scheme = [
+                        "SFP0", "SFP1", "SFP2", "SFP3",
+                        "A1", "A2", "A3", "A4",
+                        "B1", "B2", "B3", "B4",
+                        "C1", "C2", "C3", "C4",
+                        "D1", "D2", "D3", "D4"
+                    ]
+
         self.console_text = None
         self.original_stdout = sys.stdout  # Store the default stdout
         
@@ -52,13 +60,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.update_frame(parent)
         sys.stdout = self.original_stdout
 
-        self.naming_scheme = [
-                                "SFP0", "SFP1", "SFP2", "SFP3",
-                                "A1", "A2", "A3", "A4",
-                                "B1", "B2", "B3", "B4",
-                                "C1", "C2", "C3", "C4",
-                                "D1", "D2", "D3", "D4"
-                            ]
+
 
     #################################################
 
