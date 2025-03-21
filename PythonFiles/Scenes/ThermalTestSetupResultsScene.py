@@ -334,9 +334,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
 
         # Redirect sys.stdout to the Text widget
-        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
+        print("ThermalTestSetupResultsScene: Sending console text to TestInProgressScene")
         sys.stdout = ConsoleRedirector(self.console_text)
-        print("ThermalTestInProgressScene: Sending console text to TestInProgressScene")
+        print("ThermalTestSetupResultsScene: Sent console text to TestInProgressScene")
     
     
     # Function to toggle states on click
