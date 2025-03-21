@@ -2,6 +2,7 @@
 
 # Importing Necessary Modules
 import tkinter as tk
+import time
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import tkinter.font as font
@@ -477,6 +478,89 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     #################################################
 
+    def begin_update(self, master_window, queue, parent):
 
+        logger.info("ThermalTestSetupResultsScene: Started console update loop.")
+        
+        # How long before the queue is being checked (if empty)
+        # units of seconds
+        refresh_break = 0.01
+
+        # Time spent in the waiting phase; in units of refresh_break
+        # Time waiting (sec) = counter * refresh_break
+        counter = 0
+
+        self.window_closed = False
+
+        # Maximum timeout in seconds
+        Timeout_after = 10
+        MAX_TIMEOUT = Timeout_after / 2.5
+        try:
+            print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
+            logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
+            
+            information_received = False
+            while 1>0:
+                master_window.update()
+                if not queue.empty():    
+                    information_received = True
+                    text = queue.get()
+                    print(text)
+                    logger.info(text)
+                    
+
+                    if "Done." in text:
+                        print("\nTest is complete; received 'Done.'\n")
+                        logger.info("ThermalTestSetupResultsScene: Stopping Progress Bar.")
+
+                    if "Exit." in text:
+                        time.sleep(1)
+                        parent.test_error_popup("Unable to run test")
+                        logger.info("ThermalTestSetupResultsScene: Unable to run test.")
+                        break
+
+                    if "Results received successfully." in text:
+                    
+                        message =  self.conn.recv()
+                        self.data_holder.update_from_json_string(message) 
+                        
+                        logger.info("ThermalTestSetupResultsScene: JSON Received.")
+                        logger.info(message)
+#                        FinishedTestPopup(parent, self.data_holder, queue)
+#
+#                    if "Closing Test Window." in text:
+                        logger.info("ThermalTestSetupResultsScene: ending loop")
+                        try:
+                            master_window.update()
+                        except Exception as e:
+                            print("\ThermalTestSetupResultsScene: Unable to update master_window\n")
+                            print("Exception: ", e)
+                            logger.info(e)
+
+                        time.sleep(0.02)
+                        break
+                    
+
+        except ValueError as e:
+            
+            print("\n\nException:  ", e)
+
+            # Throw a message box that shows the error message
+            # Logs the message
+            time_sec = counter*refresh_break
+            logger.info('ThermalTestSetupResultsScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
+
+            messagebox.showwarning('Timeout Error', "ThermalTestSetupResultsScene: Process timed out after 10 seconds")
+            logger.info("ThermalTestSetupResultsScene: Trying to go back to the login frame.")
+            # parent.set_frame_login_frame()
+            return False
+        
+        #except Exception as e:
+            
+        #    print("\n\nException:  ", e, "\n\n")
+
+        return True    
+
+#########################################################
 
 
