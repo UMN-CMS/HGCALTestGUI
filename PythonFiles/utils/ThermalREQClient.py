@@ -95,7 +95,7 @@ class ThermalREQClient():
             # Creates a socket to talk to the server
             print("ThermalREQClient: Connecting to the thermal testing server...")
             socket = context.socket(zmq.REQ)
-            socket.connect("tcp://{ip_address}:5555".format(ip_address = remote_ip))
+            socket.connect("tcp://{ip_address}:8898".format(ip_address = remote_ip))
         except:
             print("No remote_ip specified, please modify config")
 
