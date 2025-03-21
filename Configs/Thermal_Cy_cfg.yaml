@@ -41,7 +41,7 @@ PhysicalTest: []
 TestHandler: {
   name: ThermalZMQ, 
   localip: "localhost", 
-  remoteip: "TEST_SERVER_IP_ADDRESS", 
+  remoteip: "zcu102b", 
   username: "test_server", 
   serverpath: <serverpath>, 
   serverscript: <serverscript>
