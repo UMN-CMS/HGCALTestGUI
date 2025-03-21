@@ -500,7 +500,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
             
             information_received = False
-            while 1>0:
+            json_received = False
+            while not json_received:
                 master_window.update()
                 if not queue.empty():    
                     information_received = True
@@ -526,6 +527,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                         
                         logger.info("ThermalTestSetupResultsScene: JSON Received.")
                         logger.info(message)
+                        json_received = True
 #                        FinishedTestPopup(parent, self.data_holder, queue)
 #
 #                    if "Closing Test Window." in text:
