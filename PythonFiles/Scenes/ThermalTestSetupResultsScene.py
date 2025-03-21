@@ -419,6 +419,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             self.conn_trigger
             )
 
+        self.begin_update(self.parent.master_window, self.parent.queue, self.parent)
         # TODO Complete
         # _parent.btn_recheck_selected_action(self)
         pass
