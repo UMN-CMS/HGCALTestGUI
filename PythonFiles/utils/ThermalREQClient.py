@@ -82,7 +82,8 @@ class ThermalREQClient():
 
     def ThermalZMQClient(self, gui_cfg, desired_test, thermal_dict, serial, tester):
 
-        sending_msg = f"{desired_test};{thermal_dict};{tester}"
+        sending_msg = (desired_test, thermal_dict, tester)
+        # sending_msg = f"{desired_test};{thermal_dict};{tester}"
 
         print("\nsending_msg:", sending_msg, "\n")
         # Establishing variable for use
@@ -105,7 +106,7 @@ class ThermalREQClient():
         logger.debug(debug_msg)
         
         # Tell the server what test to run
-        socket.send_string(sending_msg)
+        socket.send_json(sending_msg)
         
         # Timeout feature for the socket
         # The poller is responsible for stopping the socket send after a certain time
