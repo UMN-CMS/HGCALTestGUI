@@ -480,8 +480,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     #################################################
 
     def begin_update(self, master_window, queue, parent):
-        return False
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
+        return False
+        
         logger.info("ThermalTestSetupResultsScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
