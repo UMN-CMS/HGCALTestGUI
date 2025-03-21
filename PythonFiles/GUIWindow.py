@@ -182,8 +182,8 @@ class GUIWindow():
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
 
-        self.TODO_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        self.TODO_frame.grid(row=0, column=0, sticky='nsew')
+        # self.TODO_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+        # self.TODO_frame.grid(row=0, column=0, sticky='nsew')
 
         
         self.master_window.mainloop()
@@ -420,11 +420,11 @@ class GUIWindow():
     #################################################    
     
     # TODO Remove later (purely for testing purposes)
-    def TODO_set_trial_frame(self):
+    # def TODO_set_trial_frame(self):
         
-        logging.debug("GUIWindow: TODO Trying to set trial frame.")
-        self.set_frame(self.TODO_frame)
-        logging.debug("GUIWindow: TODO Completed the set of trial frame.")
+    #     logging.debug("GUIWindow: TODO Trying to set trial frame.")
+    #     self.set_frame(self.TODO_frame)
+    #     logging.debug("GUIWindow: TODO Completed the set of trial frame.")
 
 
 
