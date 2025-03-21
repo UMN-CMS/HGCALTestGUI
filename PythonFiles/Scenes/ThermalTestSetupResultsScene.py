@@ -411,7 +411,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         sending_REQ = ThermalREQClient(
             gui_cfg, 
-            'submit_slots', 
+            'fullIDs', 
             bool_checkbox_values, 
             self.data_holder.data_dict['current_full_ID'], 
             self.data_holder.data_dict['user_ID'], 
