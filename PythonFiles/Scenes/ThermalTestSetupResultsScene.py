@@ -504,7 +504,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             information_received = False
             json_received = False
             while not json_received:
-                message =  self.conn.recv()
+                message =  self.conn_trigger.recv()
                 if not queue.empty():    
                     text = queue.get()
                 print("\n\nMessage Received\n\n", message)
