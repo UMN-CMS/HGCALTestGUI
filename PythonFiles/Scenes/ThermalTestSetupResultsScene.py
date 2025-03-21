@@ -506,52 +506,54 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
 
             while not json_received:
+                message = self.queue.get_nowait()
                 if (counter == 1000):
                     print("Looping....")
+                    print("Message:", message)
                     counter = 0
                 else:
                     counter = counter + 1
                 
-                master_window.update()
-                if not queue.empty():    
-                    information_received = True
-                    text = queue.get()
-                    print(text)
-                    logger.info(text)
+#                 master_window.update()
+#                 if not queue.empty():    
+#                     information_received = True
+#                     text = queue.get()
+#                     print(text)
+#                     logger.info(text)
                     
 
-                    if "Done." in text:
-                        print("\nTest is complete; received 'Done.'\n")
-                        logger.info("ThermalTestSetupResultsScene: Stopping Progress Bar.")
+#                     if "Done." in text:
+#                         print("\nTest is complete; received 'Done.'\n")
+#                         logger.info("ThermalTestSetupResultsScene: Stopping Progress Bar.")
 
-                    if "Exit." in text:
-                        time.sleep(1)
-                        parent.test_error_popup("Unable to run test")
-                        logger.info("ThermalTestSetupResultsScene: Unable to run test.")
-                        break
+#                     if "Exit." in text:
+#                         time.sleep(1)
+#                         parent.test_error_popup("Unable to run test")
+#                         logger.info("ThermalTestSetupResultsScene: Unable to run test.")
+#                         break
 
-                    if "Results received successfully." in text:
+#                     if "Results received successfully." in text:
                     
-                        # message =  self.conn.recv()
-                        message = "FOO"
-                        self.data_holder.update_from_json_string(message) 
+#                         # message =  self.conn.recv()
+#                         message = "FOO"
+#                         self.data_holder.update_from_json_string(message) 
                         
-                        logger.info("ThermalTestSetupResultsScene: JSON Received.")
-                        logger.info(message)
-                        json_received = True
-#                        FinishedTestPopup(parent, self.data_holder, queue)
-#
-#                    if "Closing Test Window." in text:
-                        logger.info("ThermalTestSetupResultsScene: ending loop")
-                        try:
-                            master_window.update()
-                        except Exception as e:
-                            print("\ThermalTestSetupResultsScene: Unable to update master_window\n")
-                            print("Exception: ", e)
-                            logger.info(e)
+#                         logger.info("ThermalTestSetupResultsScene: JSON Received.")
+#                         logger.info(message)
+#                         json_received = True
+# #                        FinishedTestPopup(parent, self.data_holder, queue)
+# #
+# #                    if "Closing Test Window." in text:
+#                         logger.info("ThermalTestSetupResultsScene: ending loop")
+#                         try:
+#                             master_window.update()
+#                         except Exception as e:
+#                             print("\ThermalTestSetupResultsScene: Unable to update master_window\n")
+#                             print("Exception: ", e)
+#                             logger.info(e)
 
-                        time.sleep(0.02)
-                        break
+#                         time.sleep(0.02)
+#                         break
                     
 
         except ValueError as e:
