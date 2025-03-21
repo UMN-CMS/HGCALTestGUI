@@ -481,6 +481,14 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
+
+        received_data = False
+        while not received_data:
+            if not queue.empty():
+                text=queue.get()
+                print("Text:", text)
+                received_data = True
+                
         return False
         
         logger.info("ThermalTestSetupResultsScene: Started console update loop.")
