@@ -482,20 +482,20 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
         received_data = False
-        while not received_data:
-            if not queue.empty():
-                text=queue.get()
-                print("Text:", text)
-                if (text == "Done."):
-                    received_data = True
-                if "Results received successfully." in text:
-                    # message =  self.conn.recv()
-                    message = "FOO"
-                    self.data_holder.update_from_json_string(message) 
+        # while not received_data:
+        #     if not queue.empty():
+        #         text=queue.get()
+        #         print("Text:", text)
+        #         if (text == "Done."):
+        #             received_data = True
+        #         if "Results received successfully." in text:
+        #             # message =  self.conn.recv()
+        #             message = "FOO"
+        #             self.data_holder.update_from_json_string(message) 
                     
-                    logger.info("ThermalTestSetupResultsScene: JSON Received.")
-                    logger.info(message)
-                    json_received = True
+        #             logger.info("ThermalTestSetupResultsScene: JSON Received.")
+        #             logger.info(message)
+        #             json_received = True
 
         return False
         
