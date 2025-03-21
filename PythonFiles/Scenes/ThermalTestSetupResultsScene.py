@@ -498,21 +498,21 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         Timeout_after = 10
         MAX_TIMEOUT = Timeout_after / 2.5
         # try:
-            print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
-            logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
-            
-            information_received = False
-            json_received = False
+        print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
+        logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
+        
+        information_received = False
+        json_received = False
 
 
-            while not json_received:
-                message = queue.get_nowait()
-                if (counter == 1000 or len(message) > 1):
-                    print("Looping....")
-                    print("Message:", message)
-                    counter = 0
-                else:
-                    counter = counter + 1
+        while not json_received:
+            message = queue.get_nowait()
+            if (counter == 1000 or len(message) > 1):
+                print("Looping....")
+                print("Message:", message)
+                counter = 0
+            else:
+                counter = counter + 1
                 
 #                 master_window.update()
 #                 if not queue.empty():    
