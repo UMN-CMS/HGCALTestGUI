@@ -195,7 +195,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             text = "Make any adjustments and rerun check on selected sites:", 
             font = ('Arial', '14')
             )
-        lbl_begin_text.pack(side = 'top', pady = 15)
+        lbl_begin_text.pack(side = 'top', pady = (15,5))
 
         # Create 20 checkboxes in a single row
         adjustment_row_frame = ttk.Frame(frm_window)
@@ -308,7 +308,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         console_frame = tk.Frame(frm_window)
         
         # Create a Text widget for displaying console output
-        self.console_text = tk.Text(console_frame, width=85, height=15, wrap="word", state="disabled", bg="black", fg="white")
+        self.console_text = tk.Text(console_frame, width=85, height=10, wrap="word", state="disabled", bg="black", fg="white")
         self.console_text.pack(side="left", fill="both", expand=True)
 
         # Create a Scrollbar and attach it to the Text widget
