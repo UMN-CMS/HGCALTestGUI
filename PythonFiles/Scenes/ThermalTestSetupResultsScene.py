@@ -220,7 +220,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
             adj_checkbox = ttk.Checkbutton(
                 adjustment_row_frame,
-                text=f"{i + 1}",
+                text=f"{i + 1}-{self.naming_scheme[i]}",
                 variable=adj_var,
                 command= lambda idx=i: self.adj_checkbox_action(idx)
             )
