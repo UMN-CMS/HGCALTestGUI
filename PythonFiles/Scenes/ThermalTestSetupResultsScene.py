@@ -12,6 +12,9 @@ import os
 import sys
 from PythonFiles.utils.ConsoleRedirector import ConsoleRedirector
 
+# Importing Necessary Server Files
+from PythonFiles.utils.ThermalREQClient import ThermalREQClient
+
 # Importing Necessary Files
 # from PythonFiles.utils.REQClient import REQClient
 
@@ -386,6 +389,16 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def btn_recheck_selected_action(self, _parent):
         sys.stdout = self.original_stdout
+        
+        sending_REQ = ThermalREQClient(
+            self.gui_cfg, 
+            'submit_slots', 
+            self.bool_checkbox_values, 
+            self.data_holder.data_dict['current_full_ID'], 
+            self.data_holder.data_dict['user_ID'], 
+            self.conn_trigger
+            )
+
         # TODO Complete
         # _parent.btn_recheck_selected_action(self)
         pass
