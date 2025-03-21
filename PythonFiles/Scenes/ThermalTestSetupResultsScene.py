@@ -480,6 +480,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def begin_update(self, master_window, queue, parent):
 
+        print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
         logger.info("ThermalTestSetupResultsScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
@@ -503,6 +504,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             json_received = False
             while not json_received:
                 message =  self.conn.recv()
+                if not queue.empty():    
+                    text = queue.get()
                 print("\n\nMessage Received\n\n", message)
                 master_window.update()
                 if not queue.empty():    
