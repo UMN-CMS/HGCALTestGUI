@@ -52,6 +52,14 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.update_frame(parent)
         sys.stdout = self.original_stdout
 
+        self.naming_scheme = [
+                                "SFP0", "SFP1", "SFP2", "SFP3",
+                                "A1", "A2", "A3", "A4",
+                                "B1", "B2", "B3", "B4",
+                                "C1", "C2", "C3", "C4",
+                                "D1", "D2", "D3", "D4"
+                            ]
+
     #################################################
 
     def create_style(self, _parent):
@@ -163,7 +171,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}",
+                    text=f"{i + 1}-{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 0), pady=2, sticky="w")
@@ -171,7 +179,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}",
+                    text=f"{i + 1}-{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
@@ -392,10 +400,17 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         
         gui_cfg = self.data_holder.getGUIcfg()
 
+        bool_checkbox_values = []
+        for chk_var in self.adjustment_var:
+            value = chk_var.get() 
+            # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
+            bool_checkbox_values.append(value)  # Ensure proper boolean conversion
+
+
         sending_REQ = ThermalREQClient(
             gui_cfg, 
             'submit_slots', 
-            self.adjustment_var, 
+            bool_checkbox_values, 
             self.data_holder.data_dict['current_full_ID'], 
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
