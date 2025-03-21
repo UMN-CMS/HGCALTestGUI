@@ -497,7 +497,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Maximum timeout in seconds
         Timeout_after = 10
         MAX_TIMEOUT = Timeout_after / 2.5
-        try:
+        # try:
             print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
             logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
             
@@ -556,25 +556,25 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 #                         break
                     
 
-        except ValueError as e:
+        # except ValueError as e:
             
-            print("\n\nException:  ", e)
+        #     print("\n\nException:  ", e)
 
-            # Throw a message box that shows the error message
-            # Logs the message
-            time_sec = counter*refresh_break
-            logger.info('ThermalTestSetupResultsScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
+        #     # Throw a message box that shows the error message
+        #     # Logs the message
+        #     time_sec = counter*refresh_break
+        #     logger.info('ThermalTestSetupResultsScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
 
-            messagebox.showwarning('Timeout Error', "ThermalTestSetupResultsScene: Process timed out after 10 seconds")
-            logger.info("ThermalTestSetupResultsScene: Trying to go back to the login frame.")
-            # parent.set_frame_login_frame()
-            return False
+        #     messagebox.showwarning('Timeout Error', "ThermalTestSetupResultsScene: Process timed out after 10 seconds")
+        #     logger.info("ThermalTestSetupResultsScene: Trying to go back to the login frame.")
+        #     # parent.set_frame_login_frame()
+        #     return False
         
-        #except Exception as e:
+        # #except Exception as e:
             
-        #    print("\n\nException:  ", e, "\n\n")
+        # #    print("\n\nException:  ", e, "\n\n")
 
-        return True    
+        # return True    
 
 #########################################################
 
