@@ -390,8 +390,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def btn_recheck_selected_action(self, _parent):
         sys.stdout = self.original_stdout
         
+        gui_cfg = self.data_holder.getGUIcfg()
+
         sending_REQ = ThermalREQClient(
-            self.gui_cfg, 
+            gui_cfg, 
             'submit_slots', 
             self.bool_checkbox_values, 
             self.data_holder.data_dict['current_full_ID'], 
