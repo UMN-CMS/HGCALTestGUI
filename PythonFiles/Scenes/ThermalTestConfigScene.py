@@ -287,7 +287,9 @@ class ThermalTestConfigScene(ttk.Frame):
         
         print("Sending REQ to ThermalREQClient...")
         
-        sending_REQ = ThermalREQClient(
+        _parent.set_frame_thermal_setup_results()
+        try:
+            sending_REQ = ThermalREQClient(
             self.gui_cfg, 
             'fullIDs', 
             self.bool_checkbox_values, 
@@ -295,8 +297,11 @@ class ThermalTestConfigScene(ttk.Frame):
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
             )
+        except Exception as e:
+            print(e)
         
-        _parent.set_frame_thermal_setup_results()
+        
+        
         # TODO Complete data logging from current scene
 
         pass
