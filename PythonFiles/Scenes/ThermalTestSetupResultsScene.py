@@ -506,7 +506,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             while not json_received:
                 if not queue.empty():    
                     text = queue.get()
-                print("\n\nMessage Received\n\n", message)
+                print("\n\nMessage Received\n\n", text)
                 master_window.update()
                 if not queue.empty():    
                     information_received = True
