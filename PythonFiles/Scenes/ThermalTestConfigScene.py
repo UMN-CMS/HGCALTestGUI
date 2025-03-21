@@ -45,6 +45,13 @@ class ThermalTestConfigScene(ttk.Frame):
                                 False, False, False, False, False,
                                 False, False, False, False, False
                                 ]
+        self.naming_scheme = [
+                                "SFP0", "SFP1", "SFP2", "SFP3",
+                                "A1", "A2", "A3", "A4",
+                                "B1", "B2", "B3", "B4",
+                                "C1", "C2", "C3", "C4",
+                                "D1", "D2", "D3", "D4"
+                            ]
         
         self.current_engine_selection = None
         
@@ -145,7 +152,7 @@ class ThermalTestConfigScene(ttk.Frame):
 
             checkbox = ttk.Checkbutton(
                 checkbox_frame,
-                text=f"{i + 1}",  # Display the number next to the checkbox (1-indexed)
+                text=f"{i + 1} - {self.naming_scheme[i]}",   # Display the number next to the checkbox (1-indexed)
                 variable=chk_var,
                 command=lambda idx=i: self.checkbox_selected(idx)  # Pass index to function
             )
