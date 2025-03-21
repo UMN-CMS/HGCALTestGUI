@@ -32,14 +32,20 @@ PhysicalTest: []
 # TestHandler: {name: Local, remoteip: localhost}
 # TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
 # TODO ZMQ update to accurate hosts and IP addresses
+
+# For testing purposes only
 TestHandler: {
-  name: ThermalZMQ, 
-  localip: "localhost", 
-  remoteip: "TEST_SERVER_IP_ADDRESS", 
-  username: "test_server", 
-  serverpath: <serverpath>, 
-  serverscript: <serverscript>
-  }
+  name: Demo
+}
+
+# TestHandler: {
+#   name: ThermalZMQ, 
+#   localip: "localhost", 
+#   remoteip: "TEST_SERVER_IP_ADDRESS", 
+#   username: "test_server", 
+#   serverpath: <serverpath>, 
+#   serverscript: <serverscript>
+#   }
 
 
 # Information for sending and receiving data to/from the database
