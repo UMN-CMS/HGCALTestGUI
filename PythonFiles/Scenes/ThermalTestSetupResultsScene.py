@@ -532,7 +532,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
                     if "Results received successfully." in text:
                     
-                        message =  self.conn.recv()
+                        # message =  self.conn.recv()
+                        message = "FOO"
                         self.data_holder.update_from_json_string(message) 
                         
                         logger.info("ThermalTestSetupResultsScene: JSON Received.")
