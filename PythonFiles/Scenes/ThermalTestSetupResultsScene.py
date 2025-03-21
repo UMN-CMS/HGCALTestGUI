@@ -507,7 +507,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
             while not json_received:
                 message = self.queue.get_nowait()
-                if (counter == 1000):
+                if (counter == 1000 or len(message) > 1):
                     print("Looping....")
                     print("Message:", message)
                     counter = 0
