@@ -399,7 +399,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
 
     def btn_recheck_selected_action(self, _parent):
-        sys.stdout = self.original_stdout
         
         gui_cfg = self.data_holder.getGUIcfg()
 
@@ -488,7 +487,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 text=queue.get()
                 print("Text:", text)
                 received_data = True
-                
+
         return False
         
         logger.info("ThermalTestSetupResultsScene: Started console update loop.")
