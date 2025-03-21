@@ -455,7 +455,7 @@ class GUIWindow():
     def set_frame_thermal_test_in_progress(self):
         logging.debug("GUIWindow: TODO Trying to set thermal test in progress frame.")
         self.thermal_in_progress_frame.update_frame(self)
-        self.thermal_in_progress_frame.begin_update(self.master_window, self.queue, self)
+        # self.thermal_in_progress_frame.begin_update(self.master_window, self.queue, self)
         self.set_frame(self.thermal_in_progress_frame)
 
         logging.debug("GUIWindow: TODO Completed the set thermal test in progress frame.")
@@ -463,8 +463,9 @@ class GUIWindow():
     def set_frame_thermal_setup_results(self):
         logging.debug("GUIWindow: TODO Trying to set thermal setup results frame.")
         # TODO Figure out if this needs a call to update_frame method
-        self.set_frame(self.thermal_setup_results_frame)
         self.thermal_setup_results_frame.update_frame(self)
+        self.thermal_setup_results_frame.begin_update(self.master_window, self.queue, self)
+        self.set_frame(self.thermal_setup_results_frame)
         logging.debug("GUIWindow: TODO Completed the set thermal setup results frame.")
 
     #################################################
