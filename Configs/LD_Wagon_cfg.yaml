@@ -22,14 +22,14 @@ Test:
   required: 1
 - TestClass: gen_resist_test
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_gen_res.py
+  TestScript: wagon_rtd.py
   desc_long: Test must be completed before attempting to measure ID resistor
   desc_short: Measure resistance of analog lines
   name: Resistance Measurement
   required: 1
 - TestClass: id_resist_test
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_id_res.py
+  TestScript: wagon_rtd.py
   desc_long: Must be completed after the general resistance measurement
   desc_short: Measure resistance of ID resistor
   name: ID Resistor Measurement
