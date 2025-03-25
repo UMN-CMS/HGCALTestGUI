@@ -218,8 +218,11 @@ class GUIWindow():
         self.current_test_index = 0
         self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
+        cur_name = self.gui_cfg.getTest[self.current_test_index]['name']
+        print(cur_name)
 
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
 
@@ -446,7 +449,12 @@ class GUIWindow():
                 self.data_holder.setTestIdx(self.running_all_idx)
                 
                 gui_cfg = self.data_holder.getGUIcfg()
-                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+
+                cur_name = gui_cfg.getTest[self.current_test_index]['name']
+                print(cur_name)
+
+                test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+                #test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
                 self.set_frame_test_in_progress(self.queue)
             
 
