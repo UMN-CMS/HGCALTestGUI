@@ -219,6 +219,7 @@ class GUIWindow():
         self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
         cur_name = self.gui_cfg.getTest[self.current_test_index]['name']
+        print("PRINTING CUR NAME FROM run_all_tests")
         print(cur_name)
 
         test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
@@ -451,6 +452,7 @@ class GUIWindow():
                 gui_cfg = self.data_holder.getGUIcfg()
 
                 cur_name = gui_cfg.getTest[self.current_test_index]['name']
+                print("PRINTING CUR NAME FROM run_one_tests")
                 print(cur_name)
 
                 test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
