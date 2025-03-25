@@ -257,8 +257,6 @@ class DataHolder():
                 'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
                 'test_stand': self.data_dict['test_stand'],
                 }
-            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
-            db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
             info_dict = {'ZCU': self.engine_tester_info['ZCU'],
                 'east_interposer': self.engine_tester_info['East Interposer'],
@@ -270,11 +268,9 @@ class DataHolder():
                 'vtrx_2': self.engine_tester_info['VTRX 2'],
                 'test_stand': self.data_dict['test_stand'],
                 }
-            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
-            db_url = engine_cfg['DBInfo']['baseURL']
 
         logger.info("DataHolder: Setting tester configuration")
-        self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
+        self.config_id = self.data_sender.add_test_stand_info(info_dict)
 
     def set_component_info(self, label, working, comments):
         info_dict = {'label': label, 'working': working, 'comments': comments}
@@ -329,16 +325,15 @@ class DataHolder():
             temp = 1 
 
 
-        #if self.config_id:
-        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
-        #else:
-        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        if self.config_id:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
+        else:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
-        #with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
-        #    print(str(info_dict) + '\r\n')
-        #    json.dump(info_dict, outfile)
+        with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
+            print(str(info_dict) + '\r\n')
+            json.dump(info_dict, outfile)
 
-        #self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
         self.data_sender.add_test_json(file_path_list[index])
         logger.info("DataHolder: Test results sent to database.")
 
