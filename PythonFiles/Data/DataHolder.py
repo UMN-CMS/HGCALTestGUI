@@ -82,7 +82,7 @@ class DataHolder():
 
         self.label_info = None
 
-        self.config_id = None
+        self.config_id = self.data_sender.get_tester_config(self.data_dict['test_stand'])
 
         self.admin = False
         self.password = None
