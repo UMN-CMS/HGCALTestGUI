@@ -484,6 +484,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         received_data = False
         while not received_data:
             if not queue.empty():
+                print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
                 topic, message = signal.split(" ; ")
                 print("signal:", signal, "\ntopic:", topic, "message", message)
