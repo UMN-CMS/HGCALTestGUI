@@ -218,11 +218,11 @@ class DBSender():
         else:
             pass
 
-    def set_component_info(self, info_dict, db_url):
-        r = requests.post('{}/set_component_info.py'.format(db_url), data = info_dict)
+    def set_component_info(self, info_dict):
+        r = requests.post('{}/set_component_info.py'.format(self.db_url), data = info_dict)
 
-    def add_test_stand_info(self, info_dict, db_url):
-        r = requests.post('{}/add_test_station_info.py'.format(db_url), data = info_dict)
+    def add_test_stand_info(self, info_dict):
+        r = requests.post('{}/add_test_station_info.py'.format(self.db_url), data = info_dict)
 
         lines = r.text.split('\n')
 
@@ -231,6 +231,21 @@ class DBSender():
 
         for i in range(begin, end): 
             return lines[i]
+
+    def get_tester_config(self, teststand):
+        r = requests.post('{}/get_tester_config_id.py'.format(self.db_url), data={'test_stand':teststand})
+
+        lines = r.text.split('\n')
+
+        try:
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+
+            for i in range(begin, end): 
+                return lines[i]
+
+        except:
+            return None
         
 
     def add_test_json(self, json_file):
