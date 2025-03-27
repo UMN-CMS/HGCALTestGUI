@@ -14,19 +14,20 @@ cp -r CheckInGUI/PythonFiles HGCAL-VI
 cp -r CheckInGUI/Configs HGCAL-VI
 cp -r CheckInGUI/MainFunctionVI.py HGCAL-VI
 cp -r awthemes-10.4.0 HGCAL-VI 
+
 cat <<EOF > HGCAL-VI/hgcal_vi_gui
 #!/usr/bin/env bash
 mkdir -p \$HOME/.gui_logs 
 while read line; do
-	echo "$(date) $line" 
-	echo "$(date) $line" >> \$HOME/.gui_logs/active.log
+	echo "\$(date) \$line" 
+	echo "\$(date) \$line" >> \$HOME/.gui_logs/active.log
 	if [ -n "$(find \$HOME/.gui_logs/active.log -prune -size 10M)" ]; then
 		( 
 		echo "ROTATING LOGS"
 		cd $\HOME/.gui_logs
-		name="$(date '+%Y-%m-%dT%H-%M-%S').log"
+		name="\$(date '+%Y-%m-%dT%H-%M-%S').log"
 		mv active.log $name
-		tar cvzf $name.tar.gz $name
+		tar cvzf \$name.tar.gz \$name
 	)
 	fi
 done < <(python3 \$HOME/.local/HGCAL-VI/MainFunctionVI.py 2>&1) 
