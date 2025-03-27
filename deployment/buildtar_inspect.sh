@@ -21,7 +21,7 @@ mkdir -p \$HOME/.gui_logs
 while read line; do
 	echo "\$(date) \$line" 
 	echo "\$(date) \$line" >> \$HOME/.gui_logs/active.log
-	if [ -n "$(find \$HOME/.gui_logs/active.log -prune -size 10M)" ]; then
+	if [ -n "\$(find \$HOME/.gui_logs/active.log -prune -size 10M)" ]; then
 		( 
 		echo "ROTATING LOGS"
 		cd $\HOME/.gui_logs
