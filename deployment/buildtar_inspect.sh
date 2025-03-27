@@ -16,7 +16,7 @@ cp -r CheckInGUI/MainFunctionVI.py HGCAL-VI
 cp -r awthemes-10.4.0 HGCAL-VI 
 cat <<EOF > HGCAL-VI/hgcal_vi_gui
 #!/usr/bin/env bash
-python3 $HOME/.local/HGCAL-VI/MainFunctionVI.py
+python3 ~/.local/HGCAL-VI/MainFunctionVI.py
 EOF
 
 cat <<EOF > HGCAL-VI/hgcal_vi_gui.desktop
