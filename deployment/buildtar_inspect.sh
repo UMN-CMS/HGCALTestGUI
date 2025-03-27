@@ -29,6 +29,7 @@ Exec=$HOME/.local/HGCAL-VI/hgcal_vi_gui
 EOF
 
 chmod a+x HGCAL-VI/hgcal_vi_gui
+chmod a+x HGCAL-VI/hgcal_vi_gui.desktop
 cp deployment/application_icon.png HGCAL-VI
 
 for f in HGCAL-VI/**/*.py; do
