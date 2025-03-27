@@ -229,8 +229,10 @@ class Inspection1(ttk.Frame):
             self.data_holder.set_check_dict(i, item.get())
  
         self.data_holder.set_comment_dict(0, self.comment_box.get())  
-        self.data_holder.add_inspection_to_comments()
         self.data_holder.update_from_json_string()
+        self.data_holder.set_inspection_comments(self.comment_box.get())
+        self.data_holder.set_comments(self.comment_box.get())
+        self.data_holder.add_inspection_to_comments()
         self.data_holder.print()
 
 

@@ -152,6 +152,11 @@ class DataHolder():
         self.data_dict['comments'] = comments
         logging.debug("DataHolder: Comments have been entered.")
 
+    def set_inspection_comments(self, comments):
+
+        self.inspection_data['inspection_comments'] = comments
+        logging.debug('DataHolder: Comments entered for VI test')
+
     ##################################################
 
     def set_full_ID(self, full):
@@ -211,6 +216,7 @@ class DataHolder():
             if got_code is None or got_code == "None":
                 self.data_dict['inspection_pass'] = 0
 
+        #self.add_inspection_to_comments()
         self.data_dict['data'] = self.inspection_data
 
         logging.info("DataHolder: Test results have been saved")
@@ -233,11 +239,13 @@ class DataHolder():
         if self.inspection_data['component_broken']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " There are visual scratches on the board."
-        if self.inspection_data['inspection_comments'] != "_":
-            if self.data_dict['comments'] == "_":
-                self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+            self.data_dict['comments'] = self.data_dict['comments'] + " Board component is broken."
+        print(self.inspection_data['inspection_comments'])
+        #if self.inspection_data['inspection_comments'] != "_":
+        #    if self.data_dict['comments'] == "_":
+        #        self.data_dict['comments'] = ""
+        #    self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+        #    self.data_dict['inspection_comments'] = self.inspection_data['inspection_comments']
 
 
     ##################################################
