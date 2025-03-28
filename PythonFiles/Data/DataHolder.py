@@ -334,7 +334,7 @@ class DataHolder():
             print(str(info_dict) + '\r\n')
             json.dump(info_dict, outfile)
 
-        self.data_sender.add_test_json(file_path_list[index])
+        self.data_sender.add_test_json(file_path_list[index], self.config_id)
         logger.info("DataHolder: Test results sent to database.")
 
         self.data_dict['comments'] = '_'
@@ -495,8 +495,6 @@ class DataHolder():
         self.total_test_num = 0
 
         self.label_info = None
-
-        self.config_id = None
 
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict['test{}_completed'.format(i)] = False

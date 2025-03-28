@@ -248,7 +248,7 @@ class DBSender():
             return None
         
 
-    def add_test_json(self, json_file):
+    def add_test_json(self, json_file, config):
         
         with open(json_file) as load_file:
             results = json.load(load_file)        
@@ -259,6 +259,7 @@ class DBSender():
         results['test_type'] = results['name']
         results['full_id'] = results['board_sn']
         results['successful'] = int(results['pass'])
+        results['config_id'] = config
 
         with open(datafile_name, 'w') as datafile:
             json.dump(test_attach, datafile)
