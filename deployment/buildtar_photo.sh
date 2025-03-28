@@ -12,7 +12,7 @@ rm -rf HGCAL-Photo
 mkdir HGCAL-Photo
 cp -r PhotoTakingGUI/PythonFiles HGCAL-Photo
 cp -r PhotoTakingGUI/Configs HGCAL-Photo
-cp -r PhotoTakingGUI/MainFunctionPhoto.py HGCAL-Photo
+cp -r PhotoTakingGUI/MainFunctionVI.py HGCAL-Photo
 cp -r awthemes-10.4.0 HGCAL-Photo 
 
 cat <<EOF > HGCAL-Photo/hgcal_photo_gui
