@@ -18,14 +18,14 @@ cp -r awthemes-10.4.0 HGCAL-Photo
 cat <<EOF > HGCAL-Photo/hgcal_photo_gui
 #!/usr/bin/env bash
 
-mkdir -p \$HOME/.gui_logs 
+mkdir -p \$HOME/.gui_logs/photogui
 while read line; do
 	echo "\$(date) \$line" 
-	echo "\$(date) \$line" >> \$HOME/.gui_logs/active.log
-	if [ -n "\$(find \$HOME/.gui_logs/active.log -prune -size 10M)" ]; then
+	echo "\$(date) \$line" >> \$HOME/.gui_logs/photogui/active.log
+	if [ -n "\$(find \$HOME/.gui_logs/photogui/active.log -prune -size 10M)" ]; then
 		( 
 		echo "ROTATING LOGS"
-		cd $\HOME/.gui_logs
+		cd $\HOME/.gui_logs/photogui
 		name="\$(date '+%Y-%m-%dT%H-%M-%S').log"
 		mv active.log \$name
 		tar cvzf \$name.tar.gz \$name
