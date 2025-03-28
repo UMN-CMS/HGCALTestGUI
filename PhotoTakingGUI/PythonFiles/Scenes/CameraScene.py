@@ -223,10 +223,10 @@ class CameraScene(ttk.Frame):
         # scales the image to fit the gui window after it's been cropped
         # this doesn't affect the size of the actual image that goes into the Database
         width = int(self.image.size[0]*(800/self.image.size[1]))
-        self.Engine_image = self.image.resize((width, 800), PIL.Image.Resampling.LANCZOS)
+        self.Engine_image = self.image.resize((width, 800), PIL.Image.LANCZOS)
         if width > 1000:
             height = int(self.image.size[1]*(1000/self.image.size[0]))
-            self.Engine_image = self.image.resize((1000, height), PIL.Image.Resampling.LANCZOS)
+            self.Engine_image = self.image.resize((1000, height), PIL.Image.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
         # if the flip prompt exists, destroy it
