@@ -504,6 +504,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     json_received = True
             counter = counter + 1
 
+        print (f"ThermalTestSetupResultsScene: Counter = {counter}")
         return False
         
         logger.info("ThermalTestSetupResultsScene: Started console update loop.")
