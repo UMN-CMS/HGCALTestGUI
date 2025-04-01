@@ -2,6 +2,7 @@
 import json, logging, socket, PythonFiles, copy, os
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
+from collections import OrderedDict
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
 
@@ -34,13 +35,13 @@ class DataHolder():
                 }
 
         # for the visual inspection component
-        self.inspection_data = {
+        self.inspection_data = OrderedDict({
                 'board_bent': False,
                 'board_broken': False,
                 'component_missing': False,
                 'component_broken': False,
                 'inspection_comments': '_'
-                }
+                })
 
         # All of the checkbox logic
         # Dictionaries stored by inspection index
@@ -62,6 +63,12 @@ class DataHolder():
 
     def get_check_dict(self, idx):
         return self.all_checkboxes[idx]
+
+    def set_check_dict(self, idx, value):
+        self.all_checkboxes[0][idx]['value'] = value
+        print(list(self.inspection_data.keys()))
+        self.inspection_data[list(self.inspection_data.keys())[idx]] = value
+        print(self.inspection_data)
 
     def get_comment_dict(self, idx):
         return self.all_comments[idx]
@@ -96,21 +103,22 @@ class DataHolder():
         logger.info("DataHolder: Checking if full id is a new board")
 
         full = self.get_full_ID()
-        user = self.data_dict['user_ID']
         #returns true if the board is new, false if not
+        print('GUI is slowing down when checking if the board is new')
         is_new_board, in_id = self.data_sender.is_new_board(full)
-        print('Is new board?')
-        print(is_new_board)
-        print(in_id)
+
         comments = self.data_dict['comments']
         self.data_dict['is_new_board'] = is_new_board
         
         if is_new_board == True:
+            print('GUI is slowing down when uploading the new board')
+            user = self.data_dict['user_ID']
             # data sender's add new board function returns the check in id
             self.data_dict['in_id'] = self.data_sender.add_new_board(full, user, comments, self.data_dict['manufacturer'])
 
         else:
             # if the board is not new, this returns the previous testing information on the board
+            print('GUI is slowing down when getting previous results')
             prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
                 self.data_dict['test_names'] = test_names
@@ -144,15 +152,22 @@ class DataHolder():
         self.data_dict['comments'] = comments
         logging.debug("DataHolder: Comments have been entered.")
 
+    def set_inspection_comments(self, comments):
+
+        self.inspection_data['inspection_comments'] = comments
+        logging.debug('DataHolder: Comments entered for VI test')
+
     ##################################################
 
     def set_full_ID(self, full):
-        self.data_dict['current_full_ID'] = full
-        new_cfg = update_config(full)
-        self.gui_cfg = new_cfg
+        if full[3] != self.data_dict['current_full_ID'][3]:
+            new_cfg = update_config(full)
+            self.gui_cfg = new_cfg
 
+            self.data_sender = DBSender(self.gui_cfg)
+
+        self.data_dict['current_full_ID'] = full
         self.data_holder_new_test()
-        self.data_sender = DBSender(self.gui_cfg)
         logging.info("DataHolder: Full ID has been set.")
 
     def send_image(self, img_idx=0):
@@ -201,6 +216,7 @@ class DataHolder():
             if got_code is None or got_code == "None":
                 self.data_dict['inspection_pass'] = 0
 
+        #self.add_inspection_to_comments()
         self.data_dict['data'] = self.inspection_data
 
         logging.info("DataHolder: Test results have been saved")
@@ -215,19 +231,21 @@ class DataHolder():
         if self.inspection_data['board_broken']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " Wagon connnection pin is bent."
+            self.data_dict['comments'] = self.data_dict['comments'] + " Board is visibly broken"
         if self.inspection_data['component_missing']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " Engine connection pin is bent."
+            self.data_dict['comments'] = self.data_dict['comments'] + " Board is missing components."
         if self.inspection_data['component_broken']:
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " There are visual scratches on the board."
-        if self.inspection_data['inspection_comments'] != "_":
-            if self.data_dict['comments'] == "_":
-                self.data_dict['comments'] = ""
-            self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+            self.data_dict['comments'] = self.data_dict['comments'] + " Board component is broken."
+        print(self.inspection_data['inspection_comments'])
+        #if self.inspection_data['inspection_comments'] != "_":
+        #    if self.data_dict['comments'] == "_":
+        #        self.data_dict['comments'] = ""
+        #    self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+        #    self.data_dict['inspection_comments'] = self.inspection_data['inspection_comments']
 
 
     ##################################################
