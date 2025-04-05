@@ -522,6 +522,11 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         print(f"\n\njson_dict: {json_dict}\n\n\n")
 
+        self.checkbox_states = json_dict
+        self.update_frame(self.parent)
+
+
+
         # logger.info("ThermalTestSetupResultsScene: Started console update loop.")
         
         # # How long before the queue is being checked (if empty)
