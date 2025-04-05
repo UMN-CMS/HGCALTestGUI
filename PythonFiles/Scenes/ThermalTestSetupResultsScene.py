@@ -11,6 +11,7 @@ logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
 import sys
+import json
 from PythonFiles.utils.ConsoleRedirector import ConsoleRedirector
 
 # Importing Necessary Server Files
@@ -483,65 +484,77 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         counter = 0
         received_data = False
+        json_received = None
         while not received_data:
             if not queue.empty():
                 print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
                 print(f"ThermalTestSetupResultsScene: signal = {signal}")
-                # topic, message = signal.split(" ; ")
-                # print("signal:", signal, "\ntopic:", topic, "message", message)
-                # if (topic == "print"):
-                #     print(message) 
-                # if (topic == "Done."):
-                #     received_data = True
+                
                 if "Results received successfully." in signal:
                     message = "FOO"
                     message =  self.conn_trigger.recv()
                     print("\nMessage from conn_trigger:", message)
-                    self.data_holder.update_from_json_string(message) 
+                    # self.data_holder.update_from_json_string(message) 
                     
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
                     logger.info(message)
-                    json_received = True
+                    json_received = message
                     received_data = True
+                else:
+                    topic, message = signal.split(" ; ")
+                    print("signal:", signal, "\ntopic:", topic, "message", message)
+                    if (topic == "print"):
+                        print(message) 
+                    if (topic == "Done."):
+                        received_data = True
             counter = counter + 1
 
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
+        self.format_json_received_to_json(json_received)
         return False
+
+    def format_json_received_to_json(self, imported_json_string):
+        json_string = imported_json_string.replace("'", '"')
+        json_string = json_string.replace('True', 'true')
+        json_string = json_string.replace('False', 'false')
+        json_dict = json.loads(json_string)
+
+        print(f"\n\njson_dict: {json_dict}\n\n\n")
+
+        # logger.info("ThermalTestSetupResultsScene: Started console update loop.")
         
-        logger.info("ThermalTestSetupResultsScene: Started console update loop.")
+        # # How long before the queue is being checked (if empty)
+        # # units of seconds
+        # refresh_break = 0.01
+
+        # # Time spent in the waiting phase; in units of refresh_break
+        # # Time waiting (sec) = counter * refresh_break
+        # counter = 0
+
+        # self.window_closed = False
+
+        # # Maximum timeout in seconds
+        # Timeout_after = 10
+        # MAX_TIMEOUT = Timeout_after / 2.5
+        # # try:
+        # print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
+        # logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
         
-        # How long before the queue is being checked (if empty)
-        # units of seconds
-        refresh_break = 0.01
+        # information_received = False
+        # json_received = False
 
-        # Time spent in the waiting phase; in units of refresh_break
-        # Time waiting (sec) = counter * refresh_break
-        counter = 0
-
-        self.window_closed = False
-
-        # Maximum timeout in seconds
-        Timeout_after = 10
-        MAX_TIMEOUT = Timeout_after / 2.5
         # try:
-        print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
-        logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
-        
-        information_received = False
-        json_received = False
-
-        try:
-            while not json_received:
-                message = queue.get_nowait()
-                if (counter == 1000 or len(message) > 1):
-                    print("Looping....")
-                    print("Message:", message)
-                    counter = 0
-                else:
-                    counter = counter + 1
-        except queue.Empty:
-            pass  # No new messages
+        #     while not json_received:
+        #         message = queue.get_nowait()
+        #         if (counter == 1000 or len(message) > 1):
+        #             print("Looping....")
+        #             print("Message:", message)
+        #             counter = 0
+        #         else:
+        #             counter = counter + 1
+        # except queue.Empty:
+        #     pass  # No new messages
                 
 #                 master_window.update()
 #                 if not queue.empty():    
