@@ -50,6 +50,14 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                         "C1", "C2", "C3", "C4",
                         "D1", "D2", "D3", "D4"
                     ]
+        
+        # Initialize the states
+        self.checkbox_states = [
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+            "waiting", "waiting", "waiting", "waiting", "waiting",
+        ]
 
         self.console_text = None
         self.original_stdout = sys.stdout  # Store the default stdout
@@ -58,6 +66,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
         self.parent = parent
+
+
         
         self.update_frame(parent)
         # sys.stdout = self.original_stdout
@@ -115,15 +125,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Create a frame to hold the checkboxes
         checkbox_frame = ttk.Frame(frm_window)
         checkbox_frame.pack(pady=10)
-
-        # Initialize states
-        # TODO Update these to fill dynamically
-        self.checkbox_states = [
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-        ]
+        
 
         self.adjustment_var = [
             False, False, False, False, False, 
