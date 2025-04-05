@@ -488,12 +488,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
                 print(f"ThermalTestSetupResultsScene: signal = {signal}")
-                topic, message = signal.split(" ; ")
-                print("signal:", signal, "\ntopic:", topic, "message", message)
-                if (topic == "print"):
-                    print(message) 
-                if (topic == "Done."):
-                    received_data = True
+                # topic, message = signal.split(" ; ")
+                # print("signal:", signal, "\ntopic:", topic, "message", message)
+                # if (topic == "print"):
+                #     print(message) 
+                # if (topic == "Done."):
+                #     received_data = True
                 if "Results received successfully." in signal:
                     message = "FOO"
                     message =  self.conn.recv()
@@ -503,6 +503,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
                     logger.info(message)
                     json_received = True
+                    received_data = True
             counter = counter + 1
 
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
