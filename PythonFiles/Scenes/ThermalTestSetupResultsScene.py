@@ -483,7 +483,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         counter = 0
         received_data = False
-        while not received_data and counter < 1500:
+        while not received_data:
             if not queue.empty():
                 print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
