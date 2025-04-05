@@ -24,6 +24,7 @@ class SUBClient():
 
     def local(self, conn, queue, gui_cfg, q):
         try:
+            print(f"\nSUBCLIENT: Beginning function 'local'\n")
             while 1 > 0:
                 # gets the signal from the Handler and splits it into topic and message
                 # the topic determines what SUBClient will do with the message
@@ -63,8 +64,10 @@ class SUBClient():
                     queue.put("SUBClient: An error has occurred. Check logs for more details.")
 
         except Exception as e:
-            logger.exception(e)
-            logger.critical("SUBClient has crashed. Please restart the software.")
+
+            print("\nOuter Try: {}".format(e))
+            logger.error(e)
+            logger.critical("SUBClient: SUBClient has crashed. Please restart the software.")
         
 
     # Responsible for listening for ZMQ messages from teststand
