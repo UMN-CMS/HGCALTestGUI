@@ -99,7 +99,7 @@ class SUBClient():
                 try:
                     print("Waiting")
                     self.topic, self.message = listen_socket.recv_string().split(" ; ")
-                    print(self.topic, self.message)
+                    print(f"topic: {self.topic}, message: {self.message}")
                 except Exception as e:
                     logger.error("SUBClient: There was an error trying to get the topic and/or message from the socket")
                     logger.error(e)
