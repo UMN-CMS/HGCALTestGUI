@@ -41,7 +41,7 @@ class ThermalTestInProgressScene(ttk.Frame):
         self.update_frame(parent)
 
         # Restore to default (in constructor)
-        sys.stdout = self.original_stdout
+        # sys.stdout = self.original_stdout
 
     #################################################
 
@@ -279,7 +279,7 @@ class ThermalTestInProgressScene(ttk.Frame):
     # Send to the next scene (thermal_final_results)
     def btn_next_action(self, _parent):
         self.cancel_timer()
-        sys.stdout = self.original_stdout
+        # sys.stdout = self.original_stdout
         _parent.set_frame_thermal_final_results()
 
 

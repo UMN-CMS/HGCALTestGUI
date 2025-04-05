@@ -59,7 +59,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.parent = parent
         
         self.update_frame(parent)
-        sys.stdout = self.original_stdout
+        # sys.stdout = self.original_stdout
 
 
 
@@ -391,7 +391,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
  
 
     def btn_proceed_action(self, _parent):
-        sys.stdout = self.original_stdout
+        # sys.stdout = self.original_stdout
         _parent.set_frame_thermal_begin()
         # TODO Complete
         # _parent.btn_proceed_action(self)
