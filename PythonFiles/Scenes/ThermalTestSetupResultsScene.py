@@ -501,13 +501,13 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     logger.info(message)
                     json_received = message
                     received_data = True
-                else:
-                    topic, message = signal.split(" ; ")
-                    print("signal:", signal, "\ntopic:", topic, "message", message)
-                    if (topic == "print"):
-                        print(message) 
-                    if (topic == "Done."):
-                        received_data = True
+                # else:
+                #     topic, message = signal.split(" ; ")
+                #     print("signal:", signal, "\ntopic:", topic, "message", message)
+                #     if (topic == "print"):
+                #         print(message) 
+                #     if (topic == "Done."):
+                #         received_data = True
             counter = counter + 1
 
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
