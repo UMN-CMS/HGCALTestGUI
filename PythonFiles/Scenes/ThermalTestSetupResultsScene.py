@@ -496,8 +496,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 #     received_data = True
                 if "Results received successfully." in signal:
                     message = "FOO"
-                    message =  self.conn.recv()
-                    print("\nMessage from conn:", message)
+                    message =  self.conn_trigger.recv()
+                    print("\nMessage from conn_trigger:", message)
                     self.data_holder.update_from_json_string(message) 
                     
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
