@@ -464,8 +464,8 @@ class GUIWindow():
         logging.debug("GUIWindow: TODO Trying to set thermal setup results frame.")
         # TODO Figure out if this needs a call to update_frame method
         self.thermal_setup_results_frame.update_frame(self)
-        self.thermal_setup_results_frame.begin_update(self.master_window, self.queue, self)
         self.set_frame(self.thermal_setup_results_frame)
+        self.thermal_setup_results_frame.begin_update(self.master_window, self.queue, self)
         logging.debug("GUIWindow: TODO Completed the set thermal setup results frame.")
 
     #################################################
