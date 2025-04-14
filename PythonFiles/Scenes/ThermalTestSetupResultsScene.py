@@ -515,7 +515,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             time.sleep(0.01)
 
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
-        self.format_json_received_to_json(json_received)
+        if json_received:
+            self.format_json_received_to_json(json_received)
+        else:
+            print("ThermalTestSetupResultsScene: No json received after allotted time.")
         return False
 
     def format_json_received_to_json(self, imported_json_string):
