@@ -284,7 +284,6 @@ class ThermalTestConfigScene(ttk.Frame):
 
     def btn_setup_check_action(self, _parent):
         
-        _parent.set_frame_thermal_setup_results()
         print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
         sending_REQ = ThermalREQClient(
             self.gui_cfg, 
@@ -295,6 +294,8 @@ class ThermalTestConfigScene(ttk.Frame):
             self.conn_trigger
             )
         print("ThermalTestConfigScene: Completed REQ to ThermalREQClient...")
+        
+        _parent.set_frame_thermal_setup_results()
         # TODO Complete data logging from current scene
 
 
