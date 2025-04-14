@@ -511,7 +511,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 #     if (topic == "Done."):
                 #         received_data = True
             counter = counter + 1
-            print(counter)
             time.sleep(0.01)
 
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
