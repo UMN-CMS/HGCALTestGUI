@@ -282,11 +282,10 @@ class ThermalTestConfigScene(ttk.Frame):
 
 
 
-
     def btn_setup_check_action(self, _parent):
         
-        print("Sending REQ to ThermalREQClient...")
-        
+        _parent.set_frame_thermal_setup_results()
+        print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
         sending_REQ = ThermalREQClient(
             self.gui_cfg, 
             'fullIDs', 
@@ -295,14 +294,9 @@ class ThermalTestConfigScene(ttk.Frame):
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
             )
-
-        _parent.set_frame_thermal_setup_results()
-        
-        
-        
+        print("ThermalTestConfigScene: Completed REQ to ThermalREQClient...")
         # TODO Complete data logging from current scene
 
-        pass
 
     def dropdown_engine_selected(self):
         self.current_engine_selection = self.engine_type_selected.get()
