@@ -487,7 +487,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         counter = 0
         received_data = False
         json_received = None
-        while not received_data:
+        while not received_data or counter<5000:
             if not queue.empty():
                 print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
@@ -511,7 +511,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 #     if (topic == "Done."):
                 #         received_data = True
             counter = counter + 1
-
+            time.sleep(0.01)
+        
         print (f"ThermalTestSetupResultsScene: Counter = {counter}")
         self.format_json_received_to_json(json_received)
         return False
