@@ -2,6 +2,7 @@
 
 
 # HGCALTestGUI
+Edited on 5/19/25
 
 This repository contains the GUI used to run the quality control testing for all HGCAL Wagons and Engines.
 It also contains the CheckIn GUI and the Photo Taking GUI.
