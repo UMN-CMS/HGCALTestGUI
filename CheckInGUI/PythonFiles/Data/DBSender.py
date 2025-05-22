@@ -38,8 +38,7 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('{}/../WagonDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('{}/../EngineDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 

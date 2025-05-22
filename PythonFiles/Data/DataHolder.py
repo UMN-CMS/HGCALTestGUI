@@ -223,11 +223,6 @@ class DataHolder():
         logger.info("DataHolder: Full ID has been set to {}.".format(full))
 
 
-    def update_location(self, full):
-        text = self.data_sender.update_location(full, self.data_dict['test_stand'])
-        print(text)
-
-
     ##################################################
 
     def get_full_ID(self):
@@ -428,8 +423,6 @@ class DataHolder():
             }
 
         for zipper in self.other_zippers:
-
-            self.update_location(zipper)
 
             placeholder['board_sn'] = zipper
 

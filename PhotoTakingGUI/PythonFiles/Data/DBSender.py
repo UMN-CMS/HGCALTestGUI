@@ -42,8 +42,7 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('{}/../WagonDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('{}/../EngineDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
 
@@ -196,20 +195,6 @@ class DBSender():
             in_id = None
 
         return in_id
-
-    # sets the location in the database
-    def update_location(self, full, loc):
-        loc = 'Last seen at ' + loc
-        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        
-        lines = r.text.split('\n')
-   
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
-
-
-        for i in range(begin, end): 
-            return lines[i]
 
     # checks if the board is in the database
     def is_new_board(self, full):
