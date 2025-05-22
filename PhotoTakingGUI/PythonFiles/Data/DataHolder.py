@@ -144,11 +144,6 @@ class DataHolder():
             self.data_sender.add_board_image(self.data_dict["current_full_ID"], self.image_holder[i], view)
 
 
-    # sets the boards location in the database to the current test stand
-    def update_location(self, full):
-        text = self.data_sender.update_location(full, 'Visual Inspection')
-        print('text')
-
     def upload_local_boards(self, board_list):
         for path, sn, view in board_list:
             self.data_sender.upload_local_board(path, sn, view)

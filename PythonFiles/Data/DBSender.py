@@ -160,19 +160,6 @@ class DBSender():
 
         return in_id
 
-    def update_location(self, full, loc):
-        loc = 'Last seen at ' + loc
-        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-       
-        lines = r.text.split('\n')
-   
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
-
-
-        for i in range(begin, end): 
-            return lines[i]
-
     def is_new_board(self, full):
         r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
         

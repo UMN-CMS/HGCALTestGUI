@@ -305,7 +305,6 @@ class ScanScene(ttk.Frame):
         if self.data_holder.getGUIcfg().get_if_use_DB():
             self.data_holder.check_if_new_board() 
 
-        self.data_holder.update_location(self.ent_full.get())
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
         if 'Zipper' in self.data_holder.getGUIcfg().getGUIType():
             _parent.set_frame_scan_many_frame()

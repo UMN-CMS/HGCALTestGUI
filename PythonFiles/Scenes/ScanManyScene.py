@@ -334,8 +334,6 @@ class ScanManyScene(ttk.Frame):
         #_parent.update_config()
         #if self.data_holder.getGUIcfg().get_if_use_DB():
         #    self.data_holder.check_if_new_board() 
-
-        #self.data_holder.update_location(self.ent_full.get())
        
         entries = self.ent_list.get(0, tk.END)
 
