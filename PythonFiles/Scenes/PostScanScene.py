@@ -14,12 +14,7 @@ import datetime
 
 #################################################################################
 
-logging.getLogger('PIL').setLevel(logging.WARNING)
-
-
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Frame that shows up after board has been entered with info about the board
 # @param parent -> References a GUIWindow object
@@ -43,8 +38,6 @@ class PostScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logger.info("PostScanScene: Frame has been created.")
-
         self.parent = parent
        
         self.create_frame(parent)        
@@ -63,15 +56,13 @@ class PostScanScene(ttk.Frame):
     def create_frame(self, parent):
         self.create_style(parent)
 
-        logger.debug("PostScanScene: Destroying old widgets on the PostScanScene.")
-        
         try:
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logger.warning("PostScanScene:Widgets could not be found and/or destroyed (making room for new widgets.")
+            logger.warning("Widgets could not be found and/or destroyed (making room for new widgets on the PostScanScene).")
         else:
-            logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
+            logger.info("Widgets destroyed successfully (making room for new widgets on the PostScanScene).")
         
 
         self.canvas = tk.Canvas(self)
@@ -173,7 +164,7 @@ class PostScanScene(ttk.Frame):
                     self.lbl_res.grid(row=2, column=1)
 
             except Exception as e:
-                logging.error(e)
+                logger.exception(e)
                 self.lbl_full = ttk.Label(
                         self, 
                         text = 'Error, No Results',

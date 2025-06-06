@@ -17,8 +17,6 @@ import os
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -86,12 +84,10 @@ class ScanScene(ttk.Frame):
 
             manager = mp.Manager()
             full_id = manager.list()
-            print(full_id)
+            logger.debug('Scanner - %s' % full_id)
 
             self.ent_full.config(state = 'normal')
 
-            logger.info("ScanScene: Beginning scan...")
-            print("ScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -116,15 +112,13 @@ class ScanScene(ttk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logger.info("ScanScene: Exit code received. Terminating processes.")
+                    logger.info("Exit code received on the ScanScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("ScanScene: Processes terminated successfully.")
+                    logger.info("ScanScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
-                
-            logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -132,7 +126,6 @@ class ScanScene(ttk.Frame):
         QR_Frame = ttk.Frame(self)
         QR_Frame.grid(sticky = 'ne', column = 1)
 
-        logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
         QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
@@ -386,11 +379,11 @@ class ScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logger.info("ScanScene: Terminating scanner proceses.")
+        logger.info("Terminating scanner processes.")
         try:
             if self.use_scanner:
                 self.scanner.kill()
                 self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logger.info("ScanScene: Processes could not be terminated.")
+            logger.info("Processes could not be terminated.")

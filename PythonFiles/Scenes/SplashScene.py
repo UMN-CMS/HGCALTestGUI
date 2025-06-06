@@ -6,15 +6,12 @@ import tkinter.ttk as ttk
 from PIL import ImageTk as iTK
 from PIL import Image
 import logging
-logging.getLogger('PIL').setLevel(logging.WARNING)
 import PythonFiles
 import os
 
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SplashScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 class SplashScene(ttk.Frame):
 
@@ -39,7 +36,6 @@ class SplashScene(ttk.Frame):
 
         self.create_style(parent)
 
-        logger.info("SplashScene: Frame has been initialized.")
         # Creating Bethel Logo
         img_bethel_logo = Image.open("{}/Images/Bethel_Logo.png".format(PythonFiles.__path__[0]))
         img_bethel_logo = img_bethel_logo.resize((250,100), Image.LANCZOS)

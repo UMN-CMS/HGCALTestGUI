@@ -10,10 +10,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('spam_application')
-
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.AdminScene')
 
 
 # Creates a class that is called by the GUIWindow. 
@@ -29,7 +26,6 @@ class AdminScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
         super().__init__(master_frame, width=1300-213, height=800)
-        logger.info("AddUserScene: Frame has been created.")
         self.data_holder = data_holder
         self.create_style(parent)
         self.update_frame(parent)
@@ -120,7 +116,7 @@ class Popup1():
     # Function to make retry or continue window if the test fails
     def confirm_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("AdminTools: Teststand info is being specified.")
+        logger.info("Teststand info is being specified.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Select Test Stand Type") 
@@ -194,7 +190,7 @@ class Popup2():
     # Function to make retry or continue window if the test fails
     def confirm_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("AdminTools: Number of Wagon Wheels is being Specified.")
+        logger.info("Number of Wagon Wheels is being Specified.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Select Test Stand Type") 
@@ -282,7 +278,7 @@ class Popup3():
     # Function to make retry or continue window if the test fails
     def confirm_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("AdminTools: Tester component info is being updated.")
+        logger.info("Tester component info is being updated.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Select Test Stand Type") 

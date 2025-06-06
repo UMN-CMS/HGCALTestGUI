@@ -16,9 +16,6 @@ import os
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanManyScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
 # instantiated as scan_frame by GUIWindow
@@ -87,12 +84,10 @@ class ScanManyScene(ttk.Frame):
 
             manager = mp.Manager()
             full_id = manager.list()
-            print(full_id)
+            logger.debug('Scanner - %s' % full_id)
 
             #self.ent_full.config(state = 'normal')
 
-            logger.info("ScanScene: Beginning scan...")
-            print("ScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -100,7 +95,7 @@ class ScanManyScene(ttk.Frame):
 
             current_idx = 0
 
-            print(f'Current_scan_idx = {current_idx}')
+            logger.debug(f'Current_scan_idx = {current_idx}')
                 
             while 1 > 0:
 
@@ -123,7 +118,7 @@ class ScanManyScene(ttk.Frame):
                     current_idx += 1
 
                     self.ent_list.grid(column=0, row=2)
-                    print(str(label))
+                    logger.debug('Label: ' + str(label))
                     manager = mp.Manager()
                     full_id = manager.list()
 
@@ -133,24 +128,19 @@ class ScanManyScene(ttk.Frame):
                     self.listener.start()
 
                 elif self.EXIT_CODE == 1:
-                    logger.info("ScanScene: Exit code received. Terminating processes.")
+                    logger.info("Exit code received on the ScanManyScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("ScanScene: Processes terminated successfully.")
-                    print('Leaving')
+                    logger.info("ScanManyScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
-                
-            logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
 
         QR_Frame = ttk.Frame(self)
         QR_Frame.grid(sticky = 'ne', column = 1)
-
-        logger.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
         QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
@@ -420,11 +410,11 @@ class ScanManyScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logger.info("ScanScene: Terminating scanner proceses.")
+        logger.info("Terminating scanner proceses.")
         try:
             if self.use_scanner:
                 self.scanner.kill()
                 self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logger.info("ScanScene: Processes could not be terminated.")
+            logger.info("Processes could not be terminated.")

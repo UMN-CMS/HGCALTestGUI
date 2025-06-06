@@ -16,9 +16,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ComponentScanScene')
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -68,12 +66,10 @@ class TesterComponentScene(ttk.Frame):
 
         manager = mp.Manager()
         full_id = manager.list()
-        print(full_id)
+        logger.debug('Scanner - %s' % full_id)
 
         self.ent_full.config(state = 'normal')
 
-        print("\nComponentScanScene: Beginning scan...\n")
-        logging.info("ComponentScanScene: Beginning scan...")
         self.scanner = scan()
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -98,15 +94,13 @@ class TesterComponentScene(ttk.Frame):
                 break
 
             elif self.EXIT_CODE:
-                logging.info("ComponentScanScene: Exit code received. Terminating processes.")
+                logger.info("Exit code received on ComponentScanScene. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logging.info("ComponentScanScene: Processes terminated successfully.")
+                logger.info("ComponentScanScene processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)
-            
-        logging.info("ComponentScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -119,7 +113,6 @@ class TesterComponentScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logging.info("ComponentScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
@@ -321,7 +314,6 @@ class TesterComponentScene(ttk.Frame):
     # Function for the log out button
     def btn_logout_action(self, _parent):
         
-        logging.debug("ComponentScanScene: Closing the scanner from the logout button action.")
         self.EXIT_CODE = 1 
         self.listener.terminate()
         self.scanner.terminate()
@@ -378,10 +370,10 @@ class TesterComponentScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logging.info("ComponentScanScene: Terminating scanner proceses.")
+        logger.info("Terminating scanner processes.")
         try:
             self.scanner.kill()
             self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ComponentScanScene: Processes could not be terminated.")
+            logger.info("Processes could not be terminated.")

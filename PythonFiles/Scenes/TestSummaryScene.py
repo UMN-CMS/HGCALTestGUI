@@ -41,8 +41,6 @@ class TestSummaryScene(ttk.Frame):
 
         self.id_text = tk.StringVar()
 
-        logger.info("TestSummaryScene: Frame has been created.")
-
         self.data_holder = data_holder
 
         # Instantiates an updated table with the current data
@@ -89,7 +87,7 @@ class TestSummaryScene(ttk.Frame):
     
     def create_updated_table(self, parent):
 
-        logger.debug("TestSummaryScene: Table is being updated.")        
+        logger.info("Summary table is being updated.")        
         
         self.list_of_tests =self.data_holder.getPhysicalNames() + self.data_holder.getTestNames()
         self.list_of_table_labels = ["Test Name", "Test Status", "Actions"]
@@ -104,7 +102,7 @@ class TestSummaryScene(ttk.Frame):
 
         for name in self.list_of_tests:
             if name in prev_names:
-                logger.debug(f'Warning, Duplicate test name found: {name}')
+                logger.warning(f'Warning, Duplicate test name found: {name}')
             else:
                 prev_names.add(name)
             
@@ -271,9 +269,6 @@ class TestSummaryScene(ttk.Frame):
 
 
         self.create_retest_more_info_btns(parent)
-        
-
-        logger.debug("TestSummaryScene: Table finished update.")     
 
     #################################################
     #################################################
@@ -308,8 +303,6 @@ class TestSummaryScene(ttk.Frame):
 
     # Creates all of the retest button
     def create_retest_more_info_btns(self, parent):
-
-        logging.debug("TestSummaryScene: Buttons are being created.")
 
         rows = []
         retests = []
@@ -347,15 +340,13 @@ class TestSummaryScene(ttk.Frame):
                 command = lambda: self.btn_next_test_action(parent)
                 )
         btn_next_test.grid(column = 3, row = self.data_holder.getNumTest() + 5, sticky='se', pady=50, padx = 50)        
-
-        logger.debug("TestSummaryScene: Buttons finshed being created.")
     
         
     #################################################
 
     # A function to be called within GUIWindow to create the console output
     # when the frame is being brought to the top
-    def create_JSON_popup(self, JSON_String):
+    def create_JSON_popup(self, JSON_String, test):
         try:
             # Creating a popup window for the JSON Details
             self.JSON_popup = tk.Toplevel()
@@ -383,7 +374,7 @@ class TestSummaryScene(ttk.Frame):
                 )
             self.JSON_entry_box.pack(anchor = 'center', fill=tk.BOTH, expand=1)
 
-            print(JSON_String)
+            logger.debug(JSON_String)
             current_JSON_file = open(JSON_String)
             current_JSON_data = json.load(current_JSON_file)
 
@@ -399,9 +390,8 @@ class TestSummaryScene(ttk.Frame):
             
             current_JSON_file.close()   
         except Exception as e:
-            print(e)
-            logger.debug(e)
-            logger.warning("TestSummaryScene: More Info popup has failed to be created.")
+            logger.exception(e)
+            logger.warning("More Info popup has failed to be created.")
 
             
 
@@ -427,6 +417,7 @@ class TestSummaryScene(ttk.Frame):
 
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
+        logger.info('Opening JSON file for %s...' % names[test_idx])
         self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(Path.home(), names[test_idx].replace(" ", "").replace("/", "")))
 
     #################################################
@@ -436,7 +427,6 @@ class TestSummaryScene(ttk.Frame):
         self.data_holder.data_holder_new_test()
         self.lbl_id.destroy()
         _parent.reset_board()
-        logger.info("TestSummaryScene: Starting a new test.")
 
     def get_submit_action(self):
         return self.btn_next_test_action

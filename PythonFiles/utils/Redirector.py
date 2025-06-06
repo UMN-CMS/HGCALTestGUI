@@ -35,7 +35,6 @@ def main():
     redirectHandler = redirect_handler_factory(redirect_url)
     
     handler = socketserver.TCPServer((host, port), redirectHandler)
-    print("serving at port %s" % port)
     handler.serve_forever()
 
 if __name__ == "__main__":

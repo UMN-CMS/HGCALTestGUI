@@ -7,19 +7,15 @@ from tkinter import messagebox
 from xml.dom.expatbuilder import parseFragmentString
 import time
 import logging
-logging.getLogger('PIL').setLevel(logging.WARNING)
 import PythonFiles
 import os
 
 #################################################################################
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.TestInProgressScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 # Creating the frame itself
 class TestInProgressScene(ttk.Frame):
     def __init__(self, parent, master_frame, data_holder, queue, _conn):
-        logger.info("TestInProgressScene: Beginning the initialization of the TestInProgressScene.")
         
         super().__init__(master_frame, width=1300-213, height = 800)
 
@@ -68,7 +64,6 @@ class TestInProgressScene(ttk.Frame):
     # next_frame is used to progress to the next scene and is passed in from GUIWindow
     def initialize_scene(self, parent, master_frame):
         
-        logger.info("TestInProgressScene: The frame has been initialized.")
         scrollbar = ttk.Scrollbar(self)
         scrollbar.pack(side = "right", fill = 'y')
 
@@ -166,8 +161,7 @@ class TestInProgressScene(ttk.Frame):
         Timeout_after = 10
         MAX_TIMEOUT = Timeout_after / 2.5
         try:
-            print("\n\nTestInProgressScene: Beginning the while loop\n\n") 
-            logger.info("TestInProgressScene: While-loop - Beginning try catch for receiving data through the pipeline.")
+            logger.info("TestInProgressScene: Beginning the while loop")
             
             information_received = False
             while 1>0:
@@ -175,8 +169,7 @@ class TestInProgressScene(ttk.Frame):
                 if not queue.empty():    
                     information_received = True
                     text = queue.get()
-                    print(text)
-                    logger.info(text)
+                    logger.debug(text)
                     ent_console.insert(tk.END, text.strip('\r\n'))
                     # need this twice since the first one is stripped from the original text
                     ent_console.insert(tk.END, "\n")
@@ -184,15 +177,14 @@ class TestInProgressScene(ttk.Frame):
                     ent_console.see('end')
 
                     if "Done." in text:
-                        print('Stopping Progress Bar\r\n')
-                        logger.info("TestInProgressScene: Stopping Progress Bar.")
+                        logger.info("Stopping Progress Bar.")
                         self.progressbar.stop()
 
                     if "Exit." in text:
                         self.progressbar.stop()
                         time.sleep(1)
                         parent.test_error_popup("Unable to run test")
-                        logger.info("TestInProgressScene: Unable to run test.")
+                        logger.error("Unable to run test.")
                         break
 
                     if "Results received successfully." in text:
@@ -200,8 +192,8 @@ class TestInProgressScene(ttk.Frame):
                         message =  self.conn.recv()
                         self.data_holder.update_from_json_string(message) 
                         
-                        logger.info("TestInProgressScene: JSON Received.")
-                        logger.info(message)
+                        logger.info("JSON Received.")
+                        logger.debug(message)
 #                        FinishedTestPopup(parent, self.data_holder, queue)
 #
 #                    if "Closing Test Window." in text:
@@ -209,9 +201,8 @@ class TestInProgressScene(ttk.Frame):
                         try:
                             master_window.update()
                         except Exception as e:
-                            print("\nTestInProgressScene: Unable to update master_window\n")
-                            print("Exception: ", e)
-                            logger.info(e)
+                            logger.warning('Unable to update master_window')
+                            logger.exception(e)
 
                         time.sleep(0.02)
                         break
@@ -238,16 +229,16 @@ class TestInProgressScene(ttk.Frame):
                 #        time.sleep(1)
                 #        break
         except ValueError as e:
-            
-            print("\n\nException:  ", e)
+
+            logger.exception(e)
 
             # Throw a message box that shows the error message
             # Logs the message
             time_sec = counter*refresh_break
-            logger.info('TestInProgressScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
+            logger.error('Timeout Error', "Exception received -> Process timed out after 10 seconds")
 
             messagebox.showwarning('Timeout Error', "TestInProgressScene: Process timed out after 10 seconds")
-            logger.info("TestInProgressScene: Trying to go back to the login frame.")
+            logger.info("Trying to go back to the login frame.")
             parent.set_frame_login_frame()
             return False
         
@@ -283,7 +274,7 @@ class FinishedTestPopup():
 
     def finished_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("TestInProgressScene: Test Finished")
+        logger.info("Test Finished")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Test Completed") 
