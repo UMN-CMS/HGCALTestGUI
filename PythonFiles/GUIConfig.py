@@ -90,5 +90,5 @@ class GUIConfig():
         try:
             return [test["name"] for test in self.board_cfg["Test"]]
         except:
-            logger.error("Unable to return test names. Check to see if test['name'] is empty")
+            logger.error("Unable to return test names from config. Check to see if test['name'] is empty")
             return []

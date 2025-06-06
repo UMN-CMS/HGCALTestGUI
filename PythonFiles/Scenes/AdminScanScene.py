@@ -109,10 +109,10 @@ class AdminScanScene(ttk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logger.info("Exit code received. Terminating processes.")
+                    logger.info("Exit code received on AdminScanScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("Processes terminated successfully.")
+                    logger.info("AdminScanScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)

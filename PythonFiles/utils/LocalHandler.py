@@ -24,7 +24,7 @@ class LocalHandler:
 
         # Listen for test request
         while True:
-            logger.info("New PUB proc")
+            logger.info("LocalHandler: New PUB proc")
             request = json.loads(conn_trigger.recv())
             process_PUB = mp.Process(target = self.task_local, args=(conn_pub,q))
             process_PUB.start()
@@ -34,15 +34,15 @@ class LocalHandler:
                 desired_test = request["desired_test"]
                 test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
-                logger.info("New test proc")
+                logger.info("LocalHandler: New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(conn_test, gui_cfg, desired_test, test_info))
                 self.process_test.start()
 
                 # Hold until test finish
-                logger.info("Joining test proc")
+                logger.info("LocalHandler: Joining test proc")
                 self.process_test.join()
 
-                logger.info("Terminate PUB proc")
+                logger.info("LocalHandler: Terminate PUB proc")
                 process_PUB.terminate()
 
 
@@ -51,12 +51,12 @@ class LocalHandler:
             conn_test.close()
 
         except Exception as e:
-            logger.error("PUB and test pipe could not be closed: {}".format(e))
+            logger.error("LocalHandler: PUB and test pipe could not be closed: {}".format(e))
 
         try:
             process_PUB.terminate()
         except Exception as e:
-            logger.error("PUB and test process could not be terminated: {}".format(e))
+            logger.error("LocalHandler: PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, conn, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
@@ -74,7 +74,7 @@ class LocalHandler:
                 prints = 'print ; ' + str(prints)
                 q.put(prints)
             
-        logging.info("Loop has been broken.")
+        logger.info("LocalHandler: Loop has been broken.")
         #except:
         #    logging.critical("Local server has crashed.")
 

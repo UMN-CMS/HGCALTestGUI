@@ -128,10 +128,10 @@ class ScanManyScene(ttk.Frame):
                     self.listener.start()
 
                 elif self.EXIT_CODE == 1:
-                    logger.info("Exit code received. Terminating processes.")
+                    logger.info("Exit code received on the ScanManyScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("Processes terminated successfully.")
+                    logger.info("ScanManyScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)

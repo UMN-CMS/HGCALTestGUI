@@ -60,9 +60,9 @@ class PostScanScene(ttk.Frame):
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logger.warning("Widgets could not be found and/or destroyed (making room for new widgets.")
+            logger.warning("Widgets could not be found and/or destroyed (making room for new widgets on the PostScanScene).")
         else:
-            logger.info("Widgets destroyed successfully (making room for new widgets).")
+            logger.info("Widgets destroyed successfully (making room for new widgets on the PostScanScene).")
         
 
         self.canvas = tk.Canvas(self)

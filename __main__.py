@@ -53,6 +53,30 @@ if not logger.handlers:
     logger.addHandler(fh)
     logger.addHandler(ch)
 
+class StreamToLogger(object):
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+        self.buffer = ''
+
+    def write(self, message):
+        if message != '\n':
+            self.logger.log(self.level, message.strip())
+
+    def flush(self):
+        pass
+
+sys.stdout = StreamToLogger(logger, logging.DEBUG) 
+sys.stderr = StreamToLogger(logger, logging.ERROR) 
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
+
 
 # Creates a task of creating the GUIWindow
 def task_GUI(conn, conn_trigger, queue, board_cfg, curpath):
@@ -162,7 +186,7 @@ if __name__ == "__main__":
     logger.info("Current path is: %s" % curpath)
 
     node = socket.gethostname()
-    logger.info(socket.gethostname())
+    logger.info("Node is: %s" % socket.gethostname())
 
     ld_wagon_computers = [
         "cmsfactory4.cmsfactorynet",

@@ -346,7 +346,7 @@ class TestSummaryScene(ttk.Frame):
 
     # A function to be called within GUIWindow to create the console output
     # when the frame is being brought to the top
-    def create_JSON_popup(self, JSON_String):
+    def create_JSON_popup(self, JSON_String, test):
         try:
             # Creating a popup window for the JSON Details
             self.JSON_popup = tk.Toplevel()

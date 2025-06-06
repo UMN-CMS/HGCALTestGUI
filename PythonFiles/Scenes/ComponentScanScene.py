@@ -94,10 +94,10 @@ class TesterComponentScene(ttk.Frame):
                 break
 
             elif self.EXIT_CODE:
-                logger.info("Exit code received. Terminating processes.")
+                logger.info("Exit code received on ComponentScanScene. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logger.info("Processes terminated successfully.")
+                logger.info("ComponentScanScene processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)

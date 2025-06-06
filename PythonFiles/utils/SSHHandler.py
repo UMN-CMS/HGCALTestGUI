@@ -25,7 +25,7 @@ class SSHHandler:
 
         # Listen for test request
         while True:
-            logger.info("New PUB proc")
+            logger.info("SSHHandler: New PUB proc")
             request = json.loads(conn_trigger.recv())
             process_PUB = mp.Process(target = self.task_local, args=(queue,q))
             process_PUB.start()
@@ -35,15 +35,15 @@ class SSHHandler:
                 desired_test = request["desired_test"]
                 test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
-                logger.info("New test proc")
+                logger.info("SSHHandler: New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(queue, gui_cfg, gui_cfg_host, desired_test, test_info))
                 self.process_test.start()
 
                 # Hold until test finish
-                logger.info("Joining test proc")
+                logger.info("SSHHandler: Joining test proc")
                 self.process_test.join()
 
-                logger.info("Terminate PUB proc")
+                logger.info("SSHHandler: Terminate PUB proc")
                 process_PUB.terminate()
 
 
@@ -51,12 +51,12 @@ class SSHHandler:
             queue.close()
 
         except Exception as e:
-            logger.error("PUB and test queue could not be closed: {}".format(e))
+            logger.error("SSHHandler: PUB and test queue could not be closed: {}".format(e))
 
         try:
             process_PUB.terminate()
         except Exception as e:
-            logger.error("PUB and test process could not be terminated: {}".format(e))
+            logger.error("SSHHandler: PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, queue, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
@@ -75,9 +75,9 @@ class SSHHandler:
                     prints = 'print ; ' + str(prints)
                     q.put(prints)
                 
-            logging.info("Loop has been broken.")
+            logger.info("SSHHandler: Loop has been broken.")
         except:
-            logging.critical("Local server has crashed.")
+            logger.critical("SSHHandler: Local server has crashed.")
 
 
     def task_test(self, conn_test, gui_cfg, gui_cfg_host, desired_test, test_info):   

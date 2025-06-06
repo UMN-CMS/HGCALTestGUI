@@ -112,10 +112,10 @@ class ScanScene(ttk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logger.info("Exit code received. Terminating processes.")
+                    logger.info("Exit code received on the ScanScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("Processes terminated successfully.")
+                    logger.info("ScanScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)

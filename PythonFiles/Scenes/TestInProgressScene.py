@@ -143,7 +143,7 @@ class TestInProgressScene(ttk.Frame):
 
     def begin_update(self, master_window, queue, parent):
 
-        logger.info("Started console update loop.")
+        logger.info("TestInProgressScene: Started console update loop.")
         
         # How long before the queue is being checked (if empty)
         # units of seconds
@@ -161,7 +161,7 @@ class TestInProgressScene(ttk.Frame):
         Timeout_after = 10
         MAX_TIMEOUT = Timeout_after / 2.5
         try:
-            logger.info("Beginning the while loop")
+            logger.info("TestInProgressScene: Beginning the while loop")
             
             information_received = False
             while 1>0:
@@ -197,7 +197,7 @@ class TestInProgressScene(ttk.Frame):
 #                        FinishedTestPopup(parent, self.data_holder, queue)
 #
 #                    if "Closing Test Window." in text:
-                        logger.info("ending loop")
+                        logger.info("TestInProgressScene: ending loop")
                         try:
                             master_window.update()
                         except Exception as e:
@@ -229,8 +229,8 @@ class TestInProgressScene(ttk.Frame):
                 #        time.sleep(1)
                 #        break
         except ValueError as e:
-            
-            print("\n\nException:  ", e)
+
+            logger.exception(e)
 
             # Throw a message box that shows the error message
             # Logs the message
