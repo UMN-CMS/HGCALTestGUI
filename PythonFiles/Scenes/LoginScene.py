@@ -10,8 +10,6 @@ import os
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.LoginScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 
 # Creates a class that is called by the GUIWindow. 
@@ -50,11 +48,7 @@ class LoginScene(ttk.Frame):
             widget.destroy()
 
 
-        logger.info("LoginScene: Frame has been created.")
-
-
-        # Creating a list of users for dropdown menu
-        # Eventually need to add a way for a database to have control over this list
+        # getting list of users for dropdown menu
         User_List = self.data_holder.get_all_users()
 
         # Creating the title for the window
@@ -158,6 +152,7 @@ class LoginScene(ttk.Frame):
     #################################################
 
     def btn_admin_action(self, _parent):
+        logger.info("User has opened the Admin tools")
         pass_pop = PasswordPopup(_parent, self.data_holder)
     
     #################################################
@@ -191,7 +186,7 @@ class PasswordPopup():
     # Function to enter password for admin access
     def password_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("PasswordPopup: Prompting the user for the admin password")
+        logger.info("Prompting the user for the admin password")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Admin Access") 
@@ -258,7 +253,6 @@ class PasswordPopup():
     # Called to continue on in the testing procedure
     def continue_function(self, _parent):  
         self.data_holder.attempt_admin_access(self.user_password.get())
-        print(self.data_holder.admin)
         if self.data_holder.admin == True:
             _parent.set_frame_admin_frame()
         else:
@@ -284,7 +278,6 @@ class FailedPopup():
     # Function to enter password for admin access
     def password_popup(self, data_holder):
         self.data_holder = data_holder
-        logger.info("PasswordPopup: Admin Access was denied.")
         # Creates a popup to ask whether or not to retry the test
         self.popup = tk.Toplevel()
         self.popup.title("Admin Connection Failed") 

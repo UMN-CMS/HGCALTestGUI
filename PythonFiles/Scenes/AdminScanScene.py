@@ -16,10 +16,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.AdminScanScene')
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
 # instantiated as scan_frame by GUIWindow
@@ -66,7 +63,6 @@ class AdminScanScene(ttk.Frame):
         
         self.s.theme_use('awdark')
 
-
     
     # Creates a thread for the scanning of a barcode
     # Needs to be updated to run the read_barcode function in the original GUI
@@ -85,11 +81,10 @@ class AdminScanScene(ttk.Frame):
 
             manager = mp.Manager()
             full_id = manager.list()
-            print(full_id)
+            logger.debug('Scanner - %s' % full_id)
 
             self.ent_full.config(state = 'normal')
 
-            logger.info("AdminScanScene: Beginning scan...")
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -114,20 +109,17 @@ class AdminScanScene(ttk.Frame):
                     break
 
                 elif self.EXIT_CODE:
-                    logger.info("AdminScanScene: Exit code received. Terminating processes.")
+                    logger.info("Exit code received. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("AdminScanScene: Processes terminated successfully.")
+                    logger.info("Processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
-                
-            logger.info("AdminScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent):
 
-        logger.info("AdminScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
 
         QR_image = Image.open("{}/Images/QRimage.png".format(PythonFiles.__path__[0]))
@@ -374,14 +366,14 @@ class AdminScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logger.info("AdminScanScene: Terminating scanner proceses.")
+        logger.info("Terminating scanner processes.")
         try:
             if self.use_scanner:
                 self.scanner.kill()
                 self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logger.info("AdminScanScene: Processes could not be terminated.")
+            logger.info("Scanner processes could not be terminated.")
 
 
 ##########################################################

@@ -15,9 +15,7 @@ sys.path.append("{}/Tests".format(os.getcwd()))
 # to avoid any overlapping event monitors. So, conn_trigger
 # is used to trigger a new test via REQClient
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
 
 class SSHHandler:
 
@@ -27,8 +25,6 @@ class SSHHandler:
 
         # Listen for test request
         while True:
-            print("New PUB proc")
-            print("waiting for trigger request")
             logger.info("New PUB proc")
             request = json.loads(conn_trigger.recv())
             process_PUB = mp.Process(target = self.task_local, args=(queue,q))
@@ -39,17 +35,14 @@ class SSHHandler:
                 desired_test = request["desired_test"]
                 test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
-                print("New test proc")
                 logger.info("New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(queue, gui_cfg, gui_cfg_host, desired_test, test_info))
                 self.process_test.start()
 
                 # Hold until test finish
-                print("Joining test proc")
                 logger.info("Joining test proc")
                 self.process_test.join()
 
-                print("Terminate PUB proc")
                 logger.info("Terminate PUB proc")
                 process_PUB.terminate()
 
@@ -58,12 +51,12 @@ class SSHHandler:
             queue.close()
 
         except Exception as e:
-            logging.error("PUB and test queue could not be closed: {}".format(e))
+            logger.error("PUB and test queue could not be closed: {}".format(e))
 
         try:
             process_PUB.terminate()
         except Exception as e:
-            logging.error("PUB and test process could not be terminated: {}".format(e))
+            logger.error("PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, queue, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
@@ -89,8 +82,7 @@ class SSHHandler:
 
     def task_test(self, conn_test, gui_cfg, gui_cfg_host, desired_test, test_info):   
 
-        print('SSHHandler: task_test has started.')
-        logging.info("SSHHandler: task_test has started.")
+        logger.info("SSHHandler: task_test has started.")
 
         # Dynamically import test class and testing info
         full_id = test_info["full_id"]
@@ -109,8 +101,7 @@ class SSHHandler:
 
         #runs ssh command using python subprocess 
         proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.STDOUT, universal_newlines=True)
-        print('Test has been started')
-        logging.info("SSHHandler: test has been started")
+        logger.info("SSHHandler: test has been started")
 
         #iterates over lines as they are received, sends them to task_local 
         for line in iter(proc.stdout.readline, ''):

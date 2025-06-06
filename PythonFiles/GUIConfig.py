@@ -1,6 +1,8 @@
-
+import logging
 # Class to handle creation of different types of GUIs based on which board we want to test
 # This class will hold all of the frame information and order them accordingly
+
+logger = logging.getLogger('HGCALTestGUI')
 
 
 # Responsible for interfacing with the configuration file
@@ -20,7 +22,7 @@ class GUIConfig():
 
         # Possibly do something special here if need be
 
-        print("Instance of {} GUI created.".format(self.getGUIType()))
+        logger.info("Instance of {} GUI created.".format(self.getGUIType()))
 
 
     # Get serial check safe attribute
@@ -44,7 +46,6 @@ class GUIConfig():
             if index == num:
                 return ptest
 
-        print("\n\nCannot find a physical test with num = {}. Please try again.\n".format(num))
         return None
 
     def getUseScanner(self):
@@ -89,6 +90,5 @@ class GUIConfig():
         try:
             return [test["name"] for test in self.board_cfg["Test"]]
         except:
-            print("Unable to return test names. Check to see if test['name'] is empty")
-            logging.debug("Unable to return test names. Check to see if test['name'] is empty")
+            logger.error("Unable to return test names. Check to see if test['name'] is empty")
             return []

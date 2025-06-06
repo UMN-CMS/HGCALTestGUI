@@ -10,7 +10,6 @@ from PythonFiles.utils.helper import get_logging_path
 
 guiLogPath = "{}".format(get_logging_path())
 guiLogDir = "/".join(guiLogPath.split("/")[:-1])
-print("Writing log file to {}".format(guiLogPath))
 
 if not os.path.exists(guiLogDir):
     os.makedirs(guiLogDir)
@@ -27,27 +26,33 @@ from PythonFiles.utils.SSHHandler import SSHHandler
 import sys
 import logging
 import logging.handlers
+from logging.handlers import QueueHandler, QueueListener
 import yaml
 from pathlib import Path
 
 # create logger with 'HGCALTestGUI'
 logger = logging.getLogger('HGCALTestGUI')
 logger.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-fh = logging.handlers.TimedRotatingFileHandler(guiLogPath, when="midnight", interval=1)
-fh.setLevel(logging.DEBUG)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
-# add the handlers to the logger
-logger.addHandler(fh)
-logger.addHandler(ch)
 
-logger.info("Creating new instance of HGCALTestGUI")
+# avoid duplicate handlers  
+if not logger.handlers:
+    # file handler which rotates every day
+    fh = logging.handlers.TimedRotatingFileHandler(guiLogPath, when="midnight", interval=1)
+    fh.setLevel(logging.DEBUG)
+
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    # add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
 
 # Creates a task of creating the GUIWindow
 def task_GUI(conn, conn_trigger, queue, board_cfg, curpath):
@@ -69,6 +74,7 @@ def task_SSHHandler(gui_cfg, host_cfg, conn_trigger, queue):
     SSHHandler(gui_cfg, host_cfg, conn_trigger, queue)
 
 def run(board_cfg, curpath, host_cfg):    
+
     # Creates a Pipe for the SUBClient to talk to the GUI Window
     conn_SUB, conn_GUI = mp.Pipe()
 
@@ -101,7 +107,7 @@ def run(board_cfg, curpath, host_cfg):
 
     # Starts the processes
     process_GUI.start()
-    if host_cfg["TestHandler"]["name"] == "Local" or board_cfg['TestHandler']['name'] == 'SSH':
+    if host_cfg["TestHandler"]["name"] == "Local" or host_cfg['TestHandler']['name'] == 'SSH':
         process_Handler.start()
     process_SUBClient.start()
 
@@ -115,7 +121,6 @@ def run(board_cfg, curpath, host_cfg):
         conn_trigger_GUI.close()
         conn_trigger_Handler.close()
     except:
-        print("Pipe close is unnecessary.")
         logger.debug("Pipe close is unnecessary.")
 
     try:
@@ -123,7 +128,6 @@ def run(board_cfg, curpath, host_cfg):
         process_SUBClient.terminate()
         process_Handler.kill()
     except:
-        print("Terminate is unnecessary.")
         logger.debug("Terminate is unnecessary.")
         pass
 
@@ -137,11 +141,11 @@ def main(args):
 
 if __name__ == "__main__":
 
+    logger.info("Creating new instance of HGCALTestGUI")
+
     try:
         if sys.argv[1] is not None:
             config_path = sys.argv[1]
-            print(config_path)
-            logger.debug(config_path)
     except:
         config_path = None
 
@@ -155,12 +159,10 @@ if __name__ == "__main__":
             host_path = None
 
     curpath = Path(__file__).parent.absolute()
-    print("Current path is: %s" % curpath)
-    logger.debug("Current path is: %s" % curpath)
+    logger.info("Current path is: %s" % curpath)
 
     node = socket.gethostname()
-    print(socket.gethostname())
-    logger.debug(socket.gethostname())
+    logger.info(socket.gethostname())
 
     ld_wagon_computers = [
         "cmsfactory4.cmsfactorynet",
@@ -176,6 +178,8 @@ if __name__ == "__main__":
     if config_path is not None:
         board_cfg = import_yaml(config_path)
         host_cfg = import_yaml(host_path)
+        logger.info("Board Config: " + config_path)
+        logger.info("Host Config: " + host_path)
 
         run(board_cfg, curpath, host_cfg)
     elif any((node in x for x in ld_wagon_computers)):

@@ -15,8 +15,6 @@ sys.path.append("{}/Tests".format(os.getcwd()))
 # is used to trigger a new test via REQClient
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.LocalHandler')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.INFO)
 
 class LocalHandler:
 
@@ -26,8 +24,6 @@ class LocalHandler:
 
         # Listen for test request
         while True:
-            print("New PUB proc")
-            print("waiting for trigger request")
             logger.info("New PUB proc")
             request = json.loads(conn_trigger.recv())
             process_PUB = mp.Process(target = self.task_local, args=(conn_pub,q))
@@ -38,17 +34,14 @@ class LocalHandler:
                 desired_test = request["desired_test"]
                 test_info = {"full_id": request["full_id"], "tester": request["tester"]}
 
-                print("New test proc")
                 logger.info("New test proc")
                 self.process_test = mp.Process(target = self.task_test, args=(conn_test, gui_cfg, desired_test, test_info))
                 self.process_test.start()
 
                 # Hold until test finish
-                print("Joining test proc")
                 logger.info("Joining test proc")
                 self.process_test.join()
 
-                print("Terminate PUB proc")
                 logger.info("Terminate PUB proc")
                 process_PUB.terminate()
 
@@ -58,12 +51,12 @@ class LocalHandler:
             conn_test.close()
 
         except Exception as e:
-            logging.error("PUB and test pipe could not be closed: {}".format(e))
+            logger.error("PUB and test pipe could not be closed: {}".format(e))
 
         try:
             process_PUB.terminate()
         except Exception as e:
-            logging.error("PUB and test process could not be terminated: {}".format(e))
+            logger.error("PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, conn, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
@@ -96,57 +89,4 @@ class LocalHandler:
         test_class = getattr(mod, test_meta["TestClass"])
 
         test_class(conn_test, board_sn=test_info["full_id"], tester=test_info["tester"])
-
-
-    # removed in favor of task_local, which functions without a ZMQ server
-##########################################################################
-    def task_PUB(self, conn_pub):
-        # Used to allow CTRL+C keyboard interrupt
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-        # Creates zmq.Context object
-        cxt = zmq.Context()
-        # Sets socket type to PUBLISH
-        pub_socket = cxt.socket(zmq.PUB)
-        # Server side .bind
-        pub_socket.bind("tcp://*:5556")
-
-        # Creates a while loop that is searching for the "print" messages on the pipe
-        # Sends them immediately and once it receieves "Done." It prepares to receive and send
-        # the json files of results.
-        try:
-            while 1 > 0:
-                print("Ready for next request")
-                prints = conn_pub.recv()
-                logger.info("Print statement received.")
-                logger.info("Testing if print statement is 'Done.'")
-                if prints == "Done.":
-                    logger.info("String variable prints = 'Done.'")
-                    prints = "print ; " + str(prints)
-                    logger.info("'print' topic added to the prints variable.")
-                    pub_socket.send_string(prints)
-                    logger.info("Sent final print statement.")
-                    logger.info("Waiting for JSON on Pipe")
-                    json = conn_pub.recv()
-                    logger.info("JSON receieved.")
-                    json = "JSON ; " + str(json)
-                    logger.info("JSON topic added to json string")
-                    pub_socket.send_string(str(json))
-                    logger.info("JSON sent.")
-                    # Breaks the loop once it sends the JSON so the server will shut down
-                    #break
-                else:
-                    prints = "print ; " + prints
-                    logger.info(prints)
-                    logger.info("'print' topic added to prints variable.")
-                    pub_socket.send_string(prints)
-                    logger.info("Sent print statement.")
-            
-            logger.info("Loop has been broken.")
-        except:
-            logger.critical("PUBServer has crashed.")
-
-        # Closes the server once the loop is broken so that there is no hang-up in the code
-        #print("PUBServer Closing")    
-        #pub_socket.close()
-##########################################################################
 
