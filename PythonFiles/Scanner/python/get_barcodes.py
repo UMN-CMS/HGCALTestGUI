@@ -7,7 +7,7 @@ from pathlib import Path
 libc = ctypes.CDLL("libc.so.6")
 import logging
 
-logger = logging.getLogger('PythonFiles.Scanner.python.get_barcodes')
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scanner.python.get_barcodes')
 
 from multiprocessing import Process, Manager, Pipe
 
@@ -64,7 +64,7 @@ def run_scanner():
 
     listener.join()
 
-    print(parse_xml(serial[0]))
+    logger.info('Scanner: %s' % parse_xml(serial[0]))
 
 if __name__=="__main__":
     run_scanner()
