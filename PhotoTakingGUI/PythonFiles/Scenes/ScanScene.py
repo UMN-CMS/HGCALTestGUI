@@ -16,9 +16,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.ScanScene')
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -68,8 +66,6 @@ class ScanScene(ttk.Frame):
 
         self.ent_full.config(state = 'normal')
 
-        print("\nScanScene: Beginning scan...\n")
-        logging.info("ScanScene: Beginning scan...")
         self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -84,7 +80,7 @@ class ScanScene(ttk.Frame):
             if not len(full_id) == 0:
                 # takes in the full id scanned, parses the hexadecimal in ASCII
                 # and sends it to the data holder
-                self.data_holder.set_full_ID( parse_xml(full_id[0]))
+                self.data_holder.set_full_ID(parse_xml(full_id[0]))
 
                 self.listener.terminate()
                 self.scanner.terminate()
@@ -96,10 +92,10 @@ class ScanScene(ttk.Frame):
                 break
 
             elif self.EXIT_CODE:
-                logging.info("ScanScene: Exit code received. Terminating processes.")
+                logging.info("Exit code received on the ScanScene. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logging.info("ScanScene: Processes terminated successfully.")
+                logging.info("ScanScene Processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)
@@ -300,7 +296,6 @@ class ScanScene(ttk.Frame):
     # Function for the log out button
     def btn_logout_action(self, _parent):
 
-        logging.debug("ScanScene: Closing the scanner from the logout button action.")
         self.EXIT_CODE = 1
         self.listener.terminate()
         self.scanner.terminate()
@@ -360,10 +355,10 @@ class ScanScene(ttk.Frame):
     #################################################
 
     def kill_processes(self):
-        logging.info("ScanScene: Terminating scanner proceses.")
+        logger.info("ScanScene: Terminating scanner proceses.")
         try:
             self.scanner.kill()
             self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ScanScene: Processes could not be terminated.")
+            logger.info("ScanScene: Processes could not be terminated.")
