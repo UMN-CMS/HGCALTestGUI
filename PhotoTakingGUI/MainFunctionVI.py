@@ -46,7 +46,7 @@ class StreamToLogger(object):
         pass
 
 sys.stdout = StreamToLogger(logger, logging.DEBUG)
-sys.stderr = StreamToLogger(logger, logging.ERROR)
+#sys.stderr = StreamToLogger(logger, logging.ERROR)
 
 def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):

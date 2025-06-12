@@ -71,7 +71,7 @@ class TestSummaryScene(ttk.Frame):
         self.title = ttk.Label(
                 self,
                 #fg='#0d0d0d',
-                text = "Visual Inspection Finished!",
+                text = "Photo Taking Finished!",
                 font=('Arial',32,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)

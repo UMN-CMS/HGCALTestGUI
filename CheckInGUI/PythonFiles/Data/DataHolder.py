@@ -4,10 +4,7 @@ from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
 from collections import OrderedDict
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
-
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_VI.PythonFiles.Data.DataHolder')
 
 class DataHolder():
 
@@ -66,9 +63,7 @@ class DataHolder():
 
     def set_check_dict(self, idx, value):
         self.all_checkboxes[0][idx]['value'] = value
-        print(list(self.inspection_data.keys()))
         self.inspection_data[list(self.inspection_data.keys())[idx]] = value
-        print(self.inspection_data)
 
     def get_comment_dict(self, idx):
         return self.all_comments[idx]
@@ -100,25 +95,24 @@ class DataHolder():
 
     # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
-        logger.info("DataHolder: Checking if full id is a new board")
+        logger.info("Checking if full id is a new board...")
 
         full = self.get_full_ID()
         #returns true if the board is new, false if not
-        print('GUI is slowing down when checking if the board is new')
         is_new_board, in_id = self.data_sender.is_new_board(full)
 
         comments = self.data_dict['comments']
         self.data_dict['is_new_board'] = is_new_board
         
         if is_new_board == True:
-            print('GUI is slowing down when uploading the new board')
+            logger.info('Board is new, checking it in.')
             user = self.data_dict['user_ID']
             # data sender's add new board function returns the check in id
             self.data_dict['in_id'] = self.data_sender.add_new_board(full, user, comments, self.data_dict['manufacturer'])
 
         else:
             # if the board is not new, this returns the previous testing information on the board
-            print('GUI is slowing down when getting previous results')
+            logger.info('Board has already been checked in, getting previous results.')
             prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
                 self.data_dict['test_names'] = test_names
@@ -143,19 +137,21 @@ class DataHolder():
     def set_user_ID(self, user_ID):
  
         self.data_dict['user_ID'] = user_ID 
-        logging.debug("DataHolder: User ID has been set.")
+        logger.info("User ID set to %s" % user_ID)
 
     ##################################################
 
     def set_comments(self, comments):
  
         self.data_dict['comments'] = comments
-        logging.debug("DataHolder: Comments have been entered.")
+        logger.info("Comments have been entered.")
+        logger.debug(comments)
 
     def set_inspection_comments(self, comments):
 
         self.inspection_data['inspection_comments'] = comments
-        logging.debug('DataHolder: Comments entered for VI test')
+        logger.info('Comments entered for VI test')
+        logger.debug(comments)
 
     ##################################################
 
@@ -168,14 +164,10 @@ class DataHolder():
 
         self.data_dict['current_full_ID'] = full
         self.data_holder_new_test()
-        logging.info("DataHolder: Full ID has been set.")
+        logging.info("Full ID set to %s" % full)
 
     def send_image(self, img_idx=0):
         self.data_sender.add_board_image(self.data_dict["current_full_ID"], open(self.image_data[img_idx], "rb"))
-
-    def update_location(self, full):
-        text = self.data_sender.update_location(full, 'UMN')
-        print(text)
 
     #################################################
 
@@ -184,8 +176,9 @@ class DataHolder():
         test_name = "Visual Inspection"
         test_type_id = 0
 
+        logger.info('Uploading visual inspection results...')
         info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_name, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
-        print(info_dict)
+        logger.debug(info_dict)
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
             json.dump(info_dict, outfile)
@@ -195,8 +188,7 @@ class DataHolder():
 
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), self.get_full_ID())
 
-        #self.dbclient.send_request(message)
-        logging.info("DataHolder: Test results sent to database.")
+        logging.info("Test results sent to database.")
 
     #################################################
 
@@ -219,8 +211,6 @@ class DataHolder():
         #self.add_inspection_to_comments()
         self.data_dict['data'] = self.inspection_data
 
-        logging.info("DataHolder: Test results have been saved")
-
     ################################################
 
     def add_inspection_to_comments(self):
@@ -240,7 +230,6 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " Board component is broken."
-        print(self.inspection_data['inspection_comments'])
         #if self.inspection_data['inspection_comments'] != "_":
         #    if self.data_dict['comments'] == "_":
         #        self.data_dict['comments'] = ""
@@ -259,14 +248,6 @@ class DataHolder():
         users_list = self.data_sender.get_usernames() 
         return users_list
 
-    #################################################
-
-    # Prints all the variable values inside data_holder
-    def print(self):    
-        print("data_dict: \n", self.data_dict)
-           
-
- 
     #################################################
 
     # Tracking the test index in another place and propagating to the config
@@ -295,8 +276,6 @@ class DataHolder():
                 'manufacturer': self.data_dict['manufacturer'],
                 }
 
-        logging.info("DataHolder: DataHolder Information has been reset for a new test.")        
-
         self.gui_cfg.setTestIndex(1)
 
         self.current_test_idx = self.gui_cfg.getTestIndex()
@@ -311,6 +290,9 @@ class DataHolder():
                 'component_broken': False,
                 'inspection_comments': "_"
                 }
+
+        logger.info("DataHolder Information has been reset for a new test.")        
+
     ################################################
 
 #################################################################################

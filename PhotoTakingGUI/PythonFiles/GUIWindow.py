@@ -36,6 +36,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
+        self.master_window.report_callback_exception = self.log_callback_exception
 
         master_window.title("Photo Taking Window")
 
@@ -125,6 +126,9 @@ class GUIWindow():
         master_frame.after(500, self.set_frame_login_frame)
 
         master_window.mainloop()
+
+    def log_callback_exception(self, exc_type, exc_value, exc_traceback):
+        logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
 
 
     #################################################

@@ -9,9 +9,7 @@ import os
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger("HGCAL_VI.PythonFiles.Scenes.LoginScene")
 
 # Creates a class that is called by the GUIWindow. 
 # GUIWindow instantiates an object called login_frame.

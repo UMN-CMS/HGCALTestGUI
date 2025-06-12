@@ -20,9 +20,7 @@ import logging
 import os
 import PythonFiles
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger('HGCAL_VI.PythonFiles.GUIWindow')
 
 
 #################################################################################
@@ -40,6 +38,8 @@ class GUIWindow():
         global master_window
         master_window = tk.Tk()
         self.master_window = master_window
+        self.master_window.report_callback_exception = self.log_callback_exception
+
         master_window.title("Board Check In and Inspection")
 
         # Creates the size of the window and disables resizing
@@ -105,6 +105,8 @@ class GUIWindow():
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0, sticky='nsew') 
 
+        logger.info('All frames have been created.')
+
         #################################################
         #              End Frame Creation               #
         #################################################
@@ -118,6 +120,9 @@ class GUIWindow():
         master_frame.after(500, self.set_frame_login_frame)
 
         master_window.mainloop()
+
+    def log_callback_exception(self, exc_type, exc_value, exc_traceback):
+        logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
         
 
 
@@ -130,66 +135,65 @@ class GUIWindow():
             return
         new_cfg = update_config(full)
         self.gui_cfg = new_cfg
-        logging.debug("Updated the GUI configuration.")
 
     ################################################
 
     def set_frame_login_frame(self):  
+        logger.info('Setting frame to login_frame')
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)    
-        
-        logging.debug("GUIWindow: the frame has been set to login_frame.")
 
 
     #################################################
 
     def set_frame_component_frame(self):
+        logger.info('Setting frame to component_scan_frame')
         self.component_scan_frame.is_current_scene = True
         self.component_scan_frame.update()
         self.component_scan_frame.start()
         self.set_frame(self.component_scan_frame)
-        logging.debug("GUIWindow: the frame has been set to component_frame.")
             
     #################################################
     
     def set_frame_scan_frame(self):
+        logger.info('Setting frame to scan_frame')
         self.scan_frame.is_current_scene = True
         self.scan_frame.update()
         self.set_frame(self.scan_frame)
         self.scan_frame.scan_QR_code(master_window)
-        logging.debug("GUIWindow: the frame has been set to scan_frame.")
    
      #################################################
 
     def set_frame_inspection_frame(self):
+        logger.info('Setting frame to inspection_frame')
         self.inspection_frame.update_frame(self)
         self.set_frame(self.inspection_frame)
-        logging.debug("GUIWindow: the frame has been set to inspection_frame.")
 
     #################################################
 
     def set_frame_postscan(self):
+        logger.info('Setting frame to postscan_frame')
 
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
-        logging.debug("GUIWindow: the frame has been set to postscan_frame.")
 
     #################################################
 
     def set_frame_splash_frame(self):
+        logger.info('Setting frame to splash_frame')
 
         self.set_frame(self.splash_frame)
 
     #################################################
 
     def set_frame_summary(self):
+        logger.info('Setting frame to summary_frame')
         self.summary_frame.update_frame()
         self.set_frame(self.summary_frame)
-        logging.debug("GUIWindow: the frame has been set to summary_frame.")
 
     def set_frame_add_user_frame(self):
+        logger.info('Setting frame to add_user_frame')
         self.set_frame(self.add_user_frame)
-        logging.debug("GUIWindow: the frame has been set to add_user_frame.")
 
     #################################################
 
@@ -205,8 +209,7 @@ class GUIWindow():
             bind_func = _frame.get_submit_action()
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
-            print("no bind function")
-            logging.info("No bind function for " + str(_frame))
+            logger.warning("No bind function for " + str(_frame))
             
 
         # Hides the submit button on scan frame until an entry is given to the computer
@@ -281,8 +284,7 @@ class GUIWindow():
         try:
             self.popup.destroy()
         except:
-            print("GUIWindow: Unable to close the popup")
-            logging.error("GUIWindow: Unable to close the popup")
+            logger.error("GUIWindow: Unable to close the popup")
     #################################################
 
     def remove_all_widgets(self):
@@ -293,9 +295,8 @@ class GUIWindow():
 
     def help_popup(self, current_window):
     
-        logging.debug("GUIWindow: The user has requested a help window")
-        logging.debug("Opening a help menu for {}".format(type(current_window)))
-        print("\n\nOpening a help menu for {}".format(type(current_window)))
+        logger.info("The user has requested a help window")
+        logger.info("Opening a help menu for {}".format(type(current_window)))
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
@@ -415,21 +416,14 @@ class GUIWindow():
             self.popup.destroy()
             self.popup.quit()
 
-
-            logging.info("GUIWindow: Trying to quit master_window")
-            print("\nQuitting master window\n\n")
             master_window.destroy()
-
-            logging.info("GUIWindow: Trying to destroy master_window")
-            print("Destroying master window\n")
             master_window.quit()
             
 
-            logging.info("GUIWindow: The application has exited successfully.")
+            logging.info("The application has exited successfully.")
         except Exception as e:
-            print(e)
-            logging.debug("GUIWindow: " + repr(e))
-            logging.error("GUIWindow: The application has failed to close.")
+            logging.exception(e)
+            logging.error("The application has failed to close.")
 
         exit() 
 

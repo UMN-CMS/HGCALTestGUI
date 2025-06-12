@@ -4,9 +4,12 @@ import socket
 import base64
 import os
 from PIL import Image
+import logging
 
 from io import BytesIO
 # from read_barcode import read_barcode
+
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Data.DBSender')
 
 
 class DBSender():
