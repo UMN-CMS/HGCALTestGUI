@@ -1,4 +1,6 @@
+import logging
 
+logger = logging.getLogger('HGCAL_VI')
 # Class to handle creation of different types of GUIs based on which board we want to test
 # This class will hold all of the frame information and order them accordingly
 
@@ -20,7 +22,7 @@ class GUIConfig():
 
         # Possibly do something special here if need be
 
-        print("Instance of {} GUI created.".format(self.getGUIType()))
+        logger.info("Instance of {} GUI created.".format(self.getGUIType()))
 
 
     # Get serial check safe attribute

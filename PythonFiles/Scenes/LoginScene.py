@@ -6,6 +6,7 @@ import tkinter.ttk as ttk
 import logging
 import PythonFiles
 import os
+import sys
 
 #################################################################################
 

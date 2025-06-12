@@ -59,6 +59,8 @@ class GUIWindow():
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
 
+        self.master_window.report_callback_exception = self.log_callback_exception
+
         # Creates the size of the window
         width = self.master_window.winfo_screenwidth()
         height = self.master_window.winfo_screenheight()
@@ -158,6 +160,8 @@ class GUIWindow():
 
         self.master_window.mainloop()
        
+    def log_callback_exception(self, exc_type, exc_value, exc_traceback):
+        logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
 
     def create_style(self):
 

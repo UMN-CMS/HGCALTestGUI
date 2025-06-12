@@ -29,10 +29,7 @@ camera = Picamera2()
 
 # Instantiating logging
 # Code that should go in every file in the GUI(s)
-logging.getLogger('PIL').setLevel(logging.WARNING)
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.CameraScene')
 
 
 # Frame class for basic webcam functionality
@@ -195,6 +192,7 @@ class CameraScene(ttk.Frame):
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
 
         # Cannot be called unless camera is already started
+        logger.info("Capturing image")
         self.image = camera.switch_mode_and_capture_image(shortened_pn)
         min_area = 25000
         padding = 50
@@ -250,6 +248,8 @@ class CameraScene(ttk.Frame):
 
             imageBox = (x_start, y_start, x_end, y_end)
             self.image = self.image.crop(imageBox)
+        else:
+            logger.error("Image couldn't be cropped")
 
         # stores the image in the data holder
         # doesn't try to write it to disk, uses more ram but saves time
@@ -283,7 +283,6 @@ class CameraScene(ttk.Frame):
             self.Engine_label.image = self.Engine_PhotoImage
 
         self.data_holder.image_data.append(self.photo_name)
-        self.parent.set_image_name(shortened_pn)
 
     def continuous_update(self):
 
@@ -301,8 +300,7 @@ class CameraScene(ttk.Frame):
             camera.stop()
             self.camera_created = False
         except:
-            print("CameraScene: Unable to stop preview")
-            logging.debug("CameraScene: Unable to stop preview")
+            pass
 
         # if a photo is being retaken, set the retaken value to true
         if self.parent.retake == True:

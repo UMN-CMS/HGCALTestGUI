@@ -16,10 +16,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger('HGCAL_VI.PythonFiles.Scenes.ComponentScanScene')
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
 # instantiated as scan_frame by GUIWindow
@@ -64,6 +61,7 @@ class ComponentScanScene(ttk.Frame):
 
         got_code = self.data_holder.check_for_ldo()
         if got_code is not None and got_code != "None":
+            logger.info("LDO uploaded successfully.")
             self.stop()
         else:
             self.parent.master_window.after(1000, self.check_for_ldo)
@@ -86,13 +84,12 @@ class ComponentScanScene(ttk.Frame):
         
         self.master_frame = master_frame
         self.parent = parent
-        
-        super().__init__(self.master_frame, width = 1105, height = 850)
+
+        super().__init__(self.master_frame, width=1105, height=850)
 
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logging.info("ComponentScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
@@ -236,7 +233,6 @@ class ComponentScanScene(ttk.Frame):
     # Function for the log out button
     def btn_logout_action(self, _parent):
         
-        logging.debug("ComponentScanScene: Closing the scanner from the logout button action.")
         self.EXIT_CODE = 1 
         self.listener.terminate()
         self.scanner.terminate()
@@ -293,10 +289,9 @@ class ComponentScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logging.info("ComponentScanScene: Terminating scanner proceses.")
         try:
             self.scanner.kill()
             self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ComponentScanScene: Processes could not be terminated.")
+            pass

@@ -20,8 +20,7 @@ import logging
 import os
 import PythonFiles
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.GUIWindow')
 
 #################################################################################
 
@@ -37,6 +36,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
+        self.master_window.report_callback_exception = self.log_callback_exception
 
         master_window.title("Photo Taking Window")
 
@@ -73,10 +73,6 @@ class GUIWindow():
         # Creates the "Storage System" for the data during testing
         self.data_holder = DataHolder(self.gui_cfg, self.main_path)
 
-        # Creates a static image for camera to replace
-        blank_image = "EnginePhoto.png"
-        self.set_image_name(blank_image)
-
         #################################################
         #   Creates all the different frames in layers  #
         #################################################
@@ -107,6 +103,8 @@ class GUIWindow():
         self.camera_frame = CameraScene(self, master_frame, self.data_holder, 0)
         self.camera_frame.grid(row=0, column=0, sticky='nsew')
 
+        logger.info("All frames have been created.")
+
         # indices to denote photo number and camera number to know when to finish
         self.camera_index = 0
         self.photo_index = 0
@@ -129,6 +127,9 @@ class GUIWindow():
 
         master_window.mainloop()
 
+    def log_callback_exception(self, exc_type, exc_value, exc_traceback):
+        logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
+
 
     #################################################
 
@@ -143,6 +144,7 @@ class GUIWindow():
 
     # function for retaking the photo at the end, takes in index of desired photo
     def retake_photo(self, photo_index):
+        logger.info("Retaking photo {}".format(photo_index))
         # need to decrease the index by 1 since next frame will increment
         self.camera_index = photo_index-1
         self.photo_index = photo_index-1
@@ -157,8 +159,7 @@ class GUIWindow():
     #################################################
 
     def set_frame_login_frame(self):
-        self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)
-        self.scan_frame.grid(row=0, column=0)
+        logger.info('Setting frame to login_frame')
 
         # resets retake variables if the login screen is opened
         self.retake = False
@@ -166,9 +167,6 @@ class GUIWindow():
 
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)
-
-        logging.debug("GUIWindow: The frame has been set to login_frame.")
-        logging.debug("GUIWindow: Conclusion of the 'set_frame_login_frame(self)' method")
 
     #################################################
 
@@ -184,7 +182,6 @@ class GUIWindow():
     def next_frame_camera_frame(self):
         self.camera_index += 1
         self.photo_index += 1
-        logging.debug("GUIWindow: Trying to go to the next camera_frame.")
         photo_list = self.data_holder.get_photo_list()
 
         # goes back to summary after photo has been retaken
@@ -198,19 +195,8 @@ class GUIWindow():
                 self.set_frame_test_summary()
 
 
-        logging.debug("GUIWindow: Frame has been set to the next camera_frame.")
-
-
-    def return_frame_camera_frame(self):
-        self.camera_index -= 1
-        logging.debug("GUIWindow: Trying to go back to the previous camera_frame.")
-        self.camera_index = self.photo_index
-        self.set_frame_camera_frame(self.camera_index)
-
-
     def set_frame_camera_frame(self, index):
-        print("GUIWindow: Going to camera frame #{}".format(index))
-        logging.debug("GUIWindow: Going to camera frame #{}".format(index))
+        logger.info("Going to camera frame #{}".format(index))
         self.camera_frame.set_text(index)
         self.camera_frame.update_preview()
         self.set_frame(self.camera_frame)
@@ -218,6 +204,7 @@ class GUIWindow():
     #################################################
 
     def set_frame_scan_frame(self):
+        logger.info("Setting frame to scan_frame")
         self.camera_index = 0
         self.photo_index = 0
         self.scan_frame.is_current_scene = True
@@ -227,27 +214,32 @@ class GUIWindow():
      #################################################
 
     def set_frame_postscan(self):
+        logger.info("Setting frame to postscan_frame")
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
 
     #################################################
 
     def set_frame_splash_frame(self):
+        logger.info("Setting frame to splash_frame")
         self.set_frame(self.splash_frame)
 
     #################################################
 
     def set_frame_upload_local_photos(self):
+        logger.info("Setting frame to local_photo_upload_frame")
         self.set_frame(self.local_upload_frame)
         self.local_upload_frame.get_local_boards(self)
 
     #################################################
 
     def set_frame_test_summary(self):
+        logger.info("Setting frame to test_summary_frame")
         self.test_summary_frame.update_frame()
         self.set_frame(self.test_summary_frame)
 
     def set_frame_add_user_frame(self):
+        logger.info("Setting frame to add_user_frame")
         self.set_frame(self.add_user_frame)
 
     #################################################
@@ -264,7 +256,7 @@ class GUIWindow():
             bind_func = _frame.get_submit_action()
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
-            print("no bind function")
+            logger.warning("No bind function for " + str(_frame))
 
 
         # Hides the submit button on scan frame until an entry is given to the computer
@@ -339,30 +331,20 @@ class GUIWindow():
         try:
             self.popup.destroy()
         except:
-            print("GUIWindow: Unable to close the popup")
-            logging.error("GUIWindow: Unable to close the popup")
+            logger.error("GUIWindow: Unable to close the popup")
     #################################################
 
     def remove_all_widgets(self):
         self.inspection_frame.remove_widgets(self)
         self.add_user_frame.remove_widgets(self)
 
-
-    #################################################
-
-    def set_image_name(self, new_name):
-        self.image_name = new_name
-
-
-
     #################################################
 
 
     def help_popup(self, current_window):
 
-        logging.debug("GUIWindow: The user has requested a help window")
-        logging.debug("Opening a help menu for {}".format(type(current_window)))
-        print("\n\nOpening a help menu for {}".format(type(current_window)))
+        logger.info("The user has requested a help window")
+        logger.info("Opening a help menu for {}".format(type(current_window)))
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
@@ -455,7 +437,7 @@ class GUIWindow():
         try:
             self.camera_frame.remove_widgets(self)
 
-            logging.info("GUIWindow: Exiting the GUI.")
+            logger.info("Exiting the GUI.")
 
             master_window.update()
             self.popup.update()
@@ -466,21 +448,14 @@ class GUIWindow():
             self.popup.destroy()
             self.popup.quit()
 
-
-            logging.info("GUIWindow: Trying to quit master_window")
-            print("\nQuitting master window\n\n")
             master_window.destroy()
-
-            logging.info("GUIWindow: Trying to destroy master_window")
-            print("Destroying master window\n")
             master_window.quit()
 
 
-            logging.info("GUIWindow: The application has exited successfully.")
+            logging.info("The application has exited successfully.")
         except Exception as e:
-            print(e)
-            logging.debug("GUIWindow: " + repr(e))
-            logging.error("GUIWindow: The application has failed to close.")
+            logging.exception(e)
+            logging.error("The application has failed to close.")
 
         exit()
 

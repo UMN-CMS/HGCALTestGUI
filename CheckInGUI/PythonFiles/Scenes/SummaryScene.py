@@ -14,12 +14,7 @@ import datetime
 
 #################################################################################
 
-logging.getLogger('PIL').setLevel(logging.WARNING)
-
-
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_VI.PythonFiles.Scenes.SummaryScene')
 
 # Frame that shows all of the final results
 # @param parent -> References a GUIWindow object
@@ -37,8 +32,6 @@ class SummaryScene(ttk.Frame):
         super().__init__(master_frame, width = 1105, height = 850)
 
         self.create_style(parent)
-
-        logging.info("SummaryScene: Frame has been created.")
 
         self.data_holder = data_holder
 
@@ -62,19 +55,15 @@ class SummaryScene(ttk.Frame):
         self.s.theme_use('awdark')
 
     def create_frame(self, parent):
-        logging.debug("SummaryScene: Destroying old widgets on the SummaryScene.")
-        print("SummaryScene: Destroying old widgets on the SummaryScene.")
         try:
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logging.warning("SummaryScene: Widgets could not be found and/or destroyed (making room for new widgets.")
+            #logger.warning("SummaryScene: Widgets could not be found and/or destroyed (making room for new widgets.")
+            pass
         else:
-            logging.info("SummaryScene: Widgets destroyed successfully (making room for new widgets).")
-        
-
-        logging.debug("SummaryScene: Table is being created with the results.")
-        print("\n\nSummaryScene: Table is being created with the results.")
+            #logger.info("SummaryScene: Widgets destroyed successfully (making room for new widgets).")
+            pass
         
         self.canvas = tk.Canvas(self, width = 1105, height = 850, background = '#33393b')
         self.frame = ttk.Frame(self.canvas, width=1105, height=850)

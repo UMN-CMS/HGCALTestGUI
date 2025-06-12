@@ -66,7 +66,6 @@ class TesterComponentScene(ttk.Frame):
 
         manager = mp.Manager()
         full_id = manager.list()
-        logger.debug('Scanner - %s' % full_id)
 
         self.ent_full.config(state = 'normal')
 

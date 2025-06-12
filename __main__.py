@@ -67,7 +67,7 @@ class StreamToLogger(object):
         pass
 
 sys.stdout = StreamToLogger(logger, logging.DEBUG) 
-sys.stderr = StreamToLogger(logger, logging.ERROR) 
+#sys.stderr = StreamToLogger(logger, logging.ERROR) 
 
 def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
@@ -81,21 +81,38 @@ sys.excepthook = handle_exception
 # Creates a task of creating the GUIWindow
 def task_GUI(conn, conn_trigger, queue, board_cfg, curpath):
     # creates the main_window as an instantiation of GUIWindow
-    main_window = GUIWindow(conn, conn_trigger, queue, board_cfg, curpath)
+    try:
+        main_window = GUIWindow(conn, conn_trigger, queue, board_cfg, curpath)
+    except Exception:
+        logger.error("Uncaught exception in task_GUI", exc_info=True)
+        raise
 
 # Creates a task of creating the SUBClient
 def task_SUBClient(conn, queue, board_cfg, sub_pipe):
     # Creates the SUBSCRIBE Socket Client
-    sub_client = SUBClient(conn, queue, board_cfg, sub_pipe)
+    try:
+        sub_client = SUBClient(conn, queue, board_cfg, sub_pipe)
+    except Exception:
+        logger.error("Uncaught exception in task_SUBClient", exc_info=True)
+        raise
+
 
 # Function to create the handler of the type specified in the config file
 def task_LocalHandler(gui_cfg, conn_trigger, local_pipe):
 
-    LocalHandler(gui_cfg, conn_trigger, local_pipe)
+    try:
+        LocalHandler(gui_cfg, conn_trigger, local_pipe)
+    except Exception:
+        logger.error("Uncaught exception in task_LocalHandler", exc_info=True)
+        raise
 
 def task_SSHHandler(gui_cfg, host_cfg, conn_trigger, queue):
 
-    SSHHandler(gui_cfg, host_cfg, conn_trigger, queue)
+    try:
+        SSHHandler(gui_cfg, host_cfg, conn_trigger, queue)
+    except Exception:
+        logger.error("Uncaught exception in task_SSHHandler", exc_info=True)
+        raise
 
 def run(board_cfg, curpath, host_cfg):    
 

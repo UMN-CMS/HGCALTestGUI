@@ -4,6 +4,9 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as font
+import logging
+
+logger = logging.getLogger("HGCAL_VI.PythonFiles.Scenes.InspectionScene")
 
 
 #################################################################################
@@ -92,7 +95,6 @@ class Inspection1(ttk.Frame):
         frm_Q.grid_columnconfigure(0, weight=1)
 
 
-        # TODO Index can change for different InspectionScenes
         inspection_index = 0
         check_dictionary = self.data_holder.get_check_dict(inspection_index)
 
@@ -134,10 +136,6 @@ class Inspection1(ttk.Frame):
         )
         self.comment_box.grid(row = 1, column =1,  columnspan=5)
 
-
-
-    
-
         # Create a button for confirming test
         btn_confirm = ttk.Button(
             frm_window, 
@@ -148,12 +146,9 @@ class Inspection1(ttk.Frame):
         btn_confirm.grid(row = 5, column= 2, pady= 35, sticky = 's')
         #btn_confirm['font'] = font.Font(family = 'Arial', size = 13)
 
-
-
         # Create frame for logout button
         nav_frame = ttk.Frame(self)
         nav_frame.grid(column = 1, row = 0, sticky = 'se', padx =5)
-
 
         # Create a rescan button
         btn_rescan = ttk.Button(

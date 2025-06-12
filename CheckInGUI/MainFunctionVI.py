@@ -16,19 +16,57 @@ import logging.handlers
 import yaml
 from pathlib import Path
 
+logger = logging.getLogger("HGCAL_VI")
+logger.setLevel(logging.DEBUG)
+
+if not logger.handlers:
+    fh = logging.handlers.TimedRotatingFileHandler(guiLogPath + "checkin_gui.log", when="midnight", interval=1)
+    fh.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+class StreamToLogger(object):
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+        self.buffer = ''
+
+    def write(self, message):
+        if message != '\n':
+            self.logger.log(self.level, message.strip())
+
+    def flush(self):
+        pass
+
+sys.stdout = StreamToLogger(logger, logging.DEBUG)
+#sys.stderr = StreamToLogger(logger, logging.ERROR)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
+
 
 # Creates a main function to initialize the GUI
 def main():
-    
-    logging.handlers.TimedRotatingFileHandler(guiLogPath + "visual_gui.log", when="midnight", interval=1)
+    logger.info('Creating new instance of HGCAL_VI')
     
     filepath = os.path.dirname(os.path.abspath(__file__))
-    print("Current path is: %s" % filepath)
-    logging.debug("Current path is: %s" % filepath)
+    logger.info("Current path is: %s" % filepath)
 
     node = socket.gethostname()
-    print(socket.gethostname())
-    logging.debug(socket.gethostname())
+    logger.info("Node is: %s" % node)
 
     wagon_GUI_computers = [ 
         "cmsfactory1.cmsfactorynet",
@@ -43,27 +81,18 @@ def main():
     ]   
     
     try:
-        if sys.argv[1] is not None:
-            config_path = sys.argv[1]
-            print(config_path)
+        config_path = sys.argv[1]
     except:
-        print("Opting for custom configuration setup called below")
         config_path = "{}/Configs/Wagon_cfg.yaml".format(filepath)
 
     masterCfg = import_yaml(config_path)
 
-    board_cfg = masterCfg
-
-
-    main_window = GUIWindow(board_cfg, filepath)
+    main_window = GUIWindow(masterCfg, filepath)
     
 
 def import_yaml(config_path):
 
     return yaml.safe_load(open(config_path,"r"))
-
-
-
 
 
 if __name__ == "__main__":
