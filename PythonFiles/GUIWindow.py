@@ -185,12 +185,6 @@ class GUIWindow():
 
         offset = 0
         
-        # For the physical tests
-        for test_idx,test in enumerate(physical_list):
-            self.test_frames.append(Inspection1(self, self.master_frame, self.data_holder, test_idx))
-            self.test_frames[test_idx].grid(row=0, column=0, sticky='nsew')
-            offset = offset + 1
-
         # For the digital tests
         for test_idx,test in enumerate(test_list):
 

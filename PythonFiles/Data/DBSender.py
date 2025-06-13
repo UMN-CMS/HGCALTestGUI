@@ -183,34 +183,6 @@ class DBSender():
             elif lines[i] == "False":
                 return False
 
-
-
-    # Posts information via the "info" dictionary
-    # full id is within the info dictionary
-    def add_board_info(self, info):
-        
-        if (self.use_database):
-
-            r = requests.post('{}/add_board_info2.py'.format(self.db_url), data = info)
-        
-        else:
-            pass 
-
-    def add_initial_tests(self, results):
-        if (self.use_database):
-    
-            r = requests.post('{}/add_init_test.py'.format(self.db_url), data = results)
-        
-        else:
-            pass        
-
-    def add_general_test(self, results, files):
-        if (self.use_database): 
-            r = requests.post('{}/add_test2.py'.format(self.db_url), data = results, files=files)
-
-        else:
-            pass
-
     def set_component_info(self, info_dict):
         r = requests.post('{}/set_component_info.py'.format(self.db_url), data = info_dict)
 
