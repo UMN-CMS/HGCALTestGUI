@@ -424,7 +424,7 @@ class GUIWindow():
         if not self.run_all_tests_bool:        
 
             if (self.current_test_index < total_num_tests):
-                cur_name = gui_cfg.getTests()[self.current_test_index]['name']
+                cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
                 logger.debug('Current test is: %s' % cur_name)
                 self.set_frame_test(self.current_test_index)
                 self.current_test_index += 1
@@ -469,6 +469,12 @@ class GUIWindow():
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
             logger.warning("No bind function for " + str(_frame))
+
+        try:
+            bind_func_2 = _frame.run_all_action
+            _frame.bind_all("<Shift-Return>", lambda event: bind_func_2(_frame.get_parent()))
+        except Exception as e:
+            pass
  
 
         # Updates the sidebar every time the frame is set
