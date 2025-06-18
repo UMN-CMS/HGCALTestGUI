@@ -53,7 +53,7 @@ class DBSender():
             logger.warning("Invalid label scanned")
             label_info = None
         else:
-            r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+            r = requests.post('{}/decode_label.py'.format(self.db_url), data={'label': full_id})
             lines = r.text.split('\n')
 
             try:
