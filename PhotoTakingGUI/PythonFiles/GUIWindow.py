@@ -258,6 +258,12 @@ class GUIWindow():
         except: 
             logger.warning("No bind function for " + str(_frame))
 
+        try:
+            bind_func_2 = _frame.snapshot
+            _frame.bind_all("<Shift-Return>", lambda event: bind_func_2())
+        except:
+            pass
+
 
         # Hides the submit button on scan frame until an entry is given to the computer
         if (_frame is not self.scan_frame):

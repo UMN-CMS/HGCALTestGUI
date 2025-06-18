@@ -294,7 +294,7 @@ class CameraScene(ttk.Frame):
             time.sleep(1)
 
     # goes to the next screen
-    def submit_button_action(self):
+    def submit_button_action(self, _parent):
         try:
             camera.stop_preview()
             camera.stop()

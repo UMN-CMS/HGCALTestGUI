@@ -235,33 +235,6 @@ class DBSender():
         r = requests.post('{}/add_component.py'.format(self.db_url), data = {'barcode': barcode, 'full_id': full_id})
 
 
-    # Posts information via the "info" dictionary
-    # full id is within the info dictionary
-    def add_board_info(self, info):
-        
-        if (self.use_database):
-
-            r = requests.post('{}/add_board_info2.py'.format(self.db_url), data = info)
-        
-        else:
-            pass    
-
-    def add_initial_tests(self, results):
-        if (self.use_database):
-    
-            r = requests.post('{}/add_init_test.py'.format(self.db_url), data = results)
-        
-        else:
-            pass        
-
-    def add_general_test(self, results, files):
-        if (self.use_database):
-    
-            r = requests.post('{}/add_test2.py'.format(self.db_url), data = results, files=files)
-
-        else:
-            pass
-
     def add_test_json(self, json_file, datafile_name, full_id):
         load_file = open(json_file)
         results = json.load(load_file)        
