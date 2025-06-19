@@ -163,7 +163,6 @@ class DataHolder():
                 temp = 1
             info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments}
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-                print(info_dict)
                 json.dump(info_dict, outfile)
             self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]))
             #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
@@ -178,7 +177,6 @@ class DataHolder():
         info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_type_id, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-            print(info_dict)
             json.dump(info_dict, outfile)
 
         with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:

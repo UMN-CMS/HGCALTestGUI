@@ -145,13 +145,11 @@ class DataHolder():
  
         self.data_dict['comments'] = comments
         logger.info("Comments have been entered.")
-        logger.debug(comments)
 
     def set_inspection_comments(self, comments):
 
         self.inspection_data['inspection_comments'] = comments
         logger.info('Comments entered for VI test')
-        logger.debug(comments)
 
     ##################################################
 
@@ -186,9 +184,11 @@ class DataHolder():
         with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:
             json.dump(self.inspection_data, outfile)
 
-        self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), self.get_full_ID())
+        test_id = self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), self.get_full_ID())
 
         logging.info("Test results sent to database.")
+
+        return test_id
 
     #################################################
 

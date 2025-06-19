@@ -229,7 +229,6 @@ class Inspection1(ttk.Frame):
         self.data_holder.set_inspection_comments(self.comment_box.get())
         self.data_holder.set_comments(self.comment_box.get())
         self.data_holder.add_inspection_to_comments()
-        self.data_holder.print()
 
 
     #################################################

@@ -42,7 +42,6 @@ class GUIConfig():
             return self.board_cfg["DBInfo"][key]
 
     def getGUIType(self):
-        print(self.board_cfg)
         return self.board_cfg["GUIType"]
 
     def setTestIndex(self, idx):

@@ -30,6 +30,7 @@ class DBSender():
             end = lines.index("End")
         except:
             logger.error('There was an issue with the web API script `connect_admin.py`. The website may be down.')
+            logger.debug(r.text)
 
         for i in range(begin, end):
             if lines[i] == 'Success':
@@ -51,6 +52,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error('There was an issue with the web API script `decode_label.py`. Check that the label library has been updated for the web API.')
+                logger.debug(r.text)
 
             temp = []
 
@@ -70,6 +72,7 @@ class DBSender():
                 r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 logger.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logger.debug(r.text)
 
 
         # If not using the database, use this...
@@ -88,6 +91,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error('There was an issue with the web API script `get_usernames.py`. There is likely a syntax error in an associated web API script.')
+                logger.debug(r.text)
 
             usernames = []
 
@@ -120,6 +124,7 @@ class DBSender():
             end3 = lines.index("End3")
         except:
             logger.error('There was an issue with the web API script `get_previous_test_results.py`. There is likely a syntax error in an associated web API script.')
+            logger.debug(r.text)
 
         tests_run = []
         outcomes = []
@@ -153,6 +158,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error('There was an issue with the web API scripts `add_module2.py` or `board_checkin2.py`. There is likely a syntax error in an associated web API script.')
+                logger.debug(r.text)
 
             in_id = None
 
@@ -174,6 +180,7 @@ class DBSender():
             end = lines.index("End")
         except:
             logger.error('There was an issue with the web API script `is_new_board.py`. There is likely a syntax error in an associated web API script.')
+            logger.debug(r.text)
 
 
         for i in range(begin, end): 
@@ -247,8 +254,12 @@ class DBSender():
 
             lines = r.text.split('\n')
 
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
+            try:
+                begin = lines.index("Begin") + 1
+                end = lines.index("End")
+            except:
+                logger.error('There was an issue with the web API script `get_test_types.py`. There is likely a syntax error in an associated web API script.')
+                logger.debug(r.text)
 
             tests = []
 

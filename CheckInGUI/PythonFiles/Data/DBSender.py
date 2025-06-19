@@ -41,6 +41,7 @@ class DBSender():
                 r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 logger.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logger.debug(r.text)
 
 
         # If not using the database, use this...
@@ -61,6 +62,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error("There was an issue with the web API script `decode_label.py`. Check that the label library has been updated for the web API.")
+                logger.debug(r.text)
 
             temp = []
 
@@ -85,6 +87,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error("There was an issue with the web API script `get_usernames.py`. There is likely a syntax error in an associated web API script.")
+                logger.debug(r.text)
 
             usernames = []
 
@@ -117,6 +120,7 @@ class DBSender():
             end3 = lines.index("End3")
         except:
             logger.error("There was an issue with the web API script `get_previous_test_results.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
         tests_run = []
         outcomes = []
@@ -151,6 +155,7 @@ class DBSender():
 
         except:
             logger.error("There was an issue with the web API script `add_module2.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
 
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
@@ -167,6 +172,7 @@ class DBSender():
                 in_id = lines[i]
         except:
             logger.error("There was an issue with the web API script `board_checkin2.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
             in_id = None
 
         return in_id
@@ -182,6 +188,7 @@ class DBSender():
             end = lines.index("End")
         except:
             logger.error("There was an issue with the web API script `is_new_board.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
         in_id = lines[end+1][1:lines[end+1].find(",")]
 
@@ -204,6 +211,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error("There was an issue with the web API script `check_for_ldo`. There is likely a syntax error in an associated web API script.")
+                logger.debug(r.text)
 
 
             for i in range(begin, end):     
@@ -224,6 +232,7 @@ class DBSender():
             end = lines.index("End")
         except:
             logger.error("There was an issue with the web API script `get_manufacturers.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
         manufacturers = []
         for i in range(begin, end):     
@@ -245,6 +254,20 @@ class DBSender():
         attach_data = {'attach1': datafile}
 
         r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
+        lines = r.text.split('\n')
+
+        try:
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+
+            for i in range(begin, end):
+                return lines[i]
+        except:
+            logger.error("There was an issue uploading the test.")
+            logger.debug(r.text)
+
+            return None
+
 
  # Returns a list of all different types of tests
     def get_test_list(self):
