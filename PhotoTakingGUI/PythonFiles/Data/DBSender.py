@@ -48,6 +48,7 @@ class DBSender():
                 r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
                 logger.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logger.debug(r.text)
 
 
         # If not using the database, use this...
@@ -68,6 +69,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error("There was an issue with the web API script `decode_label.py`. Check that the label library has been updated for the web API.")
+                logger.debug(r.text)
 
             temp = []
 
@@ -89,6 +91,7 @@ class DBSender():
                 end = lines.index("End")
             except:
                 logger.error("There was an issue with the web API script `get_usernames.py`. There is likely a syntax error in an associated web API script.")
+                logger.debug(r.text)
 
             usernames = []
 
@@ -125,6 +128,7 @@ class DBSender():
                     fp = os.path.join(dirpath, f)
                     total_size += os.path.getsize(fp)
             logger.error("Failed to save image, opting for local file storage...")
+            logger.debug(r.text)
             logger.info("Image directory size is %s megabytes" % (total_size/1000000))
             if total_size < 5000000000:
                 image.save("{}/PythonFiles/Images/{}_{}.png".format(self.main_path, full_id, view))
@@ -167,6 +171,7 @@ class DBSender():
             end3 = lines.index("End3")
         except:
             logger.error("There was an issue with the web API script `get_previous_test_results.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
         tests_run = []
         outcomes = []
@@ -219,6 +224,7 @@ class DBSender():
             end = lines.index("End")
         except:
             logger.error("There was an issue with the web API script `is_new_board.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
 
         for i in range(begin, end):

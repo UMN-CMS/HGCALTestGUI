@@ -243,8 +243,9 @@ class SummaryScene(ttk.Frame):
     #################################################
 
     def btn_NextBoard_action(self, parent):
-        self.data_holder.send_to_DB()
-        parent.set_frame_scan_frame()
+        test_id = self.data_holder.send_to_DB()
+        if test_id:
+            parent.set_frame_scan_frame()
 
     def btn_logout_action(self, parent):
         parent.set_frame_login_frame() 
