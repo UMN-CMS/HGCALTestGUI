@@ -36,7 +36,7 @@ class GUIWindow():
         # global makes master_window global and therefore accessible outside the function
         global master_window
         master_window = tk.Tk()
-        self.master_window.report_callback_exception = self.log_callback_exception
+        master_window.report_callback_exception = self.log_callback_exception
 
         master_window.title("Photo Taking Window")
 
