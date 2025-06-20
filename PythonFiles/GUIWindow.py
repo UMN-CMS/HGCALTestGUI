@@ -372,7 +372,6 @@ class GUIWindow():
         logger.info("Setting frame to test_summary_frame")
 
         self.test_summary_frame.update_frame()
-        self.check_if_test_passed()
         self.set_frame(self.test_summary_frame)
 
     #################################################

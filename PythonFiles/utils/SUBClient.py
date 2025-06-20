@@ -84,9 +84,7 @@ class SUBClient():
                 # the space around the semi-colon is necessary otherwise the topic and messaage
                 # will have extra spaces.
                 try:
-                    logger.debug("Waiting")
                     self.topic, self.message = listen_socket.recv_string().split(" ; ")
-                    logger.debug(self.topic, self.message)
                 except Exception as e:
                     logger.error("SUBClient: There was an error trying to get the topic and/or message from the socket")
                     logger.exception(e)
@@ -100,7 +98,6 @@ class SUBClient():
 
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
-                    logger.debug(self.message)
                     queue.put(self.message)
 
                 elif self.topic == "JSON":
