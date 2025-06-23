@@ -152,7 +152,7 @@ class ThermalTestConfigScene(ttk.Frame):
 
             checkbox = ttk.Checkbutton(
                 checkbox_frame,
-                text=f"{i + 1} - {self.naming_scheme[i]}",   # Display the number next to the checkbox (1-indexed)
+                text=f"{self.naming_scheme[i]}",   # Display the number next to the checkbox (1-indexed)
                 variable=chk_var,
                 command=lambda idx=i: self.checkbox_selected(idx)  # Pass index to function
             )
@@ -278,7 +278,7 @@ class ThermalTestConfigScene(ttk.Frame):
             self.bool_checkbox_values.append(value)  # Ensure proper boolean conversion
 
         # print("simple_checkbox_values:", simple_checkbox_values)
-
+        self.data_holder.data_dict["checkbox_selection"] = self.bool_checkbox_values
 
 
 

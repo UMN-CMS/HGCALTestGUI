@@ -14,6 +14,8 @@ import sys
 import json
 from PythonFiles.utils.ConsoleRedirector import ConsoleRedirector
 
+import requests
+
 # Importing Necessary Server Files
 from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
@@ -66,8 +68,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
         self.parent = parent
-
-
         
         self.update_frame(parent)
         # sys.stdout = self.original_stdout
@@ -85,6 +85,37 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         self.s.theme_use('awdark')
 
+    def check_if_ready_for_thermal(self, full_id):
+        selected_checkboxes = self.data_holder.data_dict.get("checkbox_selection", [False]*20)
+        statuses = []
+
+        for i, is_selected in enumerate(selected_checkboxes):
+            if is_selected:
+                try:
+                    r = requests.get('{}/get_status_from_sn.py'.format(self.db_url), data={'full_id': str(full_id)})
+                    r.raise_for_status()
+
+                    lines = r.text.split('\n')
+
+                    begin = lines.index("Begin") + 1
+                    end = lines.index("End")
+            
+                    status = None
+                    for i in range(begin, end):
+                        status = lines[i]
+
+                        if status == "Thermal":
+                            statuses.append("ready")
+                        else:
+                            statuses.append("warning")
+        
+                except (requests.RequestException, ValueError, Exception) as e:
+                    statuses.append("failure")
+            else:
+                statuses.append("excluded")
+
+        return statuses
+    
     def update_frame(self, parent):
         logger.debug("ParentTestClass: A ThermalTestSetupResultsScene frame has been updated.")
         # Creates a font to be more easily referenced later in the code
@@ -177,7 +208,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}-{self.naming_scheme[i]}",
+                    text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 0), pady=2, sticky="w")
@@ -185,7 +216,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}-{self.naming_scheme[i]}",
+                    text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
@@ -197,11 +228,20 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             self.checkbox_labels.append(state_label)
 
         # Add labels to the key
-        for i, (state, description) in enumerate(key_descriptions.items()):
+        time.sleep(8)
+        full_id = self.data_holder.data_dict.get("current_full_ID") 
+        print(full_id)
+        print("\n"*5)
+        statuses = self.check_if_ready_for_thermal(full_id)
+        names = self.naming_scheme
+
+        for i, status in enumerate(statuses):
+            symbol, color = STATES.get(status)
+
             ttk.Label(
                 key_frame, 
-                text=f"{STATES[state][0]}  {description}",
-                foreground=STATES[state][1], 
+                text=f"{symbol}  {names[i]}: {status}",
+                foreground=color, 
                 font=("Arial", 14)
             ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
 
@@ -224,7 +264,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
             adj_checkbox = ttk.Checkbutton(
                 adjustment_row_frame,
-                text=f"{i + 1}-{self.naming_scheme[i]}",
+                text=f"{self.naming_scheme[i]}",
                 variable=adj_var,
                 command= lambda idx=i: self.adj_checkbox_action(idx)
             )
