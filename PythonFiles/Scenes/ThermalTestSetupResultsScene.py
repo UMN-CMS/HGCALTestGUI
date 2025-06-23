@@ -19,9 +19,6 @@ import requests
 # Importing Necessary Server Files
 from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
-# Importing Necessary Files
-# from PythonFiles.utils.REQClient import REQClient
-
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestSetupResultsScene')
@@ -71,8 +68,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         
         self.update_frame(parent)
         # sys.stdout = self.original_stdout
-
-
+        
+        
 
     #################################################
 
@@ -85,36 +82,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         self.s.theme_use('awdark')
 
-    def check_if_ready_for_thermal(self, full_id):
-        selected_checkboxes = self.data_holder.data_dict.get("checkbox_selection", [False]*20)
-        statuses = []
-
-        for i, is_selected in enumerate(selected_checkboxes):
-            if is_selected:
-                try:
-                    r = requests.get('{}/get_status_from_sn.py'.format(self.db_url), data={'full_id': str(full_id)})
-                    r.raise_for_status()
-
-                    lines = r.text.split('\n')
-
-                    begin = lines.index("Begin") + 1
-                    end = lines.index("End")
-            
-                    status = None
-                    for i in range(begin, end):
-                        status = lines[i]
-
-                        if status == "Thermal":
-                            statuses.append("ready")
-                        else:
-                            statuses.append("warning")
-        
-                except (requests.RequestException, ValueError, Exception) as e:
-                    statuses.append("failure")
-            else:
-                statuses.append("excluded")
-
-        return statuses
     
     def update_frame(self, parent):
         logger.debug("ParentTestClass: A ThermalTestSetupResultsScene frame has been updated.")
@@ -139,11 +106,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         lbl_title.pack(side = 'top', pady = 10)
 
 
-        # Create console display inside the window
-        self.create_console_window(frm_window)
-        print("ThermalTestInProgressScene: Console created.")
-        logger.info("ThermalTestInProgressScene: Successfully created console for output on GUI.")
-        
 
         # # Create a canvas for the rectangle
         # canvas = tk.Canvas(frm_window, width=700, height=200)
@@ -228,22 +190,16 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             self.checkbox_labels.append(state_label)
 
         # Add labels to the key
-        time.sleep(8)
-        full_id = self.data_holder.data_dict.get("current_full_ID") 
-        print(full_id)
-        print("\n"*5)
-        statuses = self.check_if_ready_for_thermal(full_id)
-        names = self.naming_scheme
+    
 
-        for i, status in enumerate(statuses):
-            symbol, color = STATES.get(status)
-
+        for i, (state, description) in enumerate(key_descriptions.items()):
             ttk.Label(
-                key_frame, 
-                text=f"{symbol}  {names[i]}: {status}",
-                foreground=color, 
-                font=("Arial", 14)
-            ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
+                 key_frame,
+                 text=f"{STATES[state][0]} {description}",
+                 foreground=STATES[state][1],
+                 font=("Arial", 14)
+             ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
+
 
 
         # Create a label for bottom text
@@ -328,15 +284,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         #if (self.test_idx == 0):
 
-        # Create a button for confirming test
-        run_all_btn = ttk.Button(
-            frm_logout, 
-            text = "Run All Tests",
-            command = lambda:self.run_all_action(parent),
-            )
-        run_all_btn.pack(anchor = 'center', pady = 5)
-
-
         # Create a rescan button
         btn_rescan = ttk.Button(
             frm_logout, 
@@ -360,27 +307,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     #################################################
 
-    def create_console_window(self, frm_window):
-        # Create a frame to hold the console output and scrollbar
-        console_frame = tk.Frame(frm_window)
-        
-        # Create a Text widget for displaying console output
-        self.console_text = tk.Text(console_frame, width=85, height=10, wrap="word", state="disabled", bg="black", fg="white")
-        self.console_text.pack(side="left", fill="both", expand=True)
-
-        # Create a Scrollbar and attach it to the Text widget
-        scrollbar = tk.Scrollbar(console_frame, command=self.console_text.yview)
-        scrollbar.pack(side="right", fill="y")
-        self.console_text.config(yscrollcommand=scrollbar.set)
-
-        console_frame.pack()
-
-
-        # Redirect sys.stdout to the Text widget
-        print("ThermalTestSetupResultsScene: Sending console text to ThermalTestSetupResultsScene")
-        # sys.stdout = ConsoleRedirector(self.console_text)
-        print("ThermalTestSetupResultsScene: Sent console text to ThermalTestSetupResultsScene")
-    
     
     # Function to toggle states on click
     def toggle_state(self, label, index):
@@ -481,9 +407,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         pass
 
 
-    def run_all_action(self, _parent):
-       
-        _parent.run_all_tests() 
         
 
     #################################################
@@ -524,10 +447,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
-        counter = 0
+        
         received_data = False
         json_received = None
-        while not received_data and counter<500:
+        while not received_data:
             if not queue.empty():
                 print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
@@ -550,10 +473,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 #         print(message) 
                 #     if (topic == "Done."):
                 #         received_data = True
-            counter = counter + 1
+
             time.sleep(0.01)
 
-        print (f"ThermalTestSetupResultsScene: Counter = {counter}")
+    
         if json_received:
             self.format_json_received_to_json(json_received)
         else:
