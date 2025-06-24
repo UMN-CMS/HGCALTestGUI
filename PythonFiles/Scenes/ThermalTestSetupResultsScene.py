@@ -136,13 +136,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             "waiting": "Waiting"
         }
 
-        # TODO Find where to pull this information from
-        self.checkbox_labels = []
-        self.checkbox_vars = []
 
         key_frame = ttk.Frame(checkbox_frame, padding=10)
         key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
 
+        self.checkbox_labels = []
+        self.checkbox_vars = []
 
         # Loop to create 20 visual checkboxes (2 columns, 10 rows)
         for i in range(20):
@@ -370,7 +369,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def btn_recheck_selected_action(self, _parent):
         
         gui_cfg = self.data_holder.getGUIcfg()
-
+        config_bools = self.data_holder.data_dict["checkbox_selection"]
+    
         bool_checkbox_values = []
         for chk_var in self.adjustment_var:
             value = chk_var.get() 
