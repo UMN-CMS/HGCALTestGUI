@@ -105,7 +105,7 @@ class ThermalTestConfigScene(ttk.Frame):
         lbl_full.pack(side='left', padx=5)
 
         # Dynamically update dropdown menu
-        engine_types = ["LD_Engines", "HD_Half_Engines", "HD_Full_Engines"]
+        engine_types = ["LD", "HD_Half", "HD_Full"]
         self.engine_type_selected = tk.StringVar(self)
         self.engine_type_selected.set("")
 
@@ -287,9 +287,9 @@ class ThermalTestConfigScene(ttk.Frame):
         print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
         sending_REQ = ThermalREQClient(
             self.gui_cfg, 
-            'fullIDs', 
+            ('fullIDs', self.current_engine_selection), 
             self.bool_checkbox_values, 
-            self.data_holder.data_dict['current_full_ID'], 
+            self.data_holder.data_dict['current_full_ID'],
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
             )
