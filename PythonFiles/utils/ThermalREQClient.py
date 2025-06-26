@@ -101,7 +101,7 @@ class ThermalREQClient():
         except:
             print("No remote_ip specified, please modify config")
 
-        debug_msg = "ThermalREQClient: Sending request to REPServer for: " + self.desired_test
+        debug_msg = "ThermalREQClient: Sending request to REPServer for: " +str(self.desired_test)
         print(debug_msg)
         logger.debug(debug_msg)
         
