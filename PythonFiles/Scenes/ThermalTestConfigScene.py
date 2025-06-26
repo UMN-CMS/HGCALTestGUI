@@ -219,14 +219,6 @@ class ThermalTestConfigScene(ttk.Frame):
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'center', pady = 5)
 
-        # Create a button for confirming test
-        btn_confirm = ttk.Button(
-            frm_logout,
-            text = "Confirm",
-            #relief = tk.RAISED, 
-            command = lambda:self.btn_confirm_action(parent)
-            )
-        btn_confirm.pack(anchor = 'center', pady = 5)
 
         #if (self.test_idx == 0):
 
@@ -303,6 +295,7 @@ class ThermalTestConfigScene(ttk.Frame):
         self.current_engine_selection = self.engine_type_selected.get()
         print("ThermalTestConfigScene: engine_selected =", self.current_engine_selection)
         logger.info("ThermalTestConfigScene: selected the {} engine from the dropdown".format(self.current_engine_selection))
+        self.data_holder.data_dict["engine_type"] = self.engine_type_selected.get()
 
     def btn_select_all_action(self, _parent):
         
@@ -343,28 +336,7 @@ class ThermalTestConfigScene(ttk.Frame):
 
 
     #################################################
-
-    # Rescan button takes the user back to scanning in a new board
-    def btn_rescan_action(self, _parent):
-        _parent.reset_board()
-    
-    #################################################
-
-    # Confirm button action takes the user to the test in progress scene
-    def btn_confirm_action(self, _parent):
-        self.gui_cfg = self.data_holder.getGUIcfg()
       
-        sending_REQ = ThermalREQClient(
-            self.gui_cfg, 
-            'submit_slots', 
-            self.bool_checkbox_values, 
-            self.data_holder.data_dict['current_full_ID'], 
-            self.data_holder.data_dict['user_ID'], 
-            self.conn_trigger
-            )
-
-        _parent.set_frame_test_in_progress(self.queue)
-        
     def get_submit_action(self):
         return self.btn_confirm_action
 

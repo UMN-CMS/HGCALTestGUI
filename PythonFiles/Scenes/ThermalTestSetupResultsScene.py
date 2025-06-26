@@ -204,7 +204,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Create a label for bottom text
         lbl_begin_text = ttk.Label(
             frm_window, 
-            text = "Make any adjustments and rerun check on selected sites:", 
+            text = "Make any adjustments and rerun check on selected sites/add new boards or replace old ones. If you selected an unwanted channel, logout and try again:", 
             font = ('Arial', '14')
             )
         lbl_begin_text.pack(side = 'top', pady = (15,5))
@@ -272,24 +272,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'center', pady = 5)
 
-        # Create a button for confirming test
-        btn_confirm = ttk.Button(
-            frm_logout,
-            text = "Confirm",
-            #relief = tk.RAISED, 
-            command = lambda:self.btn_confirm_action(parent)
-            )
-        btn_confirm.pack(anchor = 'center', pady = 5)
+    
 
         #if (self.test_idx == 0):
 
-        # Create a rescan button
-        btn_rescan = ttk.Button(
-            frm_logout, 
-            text = "Change Boards", 
-            #relief = tk.RAISED, 
-            command = lambda: self.btn_rescan_action(parent))
-        btn_rescan.pack(anchor = 'center', pady = 5)
 
         # Creating the help button
         btn_help = ttk.Button(
@@ -361,27 +347,29 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def btn_proceed_action(self, _parent):
         # sys.stdout = self.original_stdout
         _parent.set_frame_thermal_begin()
-        # TODO Complete
-        # _parent.btn_proceed_action(self)
         pass 
 
 
     def btn_recheck_selected_action(self, _parent):
         
         gui_cfg = self.data_holder.getGUIcfg()
-        config_bools = self.data_holder.data_dict["checkbox_selection"]
+        config_bools = self.data_holder.data_dict.get("checkbox_selection")
+        
     
         bool_checkbox_values = []
         for chk_var in self.adjustment_var:
             value = chk_var.get() 
             # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
             bool_checkbox_values.append(value)  # Ensure proper boolean conversion
-
+        
+        for i in range(20):
+            if config_bools[i] == False and bool_checkbox_values[i] == True:
+                config_bools[i] = True
 
         sending_REQ = ThermalREQClient(
             gui_cfg, 
-            'fullIDs', 
-            bool_checkbox_values, 
+            ('fullIDs', self.data_holder.data_dict.get("engine_type")), 
+            config_bools, 
             self.data_holder.data_dict['current_full_ID'], 
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
@@ -406,28 +394,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # _parent.confirm_engine_type(self)
         pass
 
-
-        
-
-    #################################################
-
-    # Rescan button takes the user back to scanning in a new board
-    def btn_rescan_action(self, _parent):
-        _parent.reset_board()
     
     #################################################
 
-    # Confirm button action takes the user to the test in progress scene
-    def btn_confirm_action(self, _parent):
-        self.gui_cfg = self.data_holder.getGUIcfg()
-      
-        #try:
-        # TODO What is this supposed to be now that it's thermal?
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-        #except Exception as e:
-        #    messagebox.showerror('Exception', e)
 
-        _parent.set_frame_test_in_progress(self.queue)
         
     def get_submit_action(self):
         return self.btn_confirm_action
@@ -440,6 +410,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     # functionality for the logout button
     def btn_logout_action(self, _parent):
         logger.info("TestScene: Successfully logged out from the TestScene.")
+        config_bools = [False*20]
         _parent.set_frame_login_frame()
 
     #################################################
