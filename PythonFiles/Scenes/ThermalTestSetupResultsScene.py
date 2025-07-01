@@ -204,6 +204,15 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             )
         lbl_begin_text.pack(side = 'top', pady = (15,5))
 
+        lbl_begin_txt2 = ttk.Label(
+                frm_window,
+                text=f"(If you selected an unwanted channel, logout and try again)",
+                font=('Arial','14'),
+            )
+        lbl_begin_txt2.pack(side = 'top', pady = (10,5))
+
+
+
         # Create 20 checkboxes in a single row
         adjustment_row_frame = ttk.Frame(frm_window)
         
@@ -340,6 +349,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def btn_proceed_action(self, _parent):
         # sys.stdout = self.original_stdout
+        self.is_initial_check = True
+        self.checkbox_states = ['waiting']*20
+
         _parent.set_frame_thermal_begin()
         pass 
 
@@ -348,8 +360,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         
         self.is_initial_check = False
         gui_cfg = self.data_holder.getGUIcfg()
-    
-        
     
         bool_checkbox_values = []
         for chk_var in self.adjustment_var:
@@ -407,6 +417,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     #################################################
 
+    #This is the initial result display update being fed from the ThermalConfig scene
     def apply_initial_check_results(self, state_list):
         self.checkbox_states = state_list[:]
         for i, state in enumerate(state_list):
@@ -414,29 +425,29 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     text=STATES[state][0],
                     foreground=STATES[state][1]
                     )
+        #This data_dict will be called in the next scene to tell the server which channels to thermal test
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
+    
+
+    #This will be called for each recheck in the ThermalSetupResults scene. It only updates the channels selected for rechecking
     def apply_recheck_results(self, state_list):
         selected_indices = [i for i, var in enumerate(self.adjustment_var) if var.get()]
-
-        print("Before Update")
-        print("checkbox_states =", self.checkbox_states)
-        print("incoming_state_list =", state_list)
 
         for i in range(min(len(state_list), len(self.checkbox_states))):
             if self.adjustment_var[i].get():
                 state = state_list[i]
-                print(f"Updating index {i} to state '{state}'")
+                print(f"Updating {self.naming_scheme[i]} to state '{state}'")
 
                 self.checkbox_states[i] = state
                 self.checkbox_labels[i].config(
                         text=STATES[state][0],
                         foreground=STATES[state][1]
                         )
-        print("After Update:")
-        print("Checkbox States =", self.checkbox_states)
+        #This data_dict will be called in the next scene to tell the server which channels to thermal test        
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
+    
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
@@ -490,7 +501,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         else:
             self.apply_recheck_results(json_dict)
 
-        #self.checkbox_states = json_dict
         self.update_frame(self.parent)        
 
 
