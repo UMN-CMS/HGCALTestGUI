@@ -137,14 +137,14 @@ class ThermalTestInProgressScene(ttk.Frame):
         btn_stop_early.pack(anchor = 'center', pady = 5)
 
 
-        # Create a logout button
-        btn_next = ttk.Button(
+        # Create a button to go to test results
+        self.btn_next = ttk.Button(
             frm_window, 
             text = "Thermal Test Results", 
-            # state="disabled",
+            state="disabled",
             #relief = tk.RAISED, 
             command = lambda: self.btn_next_action(parent))
-        btn_next.pack(anchor = 'center', pady = 5)
+        self.btn_next.pack(anchor = 'center', pady = 5)
 
 
         # Create frame for logout button
@@ -217,7 +217,8 @@ class ThermalTestInProgressScene(ttk.Frame):
             self._timer_id = self.after(1000, self.update_timer)
         else:
             self.timer_label.config(text="00:00:00", foreground="black")
-    
+            self.btn_next.config(state="normal") #Results Button can only be pressed when timer is done
+
     def set_timer(self, hours, minutes):
         # Manually sets the countdown timer based on function parameters.
         # Convert input to total seconds
@@ -245,7 +246,16 @@ class ThermalTestInProgressScene(ttk.Frame):
  
 
     def btn_stop_early_action(self, _parent):
-        
+        confirm = messagebox.askyesno(
+                title="Confirm Early Stop",
+                message="Are you sure you want to stop the test now?\nThermal testing is still in progress!"
+            )
+        if confirm:
+            logger.info("User stopped thermal testing early!")
+            self.cancel_timer()
+            logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
+            _parent.set_frame_thermal_final_results()
+
         # TODO Complete
         # _parent.btn_stop_early_action(self)
         pass 
@@ -253,9 +263,15 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     # Send to the next scene (thermal_final_results)
     def btn_next_action(self, _parent):
-        self.cancel_timer()
-        # sys.stdout = self.original_stdout
-        _parent.set_frame_thermal_final_results()
+        response = messagebox.askokcancel(
+                title="Confirm Test Finish",
+                message="Make sure the green light on top of the Cycler is on before proceeding to results."
+            )
+        if response:
+            self.cancel_timer()
+            logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
+            # sys.stdout = self.original_stdout
+            _parent.set_frame_thermal_final_results()
 
 
 
