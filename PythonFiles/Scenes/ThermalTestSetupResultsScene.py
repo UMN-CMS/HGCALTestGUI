@@ -265,7 +265,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 2, row = 1, padx = 5, sticky = 'ew')
+        frm_logout.grid(column = 2, row = 2, padx = 10, pady=10, sticky = 'se')
         frm_logout.columnconfigure(0, weight=1)
 
         # Create a logout button
