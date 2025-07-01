@@ -164,9 +164,19 @@ class ThermalTestBeginScene(ttk.Frame):
     # Confirm button action takes the user to the test in progress scene
     def btn_start_full_test_action(self, _parent):
         self.gui_cfg = self.data_holder.getGUIcfg()
-      
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        print("Ready Channels", checkbox_states)
+        
+
         #try:
-        #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+       # sending_REQ = ThermalREQClient(
+        #    gui_cfg,
+         #   'fullIDs',
+            #TODO:Find what to put here,
+          #  self.data_holder.data_dict['current_full_ID'],
+           # self.data_holder.data_dict['user_ID'],
+           # self.conn_trigger
+           # )
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
 

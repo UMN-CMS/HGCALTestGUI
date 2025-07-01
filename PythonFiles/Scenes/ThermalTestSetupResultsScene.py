@@ -51,12 +51,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     ]
         
         # Initialize the states
-        self.checkbox_states = [
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-            "waiting", "waiting", "waiting", "waiting", "waiting",
-        ]
+        self.checkbox_states = ["waiting"]*20
 
         self.console_text = None
         self.original_stdout = sys.stdout  # Store the default stdout
@@ -65,7 +60,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
         self.parent = parent
-        
+        self.is_initial_check = True
         self.update_frame(parent)
         # sys.stdout = self.original_stdout
         
@@ -204,7 +199,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Create a label for bottom text
         lbl_begin_text = ttk.Label(
             frm_window, 
-            text = "Make any adjustments and rerun check on selected sites/add new boards or replace old ones. If you selected an unwanted channel, logout and try again:", 
+            text = "Make any adjustments using the channel selectors below. You may: Add new boards, replace existing boards, or adjust existing boards for rechecking", 
             font = ('Arial', '14')
             )
         lbl_begin_text.pack(side = 'top', pady = (15,5))
@@ -291,7 +286,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
 
     #################################################
-
     
     # Function to toggle states on click
     def toggle_state(self, label, index):
@@ -352,8 +346,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     def btn_recheck_selected_action(self, _parent):
         
+        self.is_initial_check = False
         gui_cfg = self.data_holder.getGUIcfg()
-        config_bools = self.data_holder.data_dict.get("checkbox_selection")
+    
         
     
         bool_checkbox_values = []
@@ -362,14 +357,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
             bool_checkbox_values.append(value)  # Ensure proper boolean conversion
         
-        for i in range(20):
-            if config_bools[i] == False and bool_checkbox_values[i] == True:
-                config_bools[i] = True
-
         sending_REQ = ThermalREQClient(
             gui_cfg, 
             ('fullIDs', self.data_holder.data_dict.get("engine_type")), 
-            config_bools, 
+            bool_checkbox_values, 
             self.data_holder.data_dict['current_full_ID'], 
             self.data_holder.data_dict['user_ID'], 
             self.conn_trigger
@@ -410,10 +401,41 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     # functionality for the logout button
     def btn_logout_action(self, _parent):
         logger.info("TestScene: Successfully logged out from the TestScene.")
-        config_bools = [False*20]
+        self.is_initial_check = True
+        self.checkbox_states = ['waiting']*20
         _parent.set_frame_login_frame()
 
     #################################################
+
+    def apply_initial_check_results(self, state_list):
+        self.checkbox_states = state_list[:]
+        for i, state in enumerate(state_list):
+            self.checkbox_labels[i].config(
+                    text=STATES[state][0],
+                    foreground=STATES[state][1]
+                    )
+        self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
+
+    def apply_recheck_results(self, state_list):
+        selected_indices = [i for i, var in enumerate(self.adjustment_var) if var.get()]
+
+        print("Before Update")
+        print("checkbox_states =", self.checkbox_states)
+        print("incoming_state_list =", state_list)
+
+        for i in range(min(len(state_list), len(self.checkbox_states))):
+            if self.adjustment_var[i].get():
+                state = state_list[i]
+                print(f"Updating index {i} to state '{state}'")
+
+                self.checkbox_states[i] = state
+                self.checkbox_labels[i].config(
+                        text=STATES[state][0],
+                        foreground=STATES[state][1]
+                        )
+        print("After Update:")
+        print("Checkbox States =", self.checkbox_states)
+        self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
@@ -459,11 +481,17 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         json_string = json_string.replace('True', 'true')
         json_string = json_string.replace('False', 'false')
         json_dict = json.loads(json_string)
-
+        
+       
         print(f"\n\njson_dict: {json_dict}\n\n\n")
 
-        self.checkbox_states = json_dict
-        self.update_frame(self.parent)
+        if self.is_initial_check == True:
+            self.apply_initial_check_results(json_dict)
+        else:
+            self.apply_recheck_results(json_dict)
+
+        #self.checkbox_states = json_dict
+        self.update_frame(self.parent)        
 
 
 
