@@ -298,7 +298,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
  
 
     def btn_finish_action(self, _parent):
-        
+        logger.info("TestScene: Successfully Finished Thermal Testing.")
         _parent.set_frame_login_frame()
 
    

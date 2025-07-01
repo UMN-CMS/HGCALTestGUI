@@ -33,6 +33,15 @@ class ThermalTestBeginScene(ttk.Frame):
         
         self.update_frame(parent)
        
+        self.naming_scheme = [
+                        "SFP0", "SFP1", "SFP2", "SFP3",
+                        "A1", "A2", "A3", "A4",
+                        "B1", "B2", "B3", "B4",
+                        "C1", "C2", "C3", "C4",
+                        "D1", "D2", "D3", "D4"
+                    ]
+
+
     #################################################
 
     def create_style(self, _parent):
@@ -165,14 +174,17 @@ class ThermalTestBeginScene(ttk.Frame):
     def btn_start_full_test_action(self, _parent):
         self.gui_cfg = self.data_holder.getGUIcfg()
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
-        print("Ready Channels", checkbox_states)
-        
-
+        ready_channels = []
+        print("Channel States", checkbox_states)
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] == 'failure':
+                ready_channels.append(self.naming_scheme[i])
+        print("Ready Channels", ready_channels)
         #try:
        # sending_REQ = ThermalREQClient(
         #    gui_cfg,
          #   'fullIDs',
-            #TODO:Find what to put here,
+           # ready_channels,
           #  self.data_holder.data_dict['current_full_ID'],
            # self.data_holder.data_dict['user_ID'],
            # self.conn_trigger
