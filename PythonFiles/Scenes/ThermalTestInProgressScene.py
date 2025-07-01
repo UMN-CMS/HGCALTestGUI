@@ -216,7 +216,7 @@ class ThermalTestInProgressScene(ttk.Frame):
             # Schedule the next update
             self._timer_id = self.after(1000, self.update_timer)
         else:
-            self.timer_label.config(text="00:00:00", foreground="black")
+            self.timer_label.config(text="00:00:00", foreground="red")
             self.btn_next.config(state="normal") #Results Button can only be pressed when timer is done
 
     def set_timer(self, hours, minutes):
@@ -237,7 +237,7 @@ class ThermalTestInProgressScene(ttk.Frame):
         self.remaining_time = 0
 
         # Update the timer display immediately
-        self.timer_label.config(text="00:00:00", foreground="black")
+        self.timer_label.config(text="00:00:00", foreground="red")
 
     
     
