@@ -418,7 +418,7 @@ class TestSummaryScene(ttk.Frame):
     def btn_more_info_action(self, _parent, test_idx):
         names = self.data_holder.getTestNames()
         logger.info('Opening JSON file for %s...' % names[test_idx])
-        self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(Path.home(), names[test_idx].replace(" ", "").replace("/", "")))
+        self.create_JSON_popup("{}/JSONFiles/Current_{}_JSON.json".format(Path.home(), names[test_idx].replace(" ", "").replace("/", "")), names[test_idx])
 
     #################################################
 
