@@ -163,9 +163,7 @@ class GUIWindow():
             
             self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
             self.thermal_final_results_frame.grid(row=0, column=0, sticky='nsew')
-            
-            self.sidebar.grid_remove()
-            sidebar_frame.grid_remove() 
+             
 
         #################################################
         #              End Frame Creation               #
