@@ -118,6 +118,8 @@ class SidebarScene(ttk.Frame):
         )
         self.btn_login.grid(column = 0, row = 0, pady = btn_pady, padx = btn_padx)
 
+
+    
         self.btn_scan = ttk.Button(
             self.viewingFrame,
             text = 'SCAN PAGE',
@@ -170,7 +172,7 @@ class SidebarScene(ttk.Frame):
                 self.test_btns[i].config(state = 'disabled')
             
             digital_offset = digital_offset + 1
-        
+       
         self.btn_summary = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
@@ -215,11 +217,14 @@ class SidebarScene(ttk.Frame):
             )
         self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
-
-
+        if (self.data_holder.tester_type == 'Thermal'):
+            self.btn_summary.grid_forget()
+            self.btn_scan.grid_forget()
+            self.scroller.grid_forget()
 
         self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
-
+        
+        
         # List for creating check marks with for loop
         self.list_of_completion = self.data_holder.data_lists['test_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['test_results']
