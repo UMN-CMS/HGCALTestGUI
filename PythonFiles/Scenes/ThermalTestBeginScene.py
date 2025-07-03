@@ -124,7 +124,7 @@ class ThermalTestBeginScene(ttk.Frame):
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
-        frm_logout.grid(column = 2, row = 1, padx = 5, sticky = 'ew')
+        frm_logout.grid(column = 2, row = 2, padx = 10, pady = 10, sticky = 'se')
         frm_logout.columnconfigure(0, weight=1)
 
         # Create a logout button
@@ -166,6 +166,7 @@ class ThermalTestBeginScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
         ready_channels = []
+        print('\n'*2)
         print("Channel States", checkbox_states)
         for i in range(len(checkbox_states)):
             if checkbox_states[i] == 'ready':
@@ -174,6 +175,7 @@ class ThermalTestBeginScene(ttk.Frame):
                 ready_channels.append(False)
 
         print("Ready Channels", ready_channels)
+        print('\n'*2)
         #try:
        # sending_REQ = ThermalREQClient(
         #    gui_cfg,
