@@ -166,25 +166,27 @@ class ThermalTestBeginScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
         ready_channels = []
-        print('\n'*2)
+        print('\n')
         print("Channel States", checkbox_states)
         for i in range(len(checkbox_states)):
             if checkbox_states[i] == 'ready':
                 ready_channels.append(True)
             else:
                 ready_channels.append(False)
-
+        print('\n')
         print("Ready Channels", ready_channels)
-        print('\n'*2)
+        print('\n')
         #try:
-       # sending_REQ = ThermalREQClient(
-        #    gui_cfg,
-         #   'fullIDs',
-           # ready_channels,
-          #  self.data_holder.data_dict['current_full_ID'],
-           # self.data_holder.data_dict['user_ID'],
-           # self.conn_trigger
-           # )
+        print("ThermalTestBeginScene: Sending REQ to ThermalREQClient...")
+        #sending_REQ = ThermalREQClient(
+        #    self.gui_cfg,
+        #    'startCycle',
+        #    ready_channels,
+        #    self.data_holder.data_dict['current_full_ID'],
+        #    self.data_holder.data_dict['user_ID'],
+        #    self.conn_trigger
+        #    )
+        print("ThermalTestBeginScene: Completed REQ to ThermalREQClient...")
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
 
@@ -199,7 +201,10 @@ class ThermalTestBeginScene(ttk.Frame):
     # functionality for the logout button
     def btn_logout_action(self, _parent):
         logger.info("TestScene: Successfully logged out from the TestScene.")
-        _parent.set_frame_login_frame()
+        result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
+        if result:
+            _parent.set_frame_login_frame()
+
 
     #################################################
 

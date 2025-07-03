@@ -411,9 +411,11 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     # functionality for the logout button
     def btn_logout_action(self, _parent):
         logger.info("TestScene: Successfully logged out from the TestScene.")
-        self.is_initial_check = True
-        self.checkbox_states = ['waiting']*20
-        _parent.set_frame_login_frame()
+        result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
+        if result:
+            self.is_initial_check = True
+            self.checkbox_states = ['waiting']*20
+            _parent.set_frame_login_frame()
 
     #################################################
 
