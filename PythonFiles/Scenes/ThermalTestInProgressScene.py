@@ -152,14 +152,6 @@ class ThermalTestInProgressScene(ttk.Frame):
         frm_logout.grid(column = 2, row = 2, padx = 10, pady = 10, sticky = 'se')
         frm_logout.columnconfigure(0, weight=1)
 
-        # Create a logout button
-        btn_logout = ttk.Button(
-            frm_logout, 
-            text = "Logout", 
-            #relief = tk.RAISED, 
-            command = lambda: self.btn_logout_action(parent))
-        btn_logout.pack(anchor = 'center', pady = 5)
-
       
         #if (self.test_idx == 0):     
       
@@ -174,7 +166,8 @@ class ThermalTestInProgressScene(ttk.Frame):
         
 
         self.grid_propagate(0)
-
+        
+    
 
     #################################################
     def create_console_window(self, frm_window):
@@ -287,13 +280,7 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     def get_parent(self):
         return self.parent
-    
-    #################################################
 
-    # functionality for the logout button
-    def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the ThermalTestScene.")
-        _parent.set_frame_login_frame()
 
     #################################################
 
