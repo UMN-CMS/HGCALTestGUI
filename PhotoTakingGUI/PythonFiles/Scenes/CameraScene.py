@@ -78,7 +78,7 @@ class CameraScene(ttk.Frame):
             btn_frame,
             text="Submit",
             width=10,
-            command= lambda: self.submit_button_action(),
+            command= lambda: self.submit_button_action(parent),
         )
         self.btn_about.pack(side="right", padx=10, pady=10)
 
