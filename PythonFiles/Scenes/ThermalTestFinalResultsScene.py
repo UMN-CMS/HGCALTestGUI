@@ -42,6 +42,14 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         
         self.update_frame(parent)
 
+        self.naming_scheme = [
+                                "SFP0", "SFP1", "SFP2", "SFP3",
+                                "A1", "A2", "A3", "A4",
+                                "B1", "B2", "B3", "B4",
+                                "C1", "C2", "C3", "C4",
+                                "D1", "D2", "D3", "D4"
+                            ]
+
     #################################################
 
     def create_style(self, _parent):
@@ -107,6 +115,13 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             "waiting": "Waiting"
         }
 
+        self.naming_scheme = [
+                                "SFP0", "SFP1", "SFP2", "SFP3",
+                                "A1", "A2", "A3", "A4",
+                                "B1", "B2", "B3", "B4",
+                                "C1", "C2", "C3", "C4",
+                                "D1", "D2", "D3", "D4"
+                            ]
 
         # Loop to create 20 visual checkboxes (2 columns, 10 rows)
         for i in range(20):
@@ -134,7 +149,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}",
+                    text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 0), pady=2, sticky="w")
@@ -142,7 +157,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 # Create a text label next to the state label (Item 1, Item 2, etc.)
                 text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{i + 1}",
+                    text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
                 text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
