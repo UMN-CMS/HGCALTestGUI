@@ -141,10 +141,14 @@ class ThermalTestConfigScene(ttk.Frame):
         checkbox_frame = ttk.Frame(frm_window)
         checkbox_frame.pack(pady=10)
 
-        # Loop to create 20 checkboxes (2 columns and 10 rows)
+        # Loop to create 20 checkboxes (5 columns and 4 rows)
         for i in range(20):
-            col = i // 10  # Determine which column (0 or 1)
-            row = i % 10   # Determine the row (0-9)
+            if i < 4:
+                col = 0  
+                row = i
+            else:
+                col = ((i - 4) // 4) + 1
+                row = (i - 4) % 4
 
             # Create the checkbox and label for each
             chk_var = tk.BooleanVar()
