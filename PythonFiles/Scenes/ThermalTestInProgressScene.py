@@ -13,7 +13,7 @@ import os
 import sys
 
 # Importing Necessary Files
-# from PythonFiles.utils.REQClient import REQClient
+from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
 #################################################################################
 
@@ -239,13 +239,37 @@ class ThermalTestInProgressScene(ttk.Frame):
  
 
     def btn_stop_early_action(self, _parent):
+        self.gui_cfg = self.data_holder.getGUIcfg()
         confirm = messagebox.askyesno(
                 title="Confirm Early Stop",
                 message="Are you sure you want to stop the test now?\nThermal testing is still in progress!"
             )
+
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        ready_channels = []
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] != 'excluded':
+                ready_channels.append(True)
+            else:
+                ready_channels.append(False)
+
         if confirm:
             logger.info("User stopped thermal testing early!")
             self.cancel_timer()
+
+            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            sending_REQ = ThermalREQClient(
+                self.gui_cfg,
+                'analyzeCycle',
+                ready_channels,
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'],
+                self.conn_trigger
+                )
+            print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
+            
+            
+
             logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             _parent.set_frame_thermal_final_results()
 
@@ -256,14 +280,36 @@ class ThermalTestInProgressScene(ttk.Frame):
 
     # Send to the next scene (thermal_final_results)
     def btn_next_action(self, _parent):
+        self.gui_cfg = self.data_holder.getGUIcfg()
+
         response = messagebox.askokcancel(
                 title="Confirm Test Finish",
                 message="Make sure the green light on top of the Cycler is on before proceeding to results."
             )
+        
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        ready_channels = []
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] != 'excluded':
+                ready_channels.append(True)
+            else:
+                ready_channels.append(False)
+
         if response:
             self.cancel_timer()
             logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             # sys.stdout = self.original_stdout
+            
+            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            sending_REQ = ThermalREQClient(
+                self.gui_cfg,
+                'analyzeCycle', 
+                ready_channels,
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'],
+                self.conn_trigger
+                )
+            print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
             _parent.set_frame_thermal_final_results()
 
 

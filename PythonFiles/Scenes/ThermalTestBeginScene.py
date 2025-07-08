@@ -32,7 +32,14 @@ class ThermalTestBeginScene(ttk.Frame):
         self.parent = parent
         
         self.update_frame(parent)
-       
+        self.naming_scheme = [
+                        "SFP0", "SFP1", "SFP2", "SFP3",
+                        "A1", "A2", "A3", "A4",
+                        "B1", "B2", "B3", "B4",
+                        "C1", "C2", "C3", "C4",
+                        "D1", "D2", "D3", "D4"
+                    ]
+
     #################################################
 
     def create_style(self, _parent):
@@ -169,23 +176,24 @@ class ThermalTestBeginScene(ttk.Frame):
         print('\n')
         print("Channel States", checkbox_states)
         for i in range(len(checkbox_states)):
-            if checkbox_states[i] == 'ready':
+            if checkbox_states[i] != 'excluded':
                 ready_channels.append(True)
             else:
                 ready_channels.append(False)
+
         print('\n')
         print("Ready Channels", ready_channels)
         print('\n')
         #try:
         print("ThermalTestBeginScene: Sending REQ to ThermalREQClient...")
-        #sending_REQ = ThermalREQClient(
-        #    self.gui_cfg,
-        #    'startCycle',
-        #    ready_channels,
-        #    self.data_holder.data_dict['current_full_ID'],
-        #    self.data_holder.data_dict['user_ID'],
-        #    self.conn_trigger
-        #    )
+        sending_REQ = ThermalREQClient(
+            self.gui_cfg,
+            'startCycle',
+            ready_channels,
+            self.data_holder.data_dict['current_full_ID'],
+            self.data_holder.data_dict['user_ID'],
+            self.conn_trigger
+            )
         print("ThermalTestBeginScene: Completed REQ to ThermalREQClient...")
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
