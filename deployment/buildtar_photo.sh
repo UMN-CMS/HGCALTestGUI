@@ -18,20 +18,7 @@ cp -r awthemes-10.4.0 HGCAL-Photo
 cat <<EOF > HGCAL-Photo/hgcal_photo_gui
 #!/usr/bin/env bash
 
-mkdir -p \$HOME/.gui_logs/photogui
-while read line; do
-	echo "\$(date) \$line" 
-	echo "\$(date) \$line" >> \$HOME/.gui_logs/photogui/active.log
-	if [ -n "\$(find \$HOME/.gui_logs/photogui/active.log -prune -size 10M)" ]; then
-		( 
-		echo "ROTATING LOGS"
-		cd $\HOME/.gui_logs/photogui
-		name="\$(date '+%Y-%m-%dT%H-%M-%S').log"
-		mv active.log \$name
-		tar cvzf \$name.tar.gz \$name
-	)
-	fi
-done < <(python3 \$HOME/.local/HGCAL-Photo/MainFunctionVI.py 2>&1) 
+python3 USERHOME/.local/HGCAL-Photo/MainFunctionVI.py
 EOF
 
 cat <<EOF > HGCAL-Photo/hgcal_photo_gui.desktop
@@ -39,8 +26,8 @@ cat <<EOF > HGCAL-Photo/hgcal_photo_gui.desktop
 Type=Application
 Terminal=True
 Name=HGCAL Visual Inspection GUI
-Icon=\$HOME/.local/HGCAL-Photo/application_icon.png
-Exec=\$HOME/.local/HGCAL-Photo/hgcal_photo_gui
+Icon=USERHOME/.local/HGCAL-Photo/application_icon.png
+Exec=USERHOME/.local/HGCAL-Photo/hgcal_photo_gui
 EOF
 
 chmod a+x HGCAL-Photo/hgcal_photo_gui
