@@ -3,6 +3,8 @@ import json, logging, socket, PythonFiles, copy, os
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
 from collections import OrderedDict
+import yaml
+from pathlib import Path
 
 logger = logging.getLogger('HGCAL_VI.PythonFiles.Data.DataHolder')
 
@@ -58,6 +60,9 @@ class DataHolder():
 
     #################################################
 
+    def import_yaml(self, filename):
+        return yaml.safe_load(filename) 
+
     def get_check_dict(self, idx):
         return self.all_checkboxes[idx]
 
@@ -85,6 +90,17 @@ class DataHolder():
 
     def get_manufacturers(self):
         return self.data_sender.get_manufacturers()
+
+    def get_manufacturer_from_batch(self, major, batch, code=None):
+        if major == 'LD-Engine' or major == 'HD-Engine':
+            x = self.import_yaml(open(Path(__file__).parent / "Engine_batches.yaml"))
+        elif major == 'HD-Wagon':
+            x = self.import_yaml(open(Path(__file__).parent / "HD_Wagon_batches.yaml"))
+
+        return x[code][int(batch)]
+
+    def get_manufacturer_from_code(self, code):
+        return self.data_sender.get_manufacturer_from_code(code)
 
     def set_manufacturer_id(self, manufacturer):
         self.data_dict['manufacturer']  = manufacturer
