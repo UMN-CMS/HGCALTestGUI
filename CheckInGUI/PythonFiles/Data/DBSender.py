@@ -243,6 +243,21 @@ class DBSender():
     def add_component(self, barcode, full_id):
         r = requests.post('{}/add_component.py'.format(self.db_url), data = {'barcode': barcode, 'full_id': full_id})
 
+    def get_manufacturer_from_code(self, code):
+        r = requests.post('{}/get_manufacturer_from_code.py'.format(self.db_url), data = {'code': code})
+        lines = r.text.split('\n')
+
+        try:
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+        except:
+            logger.error("There was an issue with the web API script `get_manufacturer_from_code.py`. Check that the database contains this manufacturer code.")
+            logger.debug(r.text)
+
+        for i in range(begin, end):     
+            return lines[i]
+        
+
 
     def add_test_json(self, json_file, datafile_name, full_id):
         load_file = open(json_file)

@@ -370,7 +370,19 @@ class ScanScene(ttk.Frame):
 
     # Function to activate the submit button
     def show_submit_button(self):
-        self.data_holder.decode_label(self.ent_full.get())
+        barcode = self.ent_full.get()
+        self.data_holder.decode_label(barcode)
+        major = self.data_holder.label_info['Major Type']
+        sn = self.data_holder.label_info['SN']
+        if major:
+            if major == 'LD-Engine' or major == 'HD-Engine':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:8]))
+            elif major == 'HD-Wagon':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:9]))
+            elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
+            elif major == "Zipper Board":
+                self.manuf_selected.set("PCBWay-PCBWay")
 
         if self.manuf_selected.get() == 'None':
             self.label_major['text'] = 'Please select manufacturer to continue'
