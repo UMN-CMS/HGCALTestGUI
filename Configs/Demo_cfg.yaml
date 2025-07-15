@@ -9,9 +9,10 @@ DBInfo:
 GUIType: Wagon
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
-#TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
+#TestHandler: {name: SSH, username: <username>, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
+# name must be the same as what's in the database, or it won't be uploaded properly
 Test:
 - TestClass: ADC
   TestPath: /home/HGCAL_dev/sw/WagonTesting

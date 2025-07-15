@@ -15,7 +15,6 @@ from PythonFiles.GUIConfig import GUIConfig
 from PythonFiles.Scenes.SidebarScene import SidebarScene
 from PythonFiles.Scenes.LoginScene import LoginScene
 from PythonFiles.Scenes.ScanScene import ScanScene
-from PythonFiles.Scenes.ScanManyScene import ScanManyScene
 from PythonFiles.TestFailedPopup import TestFailedPopup
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.TestScene import *
@@ -25,11 +24,6 @@ from PythonFiles.Scenes.SplashScene import SplashScene
 from PythonFiles.Scenes.TestInProgressScene import *
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
-from PythonFiles.Scenes.AdminScene import AdminScene
-from PythonFiles.Scenes.AdminScanScene import AdminScanScene
-from PythonFiles.Scenes.AdminScanScene import interposer_Popup
-from PythonFiles.Scenes.AdminScanScene import finished_Popup
-from PythonFiles.Scenes.ComponentScanScene import TesterComponentScene
 from PythonFiles.update_config import update_config
 import webbrowser
 import sys
@@ -121,20 +115,8 @@ class GUIWindow():
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
         self.scan_frame.grid(row=0, column=0, sticky = 'nsew')
 
-        self.scan_many_frame = ScanManyScene(self, self.master_frame, self.data_holder)        
-        self.scan_many_frame.grid(row=0, column=0, sticky = 'nsew')
-
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
-
-        self.admin_scan_frame = AdminScanScene(self, self.master_frame, self.data_holder)
-        self.admin_scan_frame.grid(row=0, column=0, sticky = 'nsew')
-
-        self.admin_frame = AdminScene(self, self.master_frame, self.data_holder)
-        self.admin_frame.grid(row=0, column=0, sticky = 'nsew')
-
-        self.tester_component_frame = TesterComponentScene(self, self.master_frame, self.data_holder)
-        self.tester_component_frame.grid(row=0, column=0, sticky = 'nsew')
 
         self.add_user_frame = AddUserScene(self, self.master_frame, self.data_holder)
         self.add_user_frame.grid(row=0, column=0, sticky= 'nsew')
@@ -216,8 +198,6 @@ class GUIWindow():
         cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
 
         test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-        #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-        #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
 
         
@@ -230,75 +210,6 @@ class GUIWindow():
 
         self.add_user_frame.update_frame(self)
         self.set_frame(self.add_user_frame)
-
-    #################################################
-
-    def set_frame_admin_frame(self):
-        logger.info("Setting frame to admin_frame")
-
-        self.admin_frame.update_frame(self)
-        self.set_frame(self.admin_frame)
-
-    def set_frame_admin_scan(self):
-        logger.info("Setting frame to admin_scan_frame")
-
-        self.component_index = 0
-
-        self.admin_scan_frame.is_current_scene = True
-        self.admin_scan_frame.update_frame(self, self.component_index)
-        self.set_frame(self.admin_scan_frame)
-        self.admin_scan_frame.scan_QR_code(self.master_window)
-
-        logger.debug('Component Index: ' + str(self.component_index))
-
-    def next_frame_admin_scan(self):
-        self.component_index += 1
-        logger.debug('Component Index: ' + str(self.component_index))
-
-        if self.data_holder.tester_type == 'Wagon':
-            if self.component_index < 3+int(self.data_holder.wagon_tester_info['num_wagon_wheels']):
-                self.admin_scan_frame.update_frame(self, self.component_index)
-                if list(self.data_holder.wagon_tester_info)[self.component_index] == 'Interposer':
-                    interposer_popup = interposer_Popup(self, self.data_holder)
-
-                self.admin_scan_frame.scan_QR_code(self.master_window)
-            else:
-                finished_Popup(self, self.data_holder)
-                logger.debug(self.data_holder.wagon_tester_info)
-
-                self.data_holder.upload_test_stand_info()
-                self.set_frame_login_frame()
-
-        if self.data_holder.tester_type == 'Engine':
-            if self.component_index == 5:
-                if self.data_holder.engine_tester_info["Major Type"] == "LD":
-                    self.component_index += 1
-
-            if self.component_index == 6:
-                if self.data_holder.engine_tester_info["Major Type"] == "HD":
-                    self.component_index = 10
-
-
-            if self.component_index < 8:
-                self.admin_scan_frame.update_frame(self, self.component_index)
-                self.admin_scan_frame.scan_QR_code(self.master_window)
-            else:
-                finished_Popup(self, self.data_holder)
-                logger.debug(self.data_holder.engine_tester_info)
-
-                self.data_holder.upload_test_stand_info()
-                self.set_frame_login_frame()
-
-    #################################################
-
-
-    def set_frame_tester_component_frame(self):
-
-        logger.info("Setting frame to tester_component_frame")
-
-        self.tester_component_frame.is_current_scene = True
-        self.set_frame(self.tester_component_frame)
-        self.tester_component_frame.scan_QR_code(self.master_window)
 
     #################################################
 
@@ -353,19 +264,11 @@ class GUIWindow():
 
     #################################################
 
-    # Used to be the visual inspection method
-
-    #################################################
-
     def scan_frame_progress(self):
         self.go_to_next_test()
 
 
     #################################################
-
-    # For example, when we set the frame to test2_frame, we want to send the results
-    # of test1 because it just completed.
-
 
     def set_frame_test_summary(self):
         
@@ -417,8 +320,6 @@ class GUIWindow():
 
         total_num_tests = self.data_holder.total_test_num
         num_digital = self.data_holder.getNumTest()
-        #num_physical = self.data_holder.getNumPhysicalTest()
-        
 
         if not self.run_all_tests_bool:        
 
@@ -444,9 +345,7 @@ class GUIWindow():
                 logger.debug('Current test is: %s' % cur_name)
 
                 test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
-                #test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
                 self.set_frame_test_in_progress(self.queue)
-            
 
             else: 
                 self.run_all_tests_bool = False
@@ -474,7 +373,6 @@ class GUIWindow():
             _frame.bind_all("<Shift-Return>", lambda event: bind_func_2(_frame.get_parent()))
         except Exception as e:
             pass
- 
 
         # Updates the sidebar every time the frame is set
         self.sidebar.clean_up_btns()
@@ -637,7 +535,6 @@ class GUIWindow():
 
     #############################################
 
-
     def set_help_text(self, current_window):
 
 
@@ -645,9 +542,6 @@ class GUIWindow():
         file = open("{}/HGCAL_Help/{}_help.txt".format(PythonFiles.__path__[0], type(current_window).__name__))
         self.all_text = file.read()
 
-        #print("\nall_text: ", self.all_text)
-
-     
         self.label_text.set(self.all_text)
 
     #################################################
@@ -663,8 +557,6 @@ class GUIWindow():
 
 
     #################################################
-    #################################################
-
 
     def onMouseWheel(self, event):             # cross platform scroll wheel event
         if event.num == 4:
@@ -679,9 +571,6 @@ class GUIWindow():
     def onLeave(self, event):                  # unbind wheel events when the cursorl leaves the control
         self.mycanvas.unbind_all("<Button-4>")
         self.mycanvas.unbind_all("<Button-5>")
-
-
-
 
     #################################################
 
@@ -844,7 +733,6 @@ class GUIWindow():
             #if self.scan_frame.is_current_scene == True:
                 #self.test_in_progress_frame.close_prgbar()
             self.scan_frame.kill_processes()
-            self.admin_scan_frame.kill_processes()
 
             # Destroys the popup and master window
             self.popup.destroy()

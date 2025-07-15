@@ -3,6 +3,7 @@ import yaml
 from pathlib import Path
 import os
 
+# TODO change this so it loads the correct config file based on the board
 
 ENV_NAME="GUI_CONFIG_PATH"
 DEFAULT_PATH="/etc/HGCALTestGUI"

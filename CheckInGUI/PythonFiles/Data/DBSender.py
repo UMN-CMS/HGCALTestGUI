@@ -19,20 +19,6 @@ class DBSender():
         self.use_database = self.gui_cfg.get_if_use_DB()
 
 
-
-    # Since we will have the tester in a separate room, we need to do modify the http requests
-    # This proxy will be used to make http requests directly to cmslab3 via an ssh tunnel
-    def getProxies(self):
-        if (self.use_database):
-            if "umncmslab" in socket.gethostname():
-                return None
-            
-            return {"http": "http://127.0.0.1:8080"}
-
-        # If not using the database, then...
-        else:
-            pass
-
     def add_new_user_ID(self, user_ID, passwd):
         
         if (self.use_database):
@@ -200,28 +186,6 @@ class DBSender():
             elif lines[i] == "False":
                 return False, in_id
 
-    def check_for_ldo(self, engine):
-        r = requests.post('{}/check_for_ldo.py'.format(self.db_url), data={"full_id": str(engine)})
-
-        try:
-            lines = r.text.split('\n')
-
-            try:
-                begin = lines.index("Begin") + 1
-                end = lines.index("End")
-            except:
-                logger.error("There was an issue with the web API script `check_for_ldo`. There is likely a syntax error in an associated web API script.")
-                logger.debug(r.text)
-
-
-            for i in range(begin, end):     
-                got_code = lines[i]
-
-        except:
-            got_code = None
-
-        return got_code
-
 
     def get_manufacturers(self):
         r = requests.post('{}/get_manufacturers.py'.format(self.db_url))
@@ -239,10 +203,6 @@ class DBSender():
             manufacturers.append(lines[i])
 
         return manufacturers
-
-    def add_component(self, barcode, full_id):
-        r = requests.post('{}/add_component.py'.format(self.db_url), data = {'barcode': barcode, 'full_id': full_id})
-
 
     def add_test_json(self, json_file, datafile_name, full_id):
         load_file = open(json_file)

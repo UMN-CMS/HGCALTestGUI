@@ -59,12 +59,6 @@ class SidebarScene(ttk.Frame):
         self.canvas_window = self.mycanvas.create_window((0, 0), window=self.viewingFrame, anchor='nw', tags="self.viewingFrame")
         self.viewingFrame.pack(fill='y', expand=True, side='left')
         
-
-        """
-        self.viewingFrame.bind("<Configure>", self.onFrameConfigure)
-        self.mycanvas.bind("<Configure>", self.onCanvasConfigure)
-        """
-
         self.viewingFrame.bind('<Enter>', self.onEnter)
         self.viewingFrame.bind('<Leave>', self.onLeave)
 
@@ -74,14 +68,8 @@ class SidebarScene(ttk.Frame):
 
         self.update_sidebar(parent)
 
-        '''Reset the scroll region to encompass the inner frame'''
+        #Reset the scroll region to encompass the inner frame
         self.mycanvas.configure(scrollregion=self.mycanvas.bbox("all"))                 #whenever the size of the frame changes, alter the scroll region respectively.
-    """
-    def onCanvasConfigure(self, event):
-        '''Reset the canvas window to encompass inner frame when required'''
-        canvas_width = event.width
-        self.mycanvas.itemconfig(self, width = canvas_width)            #whenever the size of the canvas changes alter the window region respectively.
-    """
     
     
     def create_style(self, _parent):
@@ -180,6 +168,10 @@ class SidebarScene(ttk.Frame):
             )
         self.btn_summary.grid(column = 0, row = 4 + self.data_holder.getNumTest(), pady = btn_pady)
 
+
+
+        # these buttons send info to the test stand to perform the desired operations
+        # to use these you will need to change the destination and implement the commands
         self.restart_server_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,

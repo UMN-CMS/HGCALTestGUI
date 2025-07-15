@@ -401,18 +401,6 @@ class TestSummaryScene(ttk.Frame):
     def btn_retest_action(self, _parent, test_idx):
         _parent.set_frame_test(test_idx)
 
-    def btn_retest1_action(self, _parent):
-        _parent.set_frame(_parent.test1_frame)
- 
-    def btn_retest2_action(self, _parent):
-        _parent.set_frame(_parent.test2_frame)
-        
-    def btn_retest3_action(self, _parent):
-        _parent.set_frame(_parent.test3_frame)
-
-    def btn_retest4_action(self, _parent):
-        _parent.set_frame(_parent.test4_frame)
-
     #################################################
 
     def btn_more_info_action(self, _parent, test_idx):

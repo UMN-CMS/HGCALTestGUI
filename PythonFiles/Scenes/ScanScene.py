@@ -78,6 +78,7 @@ class ScanScene(ttk.Frame):
             self.ent_full.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
+            # TODO replace path
             sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
             from ..Scanner.python.get_barcodes import scan, listen, parse_xml
@@ -127,6 +128,7 @@ class ScanScene(ttk.Frame):
 
         # Create a photoimage object of the QR Code
 
+        # TODO replace with your QR code images if you choose
         QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
         QR_label = ttk.Label(QR_Frame, image=QR_PhotoImage)
@@ -298,10 +300,7 @@ class ScanScene(ttk.Frame):
             self.data_holder.check_if_new_board() 
 
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
-        if 'Zipper' in self.data_holder.getGUIcfg().getGUIType():
-            _parent.set_frame_scan_many_frame()
-        else:
-            _parent.set_frame_postscan()
+        _parent.set_frame_postscan()
 
         self.EXIT_CODE = 0
 
@@ -339,9 +338,7 @@ class ScanScene(ttk.Frame):
             self.label_major.update()
             self.label_sub.update()
             self.label_sn.update()
-            major = self.data_holder.label_info['Major Type']
-            if major == 'LD-Engine' or major == 'HD-Engine' or major == 'LD-Wagon-West' or major == 'LD-Wagon-East' or major == 'HD-Wagon' or major == "Zipper Board":
-                self.btn_submit["state"] = "active"
+            self.btn_submit["state"] = "active"
         except TypeError:
             self.label_major['text'] = ''
             self.label_sub['text'] = ''

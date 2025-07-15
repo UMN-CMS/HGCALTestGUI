@@ -89,9 +89,6 @@ class DataHolder():
     def set_manufacturer_id(self, manufacturer):
         self.data_dict['manufacturer']  = manufacturer
 
-    def add_component(self, barcode):
-        self.data_sender.add_component(barcode, self.get_full_ID())
-
 
     # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
@@ -127,12 +124,7 @@ class DataHolder():
     def decode_label(self, full_id):
         self.label_info = self.data_sender.decode_label(full_id)
 
-    def check_for_ldo(self):
-        got_code = self.data_sender.check_for_ldo(self.get_full_ID())
-        return got_code
-
     #################################################
-
 
     def set_user_ID(self, user_ID):
  

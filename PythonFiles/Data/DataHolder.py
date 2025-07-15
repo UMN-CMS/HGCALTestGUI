@@ -79,36 +79,8 @@ class DataHolder():
 
         self.label_info = None
 
-        self.config_id = self.data_sender.get_tester_config(self.data_dict['test_stand'])
-
         self.admin = False
         self.password = None
-
-        self.tester_type = None
-        self.wagon_tester_info = {
-                'Kria': None,
-                'Tester': None,
-                'Interposer': None,
-                'Wagon Wheel 1': None,
-                'Wagon Wheel 2': None,
-                'Wagon Wheel 3': None,
-                'Wagon Wheel 4': None,
-                'num_wagon_wheels': 0,
-                'interposer_type': None,
-                }
-
-        self.engine_tester_info = {
-                'ZCU': None,
-                'Test Bridge 1': None,
-                'Test Bridge 2': None,
-                'VTRX 1': None,
-                'VTRX 2': None,
-                'HD Interposer': None,
-                'East Interposer': None,
-                'West Interposer': None,
-                'Major Type': None,
-                }
-
        
         # adds each test to data list for results and completion status to be added
         for i in range(self.gui_cfg.getNumPhysicalTest()):
@@ -225,81 +197,6 @@ class DataHolder():
 
     #################################################
 
-    def attempt_admin_access(self, password):
-        logger.info("User attempting admin access.")
-        admin_connected = self.data_sender.attempt_admin_access(password)
-        if admin_connected == True:
-            logger.info("Admin access was successful")
-            self.admin = True
-            self.password = password
-        else:
-            logger.info("Admin access was denied")
-
-    def upload_test_stand_info(self):
-        if self.tester_type == 'Wagon':
-            info_dict = {'kria': self.wagon_tester_info['Kria'],
-                'tester': self.wagon_tester_info['Tester'],
-                'interposer': self.wagon_tester_info['Interposer'],
-                'interposer_type': self.wagon_tester_info['interposer_type'],
-                'wheel_1': self.wagon_tester_info['Wagon Wheel 1'],
-                'wheel_2': self.wagon_tester_info['Wagon Wheel 2'],
-                'wheel_3': self.wagon_tester_info['Wagon Wheel 3'],
-                'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
-                'test_stand': self.data_dict['test_stand'],
-                }
-        if self.tester_type == 'Engine':
-            info_dict = {'ZCU': self.engine_tester_info['ZCU'],
-                'east_interposer': self.engine_tester_info['East Interposer'],
-                'west_interposer': self.engine_tester_info['West Interposer'],
-                'hd_interposer': self.engine_tester_info['HD Interposer'],
-                'bridge_1': self.engine_tester_info['Test Bridge 1'],
-                'bridge_2': self.engine_tester_info['Test Bridge 2'],
-                'vtrx_1': self.engine_tester_info['VTRX 1'],
-                'vtrx_2': self.engine_tester_info['VTRX 2'],
-                'test_stand': self.data_dict['test_stand'],
-                }
-
-        logger.info("Setting tester configuration")
-        self.config_id = self.data_sender.add_test_stand_info(info_dict)
-
-    def set_component_info(self, label, working, comments):
-        info_dict = {'label': label, 'working': working, 'comments': comments}
-
-        if self.tester_type == 'Wagon':
-            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
-            db_url = wagon_cfg['DBInfo']['baseURL']
-
-        if self.tester_type == 'Engine':
-            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
-            db_url = engine_cfg['DBInfo']['baseURL']
-
-        logger.info("Setting tester component information")
-        self.data_sender.set_component_info(info_dict, db_url)
-
-    #################################################
-
-    # Future method to send data to the database
-    def send_all_to_DB(self):
-          
-        person_ID = self.data_dict['user_ID']
-        comments = self.data_dict['comments']
-        full_id = self.get_full_ID()
-        
-         
-        logger.info("Sending results to database.")
-        for i in range(len(self.data_dict['tests_run'])):
-            temp = 0
-            if self.data_lists['test_results'][i]:
-                temp = 1
-            info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
-            with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
-                logger.debug(info_dict)
-                json.dump(info_dict, outfile)
-            self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())))
-            #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
-        logger.info("All results sent to database.")
-    #################################################
-
     def send_to_DB(self, test_run):
         logger.info("Uploading results...")
 
@@ -337,7 +234,6 @@ class DataHolder():
     def get_all_users(self):
         users_list = self.data_sender.get_usernames() 
         return users_list
-
 
     #################################################
 
@@ -388,40 +284,6 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
-
-    ################################################
-
-    def setOtherZippers(self, zips):
-
-        self.other_zippers = zips
-
-
-    def passOtherZippers(self):
-
-        placeholder = {
-            "name": None,
-            "board_sn": None,
-            "tester": self.data_dict['user_ID'],
-            "pass": True,
-            "data": {
-                "tested_sn": self.data_dict['current_full_ID']
-                },
-            "comments": "Passed by default"
-            }
-
-        for zipper in self.other_zippers:
-
-            placeholder['board_sn'] = zipper
-
-            for test in self.gui_cfg.getTestNames():
-
-                placeholder['name'] = test
-
-                with open("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), "w") as outfile:
-                    json.dump(placeholder, outfile)
-
-                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())))
-
 
     ################################################
 

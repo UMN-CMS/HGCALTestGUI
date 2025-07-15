@@ -1,8 +1,5 @@
 #!/TestingEnv/bin/python
 
-# Including information about both Engine and Wagon GUIs
-
-
 # Need to make the log file path before any imports
 import os
 from pathlib import Path
@@ -126,8 +123,6 @@ def run(board_cfg, curpath, host_cfg):
     # Creates a queue to send information to the testing window
     queue = mp.Queue()
 
-    #logging.FileHandler(guiLogPath + "gui.log", mode='a')
-
     # Turns creating the GUI and creating the SUBClient tasks into processes
     if host_cfg["TestHandler"]["name"] == "Local":
         # Creates a Queue to connect SUBClient and Handler
@@ -177,19 +172,19 @@ def import_yaml(config_path):
 
     return yaml.safe_load(open(config_path,"r"))
 
-def main(args):
-    pass
-
 if __name__ == "__main__":
 
     logger.info("Creating new instance of HGCALTestGUI")
 
+    # config path is first argument from the command line
     try:
         if sys.argv[1] is not None:
             config_path = sys.argv[1]
     except:
         config_path = None
 
+    # can specify a different host from the config
+    # not really used, typically just include host info in first config
     try:
         if sys.argv[2] is not None:
             host_path = sys.argv[2]
@@ -205,17 +200,6 @@ if __name__ == "__main__":
     node = socket.gethostname()
     logger.info("Node is: %s" % socket.gethostname())
 
-    ld_wagon_computers = [
-        "cmsfactory4.cmsfactorynet",
-        "cmsfactory5.cmsfactorynet",
-    ]
-    hd_wagon_computers = []
-    ld_engine_computers = [
-        "cmsfactory1.cmsfactorynet",
-        "cmsfactory2.cmsfactorynet",
-    ]
-    hd_engine_computers = []
-
     if config_path is not None:
         board_cfg = import_yaml(config_path)
         host_cfg = import_yaml(host_path)
@@ -223,28 +207,10 @@ if __name__ == "__main__":
         logger.info("Host Config: " + host_path)
 
         run(board_cfg, curpath, host_cfg)
-    elif any((node in x for x in ld_wagon_computers)):
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Wagon_cfg.yaml")
 
-        run(board_cfg, curpath, board_cfg)
-
-    elif any((node in x for x in hd_wagon_computers)):
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/HD_Wagon_cfg.yaml")
-
-        run(board_cfg, curpath, board_cfg)
-
-    elif any((node in x for x in ld_engine_computers)):
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Engine_cfg.yaml")
-
-        run(board_cfg, curpath, board_cfg)
-
-    elif any((node in x for x in hd_engine_computers)):
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/HD_Engine_cfg.yaml")
-
-        run(board_cfg, curpath, board_cfg)
-
+    # loads a default config if none is specified
     else:
-        board_cfg = import_yaml(Path(__file__).parent / "Configs/LD_Wagon_cfg.yaml")
+        board_cfg = import_yaml(Path(__file__).parent / "Configs/default.yaml")
 
         run(board_cfg, curpath, board_cfg)
 

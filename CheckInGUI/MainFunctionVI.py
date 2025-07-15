@@ -68,18 +68,6 @@ def main():
     node = socket.gethostname()
     logger.info("Node is: %s" % node)
 
-    wagon_GUI_computers = [ 
-        "cmsfactory1.cmsfactorynet",
-        "cmsfactory2.cmsfactorynet",
-        "cmsfactory4.cmsfactorynet",
-        "cmsfactory5.cmsfactorynet",
-        "cmslab4.umncmslab",
-        "127.0.1.1",
-    ]   
-    engine_GUI_computers = [ 
-
-    ]   
-    
     try:
         config_path = sys.argv[1]
     except:

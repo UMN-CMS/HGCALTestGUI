@@ -9,9 +9,10 @@ DBInfo:
 GUIType: Wagon
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
-TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
-  #TestHandler: {name: ZMQ, localip: <localip>, remoteip: 192.168.140.22, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+#TestHandler: {name: SSH, username: <username>, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
+TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
+# name must be the same as what's in the database, or it won't be uploaded properly
 Test:
 - TestClass: ADC
   TestPath: /home/HGCAL_dev/sw/WagonTesting
@@ -22,14 +23,14 @@ Test:
   required: 1
 - TestClass: gen_resist_test
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_gen_res.py
+  TestScript: wagon_rtd.py
   desc_long: Test must be completed before attempting to measure ID resistor
   desc_short: Measure resistance of analog lines
   name: Resistance Measurement
   required: 1
 - TestClass: id_resist_test
   TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_id_res.py
+  TestScript: wagon_rtd.py
   desc_long: Must be completed after the general resistance measurement
   desc_short: Measure resistance of ID resistor
   name: ID Resistor Measurement

@@ -26,20 +26,6 @@ class DBSender():
         self.use_database = self.gui_cfg.get_if_use_DB()
 
 
-
-    # Since we will have the tester in a separate room, we need to do modify the http requests
-    # This proxy will be used to make http requests directly to cmslab3 via an ssh tunnel
-    def getProxies(self):
-        if (self.use_database):
-            if "umncmslab" in socket.gethostname():
-                return None
-
-            return {"http": "http://127.0.0.1:8080"}
-
-        # If not using the database, then...
-        else:
-            pass
-
     def add_new_user_ID(self, user_ID, passwd):
 
         if (self.use_database):

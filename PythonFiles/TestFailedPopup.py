@@ -8,9 +8,6 @@ import os
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.TestFailedPopup')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'w', format=FORMAT, level=logging.DEBUG)
-
 
 class TestFailedPopup():
     

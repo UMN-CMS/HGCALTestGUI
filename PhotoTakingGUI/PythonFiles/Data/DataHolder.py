@@ -112,11 +112,6 @@ class DataHolder():
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg, self.main_path)
         
-        try:
-            self.num_modules = int(full[5]) + 1
-        except ValueError:
-            self.num_modules = 0
-
         logger.info("Full ID set to %s" % full)
 
     def save_image(self):
@@ -147,26 +142,6 @@ class DataHolder():
     def get_full_ID(self):
         return self.data_dict['current_full_ID']
 
-    #################################################
-
-    # Future method to send data to the database
-    def send_all_to_DB(self):
-
-        person_ID = self.data_dict['user_ID']
-        comments = self.data_dict['comments']
-        full_id = self.get_full_ID()
-
-
-        for i in range(len(self.data_dict['tests_run'])):
-            temp = 0
-            if self.data_lists['test_results'][i]:
-                temp = 1
-            info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments}
-            with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-                json.dump(info_dict, outfile)
-            self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]))
-            #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
-        logger.info("All results sent to database.")
     #################################################
 
     # current method to send to the database
