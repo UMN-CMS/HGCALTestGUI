@@ -9,7 +9,13 @@ import logging
 logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
+import time
+import json
+from PythonFiles.utils.ConsoleRedirector import ConsoleRedirector
+import sys
+import requests
 
+from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 # Importing Necessary Files
 # from PythonFiles.utils.REQClient import REQClient
 
@@ -21,9 +27,9 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ThermalTestFinalResu
 
 # Define state options
 STATES = {
-    "ready": ("✔", "green"),
-    "failure": ("✖", "red"),
-    "warning": ("⚠", "orange"),
+    "pass": ("✔", "green"),
+    "fail": ("✖", "red"),
+    "retest": ("⚠", "orange"),
     "excluded": ("__", "black"),
     "waiting": ("...", "lightgray")
 }
@@ -39,8 +45,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         self.conn_trigger = conn_trigger
         self.data_holder = data_holder
         self.parent = parent
-        
-        self.update_frame(parent)
 
         self.naming_scheme = [
                                 "SFP0", "SFP1", "SFP2", "SFP3",
@@ -49,7 +53,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                                 "C1", "C2", "C3", "C4",
                                 "D1", "D2", "D3", "D4"
                             ]
+        self.checkbox_states = ['waiting']*20
 
+        self.update_frame(parent)
     #################################################
 
     def create_style(self, _parent):
@@ -92,12 +98,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
         # Initialize states
         # TODO Update these to fill dynamically
-        self.checkbox_states = [
-            "ready", "failure", "warning", "excluded", "ready",
-            "failure", "ready", "ready", "excluded", "ready",
-            "ready", "ready", "excluded", "failure", "warning",
-            "ready", "ready", "failure", "excluded", "warning"
-        ]
 
         # TODO Find where to pull this information from
         self.checkbox_labels = []
@@ -108,9 +108,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
         # Key descriptions
         key_descriptions = {
-            "ready": "Pass",
-            "failure": "Fail",
-            "warning": "Set aside for retesting",
+            "pass": "Pass",
+            "fail": "Fail",
+            "retest": "Needs Retesting",
             "excluded": "Excluded from Test",
             "waiting": "Waiting"
         }
@@ -206,9 +206,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         # Create labels for each line with colored symbols
         lbl_pass = ttk.Label(
             lbl_frame,
-            text=f"{STATES['ready'][0]} ",
+            text=f"{STATES['pass'][0]} ",
             font=("Arial", 14),
-            foreground=STATES["ready"][1]
+            foreground=STATES["pass"][1]
         )
         lbl_pass.pack(side="top", anchor="w", padx=5)
 
@@ -222,9 +222,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
         lbl_fail = ttk.Label(
             lbl_frame,
-            text=f"{STATES['failure'][0]} ",
+            text=f"{STATES['fail'][0]} ",
             font=("Arial", 14),
-            foreground=STATES["failure"][1]
+            foreground=STATES["fail"][1]
         )
         lbl_fail.pack(side="top", anchor="w", padx=5)
 
@@ -238,9 +238,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
         lbl_retest = ttk.Label(
             lbl_frame,
-            text=f"{STATES['warning'][0]} ",
+            text=f"{STATES['retest'][0]} ",
             font=("Arial", 14),
-            foreground=STATES["warning"][1]
+            foreground=STATES["retest"][1]
         )
         lbl_retest.pack(side="top", anchor="w", padx=5)
 
@@ -339,5 +339,70 @@ class ThermalTestFinalResultsScene(ttk.Frame):
     #################################################
 
 
+    def send_REQ(self, _parent):
+    
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        ready_channels = []
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] != 'excluded':
+                ready_channels.append(True)
+            else:
+                ready_channels.append(False)
+        
+        print("ThermalTestFinalResultsScene: Sending REQ to ThermalREQClient...")
+        sending_REQ = ThermalREQClient(
+                self.data_holder.getGUIcfg(),
+                'analyzeCycle',
+                ready_channels,
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'],
+                self.conn_trigger
+                )
+        print("ThermalTestFinalResultsScene: Completed REQ to ThermalREQClient...")
+        
+        self.begin_update(self.parent.master_window, self.parent.queue, self.parent)
+
+    def begin_update(self, master_window, queue, parent):
+        print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
+         
+        received_data = False
+        json_received = None
+        while not received_data:
+            if not queue.empty():
+                print("ThermalTestSetupResultsScene: Queue is not empty...")
+                signal=queue.get()
+                print(f"ThermalTestSetupResultsScene: signal = {signal}")
+
+                if "Results received successfully." in signal:
+                    message = "FOO"
+                    message = self.conn_trigger.recv()
+                    print('\nMessage from conn_trigger: ', message)
+                    logger.info("ThermalTestFinalResultsScene: JSON Received.")
+                    logger.info(message)
+                    json_received = message
+                    received_data = True
+
+            time.sleep(0.01)
+
+        if json_received:
+            self.format_json_received_to_json(json_received)
+        else:
+            print("ThermalTestSetupResultsScene: No json received after allotted time.")
+        return False
+                                                                                              
+
+    def format_json_received_to_json(self, imported_json_string):
+        json_string = imported_json_string.replace("'", '"')
+        json_string = json_string.replace('True', 'true')
+        json_string = json_string.replace('False', 'false')
+        json_dict = json.loads(json_string)
 
 
+        print(f"\n\njson_dict: {json_dict}\n\n\n")
+
+        self.apply_results(json_dict)
+
+        self.update_frame(self.parent)  
+
+    def apply_results(self, json_dict):
+        print("Ready to apply results.")

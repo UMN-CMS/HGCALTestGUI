@@ -77,7 +77,7 @@ class ThermalTestBeginScene(ttk.Frame):
       
         lbl_section1 = ttk.Label(
             frm_window, 
-            text = f"1. Seal the chamber door \n 2. Select the correct engine configuration on the thermal cycler", 
+            text = f"1. Seal the chamber door \n 2. Start the ENGIN CYCL profile on the thermal cycler", 
             font = ('Arial', '24'),
             anchor="w",
             justify="left"
@@ -95,7 +95,7 @@ class ThermalTestBeginScene(ttk.Frame):
         
         lbl_section2 = ttk.Label(
             frm_window, 
-            text = "1. The correct test is displayed at the top of the thermal chamber screen \n 2. The rotameter indicator is at the top of the gauge",            font = ('Arial', '24'),
+            text = '1."ENGIN CYCL Running" is displayed on the thermal chamber screen \n 2. The rotameter indicator is at the top of the gauge',font = ('Arial', '24'),
             anchor="w",
             justify="left"
             )

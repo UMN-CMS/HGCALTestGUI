@@ -161,7 +161,7 @@ class GUIWindow():
             self.thermal_setup_results_frame = ThermalTestSetupResultsScene(self, self.master_frame, self.data_holder, queue, conn)
             self.thermal_setup_results_frame.grid(row=0, column=0, sticky='nsew')
             
-            self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, conn)
             self.thermal_final_results_frame.grid(row=0, column=0, sticky='nsew')
              
 
@@ -448,6 +448,8 @@ class GUIWindow():
         # TODO Figure out if this needs a call to update_frame method
         # self.thermal_final_results_frame.update_frame(self)
         self.set_frame(self.thermal_final_results_frame)
+        # self.thermal_final_results_frame.send_REQ(self.master_window, self.queue, self)
+        self.thermal_final_results_frame.send_REQ(self)
         logging.debug("GUIWindow: TODO Completed the set thermal begin frame.")
 
     def set_frame_thermal_test_in_progress(self):

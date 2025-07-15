@@ -257,16 +257,16 @@ class ThermalTestInProgressScene(ttk.Frame):
             logger.info("User stopped thermal testing early!")
             self.cancel_timer()
 
-            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
-            sending_REQ = ThermalREQClient(
-                self.gui_cfg,
-                'analyzeCycle',
-                ready_channels,
-                self.data_holder.data_dict['current_full_ID'],
-                self.data_holder.data_dict['user_ID'],
-                self.conn_trigger
-                )
-            print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
+            #print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            #sending_REQ = ThermalREQClient(
+            #    self.gui_cfg,
+            #    'analyzeCycle',
+            #    ready_channels,
+            #    self.data_holder.data_dict['current_full_ID'],
+            #    self.data_holder.data_dict['user_ID'],
+            #    self.conn_trigger
+            #    )
+            #print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
             
             
 
@@ -300,16 +300,16 @@ class ThermalTestInProgressScene(ttk.Frame):
             logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             # sys.stdout = self.original_stdout
             
-            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
-            sending_REQ = ThermalREQClient(
-                self.gui_cfg,
-                'analyzeCycle', 
-                ready_channels,
-                self.data_holder.data_dict['current_full_ID'],
-                self.data_holder.data_dict['user_ID'],
-                self.conn_trigger
-                )
-            print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
+            #print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            #sending_REQ = ThermalREQClient(
+            #    self.gui_cfg,
+            #    'analyzeCycle', 
+            #    ready_channels,
+            #    self.data_holder.data_dict['current_full_ID'],
+            #    self.data_holder.data_dict['user_ID'],
+            #    self.conn_trigger
+            #    )
+            #print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
             _parent.set_frame_thermal_final_results()
 
 

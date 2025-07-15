@@ -453,7 +453,22 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
-        
+        #Create loading popup
+        self.loading_popup = tk.Toplevel(self)
+        self.loading_popup.title("Loading...")
+        self.loading_popup.geometry("500x300")
+        self.loading_popup.transient(self)
+        self.loading_popup.grab_set()
+        self.loading_popup.configure(bg='#2e2e2e')
+
+        label = ttk.Label(self.loading_popup, text="Checking\nselected\nchannels...", font=('Arial', 40),foreground='white',background='#2e2e2e')
+        label.pack(pady=30)
+
+        self.after(100, lambda: self.wait_for_server_response(master_window, queue, parent))
+
+
+    def wait_for_server_response(self, master_window, queue, parent):
+
         received_data = False
         json_received = None
         while not received_data:
@@ -480,7 +495,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 #     if (topic == "Done."):
                 #         received_data = True
 
-            time.sleep(0.01)
+                else:
+                    self.after(50, lambda: self.wait_for_server_response(master_window, queue, parent))
+                    return
+
+        if hasattr(self, 'loading_popup') and self.loading_popup.winfo_exists():
+            self.loading_popup.destroy()
 
     
         if json_received:
