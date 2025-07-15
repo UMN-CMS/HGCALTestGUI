@@ -11,7 +11,7 @@ logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
 import sys
-
+import time
 # Importing Necessary Files
 from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
@@ -329,7 +329,5 @@ class ThermalTestInProgressScene(ttk.Frame):
 
 
     #################################################
-
-
 
 
