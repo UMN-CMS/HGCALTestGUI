@@ -9,7 +9,7 @@ import logging
 logging.getLogger('PIL').setLevel(logging.WARNING)
 # import PythonFiles
 import os
-
+import time
 # Importing Necessary Files
 from PythonFiles.utils.ThermalREQClient import ThermalREQClient
 
@@ -197,10 +197,10 @@ class ThermalTestBeginScene(ttk.Frame):
         print("ThermalTestBeginScene: Completed REQ to ThermalREQClient...")
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
+        self.begin_update(self.parent.master_window, self.parent.queue, self.parent)
 
         _parent.set_frame_thermal_test_in_progress()
-        
- 
+         
     def get_parent(self):
         return self.parent
     
@@ -215,6 +215,43 @@ class ThermalTestBeginScene(ttk.Frame):
 
 
     #################################################
+
+    def begin_update(self, master_window, queue, parent):
+        print("\nBeginning to update... Looking for new information...\n")
+
+        received_data = False
+        json_received = None
+        while not received_data:
+            if not queue.empty():
+                print("ThermalTestInProgressScene: Queue is not empty...")
+                signal=queue.get()
+                print(f"ThermalTestInProgressScene: signal = {signal}")
+
+                if "Results received successfully." in signal:
+                    # self.data_holder.update_from_json_string(message) 
+                    message='FOO'
+                    message=self.conn_trigger.recv()
+                    print("message from conn_trigger:", message)
+                    logger.info("ThermalTestInProgressScene: JSON Received.")
+                    logger.info(message)
+                    json_received=message
+                    received_data = True
+                # else:
+                #     topic, message = signal.split(" ; ")
+                #     print("signal:", signal, "\ntopic:", topic, "message", message)
+                #     if (topic == "print"):
+                #         print(message) 
+                #     if (topic == "Done."):
+                #         received_data = True
+
+            time.sleep(0.01)
+
+        if json_received:
+            print("startCycle has started")
+        else:
+            print("ThermalTestInProgressScene: No json received after allotted time.")
+    
+
 
 
 

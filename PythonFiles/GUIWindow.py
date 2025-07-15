@@ -152,7 +152,7 @@ class GUIWindow():
             self.thermal_in_progress_frame = ThermalTestInProgressScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
             self.thermal_in_progress_frame.grid(row=0, column=0, sticky='nsew')
 
-            self.thermal_begin_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_begin_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, conn)
             self.thermal_begin_frame.grid(row=0, column=0, sticky='nsew')
 
             self.thermal_config_frame = ThermalTestConfigScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)

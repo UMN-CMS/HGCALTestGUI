@@ -405,4 +405,10 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         self.update_frame(self.parent)  
 
     def apply_results(self, json_dict):
-        print("Ready to apply results.")
+        for i, name in enumerate(self.naming_scheme):
+            if name in json_dict:
+                state = json_dict[name].get('passing_state')
+                self.checkbox_states[i] = state
+            else:
+                self.checkbox_states[i] = 'excluded'
+            

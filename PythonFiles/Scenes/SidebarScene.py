@@ -218,7 +218,6 @@ class SidebarScene(ttk.Frame):
         self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
         if (self.data_holder.tester_type == 'Thermal'):
-            self.btn_summary.grid_forget()
             self.btn_scan.grid_forget()
             self.scroller.grid_forget()
 
@@ -319,8 +318,10 @@ class SidebarScene(ttk.Frame):
 
 
     def btn_summary_action(self, _parent):
-        _parent.set_frame_test_summary()
-
+        if (self.data_holder.tester_type != 'Thermal'):
+            _parent.set_frame_test_summary()
+        else:
+            _parent.set_frame_thermal_final_results()
     #################################################
 
     def disable_all_btns(self):
