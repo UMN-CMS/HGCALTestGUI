@@ -280,18 +280,27 @@ class ThermalTestConfigScene(ttk.Frame):
 
     def btn_setup_check_action(self, _parent):
         
-        print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
-        sending_REQ = ThermalREQClient(
-            self.gui_cfg, 
-            ('fullIDs', self.current_engine_selection), 
-            self.bool_checkbox_values, 
-            self.data_holder.data_dict['current_full_ID'],
-            self.data_holder.data_dict['user_ID'], 
-            self.conn_trigger
+        Checkboxes = all(not value for value in self.bool_checkbox_values)
+
+        if self.current_engine_selection == None or Checkboxes == True:
+            response = messagebox.showwarning(
+                title="Missing selection!",
+                message="You need to select an Engine Type and at least one channel!"
             )
-        print("ThermalTestConfigScene: Completed REQ to ThermalREQClient...")
+        else:
+
+            print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
+            sending_REQ = ThermalREQClient(
+                self.gui_cfg, 
+                ('fullIDs', self.current_engine_selection), 
+                self.bool_checkbox_values, 
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'], 
+                self.conn_trigger
+                )
+            print("ThermalTestConfigScene: Completed REQ to ThermalREQClient...")
         
-        _parent.set_frame_thermal_setup_results()
+            _parent.set_frame_thermal_setup_results()
         # TODO Complete data logging from current scene
 
 
