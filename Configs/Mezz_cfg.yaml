@@ -29,6 +29,7 @@ Test:
   desc_short: Check GPIO
   name: GPIO Test
   required: 1
+
 - TestClass: ADCTest
   TestPath: /home/hgcaldev/WagonTesting/MezzTest
   TestScript: adc_test.py
@@ -36,4 +37,21 @@ Test:
   desc_short: Check ADC
   name: ADC Test
   required: 1
+
+- TestClass: LPGBTSetup
+  TestPath: /home/hgcaldev/WagonTesting/MezzTest
+  TestScript: lpgbt_setup_test.py
+  desc_long: Check that LPGBT lines are working
+  desc_short: Check LPGBT
+  name: LPGBT Setup Test
+  required: 1
+
+- TestClass: LPGBTID
+  TestPath: /home/hgcaldev/WagonTesting/MezzTest
+  TestScript: lpgbt_ID_test.py
+  desc_long: Check that LPGBT lines are working
+  desc_short: Check LPGBT
+  name: LPGBT ID Test
+  required: 1
+
 
