@@ -262,7 +262,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             command = lambda: self.btn_finish_action(parent))
         btn_finish.pack(anchor = 'center', pady = (25, 10))
 
-
+        
 
 
 
@@ -313,6 +313,36 @@ class ThermalTestFinalResultsScene(ttk.Frame):
  
 
     def btn_finish_action(self, _parent):
+
+        self.gui_cfg = self.data_holder.getGUIcfg()
+        confirm = messagebox.askyesno(
+                title="Confirm Finish",
+                message="Make sure you have analyzed all results, this will kill any active tests!"
+            )
+
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        ready_channels = []
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] != 'excluded':
+                ready_channels.append(True)
+            else:
+                ready_channels.append(False)
+
+        if confirm:
+
+            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            sending_REQ = ThermalREQClient(
+                self.gui_cfg,
+                'killCycle',
+                ready_channels,
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'],
+                self.conn_trigger
+                )
+            print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
+        
+
+
         logger.info("TestScene: Successfully Finished Thermal Testing.")
         _parent.set_frame_login_frame()
 
@@ -334,6 +364,39 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
         if result:
             _parent.set_frame_login_frame()
+
+    def btn_stop_early_action(self, _parent):
+        self.gui_cfg = self.data_holder.getGUIcfg()
+        confirm = messagebox.askyesno(
+                title="Confirm Stop",
+                message="Make sure a thermal test is actually running!"
+            )
+
+        checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
+        ready_channels = []
+        for i in range(len(checkbox_states)):
+            if checkbox_states[i] != 'excluded':
+                ready_channels.append(True)
+            else:
+                ready_channels.append(False)
+
+        if confirm:
+            logger.info("User stopped thermal testing early!")
+            self.cancel_timer()
+
+            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            sending_REQ = ThermalREQClient(
+                self.gui_cfg,
+                'killCycle',
+                ready_channels,
+                self.data_holder.data_dict['current_full_ID'],
+                self.data_holder.data_dict['user_ID'],
+                self.conn_trigger
+                )
+            print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
+
+
+
 
 
     #################################################
@@ -379,8 +442,10 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                     print('\nMessage from conn_trigger: ', message)
                     logger.info("ThermalTestFinalResultsScene: JSON Received.")
                     logger.info(message)
-                    json_received = message
-                    received_data = True
+                    
+                    if 'completed' not in message:
+                        received_data = True
+                        json_received = message
 
             time.sleep(0.01)
 

@@ -31,7 +31,9 @@ STATES = {
     "failure": ("✖", "red"),
     "warning": ("⚠", "orange"),
     "excluded": ("__", "black"),
-    "waiting": ("...", "lightgray")
+    "waiting": ("...", "lightgray"),
+    "failed3": ("✖⚠", "maroon"),
+    "passed": ("✔⚠", "steelblue")
 }
 
 # Creating class for the window
@@ -128,7 +130,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             "failure": "Connection Failure",
             "warning": "Not Ready for Thermal Testing",
             "excluded": "Excluded from Test",
-            "waiting": "Waiting"
+            "waiting": "Waiting",
+            "failed3": "Failed Thermal Testing 3 Times",
+            "passed": "Already Passed Thermal Testing"
         }
 
 
@@ -199,17 +203,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # Create a label for bottom text
         lbl_begin_text = ttk.Label(
             frm_window, 
-            text = "Make any adjustments using the channel selectors below. You may: Add new boards, replace existing boards, or adjust existing boards for rechecking", 
+            text = "Make any adjustments using the channel selectors below. You may: Add new boards, or replace/remove/recheck existing boards", 
             font = ('Arial', '14')
             )
         lbl_begin_text.pack(side = 'top', pady = (15,5))
-
-        lbl_begin_txt2 = ttk.Label(
-                frm_window,
-                text=f"(If you selected an unwanted channel, logout and try again)",
-                font=('Arial','14'),
-            )
-        lbl_begin_txt2.pack(side = 'top', pady = (10,5))
 
 
 
@@ -239,7 +236,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda: self.btn_recheck_selected_action(parent))
         btn_recheck.pack(anchor = 'center', pady = 5)
-
+        
+        btn_remove = ttk.Button(
+                frm_window,
+                text="Remove Selected Sites",
+                command = lambda: self.btn_remove_selected_action(parent))
+        btn_remove.pack(anchor = 'center', pady = 5)
 
         # Create a label for bottom text
         lbl_proceed_text = ttk.Label(
@@ -381,7 +383,27 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # _parent.btn_recheck_selected_action(self)
         pass
         
-    
+    def btn_remove_selected_action(self, _parent):
+        
+
+        for i in range(20):
+            if self.adjustment_var[i].get():
+                state = 'excluded'
+                print(f"Updating {self.naming_scheme[i]} to state '{state}'")
+
+                self.checkbox_states[i] = state
+                self.checkbox_labels[i].config(
+                        text=STATES[state][0],
+                        foreground=STATES[state][1]
+                        )
+        #This data_dict will be called in the next scene to tell the server which channels to thermal test        
+        self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
+
+        self.update_frame(self.parent)
+                
+
+
+
     def btn_setup_check_action(self, _parent):
         
         # TODO Complete
@@ -421,12 +443,20 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     #This is the initial result display update being fed from the ThermalConfig scene
     def apply_initial_check_results(self, state_list):
-        self.checkbox_states = state_list[:]
-        for i, state in enumerate(state_list):
+           
+        for i in range(min(len(state_list), len(self.checkbox_states))):
+            if state_list[i][1] > 2:
+                state = 'failed3'
+            else:
+                state = state_list[i][0]
+
+            self.checkbox_states[i] = state    
             self.checkbox_labels[i].config(
-                    text=STATES[state][0],
-                    foreground=STATES[state][1]
-                    )
+                        text=STATES[state][0],
+                        foreground=STATES[state][1]
+                        )
+
+
         #This data_dict will be called in the next scene to tell the server which channels to thermal test
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
@@ -438,9 +468,11 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         for i in range(min(len(state_list), len(self.checkbox_states))):
             if self.adjustment_var[i].get():
-                state = state_list[i]
-                print(f"Updating {self.naming_scheme[i]} to state '{state}'")
-
+                if state_list[i][1] > 2:
+                    state = 'failed3'
+                else:    
+                    state = state_list[i][0]
+                print(f'Updating channel {self.naming_scheme[i]} to state: {state}')
                 self.checkbox_states[i] = state
                 self.checkbox_labels[i].config(
                         text=STATES[state][0],
