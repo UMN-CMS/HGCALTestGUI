@@ -102,16 +102,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             )
         lbl_title.pack(side = 'top', pady = 10)
 
-
-
-        # # Create a canvas for the rectangle
-        # canvas = tk.Canvas(frm_window, width=700, height=200)
-        # canvas.pack()
-
-        # # Draw the rectangle
-        # canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
-
-
         # Create a frame to hold the checkboxes
         checkbox_frame = ttk.Frame(frm_window)
         checkbox_frame.pack(pady=10)
@@ -382,10 +372,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # TODO Complete
         # _parent.btn_recheck_selected_action(self)
         pass
-        
-    def btn_remove_selected_action(self, _parent):
-        
 
+    
+    def btn_remove_selected_action(self, _parent): #This fuction will remove any user selected channels from the checkboxes
+        
         for i in range(20):
             if self.adjustment_var[i].get():
                 state = 'excluded'
@@ -400,28 +390,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
         self.update_frame(self.parent)
-                
-
-
-
-    def btn_setup_check_action(self, _parent):
-        
-        # TODO Complete
-        # _parent.thermal_setup_check(self)
-        pass
-
-
-    def btn_confirm_engine_action(self, _parent):
-        
-        # TODO Complete
-        # _parent.confirm_engine_type(self)
-        pass
 
     
     #################################################
 
-
-        
     def get_submit_action(self):
         return self.btn_confirm_action
 
@@ -485,7 +457,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
-        #Create loading popup
+        #Create loading popup while waiting for json to be sent from server
         self.loading_popup = tk.Toplevel(self)
         self.loading_popup.title("Loading...")
         self.loading_popup.geometry("500x300")
@@ -512,9 +484,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 if "Results received successfully." in signal:
                     message = "FOO"
                     message =  self.conn_trigger.recv()
-                    print("\nMessage from conn_trigger:", message)
-                    # self.data_holder.update_from_json_string(message) 
-                    
+                    print("\nMessage from conn_trigger:", message) 
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
                     logger.info(message)
                     json_received = message
@@ -557,104 +527,4 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         self.update_frame(self.parent)        
 
-
-
-        # logger.info("ThermalTestSetupResultsScene: Started console update loop.")
-        
-        # # How long before the queue is being checked (if empty)
-        # # units of seconds
-        # refresh_break = 0.01
-
-        # # Time spent in the waiting phase; in units of refresh_break
-        # # Time waiting (sec) = counter * refresh_break
-        # counter = 0
-
-        # self.window_closed = False
-
-        # # Maximum timeout in seconds
-        # Timeout_after = 10
-        # MAX_TIMEOUT = Timeout_after / 2.5
-        # # try:
-        # print("\n\nThermalTestSetupResultsScene: Beginning the while loop\n\n") 
-        # logger.info("ThermalTestSetupResultsScene: While-loop - Beginning try catch for receiving data through the pipeline.")
-        
-        # information_received = False
-        # json_received = False
-
-        # try:
-        #     while not json_received:
-        #         message = queue.get_nowait()
-        #         if (counter == 1000 or len(message) > 1):
-        #             print("Looping....")
-        #             print("Message:", message)
-        #             counter = 0
-        #         else:
-        #             counter = counter + 1
-        # except queue.Empty:
-        #     pass  # No new messages
-                
-#                 master_window.update()
-#                 if not queue.empty():    
-#                     information_received = True
-#                     text = queue.get()
-#                     print(text)
-#                     logger.info(text)
-                    
-
-#                     if "Done." in text:
-#                         print("\nTest is complete; received 'Done.'\n")
-#                         logger.info("ThermalTestSetupResultsScene: Stopping Progress Bar.")
-
-#                     if "Exit." in text:
-#                         time.sleep(1)
-#                         parent.test_error_popup("Unable to run test")
-#                         logger.info("ThermalTestSetupResultsScene: Unable to run test.")
-#                         break
-
-#                     if "Results received successfully." in text:
-                    
-#                         # message =  self.conn.recv()
-#                         message = "FOO"
-#                         self.data_holder.update_from_json_string(message) 
-                        
-#                         logger.info("ThermalTestSetupResultsScene: JSON Received.")
-#                         logger.info(message)
-#                         json_received = True
-# #                        FinishedTestPopup(parent, self.data_holder, queue)
-# #
-# #                    if "Closing Test Window." in text:
-#                         logger.info("ThermalTestSetupResultsScene: ending loop")
-#                         try:
-#                             master_window.update()
-#                         except Exception as e:
-#                             print("\ThermalTestSetupResultsScene: Unable to update master_window\n")
-#                             print("Exception: ", e)
-#                             logger.info(e)
-
-#                         time.sleep(0.02)
-#                         break
-                    
-
-        # except ValueError as e:
-            
-        #     print("\n\nException:  ", e)
-
-        #     # Throw a message box that shows the error message
-        #     # Logs the message
-        #     time_sec = counter*refresh_break
-        #     logger.info('ThermalTestSetupResultsScene: Timeout Error', "Exception received -> Process timed out after 10 seconds")
-
-        #     messagebox.showwarning('Timeout Error', "ThermalTestSetupResultsScene: Process timed out after 10 seconds")
-        #     logger.info("ThermalTestSetupResultsScene: Trying to go back to the login frame.")
-        #     # parent.set_frame_login_frame()
-        #     return False
-        
-        # #except Exception as e:
-            
-        # #    print("\n\nException:  ", e, "\n\n")
-
-        # return True    
-
 #########################################################
-
-
