@@ -95,7 +95,7 @@ class ThermalTestBeginScene(ttk.Frame):
         
         lbl_section2 = ttk.Label(
             frm_window, 
-            text = '1."ENGIN CYCL Running" is displayed on the thermal chamber screen \n 2. The rotameter indicator is at the top of the gauge',font = ('Arial', '24'),
+            text = '1."ENGIN CYCL Running" is displayed on the thermal chamber screen \n 2. The rotameter indicator is at the top of the gauge \n 3. Ensure the Master Switch is turned on',font = ('Arial', '24'),
             anchor="w",
             justify="left"
             )
