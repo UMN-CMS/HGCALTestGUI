@@ -87,7 +87,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         
         self.create_style(parent)
         # Create a centralized window for information
-        frm_window = ttk.Frame(self, width=870, height = 480)
+        frm_window = ttk.Frame(self, width=1000, height = 480)
         frm_window.grid(column=0, row=0, sticky='nsew')
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=0)
@@ -102,9 +102,19 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             )
         lbl_title.pack(side = 'top', pady = 10)
 
+
+        # # Create a canvas for the rectangle
+        # canvas = tk.Canvas(frm_window, width=700, height=200)
+        # canvas.pack()
+
+        # # Draw the rectangle
+        # canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
+        container_frame = ttk.Frame(frm_window)
+        container_frame.pack(pady=10, padx=350, fill='x')
+
         # Create a frame to hold the checkboxes
-        checkbox_frame = ttk.Frame(frm_window)
-        checkbox_frame.pack(pady=10)
+        checkbox_frame = ttk.Frame(container_frame)
+        checkbox_frame.pack(side='left', padx=(0, 50))
         
 
         self.adjustment_var = [
@@ -126,16 +136,17 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         }
 
 
-        key_frame = ttk.Frame(checkbox_frame, padding=10)
-        key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
+        key_frame = ttk.Frame(container_frame, padding=10, width=400)
+        key_frame.pack(side='left', fill='y')
+        key_frame.pack_propagate(False)
 
         self.checkbox_labels = []
         self.checkbox_vars = []
 
         # Loop to create 20 visual checkboxes (2 columns, 10 rows)
         for i in range(20):
-            col = i // 10  # Determine column (0 or 1)
-            row = i % 10   # Determine row (0-9)
+            col = i // 4  # Determine column (0 or 1)
+            row = i % 4   # Determine row (0-9)
 
             # Get the initial state from checkbox_states
             initial_state = self.checkbox_states[i]
@@ -152,24 +163,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             )
             state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
 
-            # If statement is necessary for formatting
-            # (note the pady)
-            if (col == 1):
-                # Create a text label next to the state label (Item 1, Item 2, etc.)
-                text_label = ttk.Label(
+            text_label = ttk.Label(
                     checkbox_frame,
                     text=f"{self.naming_scheme[i]}",
-                    font=("Arial", 14)
+                    font=("Arial", 18)
                 )
-                text_label.grid(row=row, column=col * 2 + 1, padx=(2, 0), pady=2, sticky="w")
-            else:
-                # Create a text label next to the state label (Item 1, Item 2, etc.)
-                text_label = ttk.Label(
-                    checkbox_frame,
-                    text=f"{self.naming_scheme[i]}",
-                    font=("Arial", 14)
-                )
-                text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
+            text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
 
             # Bind click event to toggle state
             state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
@@ -183,9 +182,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         for i, (state, description) in enumerate(key_descriptions.items()):
             ttk.Label(
                  key_frame,
-                 text=f"{STATES[state][0]} {description}",
+                 text=f"{STATES[state][0]} - {description}",
                  foreground=STATES[state][1],
-                 font=("Arial", 14)
+                 font=("Arial", 14),
+                 wraplength=400
              ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
 
 
@@ -194,7 +194,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         lbl_begin_text = ttk.Label(
             frm_window, 
             text = "Make any adjustments using the channel selectors below. You may: Add new boards, or replace/remove/recheck existing boards", 
-            font = ('Arial', '14')
+            font = ('Arial', '16')
             )
         lbl_begin_text.pack(side = 'top', pady = (15,5))
 
@@ -204,6 +204,8 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         adjustment_row_frame = ttk.Frame(frm_window)
         
         for i in range(20):
+            row = i % 4
+            col = i // 4
             adj_var = tk.BooleanVar()
             adj_var.set(self.adjustment_var[i])
             self.adjustment_var[i] = adj_var
@@ -214,7 +216,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 variable=adj_var,
                 command= lambda idx=i: self.adj_checkbox_action(idx)
             )
-            adj_checkbox.grid(row=0, column=i, padx=5, pady=5, sticky="w")  # Single row layout
+            adj_checkbox.grid(row=row, column=col, padx=20, pady=5, sticky="w") 
         adjustment_row_frame.pack(pady=10)
 
 
