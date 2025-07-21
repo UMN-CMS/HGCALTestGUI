@@ -74,7 +74,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         
         self.create_style(parent)
         # Create a centralized window for information
-        frm_window = ttk.Frame(self, width=870, height = 480)
+        frm_window = ttk.Frame(self, width=1000, height = 480)
         frm_window.grid(column=0, row=0, sticky='nsew')
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=0)
@@ -89,12 +89,13 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             )
         lbl_title.pack(side = 'top', pady = 10)
         
-
+        container_frame = ttk.Frame(frm_window)
+        container_frame.pack(pady=10, padx=450, fill='x')
 
 
         # Create a frame to hold the checkboxes
-        checkbox_frame = ttk.Frame(frm_window)
-        checkbox_frame.pack(pady=10)
+        checkbox_frame = ttk.Frame(container_frame)
+        checkbox_frame.pack(side='left', padx=(0, 50))
 
         # Initialize states
         # TODO Update these to fill dynamically
@@ -103,8 +104,9 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         self.checkbox_labels = []
         self.checkbox_vars = []
 
-        key_frame = ttk.Frame(checkbox_frame, padding=10)
-        key_frame.grid(row=0, column=4, rowspan=10, padx=(100, 20), sticky="nw")
+        key_frame = ttk.Frame(container_frame, padding=10, width=400)
+        key_frame.pack(side='left', fill='y')
+        key_frame.pack_propagate(False)
 
         # Key descriptions
         key_descriptions = {
@@ -123,10 +125,10 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                                 "D1", "D2", "D3", "D4"
                             ]
 
-        # Loop to create 20 visual checkboxes (2 columns, 10 rows)
+        # Loop to create 20 visual checkboxes 
         for i in range(20):
-            col = i // 10  # Determine column (0 or 1)
-            row = i % 10   # Determine row (0-9)
+            col = i // 4 
+            row = i % 4
 
             # Get the initial state from checkbox_states
             initial_state = self.checkbox_states[i]
@@ -143,24 +145,12 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             )
             state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
 
-            # If statement is necessary for formatting
-            # (note the pady)
-            if (col == 1):
-                # Create a text label next to the state label (Item 1, Item 2, etc.)
-                text_label = ttk.Label(
+            text_label = ttk.Label(
                     checkbox_frame,
                     text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
-                text_label.grid(row=row, column=col * 2 + 1, padx=(2, 0), pady=2, sticky="w")
-            else:
-                # Create a text label next to the state label (Item 1, Item 2, etc.)
-                text_label = ttk.Label(
-                    checkbox_frame,
-                    text=f"{self.naming_scheme[i]}",
-                    font=("Arial", 14)
-                )
-                text_label.grid(row=row, column=col * 2 + 1, padx=(2, 205), pady=2, sticky="w")
+            text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
 
 
             # TODO Remove/update board status button binds on Final Results Scene
@@ -176,7 +166,8 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 key_frame, 
                 text=f"{STATES[state][0]}  {description}",
                 foreground=STATES[state][1], 
-                font=("Arial", 14)
+                font=("Arial", 14),
+                wraplength=400
             ).grid(row=i, column=0, padx=5, pady=3, sticky="w")
 
 
@@ -189,15 +180,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         #     )
         # lbl_begin_text.pack(side = 'top', pady = (75, 15))
 
-        # Add labels to the key
-        for i, (state, description) in enumerate(key_descriptions.items()):
-            label = ttk.Label(
-                key_frame,
-                text=f"{STATES[state][0]}  {description}",
-                font=("Arial", 14)
-            )
-            label.grid(row=i, column=0, padx=5, pady=3, sticky="w")
-            label.configure(foreground=STATES[state][1])  # Set symbol color
+        
 
         # Create a frame to hold the bottom text labels
         lbl_frame = ttk.Frame(frm_window)

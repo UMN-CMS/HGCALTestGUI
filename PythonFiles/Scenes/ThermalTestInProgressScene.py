@@ -202,8 +202,6 @@ class ThermalTestInProgressScene(ttk.Frame):
             self.remaining_time -= 1
             hours, remainder = divmod(self.remaining_time, 3600)
             minutes, seconds = divmod(remainder, 60)
-            if (seconds % 30 == 0):
-                print("Time:", hours, ":", minutes, ":", seconds)
             self.timer_label.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
 
             # Schedule the next update
@@ -273,8 +271,6 @@ class ThermalTestInProgressScene(ttk.Frame):
             logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             _parent.set_frame_thermal_final_results()
 
-        # TODO Complete
-        # _parent.btn_stop_early_action(self)
         pass 
 
 
@@ -310,13 +306,7 @@ class ThermalTestInProgressScene(ttk.Frame):
             #    self.conn_trigger
             #    )
             #print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
-            _parent.set_frame_thermal_final_results()
-
-
-
-    def run_all_action(self, _parent):
-       
-        _parent.run_all_tests() 
+            _parent.set_frame_thermal_final_results() 
         
 
     #################################################      
