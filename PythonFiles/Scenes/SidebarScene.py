@@ -12,7 +12,7 @@ import os
 import platform
 import requests
 import time
-
+from tkinter import messagebox
 
 
 #################################################################################
@@ -321,7 +321,12 @@ class SidebarScene(ttk.Frame):
         if (self.data_holder.tester_type != 'Thermal'):
             _parent.set_frame_test_summary()
         else:
-            _parent.set_frame_thermal_final_results()
+            response = messagebox.askyesno(
+                title="Go to Test Results?",
+                message="Are you sure you want to go the the thermal test summary? Make sure a test has already been run and completed!"
+            )
+            if response:
+                _parent.set_frame_thermal_final_results()
     #################################################
 
     def disable_all_btns(self):

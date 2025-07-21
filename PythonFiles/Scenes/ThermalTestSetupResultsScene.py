@@ -63,10 +63,11 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.data_holder = data_holder
         self.parent = parent
         self.is_initial_check = True
+        self.failures = [0]*20
+
         self.update_frame(parent)
         # sys.stdout = self.original_stdout
-        
-        
+    
 
     #################################################
 
@@ -110,7 +111,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         # # Draw the rectangle
         # canvas.create_rectangle(0, 0, 700, 200, fill="lightgray", outline="black")
         container_frame = ttk.Frame(frm_window)
-        container_frame.pack(pady=10, padx=350, fill='x')
+        container_frame.pack(pady=10, padx=320, fill='x')
 
         # Create a frame to hold the checkboxes
         checkbox_frame = ttk.Frame(container_frame)
@@ -165,7 +166,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
             text_label = ttk.Label(
                     checkbox_frame,
-                    text=f"{self.naming_scheme[i]}",
+                    text=f"{self.naming_scheme[i]}:{self.failures[i]}",
                     font=("Arial", 18)
                 )
             text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
@@ -433,6 +434,13 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
         #This data_dict will be called in the next scene to tell the server which channels to thermal test
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
+        
+        
+        for i in range(20):
+            if state_list[i][1] == -1:
+                self.failures[i] = ' '
+            else:
+                self.failures[i] = state_list[i][1]
 
     
 
@@ -455,7 +463,12 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         #This data_dict will be called in the next scene to tell the server which channels to thermal test        
         self.data_holder.data_dict["checkbox_states"] = self.checkbox_states
 
-    
+        for i in range(20):
+            if state_list[i][1] == -1:
+                self.failures[i] = ' '
+            else:
+                self.failures[i] = state_list[i][1]
+
     def begin_update(self, master_window, queue, parent):
         print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
 
@@ -489,8 +502,9 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     print("\nMessage from conn_trigger:", message) 
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
                     logger.info(message)
-                    json_received = message
-                    received_data = True
+                    if 'completed' not in message:
+                        json_received = message
+                        received_data = True
                 # else:
                 #     topic, message = signal.split(" ; ")
                 #     print("signal:", signal, "\ntopic:", topic, "message", message)
