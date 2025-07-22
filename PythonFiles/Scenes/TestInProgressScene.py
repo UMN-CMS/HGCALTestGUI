@@ -169,7 +169,6 @@ class TestInProgressScene(ttk.Frame):
                 if not queue.empty():    
                     information_received = True
                     text = queue.get()
-                    logger.debug(text)
                     ent_console.insert(tk.END, text.strip('\r\n'))
                     # need this twice since the first one is stripped from the original text
                     ent_console.insert(tk.END, "\n")
