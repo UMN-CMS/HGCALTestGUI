@@ -207,6 +207,8 @@ class GUIWindow():
         logger.info("Setting frame to scan_frame")
         self.camera_index = 0
         self.photo_index = 0
+        self.retake = False
+        self.retaken = False
         self.scan_frame.is_current_scene = True
         self.set_frame(self.scan_frame)
         self.scan_frame.scan_QR_code(master_window)
