@@ -168,7 +168,7 @@ class CameraScene(ttk.Frame):
 
         if self.flip == True:
             self.flip_label.destroy()
-            self.flip_label = False
+            self.flip = False
 
         # adds text saying to flip the board over if it's the first time the bottom picture is being taken
         if self.parent.retake == True:
