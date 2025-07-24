@@ -110,6 +110,8 @@ class LoginScene(ttk.Frame):
             )
         self.btn_admin.pack(pady=40)
 
+        if (self.data_holder.tester_type == 'Thermal'):
+            self.btn_admin.pack_forget()
 
 
         # Creating the help button
