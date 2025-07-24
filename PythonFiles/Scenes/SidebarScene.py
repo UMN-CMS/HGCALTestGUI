@@ -220,6 +220,9 @@ class SidebarScene(ttk.Frame):
         if (self.data_holder.tester_type == 'Thermal'):
             self.btn_scan.grid_forget()
             self.scroller.grid_forget()
+            self.restart_server_btn.grid_forget()
+            self.reset_power_btn.grid_forget()
+            self.reload_firmware_btn.grid_forget()
 
         self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
         
