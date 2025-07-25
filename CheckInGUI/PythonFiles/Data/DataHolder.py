@@ -92,7 +92,7 @@ class DataHolder():
         return self.data_sender.get_manufacturers()
 
     def get_manufacturer_from_batch(self, major, batch, code=None):
-        if major == 'LD-Engine' or major == 'HD-Engine':
+        if major == 'LD-Engine' or major == 'HD-Engine' or major == 'Zipper Board':
             x = self.import_yaml(open(Path(__file__).parent / "Engine_batches.yaml"))
         elif major == 'HD-Wagon':
             x = self.import_yaml(open(Path(__file__).parent / "HD_Wagon_batches.yaml"))
