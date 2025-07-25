@@ -337,13 +337,13 @@ class ScanScene(ttk.Frame):
             _parent.set_frame_postscan()
             
         else:
-            if self.ent_full.get()[3] in ('W', 'Z'):
+            if self.ent_full.get()[3] in ('W', 'Z', 'S'):
                 _parent.set_frame_inspection_frame()
             elif self.ent_full.get()[3] == 'E':
                 _parent.set_frame_component_frame()
             else: 
                 # TODO make this a popup
-                logger.warning('Error: Please scan a Wagon, Zipper, or Engine.')
+                logger.warning('Error: Please scan a Wagon, Zipper, Engine, or Flex Cable.')
 
 
         
@@ -381,8 +381,11 @@ class ScanScene(ttk.Frame):
                 self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:9]))
             elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
                 self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
-            elif major == "Zipper Board":
-                self.manuf_selected.set("PCBWay-PCBWay")
+            elif major == 'Zipper Board' or major == 'Scintillator Cables':
+                if barcode[3:9] == "ZPLMEZ":
+                    self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[1], barcode[3:9]))
+                else:
+                    self.manuf_selected.set("PCBWay-PCBWay")
 
         if self.manuf_selected.get() == 'None':
             self.label_major['text'] = 'Please select manufacturer to continue'
