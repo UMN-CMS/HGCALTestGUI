@@ -31,7 +31,6 @@ class SUBClient():
                 try:
                     signal = q.get()
                     self.topic, self.message = signal.split(" ; ")
-                    print(f"SUBCLIENT: topic - {self.topic}; message - {self.message}")
                 except Exception as e:
                     logger.error("SUBClient: There was an error trying to get the topic and/or message from the socket") 
                     logger.exception(e) 
