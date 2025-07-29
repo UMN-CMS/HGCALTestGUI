@@ -387,9 +387,6 @@ class GUIWindow():
 
     #################################################
 
-    # For example, when we set the frame to test2_frame, we want to send the results
-    # of test1 because it just completed.
-
 
     def set_frame_test_summary(self):
         
@@ -410,18 +407,6 @@ class GUIWindow():
         selected_test_frame = self.test_frames[test_idx]
         
         self.set_frame(selected_test_frame)
-
-
-    #################################################    
-    
-    # TODO Remove later (purely for testing purposes)
-    # def TODO_set_trial_frame(self):
-        
-    #     logging.debug("GUIWindow: TODO Trying to set trial frame.")
-    #     self.set_frame(self.TODO_frame)
-    #     logging.debug("GUIWindow: TODO Completed the set of trial frame.")
-
-
 
     #################################################  
     # Navigation for the Thermal Testing GUI
