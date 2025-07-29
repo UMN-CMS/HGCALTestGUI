@@ -154,7 +154,7 @@ def run(board_cfg, curpath, host_cfg):
 
     # holds the code at this line until the GUI process ends
     process_GUI.join()
-
+    
     try:
         #closes multiprocessing connections
         conn_SUB.close()

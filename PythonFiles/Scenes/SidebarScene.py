@@ -12,7 +12,7 @@ import os
 import platform
 import requests
 import time
-
+from tkinter import messagebox
 
 
 #################################################################################
@@ -103,7 +103,7 @@ class SidebarScene(ttk.Frame):
        
         logger.info("The sidebar has been updated.")
 
-                # Variables for easy button editing
+        # Variables for easy button editing
         btn_height = 3
         btn_width = 18
         btn_pady = 12
@@ -116,6 +116,8 @@ class SidebarScene(ttk.Frame):
         )
         self.btn_login.grid(column = 0, row = 0, pady = btn_pady, padx = btn_padx)
 
+
+    
         self.btn_scan = ttk.Button(
             self.viewingFrame,
             text = 'SCAN PAGE',
@@ -168,7 +170,7 @@ class SidebarScene(ttk.Frame):
                 self.test_btns[i].config(state = 'disabled')
             
             digital_offset = digital_offset + 1
-        
+       
         self.btn_summary = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
@@ -213,8 +215,16 @@ class SidebarScene(ttk.Frame):
             )
         self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
-        self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
+        if (self.data_holder.tester_type == 'Thermal'):
+            self.btn_scan.grid_forget()
+            self.scroller.grid_forget()
+            self.restart_server_btn.grid_forget()
+            self.reset_power_btn.grid_forget()
+            self.reload_firmware_btn.grid_forget()
 
+        self.all_btns = [*self.test_btns, self.btn_summary, self.restart_server_btn, self.reload_firmware_btn, self.reset_power_btn]
+        
+        
         # List for creating check marks with for loop
         self.list_of_completion = self.data_holder.data_lists['test_completion']
         self.list_of_pass_fail = self.data_holder.data_lists['test_results']
@@ -309,9 +319,18 @@ class SidebarScene(ttk.Frame):
     def btn_test_action(self, _parent, test_idx):
         _parent.set_frame_test(test_idx)
 
-    def btn_summary_action(self, _parent):
-        _parent.set_frame_test_summary()
 
+
+    def btn_summary_action(self, _parent):
+        if (self.data_holder.tester_type != 'Thermal'):
+            _parent.set_frame_test_summary()
+        else:
+            response = messagebox.askyesno(
+                title="Go to Test Results?",
+                message="Are you sure you want to go the the thermal test summary? Make sure a test has already been run and completed!"
+            )
+            if response:
+                _parent.set_frame_thermal_final_results()
     #################################################
 
     def disable_all_btns(self):

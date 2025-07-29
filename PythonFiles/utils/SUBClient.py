@@ -68,12 +68,17 @@ class SUBClient():
 
     # Responsible for listening for ZMQ messages from teststand
     def SUB_ZMQ(self, conn, queue, gui_cfg):
+        
+        
         grabbed_ip = gui_cfg["TestHandler"]["remoteip"]
         # Creates the zmq.Context object
         cxt = zmq.Context()
         # Creates the socket as the SUBSCRIBE type
         listen_socket = cxt.socket(zmq.SUB)
+
+        # TODO ZMQ is this always the correct port number?
         listen_socket.connect("tcp://{ip_address}:5556".format(ip_address = grabbed_ip))
+
         # Sets the topics that the server will listen for
         listen_socket.setsockopt(zmq.SUBSCRIBE, b'print')
         listen_socket.setsockopt(zmq.SUBSCRIBE, b'JSON')
@@ -85,6 +90,7 @@ class SUBClient():
                 # will have extra spaces.
                 try:
                     self.topic, self.message = listen_socket.recv_string().split(" ; ")
+
                 except Exception as e:
                     logger.error("SUBClient: There was an error trying to get the topic and/or message from the socket")
                     logger.exception(e)

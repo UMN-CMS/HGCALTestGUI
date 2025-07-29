@@ -84,7 +84,9 @@ class DataHolder():
         self.admin = False
         self.password = None
 
-        self.tester_type = None
+        # TODO Initialize with correct value from config
+        self.tester_type = self.gui_cfg.getGUIType()
+
         self.wagon_tester_info = {
                 'Kria': None,
                 'Tester': None,
@@ -426,8 +428,7 @@ class DataHolder():
     ################################################
 
     # Tracking the test index in another place and propagating to the config
-    def setTestIdx(self, test_idx):
-        
+    def setTestIdx(self, test_idx): 
         self.current_test_idx = test_idx
 
     def getNumTest(self):

@@ -2,6 +2,7 @@
 
 
 # HGCALTestGUI
+Edited on 5/19/25
 
 This repository contains the GUI used to run the quality control testing for all HGCAL Wagons and Engines.
 It also contains the CheckIn GUI and the Photo Taking GUI.
@@ -56,7 +57,7 @@ You will also need to run "make" in the following directory of each GUI for the 
 
 To run the program:
 
-You will need to run "python REPServer.py" on the appropriate machine after pulling the server code from REPSERVER GITHUB REPO LINK HERE.
+You will need to run "python REPServer.py" on the appropriate machine after pulling the server code from `REPSERVER GITHUB REPO LINK HERE`.
 
 Note:
 
@@ -72,9 +73,9 @@ REQClient.py
 ``` 
 Be sure to update REPServer.py and PUBServer.py on the testing station and SUBClient.py and REQClient.py on the computer running the GUI
 
-You will also need to install and set up the database that you will be using at DATABASE GITHUB REPO LINK HERE
+You will also need to install and set up the database that you will be using at `DATABASE GITHUB REPO LINK HERE`
 
-This program is built to be compatible with a Zebra (MODEL NUMBER GOES HERE) Scanner. Please connect it to the computer and do any required setup before running the program. 
+This program is built to be compatible with a Zebra `MODEL NUMBER GOES HERE` Scanner. Please connect it to the computer and do any required setup before running the program. 
 
 The database and webpage script hostnames need to be specified in the Configuration file, along with how running of the test is to be handled (locally, through SSH, or through ZMQ).
 

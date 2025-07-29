@@ -34,6 +34,13 @@ from PythonFiles.update_config import update_config
 import webbrowser
 import sys
 
+from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
+from PythonFiles.Scenes.ThermalTestSetupResultsScene import ThermalTestSetupResultsScene
+from PythonFiles.Scenes.ThermalTestBeginScene import ThermalTestBeginScene
+from PythonFiles.Scenes.ThermalTestInProgressScene import ThermalTestInProgressScene
+from PythonFiles.Scenes.ThermalTestFinalResultsScene import ThermalTestFinalResultsScene
+
+
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.GUIWindow')
@@ -142,13 +149,28 @@ class GUIWindow():
         self.splash_frame = SplashScene(self, self.master_frame)
         self.splash_frame.grid(row=0, column=0, sticky = 'nsew')
 
+        if (self.data_holder.tester_type == 'Thermal'):
+            self.thermal_in_progress_frame = ThermalTestInProgressScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_in_progress_frame.grid(row=0, column=0, sticky='nsew')
+
+            self.thermal_begin_frame = ThermalTestBeginScene(self, self.master_frame, self.data_holder, queue, conn)
+            self.thermal_begin_frame.grid(row=0, column=0, sticky='nsew')
+
+            self.thermal_config_frame = ThermalTestConfigScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
+            self.thermal_config_frame.grid(row=0, column=0, sticky='nsew')
+
+            self.thermal_setup_results_frame = ThermalTestSetupResultsScene(self, self.master_frame, self.data_holder, queue, conn)
+            self.thermal_setup_results_frame.grid(row=0, column=0, sticky='nsew')
+            
+            self.thermal_final_results_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, conn)
+            self.thermal_final_results_frame.grid(row=0, column=0, sticky='nsew')
+             
 
         #################################################
         #              End Frame Creation               #
         #################################################
         
         logger.info("All frames have been created.")
-
 
         # Tells the master window that its exit window button is being given a new function
         self.master_window.protocol('WM_DELETE_WINDOW', self.exit_function)
@@ -157,7 +179,7 @@ class GUIWindow():
         self.set_frame_splash_frame()
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
-
+        
         self.master_window.mainloop()
        
     def log_callback_exception(self, exc_type, exc_value, exc_traceback):
@@ -220,7 +242,6 @@ class GUIWindow():
         #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
 
-        
 
     #################################################
 
@@ -314,13 +335,16 @@ class GUIWindow():
     #################################################
 
     def set_frame_scan_frame(self):
-        
-        logger.info("Setting frame to scan_frame")
-
-        self.scan_frame.is_current_scene = True
-        self.set_frame(self.scan_frame)
-        self.scan_frame.scan_QR_code(self.master_window)
-
+        if (self.data_holder.tester_type == 'Thermal'):
+            logger.info("set_frame_scan_frame has been bypassed, setting Thermal Config Frame")
+            self.set_frame_thermal_config()
+        else:
+            logger.info("Setting frame to scan_frame")
+            
+            self.scan_frame.is_current_scene = True
+            self.set_frame(self.scan_frame)
+            self.scan_frame.scan_QR_code(self.master_window)
+            
     #################################################
 
     def set_frame_scan_many_frame(self):
@@ -363,9 +387,6 @@ class GUIWindow():
 
     #################################################
 
-    # For example, when we set the frame to test2_frame, we want to send the results
-    # of test1 because it just completed.
-
 
     def set_frame_test_summary(self):
         
@@ -387,6 +408,35 @@ class GUIWindow():
         
         self.set_frame(selected_test_frame)
 
+    #################################################  
+    # Navigation for the Thermal Testing GUI
+
+    def set_frame_thermal_begin(self):
+        logger.info("Setting frame to thermal_begin_frame")
+        self.set_frame(self.thermal_begin_frame)
+
+    def set_frame_thermal_config(self):
+        logger.info("Setting frame to thermal_config_frame")
+        self.set_frame(self.thermal_config_frame)
+
+    def set_frame_thermal_final_results(self):
+        logger.info("Setting frame to thermal_final_results_frame.")
+        self.set_frame(self.thermal_final_results_frame)
+        # self.thermal_final_results_frame.send_REQ(self.master_window, self.queue, self)
+        self.thermal_final_results_frame.send_REQ(self)
+
+    def set_frame_thermal_test_in_progress(self):
+        logger.info("Setting frame to thermal_test_in_progress_frame.")
+        self.thermal_in_progress_frame.update_frame(self)
+        # self.thermal_in_progress_frame.begin_update(self.master_window, self.queue, self)
+        self.set_frame(self.thermal_in_progress_frame)
+
+    def set_frame_thermal_setup_results(self):
+        logger.info("Setting frame to thermal_setup_results_frame.")
+        self.thermal_setup_results_frame.update_frame(self)
+        self.set_frame(self.thermal_setup_results_frame)
+        self.thermal_setup_results_frame.begin_update(self.master_window, self.queue, self)
+        
     #################################################
 
     def set_frame_test_in_progress(self, queue):
@@ -647,7 +697,6 @@ class GUIWindow():
 
         #print("\nall_text: ", self.all_text)
 
-     
         self.label_text.set(self.all_text)
 
     #################################################
@@ -863,6 +912,5 @@ class GUIWindow():
 
 
     #################################################
-
     
 #################################################################################

@@ -1,0 +1,64 @@
+---
+
+# Specify which board you want to test here
+GUIType: Thermal
+
+# Specify if a scanner is used for barcodes
+SerialCheckSafe: false
+UsingScanner: false
+
+# How the tests will be run (local, ssh, or ZMQ)
+# TestHandler: {name: Local, remoteip: localhost}
+
+# Order of tests matters here
+# This should be the same order that you want the tests to be run in
+# Number of test will also be decided by this list so don't miss any 
+# TestClass, TestScript, and TestPath fields will be used to write the REPserver script
+# TestPath should be in reference to the testing home directory
+Test: []
+
+
+PhysicalTest: []
+# PhysicalTest: 
+# - name: Blank Test
+#   required: false 
+#   desc_short: Some short description of the test
+#   desc_long: Long description of the test
+#   criteria: 
+#   - first testing criteria
+#   - second testing criteria
+#   - third testing criteria     
+
+# TestHandler: {name: Local, remoteip: localhost}
+# TestHandler: {name: SSH, username: <username>, hostname: <hostname>, remoteip: <remoteip>}
+# TODO ZMQ update to accurate hosts and IP addresses
+
+# # For testing purposes only
+# TestHandler: {
+#   name: Demo
+# }
+
+TestHandler: {
+  name: ThermalZMQ, 
+  localip: "localhost", 
+  remoteip: "zcu102b", 
+  username: "test_server", 
+  serverpath: <serverpath>, 
+  serverscript: <serverscript>
+  }
+
+
+# Information for sending and receiving data to/from the database
+# Needs to be different based on board type
+
+# TODO To be updated with new DB info
+DBInfo: 
+  use_database: false
+  name: WagonDB
+  reader: WagonDBReadUser
+  inserter: WagonDBInserter
+  baseURL: "http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB"
+
+People:
+  - Garrett
+...
