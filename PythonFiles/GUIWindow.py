@@ -180,10 +180,6 @@ class GUIWindow():
         self.set_frame_splash_frame()
         self.master_frame.update() 
         self.master_frame.after(100, self.set_frame_login_frame)
-
-        # self.TODO_frame = ThermalTestFinalResultsScene(self, self.master_frame, self.data_holder, queue, self.conn_trigger)
-        # self.TODO_frame.grid(row=0, column=0, sticky='nsew')
-
         
         self.master_window.mainloop()
        
