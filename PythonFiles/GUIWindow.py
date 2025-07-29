@@ -172,7 +172,6 @@ class GUIWindow():
         
         logger.info("All frames have been created.")
 
-
         # Tells the master window that its exit window button is being given a new function
         self.master_window.protocol('WM_DELETE_WINDOW', self.exit_function)
         
@@ -215,7 +214,6 @@ class GUIWindow():
             self.test_frames[test_idx + offset].grid(row=0, column=0, sticky='nsew')
 
 
-
     #################################################
 
     def update_config(self):
@@ -243,9 +241,6 @@ class GUIWindow():
         #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
-
-        
-    #################################################
 
 
     #################################################
@@ -340,17 +335,16 @@ class GUIWindow():
     #################################################
 
     def set_frame_scan_frame(self):
-        print("\nTester_Type:", self.data_holder.tester_type)
         if (self.data_holder.tester_type == 'Thermal'):
-            self.set_frame_thermal_config()
             logger.info("set_frame_scan_frame has been bypassed, setting Thermal Config Frame")
+            self.set_frame_thermal_config()
         else:
+            logger.info("Setting frame to scan_frame")
+            
             self.scan_frame.is_current_scene = True
             self.set_frame(self.scan_frame)
             self.scan_frame.scan_QR_code(self.master_window)
             
-            logger.info("Setting frame to scan_frame")
-
     #################################################
 
     def set_frame_scan_many_frame(self):
