@@ -24,7 +24,6 @@ class SUBClient():
 
     def local(self, conn, queue, gui_cfg, q):
         try:
-            print(f"\nSUBCLIENT: Beginning function 'local'\n")
             while 1 > 0:
                 # gets the signal from the Handler and splits it into topic and message
                 # the topic determines what SUBClient will do with the message
