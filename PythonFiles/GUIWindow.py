@@ -570,7 +570,6 @@ class GUIWindow():
 
         # Raises the passed in frame to be the current frame
         _frame.tkraise()
-        print("GUIWINDOW: Raised {} frame".format(_frame))
 
         self.set_help_text(_frame)
 
