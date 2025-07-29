@@ -355,7 +355,7 @@ class ScanScene(ttk.Frame):
 
     # Function to disable to the submit button
     def hide_submit_button(self):
-        # self.btn_submit["state"] = "disabled"
+        self.btn_submit["state"] = "disabled"
         self.label_major['text'] = ''
         self.label_sub['text'] = ''
         self.label_sn['text'] = ''
