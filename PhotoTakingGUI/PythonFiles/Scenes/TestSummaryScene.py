@@ -13,12 +13,8 @@ import os
 
 #################################################################################
 
-logging.getLogger('PIL').setLevel(logging.WARNING)
 
-
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.TestSummaryScene')
 
 # Frame that shows all of the final test results
 # @param parent -> References a GUIWindow object
@@ -38,8 +34,6 @@ class TestSummaryScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logging.info("TestSummaryScene: Frame has been created.")
-
         self.data_holder = data_holder
 
         self.parent = parent
@@ -56,6 +50,7 @@ class TestSummaryScene(ttk.Frame):
         self.s = ttk.Style()
  
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
  
         self.s.theme_use('awdark')
@@ -63,19 +58,6 @@ class TestSummaryScene(ttk.Frame):
     #################################################
 
     def create_frame(self, parent):
-        logging.debug("TestSummaryScene: Destroying old widgets on the TestSummaryScene.")
-        print("TestSummaryScene: Destroying old widgets on the TestSummaryScene.")
-        try:
-            for widget in self.winfo_children():
-                widget.destroy()
-        except:
-            logging.warning("TestSummaryScene: Widgets could not be found and/or destroyed (making room for new widgets.")
-        else:
-            logging.info("TestSummaryScene: Widgets destroyed successfully (making room for new widgets).")
-
-
-        logging.debug("TestSummaryScene: Table is being created with the results.")
-        print("\n\nTestSummaryScene: Table is being created with the results.")
 
         self.blank_frame = ttk.Frame(self)
         self.blank_frame.grid(row = 0, column = 0, padx = 80, pady = 20)
@@ -89,7 +71,7 @@ class TestSummaryScene(ttk.Frame):
         self.title = ttk.Label(
                 self,
                 #fg='#0d0d0d',
-                text = "Visual Inspection Finished!",
+                text = "Photo Taking Finished!",
                 font=('Arial',32,'bold')
                 )
         self.title.grid(row= 0, column= 1, pady = 20)
@@ -130,14 +112,9 @@ class TestSummaryScene(ttk.Frame):
                     retake_2.grid(column = i+1, row = 2)
 
             except Exception as e:
-                print("TestSummaryScene: Could not find captured_image.")
-                print(e)
                 logging.debug("TestSummaryScene: Could not find captured_image.")
                 logging.debug("Exception: {}".format(e))
                 next
-
-        logging.debug("TestSummaryScene: Creating the board image.")
-
 
 
        # Adds Board full id to the TestSummaryFrame

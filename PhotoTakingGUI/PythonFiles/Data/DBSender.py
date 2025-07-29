@@ -4,9 +4,12 @@ import socket
 import base64
 import os
 from PIL import Image
+import logging
 
 from io import BytesIO
 # from read_barcode import read_barcode
+
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Data.DBSender')
 
 
 class DBSender():
@@ -42,10 +45,10 @@ class DBSender():
         if (self.use_database):
 
             try:
-                r = requests.post('{}/../WagonDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
-                r = requests.post('{}/../EngineDB/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
+                r = requests.post('{}/add_tester2.py'.format(self.db_url), data= {'person_name':user_ID, 'password': passwd})
             except Exception as e:
-                print("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logger.error("Unable to add the user to the database. Username: {}. Check to see if your password is correct.".format(user_ID))
+                logger.debug(r.text)
 
 
         # If not using the database, use this...
@@ -55,13 +58,18 @@ class DBSender():
     def decode_label(self, full_id):
         
         if len(full_id) != 15:
+            logger.warning("Invalid label scanned")
             label_info = None
         else:
-            r = requests.post('{}/../LabelDB/decode_label.py'.format(self.db_url), data={'label': full_id})
+            r = requests.post('{}/decode_label.py'.format(self.db_url), data={'label': full_id})
             lines = r.text.split('\n')
 
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
+            try:
+                begin = lines.index("Begin") + 1
+                end = lines.index("End")
+            except:
+                logger.error("There was an issue with the web API script `decode_label.py`. Check that the label library has been updated for the web API.")
+                logger.debug(r.text)
 
             temp = []
 
@@ -78,8 +86,12 @@ class DBSender():
             r = requests.get('{}/get_usernames.py'.format(self.db_url))
             lines = r.text.split('\n')
 
-            begin = lines.index("Begin") + 1
-            end = lines.index("End")
+            try:
+                begin = lines.index("Begin") + 1
+                end = lines.index("End")
+            except:
+                logger.error("There was an issue with the web API script `get_usernames.py`. There is likely a syntax error in an associated web API script.")
+                logger.debug(r.text)
 
             usernames = []
 
@@ -101,13 +113,13 @@ class DBSender():
         encodedImage = base64.b64encode(buffered.getvalue())
         r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
 
-        print(r.text)
         lines = r.text.split('\n')
 
         saved_image = False
         for l in lines:
             if 'File received successfully!' in l:
                 saved_image = True
+                logger.info('Image uploaded successfully!')
 
         if saved_image == False:
             total_size = 0
@@ -115,11 +127,12 @@ class DBSender():
                 for f in filenames:
                     fp = os.path.join(dirpath, f)
                     total_size += os.path.getsize(fp)
-            print("Image directory size is %s megabytes" % (total_size/1000000))
+            logger.error("Failed to save image, opting for local file storage...")
+            logger.debug(r.text)
+            logger.info("Image directory size is %s megabytes" % (total_size/1000000))
             if total_size < 5000000000:
-                print("Failed to save image, opting for local file storage...")
                 image.save("{}/PythonFiles/Images/{}_{}.png".format(self.main_path, full_id, view))
-                print("Image saved to local disk successfully.")
+                logger.info("Image saved to local disk successfully.")
             else:
                 raise "Image Directory is too full, please upload and delete images."
             
@@ -135,7 +148,9 @@ class DBSender():
 
         for l in lines:
             if 'File received successfully!' in l:
+                logger.info('Image uploaded successfully, deleting local file...')
                 os.remove(path)
+                logger.info('File removed.')
 
 
 
@@ -144,16 +159,19 @@ class DBSender():
     def get_previous_test_results(self, full_id):
 
         r = requests.post('{}/get_previous_test_results.py'.format(self.db_url), data={"full_id": str(full_id)})
-        print(r.text)
 
         lines = r.text.split('\n')
 
-        begin1 = lines.index("Begin1") + 1
-        end1 = lines.index("End1")
-        begin2 = lines.index("Begin2") + 1
-        end2 = lines.index("End2")
-        begin3 = lines.index("Begin3") + 1
-        end3 = lines.index("End3")
+        try:
+            begin1 = lines.index("Begin1") + 1
+            end1 = lines.index("End1")
+            begin2 = lines.index("Begin2") + 1
+            end2 = lines.index("End2")
+            begin3 = lines.index("Begin3") + 1
+            end3 = lines.index("End3")
+        except:
+            logger.error("There was an issue with the web API script `get_previous_test_results.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
         tests_run = []
         outcomes = []
@@ -177,9 +195,7 @@ class DBSender():
     # this is only called if the full id isn't recognized by is_new_board
     def add_new_board(self, full, user_id, comments):
         r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': "None"})
-        print(r.text)
         r = requests.post('{}/board_checkin2.py'.format(self.db_url), data={"full_id": str(full), 'person_id': str(user_id), 'comments': str(comments)})
-        print(r.text)
 
 
         try:
@@ -197,28 +213,18 @@ class DBSender():
 
         return in_id
 
-    # sets the location in the database
-    def update_location(self, full, loc):
-        loc = 'Last seen at ' + loc
-        r = requests.post('{}/update_location.py'.format(self.db_url), data={"full_id": str(full), 'location': loc})
-        
-        lines = r.text.split('\n')
-   
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
-
-
-        for i in range(begin, end): 
-            return lines[i]
-
     # checks if the board is in the database
     def is_new_board(self, full):
         r = requests.post('{}/is_new_board.py'.format(self.db_url), data={"full_id": str(full)})
 
         lines = r.text.split('\n')
 
-        begin = lines.index("Begin") + 1
-        end = lines.index("End")
+        try:
+            begin = lines.index("Begin") + 1
+            end = lines.index("End")
+        except:
+            logger.error("There was an issue with the web API script `is_new_board.py`. There is likely a syntax error in an associated web API script.")
+            logger.debug(r.text)
 
 
         for i in range(begin, end):
@@ -228,34 +234,6 @@ class DBSender():
             elif "False" in lines[i]:
                 return False
 
-
-
-    # Posts information via the "info" dictionary
-    # full id is within the info dictionary
-    def add_board_info(self, info):
-
-        if (self.use_database):
-
-            r = requests.post('{}/add_board_info2.py'.format(self.db_url), data = info)
-
-        else:
-            pass
-
-    def add_initial_tests(self, results):
-        if (self.use_database):
-
-            r = requests.post('{}/add_init_test.py'.format(self.db_url), data = results)
-
-        else:
-            pass
-
-    def add_general_test(self, results, files):
-        if (self.use_database):
-
-            r = requests.post('{}/add_test2.py'.format(self.db_url), data = results, files=files)
-
-        else:
-            pass
 
     def add_test_json(self, json_file, datafile_name):
         load_file = open(json_file)

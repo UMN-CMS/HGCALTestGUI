@@ -8,9 +8,6 @@ import yaml
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Data.DataHolder')
 
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
 class DataHolder():
 
     #################################################
@@ -82,7 +79,7 @@ class DataHolder():
 
         self.label_info = None
 
-        self.config_id = None
+        self.config_id = self.data_sender.get_tester_config(self.data_dict['test_stand'])
 
         self.admin = False
         self.password = None
@@ -170,17 +167,17 @@ class DataHolder():
 
     # when a board gets entered, this function checks if it's new
     def check_if_new_board(self):
-        logger.info("DataHolder: Checking if full id is a new board")
+        logger.info("Checking if full id is a new board...")
 
         full = self.get_full_ID()
         #returns true if the board is new, false if not
         is_new_board = self.data_sender.is_new_board(full)
         
         if is_new_board == True:
-            logger.info("DataHolder: Board is new")
+            logger.info("Board is new")
 
         else:
-            logger.info("DataHolder: Board is not new")
+            logger.info("Board has been checked in, getting previous results")
             # if the board is not new, this returns the previous testing information on the board
             prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
@@ -207,11 +204,9 @@ class DataHolder():
 
 
     def set_user_ID(self, user_ID):
-
-        print("\nuser_ID", user_ID)
  
         self.data_dict['user_ID'] = user_ID 
-        logger.debug("DataHolder: User ID has been set.")
+        logger.info("User ID set to %s"  % user_ID)
 
     ##################################################
 
@@ -222,12 +217,7 @@ class DataHolder():
             self.gui_cfg = new_cfg
         self.data_holder_new_test()
         self.data_sender = DBSender(self.gui_cfg)
-        logger.info("DataHolder: Full ID has been set to {}.".format(full))
-
-
-    def update_location(self, full):
-        text = self.data_sender.update_location(full, self.data_dict['test_stand'])
-        print(text)
+        logger.info("Full ID set to {}".format(full))
 
 
     ##################################################
@@ -238,14 +228,14 @@ class DataHolder():
     #################################################
 
     def attempt_admin_access(self, password):
-        logger.info("AdminScene: Attempting admin access.")
+        logger.info("User attempting admin access.")
         admin_connected = self.data_sender.attempt_admin_access(password)
         if admin_connected == True:
-            logger.info("AdminScene: Admin access was successful")
+            logger.info("Admin access was successful")
             self.admin = True
             self.password = password
         else:
-            logger.info("AdminScene: Admin access was unsuccessful")
+            logger.info("Admin access was denied")
 
     def upload_test_stand_info(self):
         if self.tester_type == 'Wagon':
@@ -259,8 +249,6 @@ class DataHolder():
                 'wheel_4': self.wagon_tester_info['Wagon Wheel 4'],
                 'test_stand': self.data_dict['test_stand'],
                 }
-            wagon_cfg = yaml.safe_load(open('{}/../../Configs/Wagon_cfg.yaml'.format(self.curpath),"r"))
-            db_url = wagon_cfg['DBInfo']['baseURL']
         if self.tester_type == 'Engine':
             info_dict = {'ZCU': self.engine_tester_info['ZCU'],
                 'east_interposer': self.engine_tester_info['East Interposer'],
@@ -272,11 +260,9 @@ class DataHolder():
                 'vtrx_2': self.engine_tester_info['VTRX 2'],
                 'test_stand': self.data_dict['test_stand'],
                 }
-            engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
-            db_url = engine_cfg['DBInfo']['baseURL']
 
-        logger.info("DataHolder: Setting tester configuration")
-        self.config_id = self.data_sender.add_test_stand_info(info_dict, db_url)
+        logger.info("Setting tester configuration")
+        self.config_id = self.data_sender.add_test_stand_info(info_dict)
 
     def set_component_info(self, label, working, comments):
         info_dict = {'label': label, 'working': working, 'comments': comments}
@@ -289,7 +275,7 @@ class DataHolder():
             engine_cfg = yaml.safe_load(open('{}/../../Configs/Engine_cfg.yaml'.format(self.curpath),"r"))
             db_url = engine_cfg['DBInfo']['baseURL']
 
-        logger.info("DataHolder: Setting tester component information")
+        logger.info("Setting tester component information")
         self.data_sender.set_component_info(info_dict, db_url)
 
     #################################################
@@ -302,20 +288,23 @@ class DataHolder():
         full_id = self.get_full_ID()
         
          
+        logger.info("Sending results to database.")
         for i in range(len(self.data_dict['tests_run'])):
             temp = 0
             if self.data_lists['test_results'][i]:
                 temp = 1
             info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.index_gui_to_db[self.tests_run[i]], "successful": temp, "comments": comments} 
             with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
-                print(info_dict)
+                logger.debug(info_dict)
                 json.dump(info_dict, outfile)
             self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())))
             #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
-        logger.info("DataHolder: All results sent to database.")
+        logger.info("All results sent to database.")
     #################################################
 
     def send_to_DB(self, test_run):
+        logger.info("Uploading results...")
+
         index = test_run
         
         test_names = self.gui_cfg.getTestNames()
@@ -331,18 +320,17 @@ class DataHolder():
             temp = 1 
 
 
-        #if self.config_id:
-        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
-        #else:
-        #    info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        if self.config_id:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
+        else:
+            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
-        #with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
-        #    print(str(info_dict) + '\r\n')
-        #    json.dump(info_dict, outfile)
+        with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
+            logger.debug(str(info_dict))
+            json.dump(info_dict, outfile)
 
-        #self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), file_path_list[index])
-        self.data_sender.add_test_json(file_path_list[index])
-        logger.info("DataHolder: Test results sent to database.")
+        self.data_sender.add_test_json(file_path_list[index], self.config_id)
+        logger.info("Test results sent to database successfully.")
 
         self.data_dict['comments'] = '_'
 
@@ -352,12 +340,6 @@ class DataHolder():
         users_list = self.data_sender.get_usernames() 
         return users_list
 
-    #################################################
-
-    # Prints all the variable values inside data_holder
-    def print(self):    
-        print("data_dict: \n", self.data_dict, "\ninspection_data: \n", self.inspection_data,  "\nall_checkboxes: \n", self.all_checkboxes, "\nall_comments: \n", self.all_comments, '\n\n')
-           
 
     #################################################
 
@@ -368,9 +350,6 @@ class DataHolder():
         json_dict = json.loads(json_string)
 
         test_names = self.gui_cfg.getTestNames()
-
-        print("current_test_idx: {}\r\n".format(self.current_test_idx))
-
         test_type = test_names[self.current_test_idx]
 
         with open("{}/JSONFiles/Current_{}_JSON.json".format(str(Path.home().absolute()), test_names[self.current_test_idx].replace(" ", "").replace("/", "")), "w") as file:
@@ -387,8 +366,6 @@ class DataHolder():
         
         if self.gui_cfg.get_if_use_DB():
             self.send_to_DB(self.current_test_idx)
-
-        logger.info("DataHolder: Test results have been saved")
 
     ################################################
 
@@ -413,6 +390,40 @@ class DataHolder():
             if self.data_dict['comments'] == "_":
                 self.data_dict['comments'] = ""
             self.data_dict['comments'] = self.data_dict['comments'] + " User comments: " + self.inspection_data['inspection_comments']
+
+    ################################################
+
+    def setOtherZippers(self, zips):
+
+        self.other_zippers = zips
+
+
+    def passOtherZippers(self):
+
+        placeholder = {
+            "name": None,
+            "board_sn": None,
+            "tester": self.data_dict['user_ID'],
+            "pass": True,
+            "data": {
+                "tested_sn": self.data_dict['current_full_ID']
+                },
+            "comments": "Passed by default"
+            }
+
+        for zipper in self.other_zippers:
+
+            placeholder['board_sn'] = zipper
+
+            for test in self.gui_cfg.getTestNames():
+
+                placeholder['name'] = test
+
+                with open("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), "w") as outfile:
+                    json.dump(placeholder, outfile)
+
+                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())))
+
 
     ################################################
 
@@ -466,8 +477,6 @@ class DataHolder():
 
         self.label_info = None
 
-        self.config_id = None
-
         for i in range(self.gui_cfg.getNumTest()):
             self.data_dict['test{}_completed'.format(i)] = False
             self.data_dict['test{}_pass'.format(i)] = False
@@ -492,14 +501,13 @@ class DataHolder():
 
             self.total_test_num = self.total_test_num + 1
         
-        #print(self.data_dict)
         for i in range(self.gui_cfg.getNumTest()):
             self.data_lists['test_results'].append(self.data_dict['test{}_pass'.format(i)])
             self.data_lists['test_completion'].append(self.data_dict['test{}_completed'.format(i)])
 
             self.total_test_num = self.total_test_num + 1
 
-        logger.info("DataHolder: DataHolder Information has been reset for a new board.")        
+        logger.info("DataHolder Information has been reset for a new board.")
 
 
     ################################################

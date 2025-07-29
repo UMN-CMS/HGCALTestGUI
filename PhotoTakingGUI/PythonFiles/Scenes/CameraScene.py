@@ -29,10 +29,7 @@ camera = Picamera2()
 
 # Instantiating logging
 # Code that should go in every file in the GUI(s)
-logging.getLogger('PIL').setLevel(logging.WARNING)
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.CameraScene')
 
 
 # Frame class for basic webcam functionality
@@ -49,14 +46,9 @@ class CameraScene(ttk.Frame):
 
         self.master_frame = master_frame
 
-        logging.info("CameraScene: Beginning to instantiate the CameraScene.")
-        print("\nCameraScene: Beginning to instantiate the CameraScene.")
-
         # Call to the super class's constructor
         # Super class is the tk.Frame class
         super().__init__(master_frame, width = 1105, height = 850)
-
-        logging.info("\nCameraScene: Frame has been created.")
 
         self.data_holder = data_holder
         self.parent = parent
@@ -86,7 +78,7 @@ class CameraScene(ttk.Frame):
             btn_frame,
             text="Submit",
             width=10,
-            command= lambda: self.submit_button_action(),
+            command= lambda: self.submit_button_action(parent),
         )
         self.btn_about.pack(side="right", padx=10, pady=10)
 
@@ -124,6 +116,7 @@ class CameraScene(ttk.Frame):
         self.s = ttk.Style()
   
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
   
         self.s.theme_use('awdark')
@@ -175,7 +168,7 @@ class CameraScene(ttk.Frame):
 
         if self.flip == True:
             self.flip_label.destroy()
-            self.flip_label = False
+            self.flip = False
 
         # adds text saying to flip the board over if it's the first time the bottom picture is being taken
         if self.parent.retake == True:
@@ -199,22 +192,64 @@ class CameraScene(ttk.Frame):
         self.photo_name = "{}/Images/{}".format(PythonFiles.__path__[0], shortened_pn)
 
         # Cannot be called unless camera is already started
+        logger.info("Capturing image")
         self.image = camera.switch_mode_and_capture_image(shortened_pn)
+        min_area = 25000
+        padding = 50
 
-        # automatically crops the image by cutting away the background
-        bg = PIL.Image.new(self.image.mode, self.image.size, self.image.getpixel((0,0)))
-        diff = ImageChops.difference(self.image, bg)
-        diff = ImageChops.add(diff, diff, 2.0, -60)
-        imageBox = diff.getbbox()
-        # adds padding to the image before cropping, scuffed but it works
-        # can't work directly with a tuple, need to make list and then go back to tuple
-        imageBox = list(imageBox)
-        imageBox[0] += -50
-        imageBox[1] += -50
-        imageBox[2] += 50
-        imageBox[3] += 50
-        imageBox = tuple(imageBox)
-        self.image = self.image.crop(imageBox)
+        img_rgb = np.array(self.image)
+        if img_rgb.shape[-1] == 4:
+            img_rgb = img_rgb[:, : , :3]
+        height, width, _ = img_rgb.shape
+        hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+
+        # select pixels that aren't white
+        lower = np.array([0, 30, 30])
+        upper = np.array([180, 255, 255])
+        non_white_mask = cv2.inRange(hsv, lower, upper)
+
+        kernel = np.ones((5, 5), np.uint8)
+        clean_mask = cv2.morphologyEx(non_white_mask, cv2.MORPH_OPEN, kernel)
+        clean_mask = cv2.morphologyEx(clean_mask, cv2.MORPH_CLOSE, kernel)
+
+        # select edges around non white objects
+        contours, _ = cv2.findContours(clean_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        best = None
+        best_score = 0
+
+        for c in contours:
+            area = cv2.contourArea(c)
+            x, y, w, h = cv2.boundingRect(c)
+            # filter out small dust particles and such
+            if area < min_area:
+                continue
+
+            hull = cv2.convexHull(c)
+            hull_area = cv2.contourArea(hull)
+            if hull_area == 0:
+                continue
+
+            # how solid is the object? closer to 1 = more solid
+            solidity = area / hull_area
+            score = solidity * area
+            # saves the largest and most solid object, should always be the board
+            if score > best_score:
+                best = (x, y, w, h)
+                best_score = score
+
+        if best is not None:
+            x, y, w, h = best
+            # don't go over the bounds of the image
+            x_start = max(x - padding, 0)
+            y_start = max(y - padding, 0)
+            x_end = min(x + w + padding, width)
+            y_end = min(y + h + padding, height)
+
+            imageBox = (x_start, y_start, x_end, y_end)
+            self.image = self.image.crop(imageBox)
+        else:
+            logger.error("Image couldn't be cropped")
 
         # stores the image in the data holder
         # doesn't try to write it to disk, uses more ram but saves time
@@ -222,10 +257,10 @@ class CameraScene(ttk.Frame):
         # scales the image to fit the gui window after it's been cropped
         # this doesn't affect the size of the actual image that goes into the Database
         width = int(self.image.size[0]*(800/self.image.size[1]))
-        self.Engine_image = self.image.resize((width, 800), PIL.Image.Resampling.LANCZOS)
+        self.Engine_image = self.image.resize((width, 800), PIL.Image.LANCZOS)
         if width > 1000:
             height = int(self.image.size[1]*(1000/self.image.size[0]))
-            self.Engine_image = self.image.resize((1000, height), PIL.Image.Resampling.LANCZOS)
+            self.Engine_image = self.image.resize((1000, height), PIL.Image.LANCZOS)
         self.Engine_PhotoImage = iTK.PhotoImage(self.Engine_image)
 
         # if the flip prompt exists, destroy it
@@ -248,7 +283,6 @@ class CameraScene(ttk.Frame):
             self.Engine_label.image = self.Engine_PhotoImage
 
         self.data_holder.image_data.append(self.photo_name)
-        self.parent.set_image_name(shortened_pn)
 
     def continuous_update(self):
 
@@ -260,14 +294,13 @@ class CameraScene(ttk.Frame):
             time.sleep(1)
 
     # goes to the next screen
-    def submit_button_action(self):
+    def submit_button_action(self, _parent):
         try:
             camera.stop_preview()
             camera.stop()
             self.camera_created = False
         except:
-            print("CameraScene: Unable to stop preview")
-            logging.debug("CameraScene: Unable to stop preview")
+            pass
 
         # if a photo is being retaken, set the retaken value to true
         if self.parent.retake == True:

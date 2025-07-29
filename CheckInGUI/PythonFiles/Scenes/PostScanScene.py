@@ -14,10 +14,8 @@ import datetime
 
 #################################################################################
 
-logging.getLogger('PIL').setLevel(logging.WARNING)
+logger = logging.getLogger("HGCAL_VI.PythonFiles.Scenes.PostScanScene")
 
-
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
 #FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
 #logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
@@ -43,8 +41,6 @@ class PostScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logger.info("PostScanScene: Frame has been created.")
-
         self.parent = parent
 
         self.create_style(parent)
@@ -61,19 +57,18 @@ class PostScanScene(ttk.Frame):
         self.s = ttk.Style()
   
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
   
         self.s.theme_use('awdark')
 
     def create_frame(self, parent):
-        logger.debug("PostScanScene: Destroying old widgets on the PostScanScene.")
-        print("PostScanScene: Destroying old widgets on the PostScanScene.")
         
         try:
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logger.warning("PostScanScene:Widgets could not be found and/or destroyed (making room for new widgets.")
+            logger.warning("PostScanScene: Widgets could not be found and/or destroyed (making room for new widgets.")
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
@@ -166,11 +161,10 @@ class PostScanScene(ttk.Frame):
                 self.lbl_res.grid(row=2, column=1)
 
         except Exception as e:
-            logger.error(e)
-            print(e)
+            logger.exception(e)
             self.lbl_err = ttk.Label(
                     self, 
-                    text = "Some other error occured and Board was not entered. See logs for more info.",
+                    text = "Some extraneous error occured and Board was not entered. See logs for more info.",
                     font=('Arial', 14) 
                     )
             self.lbl_err.grid(column = 1, row = 2, pady = 10) 

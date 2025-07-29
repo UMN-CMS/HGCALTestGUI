@@ -12,12 +12,10 @@ from PIL import ImageTk as iTK
 from PIL import Image
 import PythonFiles
 import os
- 
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
-
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanManyScene')
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
 # instantiated as scan_frame by GUIWindow
@@ -25,7 +23,7 @@ logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.ScanScene')
 # @param master_frame -> passes master_frame as the container for everything in the class.
 # @param data_holder -> passes data_holder into the class so the data_holder functions can
 #       be accessed within the class.
-class ScanScene(ttk.Frame):
+class ScanManyScene(ttk.Frame):
     
     #################################################
 
@@ -74,8 +72,10 @@ class ScanScene(ttk.Frame):
         
         if self.use_scanner:
 
-            self.ent_full.config(state = 'normal')
-            self.ent_full.delete(0,END)
+            self.EXIT_CODE = 0
+
+            #self.ent_full.config(state = 'normal')
+            #self.ent_full.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
             sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
@@ -85,12 +85,16 @@ class ScanScene(ttk.Frame):
             manager = mp.Manager()
             full_id = manager.list()
 
-            self.ent_full.config(state = 'normal')
+            #self.ent_full.config(state = 'normal')
 
             self.scanner = scan()
             self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
             self.listener.start()
+
+            current_idx = 0
+
+            logger.debug(f'Current_scan_idx = {current_idx}')
                 
             while 1 > 0:
 
@@ -104,17 +108,29 @@ class ScanScene(ttk.Frame):
                     self.listener.terminate()
                     self.scanner.terminate()
                 
-                    self.ent_full.delete(0,END)
-                    self.ent_full.insert(0, str(label))
-                    self.ent_full.config(state = 'disabled')
+                    #self.ent_full.delete(0,END)
+                    self.ent_list.insert(tk.END, str(label))
+                    #self.ent_full.config(state = 'disabled')
                     self.show_rescan_button()
-                    break
+                    #break
 
-                elif self.EXIT_CODE:
-                    logger.info("Exit code received on the ScanScene. Terminating processes.")
+                    current_idx += 1
+
+                    self.ent_list.grid(column=0, row=2)
+                    logger.debug('Label: ' + str(label))
+                    manager = mp.Manager()
+                    full_id = manager.list()
+
+                    self.scanner = scan()
+                    self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
+
+                    self.listener.start()
+
+                elif self.EXIT_CODE == 1:
+                    logger.info("Exit code received on the ScanManyScene. Terminating processes.")
                     self.listener.terminate()
                     self.scanner.terminate()
-                    logger.info("ScanScene processes terminated successfully.")
+                    logger.info("ScanManyScene processes terminated successfully.")
                     break
                 else:
                     time.sleep(.01)
@@ -124,7 +140,6 @@ class ScanScene(ttk.Frame):
 
         QR_Frame = ttk.Frame(self)
         QR_Frame.grid(sticky = 'ne', column = 1)
-
         # Create a photoimage object of the QR Code
 
         QR_image = Image.open("{}/Images/WagonExample.png".format(PythonFiles.__path__[0]))
@@ -163,32 +178,38 @@ class ScanScene(ttk.Frame):
         # creates a Label Variable, different customization options
         lbl_scan = ttk.Label(
             master= Scan_Board_Prompt_Frame,
-            text = "Scan the QR Code on the Board",
+            text = "Scan all other zippers in sleeve:",
             font = ('Arial', 28)
         )
         lbl_scan.grid(column=0, row=0, sticky='n', pady = 50)
 
         # Create a label to label the entry box
-        lbl_full = ttk.Label(
-            Scan_Board_Prompt_Frame,
-            text = "Full ID: ",
-            font = ('Arial', 24)
-        )
-        lbl_scan.grid(column=0, row=2)
+        #lbl_full = ttk.Label(
+        #    Scan_Board_Prompt_Frame,
+        #    text = "Full ID: ",
+        #    font = ('Arial', 24)
+        #)
+        #lbl_scan.grid(column=0, row=2)
 
         # Entry for the full id to be displayed. Upon Scan, update and disable?
-        global ent_full
+        #global ent_full
         
         # Creating intial value in entry box
         self.user_text = tk.StringVar(self)
         
         # Creates an entry box
-        self.ent_full = tk.Entry(
+        #self.ent_full = tk.Entry(
+        #    Scan_Board_Prompt_Frame,
+        #    font = ('Arial', 24),
+        #    textvariable= self.user_text,
+        #    )
+        #self.ent_full.grid(column=0, row=3)
+
+        self.ent_list = tk.Listbox(
             Scan_Board_Prompt_Frame,
-            font = ('Arial', 24),
-            textvariable= self.user_text,
+            font = ('Arial', 16)
             )
-        self.ent_full.grid(column=0, row=3)
+        self.ent_list.grid(column=0, row=2)
 
 
         # Traces an input to show the submit button once text is inside the entry box
@@ -200,14 +221,14 @@ class ScanScene(ttk.Frame):
             sv=self.user_text: self.show_submit_button()
             )
 
-        # Rescan button creation
+        # Remove button creation
         self.btn_rescan = ttk.Button(
             Scan_Board_Prompt_Frame,
-            text="Rescan",
+            text="Remove",
             #padx = 20,
             #pady =10,
             #relief = tk.RAISED,
-            command = lambda:  self.scan_QR_code(self.master_frame)
+            command = lambda:  self.remove_list_entry()
             )
         self.btn_rescan.grid(column=0, row=5, padx=10, pady=(25,10))
 
@@ -263,21 +284,27 @@ class ScanScene(ttk.Frame):
 
         # Creating the help button
 
-        btn_help = ttk.Button(
-            frm_logout,
-            #relief = tk.RAISED,
-            text = "Help",
-            command = lambda: self.help_action(parent)
-        )
-        btn_help.grid(column=0, row=0, sticky='ne', padx=10, pady=10)
+        #btn_help = ttk.Button(
+        #    frm_logout,
+        #    #relief = tk.RAISED,
+        #    text = "Help",
+        #    command = lambda: self.help_action(parent)
+        #)
+        #btn_help.grid(column=0, row=0, sticky='ne', padx=10, pady=10)
 
         
 
 
     #################################################
 
-    def help_action(self, _parent):
-        _parent.help_popup(self)
+    #def help_action(self, _parent):
+    #    _parent.help_popup(self)
+
+    def remove_list_entry(self):
+
+        idxs = self.ent_list.curselection()
+
+        self.ent_list.delete(*idxs)
 
 
     #################################################    
@@ -288,22 +315,26 @@ class ScanScene(ttk.Frame):
        
         self.EXIT_CODE = 1 
 
-#        if self.use_scanner:
-#            self.listener.terminate()
-#            self.scanner.terminate()
+        if self.use_scanner:
+            self.listener.terminate()
+            self.scanner.terminate()
 
-        self.data_holder.set_full_ID(self.ent_full.get())
-        _parent.update_config()
-        if self.data_holder.getGUIcfg().get_if_use_DB():
-            self.data_holder.check_if_new_board() 
+        #self.data_holder.set_full_ID(self.ent_full.get())
+        #_parent.update_config()
+        #if self.data_holder.getGUIcfg().get_if_use_DB():
+        #    self.data_holder.check_if_new_board() 
+       
+        entries = self.ent_list.get(0, tk.END)
+
+        self.data_holder.setOtherZippers(entries)
+        self.data_holder.passOtherZippers()
+
+        self.ent_list.delete(0, tk.END)
 
         _parent.create_test_frames(self.data_holder.data_dict['queue'])
-        if 'Zipper' in self.data_holder.getGUIcfg().getGUIType():
-            _parent.set_frame_scan_many_frame()
-        else:
-            _parent.set_frame_postscan()
+        _parent.set_frame_postscan()
 
-        self.EXIT_CODE = 0
+        #self.EXIT_CODE = 0
 
     def get_submit_action(self):
         return self.btn_submit_action
@@ -325,7 +356,7 @@ class ScanScene(ttk.Frame):
          # Send user back to login frame
         _parent.set_frame_login_frame() 
 
-        self.EXIT_CODE = 0
+        #self.EXIT_CODE = 0
 
     #################################################
 
@@ -355,7 +386,7 @@ class ScanScene(ttk.Frame):
 
     # Function to disable to the submit button
     def hide_submit_button(self):
-        # self.btn_submit["state"] = "disabled"
+        self.btn_submit["state"] = "disabled"
         self.label_major['text'] = ''
         self.label_sub['text'] = ''
         self.label_sn['text'] = ''
@@ -378,7 +409,7 @@ class ScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logger.info("Terminating scanner processes.")
+        logger.info("Terminating scanner proceses.")
         try:
             if self.use_scanner:
                 self.scanner.kill()

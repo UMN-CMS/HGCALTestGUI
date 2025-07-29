@@ -10,9 +10,7 @@ import os
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scene.AddUserScene')
 
 # Creates a class that is called by the GUIWindow. 
 # GUIWindow instantiates an object called add_user_scene.
@@ -27,7 +25,6 @@ class AddUserScene(ttk.Frame):
 
     def __init__(self, parent, master_frame, data_holder):
         super().__init__(master_frame, width=850, height=500)
-        logging.info("AddUserScene: Frame has been created.")
         self.data_holder = data_holder
         self.update_frame(parent)
         self.create_style(parent)
@@ -37,6 +34,7 @@ class AddUserScene(ttk.Frame):
         self.s = ttk.Style()
   
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
   
         self.s.theme_use('awdark')
@@ -172,7 +170,7 @@ class ConfirmPopup():
         self.data_holder = data_holder
         self.new_user_name = new_user_name
         self.password = password
-        logging.info("ConfirmPopup: Confirming that the user wants to add {}".format(self.new_user_name))
+        logger.info("Confirming that the user wants to add {} to the database.".format(self.new_user_name))
         # Creates a popup to ask whether or not to retry the test
         self.popup = ttk.Toplevel()
         self.popup.title("New User Name") 
@@ -228,7 +226,6 @@ class ConfirmPopup():
         self.popup.destroy()
             
         # Adding a new user name to data_holder/DB 
-        logging.info("AddUserScene: Going to DataHolder to try to add {} as a username".format(self.new_user_name))
         self.data_holder.add_new_user_name(self.new_user_name, self.password)
         # Changes frame to scan_frame
         _parent.set_frame_login_frame()

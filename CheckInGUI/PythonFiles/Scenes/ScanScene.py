@@ -16,9 +16,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCAL_GUI')
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_VI.PythonFiles.Scenes.ScanScene')
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -48,6 +46,7 @@ class ScanScene(ttk.Frame):
         self.s = ttk.Style()
 
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
 
         self.s.theme_use('awdark')
@@ -68,14 +67,9 @@ class ScanScene(ttk.Frame):
 
         manager = mp.Manager()
         full_id = manager.list()
-        print(full_id)
-        print("AT START OF SCANNER SCENE PROXY LIST IS")
-        print(full_id)
 
         self.ent_full.config(state = 'normal')
 
-        logger.info("ScanScene: Beginning scan...")
-        print("ScanScene: Beginning scan...")
         self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
 
@@ -88,9 +82,7 @@ class ScanScene(ttk.Frame):
             except:
                 pass
             if not len(full_id) == 0:
-                print("I HAVE SUCCESSFULLY SCANNED A BARCODE")
                 label = parse_xml(full_id[0])
-                print(f"THE LABEL IS {label} ")
 
                 self.listener.terminate()
                 self.scanner.terminate()
@@ -102,16 +94,13 @@ class ScanScene(ttk.Frame):
                 break
 
             elif self.EXIT_CODE != 0:
-                print("EXITING WITH EXIT CODE")
-                logger.info("ScanScene: Exit code received. Terminating processes.")
+                logger.info("Exit code received on the Scan Scene. Terminating processes.")
                 self.listener.terminate()
                 self.scanner.terminate()
-                logger.info("ScanScene: Processes terminated successfully.")
+                logger.info("ScanScene processes terminated successfully.")
                 break
             else:
                 time.sleep(.01)
-                
-        logger.info("ScanScene: Scan complete.")
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
@@ -124,7 +113,6 @@ class ScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logging.info("ScanScene: Frame has been created.")
         # Create a photoimage object of the QR Code
         QR_image = Image.open("{}/Images/EngineExample.png".format(PythonFiles.__path__[0]))
         QR_PhotoImage = iTK.PhotoImage(QR_image)
@@ -338,28 +326,24 @@ class ScanScene(ttk.Frame):
 
         if in_id == None:
             self.label_major['text'] = 'Could not upload board'
-            self.label_sub['text'] = ''
+            self.label_sub['text'] = 'Have an expert check the logs'
             self.label_sn['text'] = ''
             self.label_sub.update()
             self.label_sn.update()
             self.label_major.update()
             self.btn_submit["state"] = "disabled"
-            return
-        self.data_holder.update_location(self.ent_full.get())
-        # FIXME REPLACE THIS WHEN DATABASE PERISSIONS ARE FIXED
-        #FIXME 
-        # FIXME
 
         if self.data_holder.data_dict['prev_results'] != '':
             _parent.set_frame_postscan()
             
         else:
-            if self.ent_full.get()[3] in ('W', 'Z'):
+            if self.ent_full.get()[3] in ('W', 'Z', 'S'):
                 _parent.set_frame_inspection_frame()
             elif self.ent_full.get()[3] == 'E':
                 _parent.set_frame_component_frame()
             else: 
-                print('Error: Please scan a Wagon or an Engine.')
+                # TODO make this a popup
+                logger.warning('Error: Please scan a Wagon, Zipper, Engine, or Flex Cable.')
 
 
         
@@ -374,7 +358,6 @@ class ScanScene(ttk.Frame):
     # Function for the log out button
     def btn_logout_action(self, _parent):
         
-        logging.debug("ScanScene: Closing the scanner from the logout button action.")
         self.EXIT_CODE = 1 
         self.listener.terminate()
         self.scanner.terminate()
@@ -387,7 +370,22 @@ class ScanScene(ttk.Frame):
 
     # Function to activate the submit button
     def show_submit_button(self):
-        self.data_holder.decode_label(self.ent_full.get())
+        barcode = self.ent_full.get()
+        self.data_holder.decode_label(barcode)
+        major = self.data_holder.label_info['Major Type']
+        sn = self.data_holder.label_info['SN']
+        if major:
+            if major == 'LD-Engine' or major == 'HD-Engine':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:8]))
+            elif major == 'HD-Wagon':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:9]))
+            elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
+            elif major == 'Zipper Board' or major == 'Scintillator Cables':
+                if barcode[3:9] == "ZPLMEZ":
+                    self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[1], barcode[3:9]))
+                else:
+                    self.manuf_selected.set("PCBWay-PCBWay")
 
         if self.manuf_selected.get() == 'None':
             self.label_major['text'] = 'Please select manufacturer to continue'
@@ -493,10 +491,10 @@ class ScanScene(ttk.Frame):
     #################################################
         
     def kill_processes(self):
-        logging.info("ScanScene: Terminating scanner proceses.")
+        logger.info("Terminating scanner proceses.")
         try:
             self.scanner.kill()
             self.listener.terminate()
             self.EXIT_CODE = 1
         except:
-            logging.info("ScanScene: Processes could not be terminated.")
+            logger.warning("Processes could not be terminated.")

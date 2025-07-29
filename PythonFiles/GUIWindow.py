@@ -15,6 +15,7 @@ from PythonFiles.GUIConfig import GUIConfig
 from PythonFiles.Scenes.SidebarScene import SidebarScene
 from PythonFiles.Scenes.LoginScene import LoginScene
 from PythonFiles.Scenes.ScanScene import ScanScene
+from PythonFiles.Scenes.ScanManyScene import ScanManyScene
 from PythonFiles.TestFailedPopup import TestFailedPopup
 from PythonFiles.Scenes.TestSummaryScene import TestSummaryScene
 from PythonFiles.Scenes.TestScene import *
@@ -32,6 +33,7 @@ from PythonFiles.Scenes.AdminScanScene import finished_Popup
 from PythonFiles.Scenes.ComponentScanScene import TesterComponentScene
 from PythonFiles.update_config import update_config
 import webbrowser
+import sys
 
 from PythonFiles.Scenes.ThermalTestConfigScene import ThermalTestConfigScene
 from PythonFiles.Scenes.ThermalTestSetupResultsScene import ThermalTestSetupResultsScene
@@ -42,12 +44,7 @@ from PythonFiles.Scenes.ThermalTestFinalResultsScene import ThermalTestFinalResu
 
 #################################################################################
 
-
-module_logger = logging.getLogger(__name__)
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename=guiLogPath, filemode = 'a', format=FORMAT, level=logging.DEBUG)
-module_logger.info("Test Logging from GUIWindow")
-    
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.GUIWindow')
 
 # Create a class for creating the basic GUI Window to be called by the main function to
 # instantiate the actual object
@@ -69,6 +66,8 @@ class GUIWindow():
         # Create the window named "self.master_window"
         self.master_window = tk.Tk()
         self.master_window.title("HGCAL Test Window")
+
+        self.master_window.report_callback_exception = self.log_callback_exception
 
         # Creates the size of the window
         width = self.master_window.winfo_screenwidth()
@@ -130,6 +129,9 @@ class GUIWindow():
         self.scan_frame = ScanScene(self, self.master_frame, self.data_holder)        
         self.scan_frame.grid(row=0, column=0, sticky = 'nsew')
 
+        self.scan_many_frame = ScanManyScene(self, self.master_frame, self.data_holder)        
+        self.scan_many_frame.grid(row=0, column=0, sticky = 'nsew')
+
         self.test_in_progress_frame = TestInProgressScene(self, self.master_frame, self.data_holder, queue, conn)
         self.test_in_progress_frame.grid(row=0, column=0, sticky = 'nsew')
 
@@ -169,7 +171,7 @@ class GUIWindow():
         #              End Frame Creation               #
         #################################################
         
-        logging.info("GUIWindow: All frames have been created.")
+        logger.info("All frames have been created.")
 
 
         # Tells the master window that its exit window button is being given a new function
@@ -186,6 +188,8 @@ class GUIWindow():
         
         self.master_window.mainloop()
        
+    def log_callback_exception(self, exc_type, exc_value, exc_traceback):
+        logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
 
     def create_style(self):
 
@@ -209,12 +213,6 @@ class GUIWindow():
 
         offset = 0
         
-        # For the physical tests
-        for test_idx,test in enumerate(physical_list):
-            self.test_frames.append(Inspection1(self, self.master_frame, self.data_holder, test_idx))
-            self.test_frames[test_idx].grid(row=0, column=0, sticky='nsew')
-            offset = offset + 1
-
         # For the digital tests
         for test_idx,test in enumerate(test_list):
 
@@ -232,19 +230,22 @@ class GUIWindow():
             return
         new_cfg = update_config(full)
         self.gui_cfg = new_cfg
-        logging.debug("Updated the GUI configuration.")
 
     #################################################
 
 
     def run_all_tests(self):
-        logging.info("Run all tests method has been selected.")
+
+        logger.info("Run all tests method has been selected.")
+
         self.running_all_idx = 0
         self.current_test_index = 0
         self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
+        cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
 
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #test_client = REQClient('test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'])
         self.set_frame_test_in_progress(self.queue)
 
@@ -255,35 +256,35 @@ class GUIWindow():
     #################################################
 
     def set_frame_add_user_frame(self):
+
+        logger.info("Setting frame to add_user_frame")
+
         self.add_user_frame.update_frame(self)
         self.set_frame(self.add_user_frame)
-        
-        logging.debug("GUIWindow: The frame has been set to add_user_frame.")
 
     #################################################
 
     def set_frame_admin_frame(self):
+        logger.info("Setting frame to admin_frame")
+
         self.admin_frame.update_frame(self)
         self.set_frame(self.admin_frame)
 
-        logging.debug("GUIWindow: The frame has been set to admin_frame.")
-
     def set_frame_admin_scan(self):
+        logger.info("Setting frame to admin_scan_frame")
+
         self.component_index = 0
-        print('Component Index: ' + str(self.component_index))
-        logging.info('Component Index: ' + str(self.component_index))
 
         self.admin_scan_frame.is_current_scene = True
         self.admin_scan_frame.update_frame(self, self.component_index)
         self.set_frame(self.admin_scan_frame)
         self.admin_scan_frame.scan_QR_code(self.master_window)
 
-        logging.debug("GUIWindow: The frame has been set to admin_scan_frame.")
+        logger.debug('Component Index: ' + str(self.component_index))
 
     def next_frame_admin_scan(self):
         self.component_index += 1
-        print('Component Index: ' + str(self.component_index))
-        logging.info('Component Index: ' + str(self.component_index))
+        logger.debug('Component Index: ' + str(self.component_index))
 
         if self.data_holder.tester_type == 'Wagon':
             if self.component_index < 3+int(self.data_holder.wagon_tester_info['num_wagon_wheels']):
@@ -294,8 +295,7 @@ class GUIWindow():
                 self.admin_scan_frame.scan_QR_code(self.master_window)
             else:
                 finished_Popup(self, self.data_holder)
-                print(self.data_holder.wagon_tester_info)
-                logging.info(self.data_holder.wagon_tester_info)
+                logger.debug(self.data_holder.wagon_tester_info)
 
                 self.data_holder.upload_test_stand_info()
                 self.set_frame_login_frame()
@@ -315,8 +315,7 @@ class GUIWindow():
                 self.admin_scan_frame.scan_QR_code(self.master_window)
             else:
                 finished_Popup(self, self.data_holder)
-                print(self.data_holder.engine_tester_info)
-                logging.info(self.data_holder.engine_tester_info)
+                logger.debug(self.data_holder.engine_tester_info)
 
                 self.data_holder.upload_test_stand_info()
                 self.set_frame_login_frame()
@@ -326,22 +325,22 @@ class GUIWindow():
 
     def set_frame_tester_component_frame(self):
 
+        logger.info("Setting frame to tester_component_frame")
+
         self.tester_component_frame.is_current_scene = True
         self.set_frame(self.tester_component_frame)
         self.tester_component_frame.scan_QR_code(self.master_window)
-
-        logging.debug("GUIWindow: The frame has been set to tester_component_frame.")
 
     #################################################
 
     def set_frame_login_frame(self):  
 
+        logger.info("The frame has been set to login_frame")
+
         self.sidebar.clean_up_btns()
         self.sidebar.update_sidebar(self)
         self.login_frame.update_frame(self)
         self.set_frame(self.login_frame)        
-
-        logging.debug("GUIWindow: The frame has been set to login_frame.")
 
     #################################################
 
@@ -349,34 +348,43 @@ class GUIWindow():
         print("\nTester_Type:", self.data_holder.tester_type)
         if (self.data_holder.tester_type == 'Thermal'):
             self.set_frame_thermal_config()
-            logging.debug("GUIWindow: set_frame_scan_frame has been bypassed, setting Thermal Config Frame")
+            logger.info("set_frame_scan_frame has been bypassed, setting Thermal Config Frame")
         else:
             self.scan_frame.is_current_scene = True
             self.set_frame(self.scan_frame)
             self.scan_frame.scan_QR_code(self.master_window)
             
-            logging.debug("GUIWindow: The frame has been set to scan_frame.")
+            logger.info("Setting frame to scan_frame")
 
+    #################################################
+
+    def set_frame_scan_many_frame(self):
+        
+        logger.info("Setting frame to scan_many_frame")
+
+        self.scan_many_frame.is_current_scene = True
+        self.set_frame(self.scan_many_frame)
+        self.scan_many_frame.scan_QR_code(self.master_window)
 
     #################################################
 
     def set_frame_splash_frame(self):
+
+        logger.info("Setting frame to splash_frame")
 
         self.set_frame(self.splash_frame)
 
         # Disables all buttons when the splash frame is the only frame
         self.sidebar.disable_all_btns()
 
-        logging.debug("GUIWindow: The frame has been set to splash_frame.")
-
     #################################################
 
     def set_frame_postscan(self):
 
+        logger.info("Setting frame to post_scan_frame")
+
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
-
-        logging.debug("GUIWindow: The frame has been set to post_scan_frame.")
 
     #################################################
 
@@ -395,25 +403,25 @@ class GUIWindow():
 
 
     def set_frame_test_summary(self):
-        self.test_summary_frame.update_frame()
-        self.check_if_test_passed()
-        self.set_frame(self.test_summary_frame)
         
+        logger.info("Setting frame to test_summary_frame")
 
-        logging.debug("GUIWindow: The frame has been set to test_summary_frame.")
+        self.test_summary_frame.update_frame()
+        self.set_frame(self.test_summary_frame)
 
     #################################################
 
     def set_frame_test(self, test_idx):
+
+        logger.info("Setting frame to test {}".format(test_idx))
+
         self.current_test_index = test_idx
         self.data_holder.setTestIdx(test_idx)
 
         selected_test_frame = self.test_frames[test_idx]
-        print("Setting frame to test {}".format(test_idx))
         
         self.set_frame(selected_test_frame)
 
-        logging.debug("GUIWindow: The frame has been set to test {}.".format(test_idx))
 
     #################################################    
     
@@ -430,59 +438,43 @@ class GUIWindow():
     # Navigation for the Thermal Testing GUI
 
     def set_frame_thermal_begin(self):
-        logging.debug("GUIWindow: TODO Trying to set thermal begin frame.")
-        # TODO Figure out if this needs a call to update_frame method
-        # self.thermal_begin_frame.update_frame(self)
+        logger.info("Setting frame to thermal_begin_frame")
         self.set_frame(self.thermal_begin_frame)
-        logging.debug("GUIWindow: TODO Completed the set thermal begin frame.")
 
     def set_frame_thermal_config(self):
-        logging.debug("GUIWindow: TODO Trying to set thermal config frame.")
-        # TODO Figure out if this needs a call to update_frame method
-        # self.thermal_config_frame.update_frame(self)
+        logger.info("Setting frame to thermal_config_frame")
         self.set_frame(self.thermal_config_frame)
-        logging.debug("GUIWindow: TODO Completed the set thermal config frame.")
 
     def set_frame_thermal_final_results(self):
-        logging.debug("GUIWindow: TODO Trying to set thermal final results frame.")
-        # TODO Figure out if this needs a call to update_frame method
-        # self.thermal_final_results_frame.update_frame(self)
+        logger.info("Setting frame to thermal_final_results_frame.")
         self.set_frame(self.thermal_final_results_frame)
         # self.thermal_final_results_frame.send_REQ(self.master_window, self.queue, self)
         self.thermal_final_results_frame.send_REQ(self)
-        logging.debug("GUIWindow: TODO Completed the set thermal begin frame.")
 
     def set_frame_thermal_test_in_progress(self):
-        logging.debug("GUIWindow: Trying to set thermal test in progress frame.")
+        logger.info("Setting frame to thermal_test_in_progress_frame.")
         self.thermal_in_progress_frame.update_frame(self)
         # self.thermal_in_progress_frame.begin_update(self.master_window, self.queue, self)
         self.set_frame(self.thermal_in_progress_frame)
 
-        logging.debug("GUIWindow: Completed the set thermal test in progress frame.")
-
     def set_frame_thermal_setup_results(self):
-        logging.debug("GUIWindow: TODO Trying to set thermal setup results frame.")
-        # TODO Figure out if this needs a call to update_frame method
+        logger.info("Setting frame to thermal_setup_results_frame.")
         self.thermal_setup_results_frame.update_frame(self)
         self.set_frame(self.thermal_setup_results_frame)
         self.thermal_setup_results_frame.begin_update(self.master_window, self.queue, self)
-        logging.debug("GUIWindow: TODO Completed the set thermal setup results frame.")
-
+        
     #################################################
 
     def set_frame_test_in_progress(self, queue):
+
+        logger.info("Setting frame to test_in_progress_frame")
+
         self.test_in_progress_frame.remove_stop_txt()
         self.set_frame(self.test_in_progress_frame)
         
-        logging.debug("GUIWindow: The frame has been set to test_in_progress_frame.")
         self.sidebar.disable_all_btns()
         passed = self.test_in_progress_frame.begin_update(self.master_window, queue, self)
         self.go_to_next_test()   
-
-    #################################################
-
-    def check_if_test_passed(self):
-        logging.debug("GUIWindow: The method check_if_test_passed(self) has been called. This method is empty.")
 
     #################################################
 
@@ -507,6 +499,8 @@ class GUIWindow():
         if not self.run_all_tests_bool:        
 
             if (self.current_test_index < total_num_tests):
+                cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
+                logger.debug('Current test is: %s' % cur_name)
                 self.set_frame_test(self.current_test_index)
                 self.current_test_index += 1
             else:
@@ -521,7 +515,12 @@ class GUIWindow():
                 self.data_holder.setTestIdx(self.running_all_idx)
                 
                 gui_cfg = self.data_holder.getGUIcfg()
-                test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+
+                cur_name = gui_cfg.getTests()[self.current_test_index]['name']
+                logger.debug('Current test is: %s' % cur_name)
+
+                test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+                #test_client = REQClient(gui_cfg, 'test{}'.format(self.running_all_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
                 self.set_frame_test_in_progress(self.queue)
             
 
@@ -544,8 +543,13 @@ class GUIWindow():
             bind_func = _frame.get_submit_action()
             _frame.bind_all("<Return>", lambda event: bind_func(_frame.get_parent()))
         except: 
-            print("no bind function")
-            logging.info("No bind function for " + str(_frame))
+            logger.warning("No bind function for " + str(_frame))
+
+        try:
+            bind_func_2 = _frame.run_all_action
+            _frame.bind_all("<Shift-Return>", lambda event: bind_func_2(_frame.get_parent()))
+        except Exception as e:
+            pass
  
 
         # Updates the sidebar every time the frame is set
@@ -604,7 +608,7 @@ class GUIWindow():
 
     def unable_to_exit(self):
         
-        logging.debug("GUIWindow: The user tried to exit during a test in progress.")
+        logger.warning("The user tried to exit during a test in progress.")
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
@@ -645,8 +649,8 @@ class GUIWindow():
     # Creates the popup window to show the text for current scene
     def help_popup(self, current_window):
         
-        logging.debug("GUIWindow: The user has requested a help window")
-        logging.debug("Opening a help menu for {}".format(type(current_window)))
+        logger.info("The user requested a help window")
+        logger.info("Opening help menu for {}".format(type(current_window)))
 
         # Creates a popup to confirm whether or not to exit out of the window
         self.popup = tk.Toplevel()
@@ -765,7 +769,7 @@ class GUIWindow():
     
     # Called when a test is skipped because it has been previously passed
     def completed_window_popup(self):
-        
+
         self.completed_window_alive = True
        
         # Creates a popup to inform user about the passing of a test
@@ -843,9 +847,8 @@ class GUIWindow():
         try:
             self.popup.destroy()
             self.completed_window_alive = False
-            logging.debug("GUIWindow: The popup has been destroyed.")
         except:
-            logging.error("GUIWindow: The popup has not been destroyed.")
+            logger.error("The popup was unable to be destroyed.")
     
 
     # New function for clicking on the exit button
@@ -909,7 +912,7 @@ class GUIWindow():
     # Called when the yes button is pressed to destroy both windows
     def destroy_function(self):
         try:
-            logging.info("GUIWindow: Exiting the GUI.")
+            logger.info("Exiting the GUI.")
 
             self.master_window.update()
             self.popup.update()
@@ -926,13 +929,12 @@ class GUIWindow():
             self.master_window.destroy()
             self.master_window.quit()
 
-            logging.info("GUIWindow: The application has exited successfully.")
+            logger.info("The application has exited successfully.")
         except Exception as e:
-            print(e)
-            logging.debug("GUIWindow: " + repr(e))
-            logging.error("GUIWindow: The application has failed to close.")
+            logger.exception(e)
+            logger.error("The application has failed to close.")
             if self.retry_attempt == False:    
-                logging.info("GUIWindow: Retrying...")
+                logger.info("Retrying...")
                 self.retry_attempt = True
 
 

@@ -14,12 +14,7 @@ import datetime
 
 #################################################################################
 
-logging.getLogger('PIL').setLevel(logging.WARNING)
-
-
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.PostScanScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.PostScanScene')
 
 # Frame that shows up after board has been entered with info about the board
 # @param parent -> References a GUIWindow object
@@ -43,8 +38,6 @@ class PostScanScene(ttk.Frame):
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
 
-        logger.info("PostScanScene: Frame has been created.")
-
         self.parent = parent
        
         self.create_frame(parent)        
@@ -63,14 +56,11 @@ class PostScanScene(ttk.Frame):
     def create_frame(self, parent):
         self.create_style(parent)
 
-        logger.debug("PostScanScene: Destroying old widgets on the SummaryScene.")
-        print("PostScanScene: Destroying old widgets on the SummaryScene.")
-        
         try:
             for widget in self.winfo_children():
                 widget.destroy()
         except:
-            logger.warning("PostScanScene:Widgets could not be found and/or destroyed (making room for new widgets.")
+            logger.warning("PostScanScene: Widgets could not be found and/or destroyed (making room for new widgets.")
         else:
             logger.info("PostScanScene: Widgets destroyed successfully (making room for new widgets).")
         
@@ -172,7 +162,7 @@ class PostScanScene(ttk.Frame):
                     self.lbl_res.grid(row=2, column=1)
 
             except Exception as e:
-                print(e)
+                logging.exception(e)
                 self.lbl_full = ttk.Label(
                         self, 
                         text = 'Error, No Results',
@@ -230,8 +220,7 @@ class PostScanScene(ttk.Frame):
     #################################################
 
     def btn_proceed_action(self, _parent):
-        #_parent.scan_frame_progress()
-        _parent.set_frame_camera_frame(0)
+        _parent.first_frame_camera_frame()
 
     def btn_NextBoard_action(self, parent):
         parent.set_frame_scan_frame()

@@ -4,8 +4,7 @@ import requests
 from PythonFiles.Data.DBSender import DBSender
 from PythonFiles.update_config import update_config
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/visual_gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Data.DataHolder')
 
 class DataHolder():
 
@@ -72,24 +71,17 @@ class DataHolder():
 
     # checks if the board is in the database already
     def check_if_new_board(self):
-        logging.info("DataHolder: Checking if board is a new board")
+        logger.info("Checking if full id is a new board...")
 
         full = self.get_full_ID()
-        user = self.data_dict['user_ID']
-        comments = 'Checked in during Visual Inspection'
         is_new_board = self.data_sender.is_new_board(full)
 
-        # if it's new, checks it in
         if is_new_board == True:
-            print('DataHolder: Board not found, checking it in.')
-            in_id = self.data_sender.add_new_board(full, user, comments)
-            if in_id:
-                print('DataHolder: Board added to Database.')
-                self.data_dict['test_names'] = None
-                self.data_dict['prev_results'] = 'This is a new board, it has been checked in. Check In ID:' + in_id
+            logger.info('Board is new, sending user to visual inspection station.')
 
         # otherwise it looks for previous test results
         else:
+            logger.info("Board has been checked in, getting previous results")
             prev_results, test_names = self.data_sender.get_previous_test_results(full)
             if prev_results:
                 self.data_dict['test_names'] = test_names
@@ -108,7 +100,7 @@ class DataHolder():
     def set_user_ID(self, user_ID):
 
         self.data_dict['user_ID'] = user_ID
-        logging.debug("DataHolder: User ID has been set.")
+        logger.info("User ID set to %s" % user_ID)
 
     ##################################################
 
@@ -125,7 +117,7 @@ class DataHolder():
         except ValueError:
             self.num_modules = 0
 
-        logging.info("DataHolder: Full ID has been set.")
+        logger.info("Full ID set to %s" % full)
 
     def save_image(self):
         for i in self.image_holder:
@@ -141,17 +133,14 @@ class DataHolder():
                 view = 'Top'
             else:
                 view = 'Bottom'
+            logger.info('Uploading %s image...' % view)
             self.data_sender.add_board_image(self.data_dict["current_full_ID"], self.image_holder[i], view)
 
-
-    # sets the boards location in the database to the current test stand
-    def update_location(self, full):
-        text = self.data_sender.update_location(full, 'Visual Inspection')
-        print('text')
 
     def upload_local_boards(self, board_list):
         for path, sn, view in board_list:
             self.data_sender.upload_local_board(path, sn, view)
+        logger.info('Locally saved images uploaded sucessfully')
 
     ##################################################
 
@@ -174,11 +163,10 @@ class DataHolder():
                 temp = 1
             info_dict = {"full_id":full_id,"tester": person_ID, "test_type": self.tests_run[i], "successful": temp, "comments": comments}
             with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-                print(info_dict)
                 json.dump(info_dict, outfile)
             self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]))
             #message = "add_test_json;{'json_file': {}/JSONFiles/storage.json, ''}"
-        logging.info("DataHolder: All results sent to database.")
+        logger.info("All results sent to database.")
     #################################################
 
     # current method to send to the database
@@ -189,30 +177,19 @@ class DataHolder():
         info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_type_id, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
 
         with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
-            print(info_dict)
             json.dump(info_dict, outfile)
 
         with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:
             json.dump(self.inspection_data, outfile)
 
         self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]))
-
-        #self.dbclient.send_request(message)
-        logging.info("DataHolder: Test results sent to database.")
+        logger.info("Test results sent to database.")
 
     #################################################
 
     def get_all_users(self):
         users_list = self.data_sender.get_usernames()
         return users_list
-
-    #################################################
-
-    # Prints all the variable values inside data_holder
-    def print(self):
-        print("data_dict: \n", self.data_dict, "\nimage_data:\n", self.image_data, '\n\n')
-
-
 
     #################################################
 
@@ -230,7 +207,7 @@ class DataHolder():
 
         self.send_to_DB()
 
-        logging.info("DataHolder: Test results have been saved")
+        logger.info("Test results have been saved")
 
     ################################################
 
@@ -293,7 +270,7 @@ class DataHolder():
 
         self.image_holder = {}
 
-        logging.info("DataHolder: DataHolder Information has been reset for a new test.")
+        logger.info("DataHolder Information has been reset for a new test.")
 
         self.gui_cfg.setTestIndex(1)
 

@@ -10,9 +10,7 @@ from PIL import Image, ImageTk
 
 #################################################################################
 
-FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
-
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.LoginScene')
 
 # Creates a class that is called by the GUIWindow. 
 # GUIWindow instantiates an object called login_frame.
@@ -36,6 +34,7 @@ class LoginScene(ttk.Frame):
         self.s = ttk.Style()
         
         self.s.tk.call('lappend', 'auto_path', '{}/../awthemes-10.4.0'.format(_parent.main_path))
+        self.s.tk.call('lappend', 'auto_path', '{}/awthemes-10.4.0'.format(_parent.main_path))
         self.s.tk.call('package', 'require', 'awdark')
        
         self.s.theme_use('awdark')
@@ -48,14 +47,10 @@ class LoginScene(ttk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        logging.info("LoginScene: Frame has been created.")
-
         img = ImageTk.PhotoImage(Image.open("{}/PythonFiles/Images/UMNLOGO.png".format(parent.main_path)))
         bg_label = ttk.Label(self, image = img) 
         bg_label.place(x=275, y=250, relwidth=1, relheight=1)
         bg_label.image = img
-
-        # TODO retire this scene and automatically log in based on the user signed in
 
         # Creating a list of users for dropdown menu
         User_List = self.data_holder.get_all_users()
@@ -171,7 +166,6 @@ class LoginScene(ttk.Frame):
 
     # A function to pack the submit button
     def show_submit_button(self):
-        logging.info("LoginScene: User has been selected.")
         self.btn_submit.config(state = 'active')
     
     #################################################

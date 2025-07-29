@@ -18,9 +18,7 @@ import os
 
 #################################################################################
 
-logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.LocalUploadScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
+logger = logging.getLogger('HGCAL_Photo.PythonFiles.Scenes.LocalUploadScene')
 
 
 # creating the Scan Frame's class (called ScanScene) to be instantiated in the GUIWindow
@@ -79,9 +77,8 @@ class LocalUploadScene(ttk.Frame):
 
     # Creates the GUI itself
     def initialize_GUI(self, parent, master_frame):
-
-        logger.info("ScanScene: Frame has been created.")
         
+        # reskinned frame from the shipping GUI
         Scan_Board_Prompt_Frame = ttk.Frame(self, width = 1105, height = 650)
         Scan_Board_Prompt_Frame.grid(column=0, row = 0, sticky='nsew')
 
@@ -95,7 +92,7 @@ class LocalUploadScene(ttk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
 
-        # creates a Frame for the Treeveiw
+        # creates a Frame for the Treeview
         self.boards_scanned_frame = ttk.Frame(Scan_Board_Prompt_Frame, borderwidth=2, relief="sunken")
         self.boards_scanned_frame.grid(column=0, row=1, rowspan = 10, sticky='nsew', padx = 20, pady = 20)
 
@@ -186,8 +183,7 @@ class LocalUploadScene(ttk.Frame):
 
     def btn_save_to_db_action(self, _parent):
         self.data_holder.add_local_boards_to_db(self.local_boards.list)
-        print("Locally saved images uploaded to database.")
-        logger.info("Locally saved images uploaded to database.")
+        logger.info("Adding locally saved images uploaded to database.")
 
     #################################################
 
@@ -205,7 +201,7 @@ class LocalUploadScene(ttk.Frame):
             self.local_boards_list.remove([self.dirpath + "/" + select[1] + "_" + select[2] + ".png", select[1], select[2]])
             self.update_board_tree()
             os.remove(self.dirpath + "/" + select[1] + "_" + select[2] + ".png")
-            logger.info("LocalUploadScene: Board deleted.")
+            logger.info("LocalUploadScene: %s_%s.png deleted." % (select[1], select[2]))
 
     #################################################
     
@@ -225,14 +221,3 @@ class LocalUploadScene(ttk.Frame):
         self.EXIT_CODE = 0
 
     #################################################
-        
-    def kill_processes(self):
-        logger.info("ScanScene: Terminating scanner proceses.")
-        try:
-            if self.use_scanner:
-                print("kill proc")
-                self.scanner.kill()
-                self.listener.terminate()
-            self.EXIT_CODE = 1
-        except:
-            logger.info("ScanScene: Processes could not be terminated.")

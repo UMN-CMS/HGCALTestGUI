@@ -6,7 +6,6 @@ import tkinter.ttk as ttk
 from tkinter import messagebox
 import tkinter.font as font
 import logging
-logging.getLogger('PIL').setLevel(logging.WARNING)
 import PythonFiles
 import os
 
@@ -49,7 +48,6 @@ class TestScene(ttk.Frame):
         self.s.theme_use('awdark')
 
     def update_frame(self, parent):
-        logger.debug("ParentTestClass: A test frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
         
@@ -214,9 +212,11 @@ class TestScene(ttk.Frame):
     # Confirm button action takes the user to the test in progress scene
     def btn_confirm_action(self, _parent):
         self.gui_cfg = self.data_holder.getGUIcfg()
+        cur_name = self.gui_cfg.getTests()[self.test_idx]['name']
       
         #try:
-        test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
+        #test_client = REQClient(self.gui_cfg, 'test{}'.format(self.test_idx), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
 
@@ -232,7 +232,7 @@ class TestScene(ttk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the TestScene.")
+        logger.info("Successfully logged out from the TestScene.")
         _parent.set_frame_login_frame()
 
     #################################################

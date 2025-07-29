@@ -18,8 +18,6 @@ from tkinter import messagebox
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scenes.SidebarScene')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), filemode = 'a', format=FORMAT, level=logging.DEBUG)
 
 class SidebarScene(ttk.Frame):
 
@@ -103,7 +101,7 @@ class SidebarScene(ttk.Frame):
 
     def update_sidebar(self, _parent):
        
-        logger.info("SidebarScene: The sidebar has been updated.")
+        logger.info("The sidebar has been updated.")
 
         # Variables for easy button editing
         btn_height = 3
@@ -299,23 +297,26 @@ class SidebarScene(ttk.Frame):
     def restart_server(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
         r = requests.get('http://{}:8899/stop/server'.format(handler['remoteip']))
-        print(r.text)
+        logger.info('Stopping server')
+        logger.debug(r.text)
         time.sleep(1)
         r = requests.get('http://{}:8899/start/server'.format(handler['remoteip']))
-        print(r.text)
+        logger.info('Starting server')
+        logger.debug(r.text)
 
     def reload_firmware(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
         r = requests.get('http://{}:8899/start/reloadfw'.format(handler['remoteip']))
-        print(r.text)
+        logger.info('Reloading firmware')
+        logger.debug(r.text)
 
     def reset_power(self, _parent):
         handler = _parent.gui_cfg.getTestHandler()
         r = requests.get('http://{}:8899/start/cycle_kconn_pwr'.format(handler['remoteip']))
-        print(r.text)
+        logger.info('Resetting power')
+        logger.debug(r.text)
 
     def btn_test_action(self, _parent, test_idx):
-        print("\nSideBarScene.btn_test_action.test_idx: ", test_idx)
         _parent.set_frame_test(test_idx)
 
 

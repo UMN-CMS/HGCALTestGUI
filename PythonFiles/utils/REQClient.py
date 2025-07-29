@@ -21,13 +21,6 @@ from PythonFiles.utils.LocalHandler import LocalHandler
 #################################################################################
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.REQClient')
-#FORMAT = '%(asctime)s|%(levelname)s|%(message)s|'
-#logging.basicConfig(
-#    filename="/home/{}/GUILogs/gui.log".format(os.getlogin()), 
-#    filemode = 'a', 
-#    format=FORMAT, 
-#    level=logging.INFO
-#    )
 
 # Making the Client Server a class
 class REQClient():
@@ -93,11 +86,10 @@ class REQClient():
             socket = context.socket(zmq.REQ)
             socket.connect("tcp://{ip_address}:5555".format(ip_address = remote_ip))
         except:
-            print("No remote_ip specified, please modify config")
+            logger.error("No remote_ip specified, please modify config")
 
-        debug_msg = "REQClient: Sending request to REPServer for: " + self.desired_test
-        print(debug_msg)
-        logger.debug(debug_msg)
+        debug_msg = "Sending request to REPServer for: " + self.desired_test
+        logger.info(debug_msg)
         
         # Tell the server what test to run
         socket.send_string(sending_msg)
@@ -111,7 +103,7 @@ class REQClient():
         #    raise IOError("Timeout processing the REQClient request from socket")
             
 
-        logger.debug("REQClient: Request sent. Waiting for confirmation receipt...")
+        logger.info("Request sent. Waiting for confirmation receipt...")
         # Get the reply
     
         # Recording the number of tries to open the socket and receive a string
@@ -134,46 +126,42 @@ class REQClient():
                 if(socket.poll(REQUEST_TIMEOUT) &  zmq.POLLIN) != 0:
                     self.message = socket.recv_string()
                     retries_left = REQUEST_RETRIES
-                    print("REQClient: Request received.")
-                    logger.info("REQClient: Request received.")
+                    logger.info("Request received.")
                     break
 
                 retries_left -= 1
-                logger.warning("REQClient: No response from server")
-                print("\n\nREQCLIENT WARNING: NO RESPONSE FROM THE SERVER\n\n")
+                logger.warning("No response from server")
                 socket.setsockopt(zmq.LINGER, 0)
                 socket.close()
                 
                 # Out of retries
                 if retries_left == 0:
-                    logger.error("REQClient: Server seems to be offline, abandoning...")
-                    print("REQClient: Server seems to be offline, abandoning...")
+                    logger.error("Server seems to be offline, abandoning...")
                     break
                 
-                logger.info("REQClient: Attempts remaining...Reconnecting to the server...")
+                logger.info("Attempts remaining... Reconnecting to the server...")
 
                 socket = context.socket(zmq.REQ)
                 
                 socket.connect("tcp://{ip_address}:5555".format(ip_address = grabbed_ip))
         
-                logger.info("REQClient: Resending...")
+                logger.info("Resending...")
 
                 socket.send_string(sending_msg)
                 
 
             except:
-                print("REQClient: couldn't get info - {}".format(tries))
-                logger.debug("REQClient: No Message received from the request.")
+                logger.info("couldn't get info - {}".format(tries))
                 tries = tries + 1 
             #messagebox.showerror("No Message Received", "REQClient: No message received from the request.")
 
 
         # Closes the client so the code in the GUI can continue once the request is sent.
         try:
-            logger.debug("REQClient: Trying to close the socket")
+            logger.info("Trying to close the socket")
             socket.close()
         except:
-            logger.debug("REQClient: Unable to close the socket")
+            logger.info("Unable to close the socket")
 
     #################################################
 

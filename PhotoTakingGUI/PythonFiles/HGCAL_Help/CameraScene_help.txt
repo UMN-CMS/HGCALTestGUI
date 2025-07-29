@@ -13,7 +13,7 @@
 ----------------------------------------------------------------------------------------
 
 	
-	The Camera Scene is a scene unique to the Visual Inspection GUI. It is
+	The Camera Scene is a scene unique to the Photo Taking GUI. It is
 	responsible for showing the preview screen of the camera attached to
 	the system. The preview takes up a majority of the screen.
 

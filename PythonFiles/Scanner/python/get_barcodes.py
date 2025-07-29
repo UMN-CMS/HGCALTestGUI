@@ -5,6 +5,9 @@ import ctypes
 from pathlib import Path
 #import PythonFiles
 libc = ctypes.CDLL("libc.so.6")
+import logging
+
+logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scanner.python.get_barcodes')
 
 from multiprocessing import Process, Manager, Pipe
 
@@ -29,7 +32,7 @@ def set_pdeathsig(sig = signal.SIGTERM):
 
 def scan():
     proc = subprocess.Popen(Path(__file__).parent.parent / 'bin/runScanner', stdout=subprocess.PIPE, preexec_fn=set_pdeathsig(signal.SIGTERM))
-    print("Starting scanner")
+    logger.info('Starting scanner')
     return proc
     #for line in proc.stdout:
     #    if line is not None:
@@ -61,7 +64,7 @@ def run_scanner():
 
     listener.join()
 
-    print(parse_xml(serial[0]))
+    logger.info('Scanner: %s' % parse_xml(serial[0]))
 
 if __name__=="__main__":
     run_scanner()

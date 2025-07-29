@@ -1,4 +1,6 @@
+import logging
 
+logger = logging.getLogger('HGCAL_Photo')
 # Class to handle creation of different types of GUIs based on which board we want to test
 # This class will hold all of the frame information and order them accordingly
 
@@ -22,7 +24,7 @@ class GUIConfig():
 
         # Possibly do something special here if need be
 
-        print("Instance of {} GUI created.".format(self.getGUIType()))
+        logger.info("Instance of {} GUI created.".format(self.getGUIType()))
 
     # Get number of tests to define order of scenes and sidebar
     def getNumTest(self):
@@ -40,7 +42,6 @@ class GUIConfig():
             return self.board_cfg["DBInfo"][key]
 
     def getGUIType(self):
-        print(self.board_cfg)
         return self.board_cfg["GUIType"]
 
     def setTestIndex(self, idx):
