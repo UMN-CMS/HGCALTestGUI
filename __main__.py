@@ -9,9 +9,6 @@ from pathlib import Path
 from PythonFiles.utils.helper import get_logging_path
 
 guiLogPath = "{}".format(get_logging_path())
-# TODO REMOVE HARD CODE
-#guiLogPath = "C:/Users/Garrett/Documents/Bethel/CMS_Internship/2025_Code/HGCALTestGUI/GUILogs/GUILogsgui.log"
-
 guiLogDir = "/".join(guiLogPath.split("/")[:-1])
 
 if not os.path.exists(guiLogDir):
