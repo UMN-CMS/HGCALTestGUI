@@ -152,13 +152,9 @@ def run(board_cfg, curpath, host_cfg):
         process_Handler.start()
     process_SUBClient.start()
 
-    # Try catch for graceful closing
-    try: 
-        # holds the code at this line until the GUI process ends
-        process_GUI.join()
-    except KeyboardInterrupt:
-        print("KeyboardInterupt detected in __main__.py. Terminating process...")
-
+    # holds the code at this line until the GUI process ends
+    process_GUI.join()
+    
     try:
         #closes multiprocessing connections
         conn_SUB.close()
