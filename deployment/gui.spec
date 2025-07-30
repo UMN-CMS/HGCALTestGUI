@@ -37,6 +37,7 @@ cp Configs/HD_Engine_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/HD_Wagon_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/LD_Wagon_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp Configs/Zipper_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
+cp Configs/Thermal_Cy_cfg.yaml $RPM_BUILD_ROOT/%{_sysconfdir}/HGCALTestGUI/
 cp hgcal_test_gui $RPM_BUILD_ROOT/%{_bindir}
 cp hgcal_test_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
 cp application_icon.png $RPM_BUILD_ROOT/%{_datadir}/HGCALTestGUI
