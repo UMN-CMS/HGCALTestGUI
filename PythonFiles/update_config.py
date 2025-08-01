@@ -26,6 +26,8 @@ def update_config(full_id):
         cfg_type =  "LD_Engine"
     elif full_id[3:5] == 'EH':
         cfg_type =  "HD_Engine"
+    elif full_id[3:5] == 'SC':
+        cfg_type = "Flex"
     else:
         cfg_type =  "LD_Wagon"
     board_cfg = loadConfig(cfg_type)
