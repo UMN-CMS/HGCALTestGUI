@@ -29,6 +29,7 @@ class DataHolder():
 
         if use_db:
             self.test_list = self.data_sender.get_test_list()
+
             gui_tests = self.gui_cfg.getTests()
             db_test_names = dict(self.test_list)
             self.index_gui_to_db = {}
@@ -318,7 +319,6 @@ class DataHolder():
         temp = 0
         if self.data_lists['test_results'][index]:
             temp = 1 
-
 
         if self.config_id:
             info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
