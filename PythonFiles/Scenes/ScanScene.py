@@ -340,7 +340,7 @@ class ScanScene(ttk.Frame):
             self.label_sub.update()
             self.label_sn.update()
             major = self.data_holder.label_info['Major Type']
-            if major == 'LD-Engine' or major == 'HD-Engine' or major == 'LD-Wagon-West' or major == 'LD-Wagon-East' or major == 'HD-Wagon' or major == "Zipper Board":
+            if major in ('LD-Engine', 'HD-Engine', 'LD-Wagon-West', 'LD-Wagon-East', 'HD-Wagon', "Zipper Board", "Scintillator Cables"):
                 self.btn_submit["state"] = "active"
         except TypeError:
             self.label_major['text'] = ''
