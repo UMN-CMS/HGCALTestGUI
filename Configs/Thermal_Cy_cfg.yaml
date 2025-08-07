@@ -53,11 +53,11 @@ TestHandler: {
 
 # TODO To be updated with new DB info
 DBInfo: 
-  use_database: false
+  use_database: true
   name: WagonDB
   reader: WagonDBReadUser
   inserter: WagonDBInserter
-  baseURL: "http://cmslab3.spa.umn.edu/~cros0400/cgi-bin/WagonDB"
+  baseURL: "http://cmslab1.spa.umn.edu/Factory/EngineDB"
 
 People:
   - Garrett
