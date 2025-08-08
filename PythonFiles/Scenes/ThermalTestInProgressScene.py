@@ -84,15 +84,8 @@ class ThermalTestInProgressScene(ttk.Frame):
 
         # Create console display inside the window
         self.create_console_window(frm_window)
-        print("ThermalTestInProgressScene: Console created.")
-        logger.info("ThermalTestInProgressScene: Successfully created console for output on GUI.")
+        logger.info("Successfully created console for output on GUI.")
         
-
-        # Example print statements (These will appear in the Tkinter window)
-        print("Initializing system...")
-        print("Loading data...")
-        print("Process completed successfully!")
-
 
         # Create a label for bottom text
         lbl_wait_text = ttk.Label(
@@ -185,14 +178,8 @@ class ThermalTestInProgressScene(ttk.Frame):
 
         console_frame.pack()
 
-
         # Redirect sys.stdout to the Text widget
-        print("ThermalTestInProgressScene: Sending console text to ThermalTestInProgressScene")
         # sys.stdout = ConsoleRedirector(self.console_text)
-        print("ThermalTestInProgressScene: Sent console text to ThermalTestInProgressScene")
-        
-            
-
 
 
     # Timer functionality
@@ -255,7 +242,7 @@ class ThermalTestInProgressScene(ttk.Frame):
             logger.info("User stopped thermal testing early!")
             self.cancel_timer()
 
-            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            logger.info("Sending request to stop thermal testing early...")
             sending_REQ = ThermalREQClient(
                 self.gui_cfg,
                 'killCycle',
@@ -264,11 +251,7 @@ class ThermalTestInProgressScene(ttk.Frame):
                 self.data_holder.data_dict['user_ID'],
                 self.conn_trigger
                 )
-            print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
             
-            
-
-            logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             _parent.set_frame_thermal_final_results()
 
         pass 
@@ -293,10 +276,8 @@ class ThermalTestInProgressScene(ttk.Frame):
 
         if response:
             self.cancel_timer()
-            logger.info("TestScene: Succesfully logged out from the ThermalTestScene")
             # sys.stdout = self.original_stdout
             
-            #print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
             #sending_REQ = ThermalREQClient(
             #    self.gui_cfg,
             #    'analyzeCycle', 
@@ -305,7 +286,6 @@ class ThermalTestInProgressScene(ttk.Frame):
             #    self.data_holder.data_dict['user_ID'],
             #    self.conn_trigger
             #    )
-            #print("ThermalTestIbProgressScene: Completed REQ to ThermalREQClient...")
             _parent.set_frame_thermal_final_results() 
         
 

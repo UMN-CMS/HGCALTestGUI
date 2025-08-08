@@ -36,7 +36,7 @@ class ThermalREQClient():
     # Ensures nothing happens on instantiantion
     def __init__(self, gui_cfg, desired_test, thermal_dict, full_id, tester, conn_trigger):
         
-        print("ThermalREQClient: Initializing...")
+        logger.info("Initializing ThermalREQClient...")
         
         with open("{}/utils/server_ip.txt".format(PythonFiles.__path__[0]),"r") as openfile:
             grabbed_ip = openfile.read()[:-1]
@@ -85,7 +85,6 @@ class ThermalREQClient():
         sending_msg = (desired_test, thermal_dict, tester)
         # sending_msg = f"{desired_test};{thermal_dict};{tester}"
 
-        print("\nsending_msg:", sending_msg, "\n")
         # Establishing variable for use
         self.desired_test = desired_test
         # Necessary for zmqClient    
@@ -95,15 +94,13 @@ class ThermalREQClient():
             remote_ip = gui_cfg.getTestHandler()["remoteip"]
 
             # Creates a socket to talk to the server
-            print("ThermalREQClient: Connecting to the thermal testing server...")
             socket = context.socket(zmq.REQ)
             socket.connect("tcp://{ip_address}:8898".format(ip_address = remote_ip))
         except:
-            print("No remote_ip specified, please modify config")
+            logger.error("No remote_ip specified, please modify config")
 
-        debug_msg = "ThermalREQClient: Sending request to REPServer for: " +str(self.desired_test)
-        print(debug_msg)
-        logger.debug(debug_msg)
+        debug_msg = "Sending request to REPServer for: " +str(self.desired_test)
+        logger.info(debug_msg)
         
         # Tell the server what test to run
         socket.send_json(sending_msg)
@@ -117,7 +114,7 @@ class ThermalREQClient():
         #    raise IOError("Timeout processing the REQClient request from socket")
             
 
-        logger.debug("ThermalREQClient: Request sent. Waiting for confirmation receipt...")
+        logger.info("Request sent. Waiting for confirmation receipt...")
         # Get the reply
     
         # Recording the number of tries to open the socket and receive a string
@@ -140,20 +137,17 @@ class ThermalREQClient():
                 if(socket.poll(REQUEST_TIMEOUT) &  zmq.POLLIN) != 0:
                     self.message = socket.recv_string()
                     retries_left = REQUEST_RETRIES
-                    print("ThermalREQClient: Request received.")
-                    logger.info("ThermalREQClient: Request received.")
+                    logger.info("Request received.")
                     break
 
                 retries_left -= 1
-                logger.warning("ThermalREQClient: No response from server")
-                print("\n\nTHERMALREQCLIENT WARNING: NO RESPONSE FROM THE SERVER\n\n")
+                logger.warning("No response from server")
                 socket.setsockopt(zmq.LINGER, 0)
                 socket.close()
                 
                 # Out of retries
                 if retries_left == 0:
-                    logger.error("ThermalREQClient: Server seems to be offline, abandoning...")
-                    print("ThermalREQClient: Server seems to be offline, abandoning...")
+                    logger.error("Server seems to be offline, abandoning...")
                     break
                 
                 logger.info("ThermalREQClient: Attempts remaining...Reconnecting to the server...")
@@ -169,18 +163,17 @@ class ThermalREQClient():
                 
 
             except:
-                print("REQClient: couldn't get info - {}".format(tries))
-                logger.debug("REQClient: No Message received from the request.")
+                logger.debug("No Message received from the request.")
                 tries = tries + 1 
             #messagebox.showerror("No Message Received", "REQClient: No message received from the request.")
 
 
         # Closes the client so the code in the GUI can continue once the request is sent.
         try:
-            logger.debug("REQClient: Trying to close the socket")
+            logger.debug("Trying to close the socket")
             socket.close()
         except:
-            logger.debug("REQClient: Unable to close the socket")
+            logger.debug("Unable to close the socket")
 
     #################################################
 

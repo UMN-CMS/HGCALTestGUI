@@ -253,11 +253,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             command = lambda: self.btn_proceed_action(parent))
         btn_proceed.pack(anchor = 'center', pady = 5)
 
-
-
-
-
-
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
         frm_logout.grid(column = 2, row = 2, padx = 10, pady=10, sticky = 'se')
@@ -270,11 +265,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'center', pady = 5)
-
-    
-
-        #if (self.test_idx == 0):
-
 
         # Creating the help button
         btn_help = ttk.Button(
@@ -312,11 +302,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
             label = self.checkbox_labels[index]
             label.config(text=STATES[state][0], foreground=STATES[state][1])
 
-        print("ThermalTestSetupResultsScene: completed set_checkbox_states:", self.checkbox_states)
-
-
     def get_setup_check_results(self):
-        # print("checkbox_states", self.checkbox_states)    #for debugging
         # TODO return to the dataholder for storage
         return self.checkbox_states    
     
@@ -324,14 +310,11 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.get_adj_checkbox_action(idx)
 
     def get_adj_checkbox_action(self, idx):
-        # print("adj_:", self.adjustment_var)
         simple_adj = []
 
         for adj_val in self.adjustment_var:
             val = adj_val.get()
             simple_adj.append(val)
-
-        # print("simple_adj:", simple_adj)
 
         # TODO Return to the dataholder
         return simple_adj
@@ -359,7 +342,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         bool_checkbox_values = []
         for chk_var in self.adjustment_var:
             value = chk_var.get() 
-            # print(f"Value: {value} (Type: {type(value)})")  # Debugging output
             bool_checkbox_values.append(value)  # Ensure proper boolean conversion
         
         sending_REQ = ThermalREQClient(
@@ -382,7 +364,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         for i in range(20):
             if self.adjustment_var[i].get():
                 state = 'excluded'
-                print(f"Updating {self.naming_scheme[i]} to state '{state}'")
+                logger.debug(f"Updating {self.naming_scheme[i]} to state '{state}'")
 
                 self.checkbox_states[i] = state
                 self.checkbox_labels[i].config(
@@ -407,7 +389,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the TestScene.")
         result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
         if result:
             self.is_initial_check = True
@@ -454,7 +435,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                     state = 'failed3'
                 else:    
                     state = state_list[i][0]
-                print(f'Updating channel {self.naming_scheme[i]} to state: {state}')
+                logger.debug(f'Updating channel {self.naming_scheme[i]} to state: {state}')
                 self.checkbox_states[i] = state
                 self.checkbox_labels[i].config(
                         text=STATES[state][0],
@@ -470,8 +451,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 self.failures[i] = state_list[i][1]
 
     def begin_update(self, master_window, queue, parent):
-        print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
-
         #Create loading popup while waiting for json to be sent from server
         self.loading_popup = tk.Toplevel(self)
         self.loading_popup.title("Loading...")
@@ -492,26 +471,16 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         json_received = None
         while not received_data:
             if not queue.empty():
-                print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
-                print(f"ThermalTestSetupResultsScene: signal = {signal}")
                 
                 if "Results received successfully." in signal:
                     message = "FOO"
                     message =  self.conn_trigger.recv()
-                    print("\nMessage from conn_trigger:", message) 
                     logger.info("ThermalTestSetupResultsScene: JSON Received.")
                     logger.info(message)
                     if 'completed' not in message:
                         json_received = message
                         received_data = True
-                # else:
-                #     topic, message = signal.split(" ; ")
-                #     print("signal:", signal, "\ntopic:", topic, "message", message)
-                #     if (topic == "print"):
-                #         print(message) 
-                #     if (topic == "Done."):
-                #         received_data = True
 
                 else:
                     self.after(50, lambda: self.wait_for_server_response(master_window, queue, parent))
@@ -524,7 +493,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         if json_received:
             self.format_json_received_to_json(json_received)
         else:
-            print("ThermalTestSetupResultsScene: No json received after allotted time.")
+            logger.warning("No json received after allotted time.")
         return False
 
     def format_json_received_to_json(self, imported_json_string):
@@ -533,8 +502,6 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         json_string = json_string.replace('False', 'false')
         json_dict = json.loads(json_string)
         
-       
-        print(f"\n\njson_dict: {json_dict}\n\n\n")
 
         if self.is_initial_check == True:
             self.apply_initial_check_results(json_dict)

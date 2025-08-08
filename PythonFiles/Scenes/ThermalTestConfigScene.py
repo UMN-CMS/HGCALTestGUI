@@ -289,7 +289,7 @@ class ThermalTestConfigScene(ttk.Frame):
             )
         else:
 
-            print("ThermalTestConfigScene: Sending REQ to ThermalREQClient...")
+            logger.info("Sending request to do setup check...")
             sending_REQ = ThermalREQClient(
                 self.gui_cfg, 
                 ('fullIDs', self.current_engine_selection), 
@@ -298,7 +298,6 @@ class ThermalTestConfigScene(ttk.Frame):
                 self.data_holder.data_dict['user_ID'], 
                 self.conn_trigger
                 )
-            print("ThermalTestConfigScene: Completed REQ to ThermalREQClient...")
         
             _parent.set_frame_thermal_setup_results()
         # TODO Complete data logging from current scene
@@ -306,8 +305,6 @@ class ThermalTestConfigScene(ttk.Frame):
 
     def dropdown_engine_selected(self):
         self.current_engine_selection = self.engine_type_selected.get()
-        print("ThermalTestConfigScene: engine_selected =", self.current_engine_selection)
-        logger.info("ThermalTestConfigScene: selected the {} engine from the dropdown".format(self.current_engine_selection))
         self.data_holder.data_dict["engine_type"] = self.engine_type_selected.get()
 
     def btn_select_all_action(self, _parent):
@@ -326,7 +323,6 @@ class ThermalTestConfigScene(ttk.Frame):
 
     # def btn_confirm_engine_action(self, _parent):
         
-    #     print()
 
     #     pass
 
@@ -360,7 +356,6 @@ class ThermalTestConfigScene(ttk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the TestScene.")
         result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
         if result:
             _parent.set_frame_login_frame()
