@@ -313,7 +313,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
         if confirm:
 
-            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
+            logger.info("Sending request to finish testing...")
             sending_REQ = ThermalREQClient(
                 self.gui_cfg,
                 'killCycle',
@@ -322,11 +322,10 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 self.data_holder.data_dict['user_ID'],
                 self.conn_trigger
                 )
-            print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
         
 
 
-        logger.info("TestScene: Successfully Finished Thermal Testing.")
+        logger.info("Successfully Finished Thermal Testing.")
         _parent.set_frame_login_frame()
 
    
@@ -343,7 +342,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the TestScene.")
         result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
         if result:
             _parent.set_frame_login_frame()
@@ -367,7 +365,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             logger.info("User stopped thermal testing early!")
             self.cancel_timer()
 
-            print("ThermalTestInProgressScene: Sending REQ to ThermalREQClient...")
             sending_REQ = ThermalREQClient(
                 self.gui_cfg,
                 'killCycle',
@@ -376,11 +373,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 self.data_holder.data_dict['user_ID'],
                 self.conn_trigger
                 )
-            print("ThermalTestinProgressScene: Completed REQ to ThermalREQClient...")
-
-
-
-
 
     #################################################
 
@@ -395,7 +387,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
             else:
                 ready_channels.append(False)
         
-        print("ThermalTestFinalResultsScene: Sending REQ to ThermalREQClient...")
         sending_REQ = ThermalREQClient(
                 self.data_holder.getGUIcfg(),
                 'analyzeCycle',
@@ -404,25 +395,20 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 self.data_holder.data_dict['user_ID'],
                 self.conn_trigger
                 )
-        print("ThermalTestFinalResultsScene: Completed REQ to ThermalREQClient...")
         
         self.begin_update(self.parent.master_window, self.parent.queue, self.parent)
 
     def begin_update(self, master_window, queue, parent):
-        print("\nThermalTestSetupResultsScene: Beginning to update...looking for new information...\n")
          
         received_data = False
         json_received = None
         while not received_data:
             if not queue.empty():
-                print("ThermalTestSetupResultsScene: Queue is not empty...")
                 signal=queue.get()
-                print(f"ThermalTestSetupResultsScene: signal = {signal}")
 
                 if "Results received successfully." in signal:
                     message = "FOO"
                     message = self.conn_trigger.recv()
-                    print('\nMessage from conn_trigger: ', message)
                     logger.info("ThermalTestFinalResultsScene: JSON Received.")
                     logger.info(message)
                     
@@ -435,7 +421,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         if json_received:
             self.format_json_received_to_json(json_received)
         else:
-            print("ThermalTestSetupResultsScene: No json received after allotted time.")
+            logger.warning("ThermalTestSetupResultsScene: No json received after allotted time.")
         return False
                                                                                               
 
@@ -444,9 +430,6 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         json_string = json_string.replace('True', 'true')
         json_string = json_string.replace('False', 'false')
         json_dict = json.loads(json_string)
-
-
-        print(f"\n\njson_dict: {json_dict}\n\n\n")
 
         self.apply_results(json_dict)
 

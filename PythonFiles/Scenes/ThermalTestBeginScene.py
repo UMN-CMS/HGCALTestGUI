@@ -55,8 +55,6 @@ class ThermalTestBeginScene(ttk.Frame):
         logger.debug("ParentTestClass: A ThermalTestBeginScene frame has been updated.")
         # Creates a font to be more easily referenced later in the code
         font_scene = ('Arial', 15)
-        print(list(self.data_holder.data_dict.keys())) 
-        print("\n"*5)
         self.create_style(parent)
         # Create a centralized window for information
         frm_window = ttk.Frame(self, width=870, height = 480)
@@ -110,12 +108,6 @@ class ThermalTestBeginScene(ttk.Frame):
         lbl_section3.pack(side = 'top', pady = 15)
 
 
-
-
-        
-
-        
-
         # Create a logout button
         btn_start_all = ttk.Button(
             frm_window, 
@@ -123,11 +115,6 @@ class ThermalTestBeginScene(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda: self.btn_start_full_test_action(parent))
         btn_start_all.pack(anchor = 'center', pady = 5)
-
-
-
-
-
 
         # Create frame for logout button
         frm_logout = ttk.Frame(self)
@@ -141,10 +128,6 @@ class ThermalTestBeginScene(ttk.Frame):
             #relief = tk.RAISED, 
             command = lambda: self.btn_logout_action(parent))
         btn_logout.pack(anchor = 'center', pady = 5)
-
- 
-        #if (self.test_idx == 0):
-
 
 
         # Creating the help button
@@ -173,19 +156,13 @@ class ThermalTestBeginScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
         ready_channels = []
-        print('\n')
-        print("Channel States", checkbox_states)
         for i in range(len(checkbox_states)):
             if checkbox_states[i] != 'excluded':
                 ready_channels.append(True)
             else:
                 ready_channels.append(False)
 
-        print('\n')
-        print("Ready Channels", ready_channels)
-        print('\n')
-        #try:
-        print("ThermalTestBeginScene: Sending REQ to ThermalREQClient...")
+        logger.info("Sending request to begin testing...")
         sending_REQ = ThermalREQClient(
             self.gui_cfg,
             'startCycle',
@@ -194,7 +171,6 @@ class ThermalTestBeginScene(ttk.Frame):
             self.data_holder.data_dict['user_ID'],
             self.conn_trigger
             )
-        print("ThermalTestBeginScene: Completed REQ to ThermalREQClient...")
         #except Exception as e:
         #    messagebox.showerror('Exception', e)
         self.begin_update(self.parent.master_window, self.parent.queue, self.parent)
@@ -208,7 +184,6 @@ class ThermalTestBeginScene(ttk.Frame):
 
     # functionality for the logout button
     def btn_logout_action(self, _parent):
-        logger.info("TestScene: Successfully logged out from the TestScene.")
         result = messagebox.askyesno("Confirm Logout", "Are you sure you want to logout?")
         if result:
             _parent.set_frame_login_frame()
@@ -217,42 +192,26 @@ class ThermalTestBeginScene(ttk.Frame):
     #################################################
 
     def begin_update(self, master_window, queue, parent):
-        print("\nBeginning to update... Looking for new information...\n")
 
         received_data = False
         json_received = None
         while not received_data:
             if not queue.empty():
-                print("ThermalTestInProgressScene: Queue is not empty...")
                 signal=queue.get()
-                print(f"ThermalTestInProgressScene: signal = {signal}")
 
                 if "Results received successfully." in signal:
                     # self.data_holder.update_from_json_string(message) 
                     message='FOO'
                     message=self.conn_trigger.recv()
-                    print("message from conn_trigger:", message)
                     logger.info("ThermalTestInProgressScene: JSON Received.")
                     logger.info(message)
                     json_received=message
                     received_data = True
-                # else:
-                #     topic, message = signal.split(" ; ")
-                #     print("signal:", signal, "\ntopic:", topic, "message", message)
-                #     if (topic == "print"):
-                #         print(message) 
-                #     if (topic == "Done."):
-                #         received_data = True
 
             time.sleep(0.01)
-
-        if json_received:
-            print("startCycle has started")
-        else:
-            print("ThermalTestInProgressScene: No json received after allotted time.")
     
-
-
-
-
+        if json_received:
+            self.format_json_received_to_json(json_received)
+        else:
+            logger.warning("No json received after allotted time.")
 
