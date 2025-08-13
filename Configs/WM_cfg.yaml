@@ -10,16 +10,17 @@ GUIType: Wagon
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: <username>, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
-TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+TestHandler: {name: Local and ZMQ, localip: "localhost", remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
 # name must be the same as what's in the database, or it won't be uploaded properly
 Test:
-- TestClass: ADC
-  TestPath: /home/HGCAL_dev/sw/WagonTesting
-  TestScript: run_adc_self_test.py
-  desc_long: Checking all ADCs to see if they are running as expected before running any tests
-  desc_short: ADC interal test
-  name: ADC Self Test
+- TestClass: TestPower
+  TestPath: /Users/lab619/dc_supply
+  TestScript: power_supply.py
+  desc_long: Read voltage and current back from the board 
+  desc_short: Ensure board is powered correctly
+  name: Power Supply
+  method: Local
   required: 1
 UsingScanner: true
 InspectionTest:

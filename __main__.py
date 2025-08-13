@@ -2,6 +2,7 @@
 
 # Need to make the log file path before any imports
 import os
+import psutil
 from pathlib import Path
 from PythonFiles.utils.helper import get_logging_path
 
@@ -111,6 +112,18 @@ def task_SSHHandler(gui_cfg, host_cfg, conn_trigger, queue):
         logger.error("Uncaught exception in task_SSHHandler", exc_info=True)
         raise
 
+def kill_processes_and_children(pid):
+    try:
+        parent = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return
+    for child in parent.children(recursive=True):
+        try:
+            child.terminate()
+        except psutil.NoSuchProcess:
+            pass
+        parent.terminate()
+
 def run(board_cfg, curpath, host_cfg):    
 
     # Creates a Pipe for the SUBClient to talk to the GUI Window
@@ -137,6 +150,12 @@ def run(board_cfg, curpath, host_cfg):
         process_Handler = mp.Process(target = task_SSHHandler, args=(board_cfg, host_cfg, conn_trigger_Handler, q))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
 
+    elif host_cfg["TestHandler"]["name"] == "Local and ZMQ":
+        q = mp.Queue()
+        process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, conn_trigger_GUI, queue, board_cfg, curpath))
+        process_Handler = mp.Process(target = task_LocalHandler, args=(board_cfg, conn_trigger_Handler, q))
+        process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, board_cfg, q))
+
     else: 
         process_GUI = mp.Process(target = task_GUI, args=(conn_GUI, None, queue, board_cfg, curpath))
         process_SUBClient = mp.Process(target = task_SUBClient, args = (conn_SUB, queue, host_cfg, None))
@@ -161,8 +180,9 @@ def run(board_cfg, curpath, host_cfg):
 
     try:
         # Cleans up the SUBClient process
-        process_SUBClient.terminate()
-        process_Handler.kill()
+        #process_SUBClient.terminate()
+        kill_processes_and_children(process_SUBClient.pid)
+        process_Handler.terminate()
     except:
         logger.debug("Terminate is unnecessary.")
         pass

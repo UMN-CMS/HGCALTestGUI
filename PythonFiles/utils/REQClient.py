@@ -33,7 +33,9 @@ class REQClient():
             grabbed_ip = openfile.read()[:-1]
         self.message = ""
 
-        test_handler_name = gui_cfg.getTestHandler()["name"]
+        # this is how to switch between testing locally vs on the ZCU
+        test_handler_name = gui_cfg["Test"][desired_test]["method"]
+        #test_handler_name = gui_cfg.getTestHandler()["name"]
 
         # Run the ZMQ server on test stand and make requests via ZMQ client
         if test_handler_name == "ZMQ":

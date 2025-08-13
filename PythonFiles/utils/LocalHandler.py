@@ -63,13 +63,14 @@ class LocalHandler:
         #try:
         while 1 > 0:
             prints = conn.recv()
-            if prints == "Done.":
+            if "Done." in prints:
                 prints = 'print ; ' + str(prints)
                 q.put(prints)
 
                 json = queue.get()
                 json = 'JSON ; ' + str(json)
                 q.put(str(json))
+                break
             else:
                 prints = 'print ; ' + str(prints)
                 q.put(prints)

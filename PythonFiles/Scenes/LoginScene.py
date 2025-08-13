@@ -95,12 +95,12 @@ class LoginScene(ttk.Frame):
         self.btn_submit.config( state = 'disabled')
 
         # Creating the submit button
-        self.btn_submit = ttk.Button(
+        self.btn_addusr = ttk.Button(
             self, 
             text="Add User",
             command= lambda:  self.btn_add_user_action(parent)
             )
-        self.btn_submit.pack(pady=40)
+        self.btn_addusr.pack(pady=40)
 
 
 
