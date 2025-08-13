@@ -34,7 +34,7 @@ class REQClient():
         self.message = ""
 
         # this is how to switch between testing locally vs on the ZCU
-        test_handler_name = gui_cfg["Test"][desired_test]["method"]
+        test_handler_name = gui_cfg.board_cfg["Test"][desired_test]["method"]
         #test_handler_name = gui_cfg.getTestHandler()["name"]
 
         # Run the ZMQ server on test stand and make requests via ZMQ client
@@ -56,8 +56,6 @@ class REQClient():
     # Handling tests run on the local machine
     def LocalClient(self, conn_trigger, desired_test, full_id, tester):
 
-        desired_test = int(desired_test[4:])
-
         trigger_dict = {"desired_test": desired_test, "full_id": full_id, "tester": tester}
         trigger_message = json.dumps(trigger_dict)
 
@@ -65,8 +63,6 @@ class REQClient():
 
     # Handling tests run via SSH
     def SSHClient(self, conn_trigger, desired_test, full_id, tester):
-
-        desired_test = int(desired_test[4:])
 
         trigger_dict = {"desired_test": desired_test, "full_id": full_id, "tester": tester}
         trigger_message = json.dumps(trigger_dict)

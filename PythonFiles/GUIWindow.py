@@ -162,7 +162,7 @@ class GUIWindow():
         # Tests are indexed starting at 1 and using the order of the list in the config
         
         self.test_frames = []
-        test_list = self.gui_cfg.getTests()
+        test_list = self.gui_cfg.getTests().values()
         physical_list = self.gui_cfg.getPhysicalTests()        
 
         offset = 0
@@ -195,7 +195,7 @@ class GUIWindow():
         self.current_test_index = 0
         self.data_holder.setTestIdx(self.current_test_index)
         self.run_all_tests_bool = True
-        cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
+        cur_name = self.gui_cfg.getTests().values()[self.current_test_index]['name']
 
         test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
         self.set_frame_test_in_progress(self.queue)
@@ -324,7 +324,7 @@ class GUIWindow():
         if not self.run_all_tests_bool:        
 
             if (self.current_test_index < total_num_tests):
-                cur_name = self.gui_cfg.getTests()[self.current_test_index]['name']
+                cur_name = self.gui_cfg.getTests().values()[self.current_test_index]['name']
                 logger.debug('Current test is: %s' % cur_name)
                 self.set_frame_test(self.current_test_index)
                 self.current_test_index += 1
@@ -341,7 +341,7 @@ class GUIWindow():
                 
                 gui_cfg = self.data_holder.getGUIcfg()
 
-                cur_name = gui_cfg.getTests()[self.current_test_index]['name']
+                cur_name = gui_cfg.getTests().values()[self.current_test_index]['name']
                 logger.debug('Current test is: %s' % cur_name)
 
                 test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)

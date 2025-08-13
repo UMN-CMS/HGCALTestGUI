@@ -88,7 +88,7 @@ class GUIConfig():
 
     def getTestNames(self):
         try:
-            return [test["name"] for test in self.board_cfg["Test"]]
+            return [test["name"] for test in self.board_cfg["Test"].values()]
         except:
             logger.error("Unable to return test names from config. Check to see if test['name'] is empty")
             return []

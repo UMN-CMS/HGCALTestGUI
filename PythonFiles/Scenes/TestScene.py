@@ -212,7 +212,7 @@ class TestScene(ttk.Frame):
     # Confirm button action takes the user to the test in progress scene
     def btn_confirm_action(self, _parent):
         self.gui_cfg = self.data_holder.getGUIcfg()
-        cur_name = self.gui_cfg.getTests()[self.test_idx]['name']
+        cur_name = self.gui_cfg.getTests().values()[self.test_idx]['name']
       
         #try:
         test_client = REQClient(self.gui_cfg, cur_name.strip().replace(" ", ""), self.data_holder.data_dict['current_full_ID'], self.data_holder.data_dict['user_ID'], self.conn_trigger)
