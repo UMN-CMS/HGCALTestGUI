@@ -78,8 +78,6 @@ class ScanScene(ttk.Frame):
             self.ent_full.delete(0,END)
             self.master_window = master_window
             self.hide_rescan_button()
-            # TODO replace path
-            sys.path.insert(1,'/home/hgcal/WagonTest/Scanner/python')
 
             from ..Scanner.python.get_barcodes import scan, listen, parse_xml
 

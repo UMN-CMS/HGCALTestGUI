@@ -2,6 +2,7 @@
 import zmq, logging
 import PythonFiles
 import os
+import multiprocessing as mp
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.utils.SUBClient')
 
@@ -16,10 +17,16 @@ class SUBClient():
         # Instantiates variables       
         self.conn = conn
         self.message = ""
+        # TODO will need to use multiprocessing to start both local and SUB_ZMQ if we want to run tests both ways
         if gui_cfg["TestHandler"]["name"] == "Local" or gui_cfg['TestHandler']['name'] == 'SSH':
             self.local(conn, queue, gui_cfg, q)
-        else:
+        elif gui_cfg["TestHandler"]["name"] == "ZMQ":
             self.SUB_ZMQ(conn, queue, gui_cfg)
+        elif gui_cfg["TestHandler"]["name"] == "Local and ZMQ":
+            self.process_local = mp.Process(target = self.local, args=(conn, queue, gui_cfg, q))
+            self.process_ZMQ = mp.Process(target = self.SUB_ZMQ, args=(conn, queue, gui_cfg))
+            self.process_local.start()
+            self.process_ZMQ.start()
 
 
     def local(self, conn, queue, gui_cfg, q):
@@ -49,13 +56,8 @@ class SUBClient():
 
                     # Sends the JSON to GUIWindow on the pipe.
                     self.conn.send(self.message)
-
-                elif self.topic == "LCD":
-                    logging.info("SUBClient: The topic of LCD has been selected. This method is empty")
-                    pass
-
                 else:
-                    logging.error("SUBClient: Invalid topic sent. Must be 'print' or 'JSON'.")
+                    logger.error("SUBClient: Invalid topic sent. Must be 'print' or 'JSON'.")
 
                     # Places the message in the queue. the queue.get() is in 
                     # TestInProgressScene's begin_update() method
