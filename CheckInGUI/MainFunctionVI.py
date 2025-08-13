@@ -71,7 +71,7 @@ def main():
     try:
         config_path = sys.argv[1]
     except:
-        config_path = "{}/Configs/Wagon_cfg.yaml".format(filepath)
+        config_path = "{}/Configs/WM_cfg.yaml".format(filepath)
 
     masterCfg = import_yaml(config_path)
 
