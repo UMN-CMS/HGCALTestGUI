@@ -32,7 +32,7 @@ class DataHolder():
             gui_tests = self.gui_cfg.getTests()
             db_test_names = dict(self.test_list)
             self.index_gui_to_db = {}
-            for i,x in enumerate(gui_tests):
+            for i,x in enumerate(gui_tests.values()):
                 if x['name'] in db_test_names.keys():
                     self.index_gui_to_db[i] = x['name']
             #self.index_gui_to_db = {i : db_test_names[x["name"]] for i,x in enumerate(gui_tests)}
@@ -40,7 +40,7 @@ class DataHolder():
         else:
             gui_tests = self.gui_cfg.getTests()
             self.index_gui_to_db = {}
-            for i,x in enumerate(gui_tests):
+            for i,x in enumerate(gui_tests.values()):
                 self.index_gui_to_db[i] = x['name']
             #self.index_gui_to_db = [i for i,x in enumerate(self.gui_cfg.getTests())]
 

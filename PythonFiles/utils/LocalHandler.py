@@ -84,8 +84,9 @@ class LocalHandler:
     def task_test(self, conn_test, gui_cfg, desired_test, test_info):   
 
         # Dynamically import test class 
-        test_meta = gui_cfg["Test"][desired_test]
+        test_meta = gui_cfg.board_cfg["Test"][desired_test]
         # Need to strip .py from test script for import
+        # TestClass is the name of the class defined in the test script
         mod = __import__(test_meta["TestScript"][:-3], fromlist=[test_meta["TestClass"]])
         test_class = getattr(mod, test_meta["TestClass"])
 
