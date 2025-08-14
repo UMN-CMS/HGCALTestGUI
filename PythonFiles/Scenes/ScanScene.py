@@ -79,15 +79,15 @@ class ScanScene(ttk.Frame):
             self.master_window = master_window
             self.hide_rescan_button()
 
-            from ..Scanner.python.get_barcodes import scan, listen, parse_xml
+            from ..Scanner.python.get_barcodes import scan_from_serial
 
             manager = mp.Manager()
             full_id = manager.list()
+            stop_flag = mp.Event()
 
             self.ent_full.config(state = 'normal')
 
-            self.scanner = scan()
-            self.listener = mp.Process(target=listen, args=(full_id, self.scanner))
+            self.listener = mp.Process(target=scan_from_serial, args=(full_id, stop_flag))
 
             self.listener.start()
                 
@@ -98,10 +98,10 @@ class ScanScene(ttk.Frame):
                 except:
                     pass
                 if not len(full_id) == 0:
-                    label = parse_xml(full_id[0])
+                    label = full_id[0]
 
+                    stop_flag.set()
                     self.listener.terminate()
-                    self.scanner.terminate()
                 
                     self.ent_full.delete(0,END)
                     self.ent_full.insert(0, str(label))
@@ -111,8 +111,8 @@ class ScanScene(ttk.Frame):
 
                 elif self.EXIT_CODE:
                     logger.info("Exit code received on the ScanScene. Terminating processes.")
+                    stop_flag.set()
                     self.listener.terminate()
-                    self.scanner.terminate()
                     logger.info("ScanScene processes terminated successfully.")
                     break
                 else:

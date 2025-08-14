@@ -4,8 +4,10 @@ import signal
 import ctypes
 from pathlib import Path
 #import PythonFiles
-libc = ctypes.CDLL("libc.so.6")
 import logging
+import serial
+from serial.tools import list_ports
+import time
 
 logger = logging.getLogger('HGCALTestGUI.PythonFiles.Scanner.python.get_barcodes')
 
@@ -38,6 +40,29 @@ def scan():
     #    if line is not None:
     #        conn.send(line.strip().decode('utf-8'))
     #        return
+
+def get_serial_port():
+    ports = list_ports.comports()
+    for p in ports:
+        if any(keyword in p.description for keyword in ["Prolific", "FTDI", "USB-to-Serial", "CP210x", "Abstract"]):
+            return p.device
+
+    logger.error("No scanner port found")
+    return None
+
+def scan_from_serial(serial_list, stop_flag):
+    port = get_serial_port()
+    try:
+        with serial.Serial(port, 9600, timeout=1) as ser:
+
+            while not stop_flag.is_set():
+                line = ser.readline().decode('utf-8').strip()
+                if line:
+                    serial_list.append(line)
+                    break
+    except serial.SerialException as e:
+        logger.exception(f"Serial Error: {e}")
+
 
 def listen(serial, proc):
     for line in proc.stdout:
