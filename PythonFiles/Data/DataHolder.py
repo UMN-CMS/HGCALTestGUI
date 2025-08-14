@@ -214,17 +214,13 @@ class DataHolder():
         if self.data_lists['test_results'][index]:
             temp = 1 
 
-
-        if self.config_id:
-            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments'], 'config':self.config_id}
-        else:
-            info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
+        info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": self.index_gui_to_db[self.data_dict['tests_run'][index]], "successful": temp, "comments": self.data_dict['comments']}
         
         with open("{}/JSONFiles/storage.json".format(str(Path.home().absolute())), "w") as outfile:
             logger.debug(str(info_dict))
             json.dump(info_dict, outfile)
 
-        self.data_sender.add_test_json(file_path_list[index], self.config_id)
+        self.data_sender.add_test_json(file_path_list[index])
         logger.info("Test results sent to database successfully.")
 
         self.data_dict['comments'] = '_'

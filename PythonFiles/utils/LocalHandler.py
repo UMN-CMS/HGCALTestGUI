@@ -2,7 +2,6 @@ import multiprocessing as mp
 import zmq, sys, os, signal, logging, json
 
 sys.path.append("{}".format(os.getcwd()))
-sys.path.append("{}/Tests".format(os.getcwd()))
 
 # Class needed for bridging the gap between request, running test
 # and sending results back
@@ -25,7 +24,11 @@ class LocalHandler:
         # Listen for test request
         while True:
             logger.info("LocalHandler: New PUB proc")
-            request = json.loads(conn_trigger.recv())
+            msg = conn_trigger.recv()
+            if msg == "EXIT":
+                break
+            else:
+                request = json.loads(msg)
             process_PUB = mp.Process(target = self.task_local, args=(conn_pub,q))
             process_PUB.start()
 
@@ -53,10 +56,10 @@ class LocalHandler:
         except Exception as e:
             logger.error("LocalHandler: PUB and test pipe could not be closed: {}".format(e))
 
-        try:
-            process_PUB.terminate()
-        except Exception as e:
-            logger.error("LocalHandler: PUB and test process could not be terminated: {}".format(e))
+        #try:
+        #    process_PUB.terminate()
+        #except Exception as e:
+        #    logger.error("LocalHandler: PUB and test process could not be terminated: {}".format(e))
 
     def task_local(self, conn, q):
         # listens for incoming data and attaches the correct topic before sending it on to SUBClient
@@ -67,7 +70,7 @@ class LocalHandler:
                 prints = 'print ; ' + str(prints)
                 q.put(prints)
 
-                json = queue.get()
+                json = conn.recv()
                 json = 'JSON ; ' + str(json)
                 q.put(str(json))
                 break
@@ -84,9 +87,10 @@ class LocalHandler:
     def task_test(self, conn_test, gui_cfg, desired_test, test_info):   
 
         # Dynamically import test class 
-        test_meta = gui_cfg.board_cfg["Test"][desired_test]
+        test_meta = gui_cfg["Test"][desired_test]
         # Need to strip .py from test script for import
         # TestClass is the name of the class defined in the test script
+        sys.path.append(test_meta["TestPath"])
         mod = __import__(test_meta["TestScript"][:-3], fromlist=[test_meta["TestClass"]])
         test_class = getattr(mod, test_meta["TestClass"])
 

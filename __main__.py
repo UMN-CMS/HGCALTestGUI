@@ -162,12 +162,16 @@ def run(board_cfg, curpath, host_cfg):
 
     # Starts the processes
     process_GUI.start()
-    if host_cfg["TestHandler"]["name"] == "Local" or host_cfg['TestHandler']['name'] == 'SSH':
+    if host_cfg["TestHandler"]["name"] == "Local" or host_cfg['TestHandler']['name'] == 'SSH' or host_cfg["TestHandler"]["name"] == "Local and ZMQ":
         process_Handler.start()
     process_SUBClient.start()
 
     # holds the code at this line until the GUI process ends
     process_GUI.join()
+
+    if host_cfg["TestHandler"]["name"] == "Local" or host_cfg['TestHandler']['name'] == 'SSH' or host_cfg["TestHandler"]["name"] == "Local and ZMQ":
+        conn_trigger_GUI.send("EXIT")
+        process_Handler.join()
 
     try:
         #closes multiprocessing connections

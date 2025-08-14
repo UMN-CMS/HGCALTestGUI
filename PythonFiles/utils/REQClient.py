@@ -44,7 +44,6 @@ class REQClient():
         
         # Run tests only on the current computer
         elif test_handler_name == "Local":
-
             self.LocalClient(conn_trigger, desired_test, full_id, tester)
 
         # Run tests on another machine via SHH (key required)

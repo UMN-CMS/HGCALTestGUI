@@ -17,18 +17,8 @@ def loadConfig(cfg_type):
     return ret
 
 def update_config(full_id):
-    if full_id[3:5] == 'WW' or full_id[3:5] == 'WE':
-        cfg_type =  "LD_Wagon"
-    elif full_id[3:5] == 'WH':
-        cfg_type =  "HD_Wagon"
-    elif full_id[3:5] == 'ZP':
-        cfg_type =  "Zipper"
-    elif full_id[3:5] == 'EL':
-        cfg_type =  "LD_Engine"
-    elif full_id[3:5] == 'EH':
-        cfg_type =  "HD_Engine"
-    else:
-        cfg_type =  "LD_Wagon"
+    if full_id[3:5] == 'WM':
+        cfg_type =  "WM"
     board_cfg = loadConfig(cfg_type)
     return GUIConfig(board_cfg)
 

@@ -16,7 +16,7 @@ PhysicalTest: []
 Test: { 
 PowerSupply: {
   TestClass: TestPower,
-  TestPath: /Users/lab619/dc_supply,
+  TestPath: C:\Users\lab619\mb_qc_tests\dc_supply,
   TestScript: power_supply.py,
   desc_long: Read voltage and current back from the board,
   desc_short: Ensure board is powered correctly,
