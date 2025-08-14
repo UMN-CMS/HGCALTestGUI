@@ -1,0 +1,38 @@
+---
+DBInfo:
+  admin: FactoryInserter
+  baseURL: http://128.186.110.114/Factory/mbDB
+  inserter: FactoryInserter
+  name: mbdb
+  reader: FactoryReadUser
+  use_database: true
+GUIType: Motherboard
+SerialCheckSafe: true
+#TestHandler: {name: Local, remoteip: localhost}
+#TestHandler: {name: SSH, username: <username>, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
+TestHandler: {name: Local and ZMQ, localip: "localhost", remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+PhysicalTest: []
+# name must be the same as what's in the database, or it won't be uploaded properly
+Test: { 
+PowerSupply: {
+  TestClass: TestPower,
+  TestPath: /Users/lab619/dc_supply,
+  TestScript: power_supply.py,
+  desc_long: Read voltage and current back from the board,
+  desc_short: Ensure board is powered correctly,
+  name: Power Supply,
+  method: Local,
+  required: 1
+  }
+}
+UsingScanner: true
+InspectionTest:
+- TestClass: Inspection
+  name: Inspection1
+  required: 1
+  checkboxes: 
+    - {text: "Is the board bent?", value: False, requirement: False}
+    - {text: "Is the board visibly broken?", value: False, requirement: False}
+    - {text: "Are any components missing?", value: False, requirement: False}
+    - {text: "Are any components visibly broken?", value: False, requirement: False}
+  comments: No Comment
