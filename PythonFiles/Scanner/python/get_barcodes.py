@@ -44,7 +44,7 @@ def scan():
 def get_serial_port():
     ports = list_ports.comports()
     for p in ports:
-        if any(keyword in p.description for keyword in ["Prolific", "FTDI", "USB-to-Serial", "CP210x", "Abstract"]):
+        if any(keyword in p.description for keyword in ["USB Serial Device", "Abstract"]):
             return p.device
 
     logger.error("No scanner port found")
@@ -53,7 +53,7 @@ def get_serial_port():
 def scan_from_serial(serial_list, stop_flag):
     port = get_serial_port()
     try:
-        with serial.Serial(port, 9600, timeout=1) as ser:
+        with serial.Serial(port, 9600, timeout=0.1) as ser:
 
             while not stop_flag.is_set():
                 line = ser.readline().decode('utf-8').strip()

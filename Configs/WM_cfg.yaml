@@ -24,13 +24,13 @@ PowerSupply: {
   method: Local,
   required: 1
   },
-HelloWorld: {
-  TestClass: MBTest_HelloWorld,
-  TestPath: /home/HGCAL_dev/scintmbdev/hgc-engine-tools/mb_QCtests,
+setup_lpgbts: {
+  TestClass: MBTest_SetupLpgbts,
+  TestPath: /home/HGCAL_dev/scintmbdev/hgc-engine-tools/mb_tests,
   TestScript: test_startup.py,
-  desc_long: Test reading from the ZCU,
-  desc_short: Ensure board is powered correctly,
-  name: Hello World,
+  desc_long: Setup DAQ and TRIG lpGBTs,
+  desc_short: Check both lpGBTs are in READY state,
+  name: setup_lpgbts,
   method: ZMQ,
   required: 1
   }

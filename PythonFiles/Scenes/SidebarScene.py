@@ -12,7 +12,7 @@ import os
 import platform
 import requests
 import time
-
+import sys
 
 
 #################################################################################
@@ -197,11 +197,11 @@ class SidebarScene(ttk.Frame):
         self.reset_power_btn = ttk.Button(
             self.viewingFrame, 
             #pady = btn_pady,
-            text = 'Reset Power',
+            text = 'Turn Off Voltage',
             #height = btn_height,
             width = btn_width,
             #font = ('Kozuka Gothic Pr6N L', 8),
-            command = lambda: self.reset_power(_parent)
+            command = lambda: self.turn_off_power(_parent)
             )
         self.reset_power_btn.grid(column = 0, row = 7 + self.data_holder.getNumTest(), pady = (btn_pady, 235))
 
@@ -292,11 +292,14 @@ class SidebarScene(ttk.Frame):
         logger.info('Reloading firmware')
         logger.debug(r.text)
 
-    def reset_power(self, _parent):
-        handler = _parent.gui_cfg.getTestHandler()
-        r = requests.get('http://{}:8899/start/cycle_kconn_pwr'.format(handler['remoteip']))
-        logger.info('Resetting power')
-        logger.debug(r.text)
+    def turn_off_power(self, _parent):
+        sys.path.append("C:\\Users\\lab619\\mb_qc_tests\\dc_supply")
+        mod = __import__("turn_off_voltage", fromlist=["PowerOff"])
+        test_class = getattr(mod, "PowerOff")
+
+        test_class()
+
+        logger.info('Turning off voltage')
 
     def btn_test_action(self, _parent, test_idx):
         _parent.set_frame_test(test_idx)
