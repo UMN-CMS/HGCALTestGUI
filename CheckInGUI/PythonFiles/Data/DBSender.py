@@ -129,7 +129,7 @@ class DBSender():
     
     # Posts a new board with passed in full id
     def add_new_board(self, full, user_id, comments, manufacturer):
-        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer, "location" :"UMN"})
+        r = requests.post('{}/add_module2.py'.format(self.db_url), data={"full_id": str(full), 'manufacturer': manufacturer, "location" :"FSU"})
         try:
             lines = r.text.split('\n')
 
