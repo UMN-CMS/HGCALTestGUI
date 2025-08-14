@@ -10,7 +10,7 @@ GUIType: Motherboard
 SerialCheckSafe: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: <username>, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
-TestHandler: {name: Local and ZMQ, localip: "localhost", remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
+TestHandler: {name: Local and ZMQ, localip: "localhost", remoteip: 128.186.110.15, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 PhysicalTest: []
 # name must be the same as what's in the database, or it won't be uploaded properly
 Test: { 
@@ -22,6 +22,16 @@ PowerSupply: {
   desc_short: Ensure board is powered correctly,
   name: Power Supply,
   method: Local,
+  required: 1
+  },
+HelloWorld: {
+  TestClass: MBTest_HelloWorld,
+  TestPath: /home/HGCAL_dev/scintmbdev/hgc-engine-tools/mb_QCtests,
+  TestScript: test_startup.py,
+  desc_long: Test reading from the ZCU,
+  desc_short: Ensure board is powered correctly,
+  name: Hello World,
+  method: ZMQ,
   required: 1
   }
 }
