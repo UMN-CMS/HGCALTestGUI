@@ -203,42 +203,75 @@ class CameraScene(ttk.Frame):
         height, width, _ = img_rgb.shape
         hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
 
-        # select pixels that aren't white
-        lower = np.array([0, 30, 30])
-        upper = np.array([180, 255, 255])
-        non_white_mask = cv2.inRange(hsv, lower, upper)
+        lower_green = np.array([25, 20, 20])
+        upper_green = np.array([95, 255, 255])
+        mask_green = cv2.inRange(hsv, lower_green, upper_green)
 
-        kernel = np.ones((5, 5), np.uint8)
-        clean_mask = cv2.morphologyEx(non_white_mask, cv2.MORPH_OPEN, kernel)
-        clean_mask = cv2.morphologyEx(clean_mask, cv2.MORPH_CLOSE, kernel)
+        lower_red1 = np.array([0, 40, 40])
+        upper_red1 = np.array([10, 255, 255])
+        mask_red1 = cv2.inRange(hsv, lower_red1, upper_red1)
 
-        # select edges around non white objects
-        contours, _ = cv2.findContours(clean_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        lower_red2 = np.array([170, 40, 40])
+        upper_red2 = np.array([180, 255, 255])
+        mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
 
-        best = None
-        best_score = 0
+        mask_red = cv2.bitwise_or(mask_red1, mask_red2)
+        pcb_mask = cv2.bitwise_or(mask_green, mask_red)
 
-        for c in contours:
-            area = cv2.contourArea(c)
-            x, y, w, h = cv2.boundingRect(c)
-            # filter out small dust particles and such
-            if area < min_area:
-                continue
+        def select_best_contour(mask):
 
-            hull = cv2.convexHull(c)
-            hull_area = cv2.contourArea(hull)
-            if hull_area == 0:
-                continue
+            kernel = np.ones((5, 5), np.uint8)
+            clean_mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+            clean_mask = cv2.morphologyEx(clean_mask, cv2.MORPH_CLOSE, kernel)
 
-            # how solid is the object? closer to 1 = more solid
-            solidity = area / hull_area
-            score = solidity * area
-            # saves the largest and most solid object, should always be the board
-            if score > best_score:
-                best = (x, y, w, h)
-                best_score = score
+            # select edges around non white objects
+            contours, _ = cv2.findContours(clean_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        if best is not None:
+            best = None
+            best_score = 0
+
+            for c in contours:
+                area = cv2.contourArea(c)
+                hull = cv2.convexHull(c)
+                x, y, w, h = cv2.boundingRect(hull)
+                # filter out small dust particles and such
+                if area < min_area:
+                    continue
+
+                hull_area = cv2.contourArea(hull)
+                if hull_area == 0:
+                    continue
+
+                # how solid is the object? closer to 1 = more solid
+                solidity = area / hull_area
+                score = solidity * area
+                # saves the largest and most solid object, should always be the board
+                if score > best_score:
+                    best = (x, y, w, h)
+                    best_score = score
+
+            return best
+
+        best = select_best_contour(pcb_mask)
+
+        if best is None:
+            gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+            blur = cv2.GaussianBlur(gray, (5, 5), 0)
+
+            med = np.median(blur)
+            lower = int(max(0, 0.66 * med))
+            upper = int(min(255, 1.33 * med))
+            edges = cv2.Canny(blur, lower, upper)
+
+            edges = cv2.dilate(edges, np.ones((3, 3), np.uint8), iterations=1)
+            closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8), iterations=2)
+
+            best = select_best_contour(closed)
+
+        if best is None:
+            logger.error("Image couldn't be cropped.")
+
+        else:
             x, y, w, h = best
             # don't go over the bounds of the image
             x_start = max(x - padding, 0)
@@ -248,8 +281,6 @@ class CameraScene(ttk.Frame):
 
             imageBox = (x_start, y_start, x_end, y_end)
             self.image = self.image.crop(imageBox)
-        else:
-            logger.error("Image couldn't be cropped")
 
         # stores the image in the data holder
         # doesn't try to write it to disk, uses more ram but saves time
