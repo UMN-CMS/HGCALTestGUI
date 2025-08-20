@@ -13,14 +13,14 @@ TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS",
 PhysicalTest: []
 Test:
 - TestClass: id_resist_test
-  TestPath: /home/HGCAL_dev/FlexTest/FlexCableTesting
+  TestPath: /home/HGCAL_dev/FlexTest/FlexTester
   TestScript: wagon_rtd.py
   desc_long: Must be completed after the general resistance measurement
   desc_short: Measure resistance of ID resistor
   name: Flex Cable Resistance Test
   required: 1
 - TestClass: BERT
-  TestPath: /home/HGCAL_dev/FlexTest/FlexCableTesting
+  TestPath: /home/HGCAL_dev/FlexTest/FlexTester
   TestScript: run_bert_tmp.py
   desc_long: Needs to be completed after I2C check in order to set up wagon wheel
   desc_short: Determine quality of data transmission
