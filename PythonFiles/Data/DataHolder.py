@@ -422,7 +422,7 @@ class DataHolder():
                 with open("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), "w") as outfile:
                     json.dump(placeholder, outfile)
 
-                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())))
+                self.data_sender.add_test_json("{}/JSONFiles/default_storage.json".format(str(Path.home().absolute())), self.config_id)
 
 
     ################################################
