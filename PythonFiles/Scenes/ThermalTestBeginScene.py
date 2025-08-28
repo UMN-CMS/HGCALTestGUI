@@ -211,7 +211,7 @@ class ThermalTestBeginScene(ttk.Frame):
             time.sleep(0.01)
     
         if json_received:
-            self.format_json_received_to_json(json_received)
+            logger.info("startCycle has been received.")
         else:
             logger.warning("No json received after allotted time.")
 
