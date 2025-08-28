@@ -113,7 +113,7 @@ class ThermalTestInProgressScene(ttk.Frame):
 
         # Clear and start the countdown from 2 hours (7200 seconds)
         self.cancel_timer()
-        self.remaining_time = 7200
+        self.remaining_time = 14400
         self.update_timer()
 
 
@@ -185,6 +185,7 @@ class ThermalTestInProgressScene(ttk.Frame):
     # Timer functionality
     def update_timer(self):
         # Updates the countdown timer every second.
+        if self.remaining_time == 14390: exit()
         if self.remaining_time > 0:
             self.remaining_time -= 1
             hours, remainder = divmod(self.remaining_time, 3600)
