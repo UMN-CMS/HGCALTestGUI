@@ -189,53 +189,59 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         lbl_frame.pack(side="top", pady=(75, 15))
 
         # Create labels for each line with colored symbols
+        pass_row = ttk.Frame(lbl_frame)
+        pass_row.pack(side="top", pady=2, padx=5)
         lbl_pass = ttk.Label(
-            lbl_frame,
+            pass_row,
             text=f"{STATES['pass'][0]} ",
             font=("Arial", 14),
             foreground=STATES["pass"][1]
         )
-        lbl_pass.pack(side="top", anchor="w", padx=5)
+        lbl_pass.pack(side="left", anchor="w", padx=5)
 
         lbl_pass_text = ttk.Label(
-            lbl_frame,
+            pass_row,
             text="Place passed engines in blue bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_pass_text.pack(side="top", anchor="w", padx=25)
-
+        lbl_pass_text.pack(side="left", anchor="w", padx=5)
+        
+        fail_row = ttk.Frame(lbl_frame)
+        fail_row.pack(side="top", pady=2, padx=5)
         lbl_fail = ttk.Label(
-            lbl_frame,
+            fail_row,
             text=f"{STATES['fail'][0]} ",
             font=("Arial", 14),
             foreground=STATES["fail"][1]
         )
-        lbl_fail.pack(side="top", anchor="w", padx=5)
+        lbl_fail.pack(side="left", anchor="w", padx=5)
 
         lbl_fail_text = ttk.Label(
-            lbl_frame,
+            fail_row,
             text="Failed engines in red bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_fail_text.pack(side="top", anchor="w", padx=25)
+        lbl_fail_text.pack(side="left", anchor="w", padx=5)
 
+        retest_row = ttk.Frame(lbl_frame)
+        retest_row.pack(side="top", pady=2, padx=5)
         lbl_retest = ttk.Label(
-            lbl_frame,
+            retest_row,
             text=f"{STATES['retest'][0]} ",
             font=("Arial", 14),
             foreground=STATES["retest"][1]
         )
-        lbl_retest.pack(side="top", anchor="w", padx=5)
+        lbl_retest.pack(side="left", anchor="w", padx=5)
 
         lbl_retest_text = ttk.Label(
-            lbl_frame,
+            retest_row,
             text="Engines needing retests in gray bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_retest_text.pack(side="top", anchor="w", padx=25)
+        lbl_retest_text.pack(side="left", anchor="w", padx=5)
 
 
 
