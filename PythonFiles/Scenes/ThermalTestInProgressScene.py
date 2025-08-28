@@ -111,10 +111,9 @@ class ThermalTestInProgressScene(ttk.Frame):
         self.timer_label = ttk.Label(self.frm_timer, text="02:00:00", font=("Arial", 24), foreground="red")
         self.timer_label.grid(row=1, column=0, columnspan=3, pady=10)
 
-        # Clear and start the countdown from 2 hours (7200 seconds)
+        # Clear and start the countdown from 4 hours (14400 seconds)
         self.cancel_timer()
         self.remaining_time = 14400
-        self.update_timer()
 
 
 
@@ -185,6 +184,7 @@ class ThermalTestInProgressScene(ttk.Frame):
     # Timer functionality
     def update_timer(self):
         # Updates the countdown timer every second.
+        logger.debug(f"Countdown time remaining: {self.remaining_time}")
         if self.remaining_time == 14390: exit()
         if self.remaining_time > 0:
             self.remaining_time -= 1

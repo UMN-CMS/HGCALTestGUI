@@ -437,7 +437,7 @@ class GUIWindow():
     def set_frame_thermal_test_in_progress(self):
         logging.debug("GUIWindow: Trying to set thermal test in progress frame.")
         self.thermal_in_progress_frame.update_frame(self)
-        # self.thermal_in_progress_frame.begin_update(self.master_window, self.queue, self)
+        self.thermal_in_progress_frame.update_timer()
         self.set_frame(self.thermal_in_progress_frame)
 
         logging.debug("GUIWindow: Completed the set thermal test in progress frame.")
