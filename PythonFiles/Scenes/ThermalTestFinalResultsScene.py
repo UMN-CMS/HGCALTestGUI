@@ -302,7 +302,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
         confirm = messagebox.askyesno(
                 title="Confirm Finish",
-                message="Make sure you have analyzed all results, this will kill any active tests!"
+                message="Stop the current cycle before exiting?"
             )
 
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
