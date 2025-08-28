@@ -143,15 +143,17 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 font=("Arial", 18),
                 padding=2
             )
-            state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
+            state_label.grid(row=row, column=col * 3, padx=1, pady=2, sticky="w")
 
             text_label = ttk.Label(
                     checkbox_frame,
                     text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
-            text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
-
+            text_label.grid(row=row, column=col * 3 + 1, padx=1, pady=6, sticky="w")
+            
+            spacer = ttk.Label(checkbox_frame, text=" ", width=10)
+            spacer.grid(row=row, column=col * 3 + 2)
 
             # TODO Remove/update board status button binds on Final Results Scene
             # Bind click event to toggle state

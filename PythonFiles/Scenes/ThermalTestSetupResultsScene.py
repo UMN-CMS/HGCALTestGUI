@@ -144,10 +144,10 @@ class ThermalTestSetupResultsScene(ttk.Frame):
         self.checkbox_labels = []
         self.checkbox_vars = []
 
-        # Loop to create 20 visual checkboxes (2 columns, 10 rows)
+        # Loop to create 20 visual checkboxes (5 columns, 4 rows)
         for i in range(20):
-            col = i // 4  # Determine column (0 or 1)
-            row = i % 4   # Determine row (0-9)
+            col = i // 4  # Determine column (0-4)
+            row = i % 4   # Determine row (0-3)
 
             # Get the initial state from checkbox_states
             initial_state = self.checkbox_states[i]
@@ -162,15 +162,17 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 font=("Arial", 18),
                 padding=2
             )
-            state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
+            state_label.grid(row=row, column=col * 3, padx=5, pady=2, sticky="w")
 
             text_label = ttk.Label(
                     checkbox_frame,
                     text=f"{self.naming_scheme[i]}:{self.failures[i]}",
                     font=("Arial", 18)
                 )
-            text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
-
+            text_label.grid(row=row, column=col * 3 + 1, padx=1, pady=6, sticky="w")
+            
+            spacer = ttk.Label(checkbox_frame, text=" ", width=15)
+            spacer.grid(row=row, column = col * 3 + 2)
             # Bind click event to toggle state
             state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
 
