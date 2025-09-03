@@ -143,15 +143,17 @@ class ThermalTestFinalResultsScene(ttk.Frame):
                 font=("Arial", 18),
                 padding=2
             )
-            state_label.grid(row=row, column=col * 2, padx=5, pady=2, sticky="w")
+            state_label.grid(row=row, column=col * 3, padx=1, pady=2, sticky="w")
 
             text_label = ttk.Label(
                     checkbox_frame,
                     text=f"{self.naming_scheme[i]}",
                     font=("Arial", 14)
                 )
-            text_label.grid(row=row, column=col * 2 + 1, padx=10, pady=6, sticky="w")
-
+            text_label.grid(row=row, column=col * 3 + 1, padx=1, pady=6, sticky="w")
+            
+            spacer = ttk.Label(checkbox_frame, text=" ", width=10)
+            spacer.grid(row=row, column=col * 3 + 2)
 
             # TODO Remove/update board status button binds on Final Results Scene
             # Bind click event to toggle state
@@ -187,53 +189,59 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         lbl_frame.pack(side="top", pady=(75, 15))
 
         # Create labels for each line with colored symbols
+        pass_row = ttk.Frame(lbl_frame)
+        pass_row.pack(side="top", pady=2, padx=5)
         lbl_pass = ttk.Label(
-            lbl_frame,
+            pass_row,
             text=f"{STATES['pass'][0]} ",
             font=("Arial", 14),
             foreground=STATES["pass"][1]
         )
-        lbl_pass.pack(side="top", anchor="w", padx=5)
+        lbl_pass.pack(side="left", anchor="w", padx=5)
 
         lbl_pass_text = ttk.Label(
-            lbl_frame,
+            pass_row,
             text="Place passed engines in blue bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_pass_text.pack(side="top", anchor="w", padx=25)
-
+        lbl_pass_text.pack(side="left", anchor="w", padx=5)
+        
+        fail_row = ttk.Frame(lbl_frame)
+        fail_row.pack(side="top", pady=2, padx=5)
         lbl_fail = ttk.Label(
-            lbl_frame,
+            fail_row,
             text=f"{STATES['fail'][0]} ",
             font=("Arial", 14),
             foreground=STATES["fail"][1]
         )
-        lbl_fail.pack(side="top", anchor="w", padx=5)
+        lbl_fail.pack(side="left", anchor="w", padx=5)
 
         lbl_fail_text = ttk.Label(
-            lbl_frame,
+            fail_row,
             text="Failed engines in red bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_fail_text.pack(side="top", anchor="w", padx=25)
+        lbl_fail_text.pack(side="left", anchor="w", padx=5)
 
+        retest_row = ttk.Frame(lbl_frame)
+        retest_row.pack(side="top", pady=2, padx=5)
         lbl_retest = ttk.Label(
-            lbl_frame,
+            retest_row,
             text=f"{STATES['retest'][0]} ",
             font=("Arial", 14),
             foreground=STATES["retest"][1]
         )
-        lbl_retest.pack(side="top", anchor="w", padx=5)
+        lbl_retest.pack(side="left", anchor="w", padx=5)
 
         lbl_retest_text = ttk.Label(
-            lbl_frame,
+            retest_row,
             text="Engines needing retests in gray bin",
             font=("Arial", 14),
             foreground="white"
         )
-        lbl_retest_text.pack(side="top", anchor="w", padx=25)
+        lbl_retest_text.pack(side="left", anchor="w", padx=5)
 
 
 
@@ -300,7 +308,7 @@ class ThermalTestFinalResultsScene(ttk.Frame):
         self.gui_cfg = self.data_holder.getGUIcfg()
         confirm = messagebox.askyesno(
                 title="Confirm Finish",
-                message="Make sure you have analyzed all results, this will kill any active tests!"
+                message="Stop the current cycle before exiting?"
             )
 
         checkbox_states = self.data_holder.data_dict.get("checkbox_states",[])
