@@ -5,43 +5,111 @@ DBInfo:
   inserter: FactoryInserter
   name: WagonDB_PRO
   reader: FactoryReadUser
-  use_database: true
+  use_database: true 
 GUIType: Wagon
 UsingScanner: true
-SerialCheckSafe: true
+SerialCheckSafe: true 
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: umn-zcu102-d, username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
 
 PhysicalTest: []
 Test:
-- TestClass: TestEconTtoEngine
+- TestClass: GPIOtest 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: gpio_test.py
+  desc_long:  Tests that the GPIO pins behave as expected
+  desc_short: Tests the GPIO pins
+  name: GPIO Test 
+  required: 1
+- TestClass: Analogtest 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: analog_test.py
+  desc_long:  Tests that the Analog pins behave as expected
+  desc_short: Tests the Analog pins
+  name: Analog Test 
+  required: 1
+- TestClass: StartupPowerCheck 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: startup_power_check.py
+  desc_long: Resets ECONs and checks the power draw of each ECON
+  desc_short:  Check power draw of wagon
+  name: Startup Power Check 
+  required: 1
+- TestClass: I2CToECON 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: i2c_to_econ.py
+  desc_long: Check that each ECON on the wagon can be communicated with via i2c
+  desc_short: Test i2c to each ECON
+  name: I2C to ECON 
+- TestClass: ResetLineTest
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: resets_test.py 
+  desc_long: Test hard and soft resets of each ECON and then setup the ECONs 
+  desc_short: Test ECON resets and setup.
+  name: Reset Lines Test 
+- TestClass: ConfigPowerCheck 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: config_power_check.py
+  desc_long: Checks the power draw of each ECON post config (no resetting)
+  desc_short:  Check power draw of wagon without resetting
+  name: Config Power Check 
+  required: 1
+- TestClass: I2CToKRIA 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: i2c_to_kria.py
+  desc_long:  Check that each KRIA can be communicated with via i2c
+  desc_short: Test i2c to each KRIA
+  name: I2C to KRIA 
+  required: 1
+- TestClass: FCECONtest 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: fc_to_econs.py
+  desc_long: Check that each of the ECONs is receiving fast control
+  desc_short: Check ECON FC
+  name: Fast Control to ECONs Test 
+  required: 1
+- TestClass: FCMODtest 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: fc_to_modules.py
+  desc_long: Check that each of the KRIAs is receiving fast control
+  desc_short: Check KRIA FC
+  name: Fast Control to Modules Test 
+  required: 1
+- TestClass: ErrorPinTest 
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: error_pin.py
+  desc_long: Tests that the ECON-D is receiving the ECON-T error pin 
+  desc_short: Tests ECON-T error pin sent to ECON-D
+  name: Error Pin Test 
+  required: 1
+- TestClass: TestEconTtoEngine 
   TestPath: /home/HGCAL_dev/sw/WagonTesting
   TestScript: test_econ_links.py
   desc_long: 
   desc_short: 
   name: ECON-T Elinks To Engine
   required: 1
-- TestClass: TestEconTtoEngine
+- TestClass: TestEconDtoEngine 
   TestPath: /home/HGCAL_dev/sw/WagonTesting
   TestScript: test_econ_links.py
   desc_long: 
   desc_short: 
   name: ECON-D Elinks To Engine
   required: 1
-- TestClass: TestEconTtoEngine
+- TestClass: TestEconDFromModule
   TestPath: /home/HGCAL_dev/sw/WagonTesting
   TestScript: test_econ_links.py
   desc_long: 
   desc_short: 
-  name: ECON-T Elinks From Module
+  name: ECON-D Elinks From Module 
   required: 1
-- TestClass: TestEconTtoEngine
+- TestClass: TestEconTFromModule 
   TestPath: /home/HGCAL_dev/sw/WagonTesting
   TestScript: test_econ_links.py
   desc_long: 
   desc_short: 
-  name: ECON-D Elinks From Module
+  name: ECON-T Elinks From Module 
   required: 1
 InspectionTest:
 - TestClass: Inspection

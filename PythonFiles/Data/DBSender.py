@@ -50,16 +50,17 @@ class DBSender():
             try:
                 begin = lines.index("Begin") + 1
                 end = lines.index("End")
+                temp = []
+
+                for i in range(begin, end):
+                    temp.append(lines[i])
+            
+                label_info = {'Major Type': temp[0], 'Subtype': temp[1], 'SN': temp[2]}
             except:
                 logger.error('There was an issue with the web API script `decode_label.py`. Check that the label library has been updated for the web API.')
                 logger.debug(r.text)
 
-            temp = []
-
-            for i in range(begin, end):
-                temp.append(lines[i])
-            
-            label_info = {'Major Type': temp[0], 'Subtype': temp[1], 'SN': temp[2]}
+                label_info = {'Major Type': 'HD-Wagon', 'Subtype': '', 'SN': full_id}
 
         return label_info
 
