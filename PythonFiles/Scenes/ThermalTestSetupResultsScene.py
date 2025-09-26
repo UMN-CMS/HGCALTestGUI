@@ -171,7 +171,7 @@ class ThermalTestSetupResultsScene(ttk.Frame):
                 )
             text_label.grid(row=row, column=col * 3 + 1, padx=1, pady=6, sticky="w")
             
-            spacer = ttk.Label(checkbox_frame, text=" ", width=15)
+            spacer = ttk.Label(checkbox_frame, text=" ", width=12)
             spacer.grid(row=row, column = col * 3 + 2)
             # Bind click event to toggle state
             state_label.bind("<Button-1>", lambda e, lbl=state_label, idx=i: self.toggle_state(lbl, idx))
