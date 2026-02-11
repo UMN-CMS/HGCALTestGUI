@@ -1,0 +1,238 @@
+boards:
+
+  WH20AT:
+    description: "Grapes D+T"
+    board_image: "/boards/wh20at/wh20at.jpg"
+
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh20at/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh20at/econs/econdm2.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh20at/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh20at/econs/econtm2.jpg"
+
+  WH20AD:
+    description: "Grapes D Only"
+    board_image: "/boards/wh20ad/wh20ad.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh20at/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh20at/econs/econdm2.jpg"
+
+  WH21AT:
+    description: "Avocado D+T"
+    board_image: "/boards/wh21at/wh21at.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh21at/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh21at/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh21at/econs/econdm3.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh21at/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh21at/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh21at/econs/econtm3.jpg"
+
+  WH21AD:
+    description: "Avocado D Only"
+    board_image: "/boards/wh21ad/wh21ad.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh21ad/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh21ad/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh21ad/econs/econdm3.jpg"
+
+
+  WH30AT:
+    description: "Pineapple D+T"
+    board_image: "/boards/wh30at/wh30at.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30at/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30at/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30at/econs/econdm3.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh30at/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh30at/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh30at/econs/econtm3.jpg"
+
+  WH30AD:
+    description: "Pineapple D Only"
+    board_image: "/boards/wh30ad/wh30ad.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30ad/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30ad/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30ad/econs/econdm3.jpg"
+
+
+  WH30BT:
+    description: "Banana D+T"
+    board_image: "/boards/wh30bt/wh30bt.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30bt/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30bt/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30bt/econs/econdm3.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh30bt/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh30bt/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh30bt/econs/econtm3.jpg"
+
+  WH30BD:
+    description: "Banana D Only"
+    board_image: "/boards/wh30bd/wh30bd.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30bd/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30bd/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30bd/econs/econdm3.jpg"
+
+
+  WH30CT:
+    description: "Pumpkin D+T"
+    board_image: "/boards/wh30ct/wh30ct.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30ct/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30ct/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30ct/econs/econdm3.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh30ct/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh30ct/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh30ct/econs/econtm3.jpg"
+
+  WH30CD:
+    description: "Pumpkin D Only"
+    board_image: "/boards/wh30cd/wh30cd.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30cd/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30cd/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30cd/econs/econdm3.jpg"
+
+
+  WH30DT:
+    description: "Donut D+T"
+    board_image: "/boards/wh30dt/wh30dt.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30dt/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30dt/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30dt/econs/econdm3.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh30dt/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh30dt/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh30dt/econs/econtm3.jpg"
+
+  WH30DD:
+    description: "Donut D Only"
+    board_image: "/boards/wh30dd/wh30dd.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh30dd/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh30dd/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh30dd/econs/econdm3.jpg"
+
+
+  WH31AT:
+    description: "Apple D+T"
+    board_image: "/boards/wh31at/wh31at.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh31at/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh31at/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh31at/econs/econdm3.jpg"
+      - name: "ECOND-M4"
+        image: "/boards/wh31at/econs/econdm4.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh31at/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh31at/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh31at/econs/econtm3.jpg"
+      - name: "ECONT-M4"
+        image: "/boards/wh31at/econs/econtm4.jpg"
+
+  WH31AD:
+    description: "Apple D Only"
+    board_image: "/boards/wh31ad/wh31ad.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh31ad/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh31ad/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh31ad/econs/econdm3.jpg"
+      - name: "ECOND-M4"
+        image: "/boards/wh31ad/econs/econdm4.jpg"
+
+
+  WH31BT:
+    description: "Cherry D+T"
+    board_image: "/boards/wh31bt/wh31bt.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh31bt/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh31bt/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh31bt/econs/econdm3.jpg"
+      - name: "ECOND-M4"
+        image: "/boards/wh31bt/econs/econdm4.jpg"
+      - name: "ECONT-M1"
+        image: "/boards/wh31bt/econs/econtm1.jpg"
+      - name: "ECONT-M2"
+        image: "/boards/wh31bt/econs/econtm2.jpg"
+      - name: "ECONT-M3"
+        image: "/boards/wh31bt/econs/econtm3.jpg"
+      - name: "ECONT-M4"
+        image: "/boards/wh31bt/econs/econtm4.jpg"
+
+  WH31BD:
+    description: "Cherry D Only"
+    board_image: "/boards/wh31bd/wh31bd.jpg"
+    components:
+      - name: "ECOND-M1"
+        image: "/boards/wh31bd/econs/econdm1.jpg"
+      - name: "ECOND-M2"
+        image: "/boards/wh31bd/econs/econdm2.jpg"
+      - name: "ECOND-M3"
+        image: "/boards/wh31bd/econs/econdm3.jpg"
+      - name: "ECOND-M4"
+        image: "/boards/wh31bd/econs/econdm4.jpg"
