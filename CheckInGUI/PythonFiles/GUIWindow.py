@@ -14,6 +14,7 @@ from PythonFiles.Scenes.SummaryScene import SummaryScene
 from PythonFiles.Scenes.AddUserScene import AddUserScene
 from PythonFiles.Scenes.PostScanScene import PostScanScene
 from PythonFiles.Scenes.ComponentScanScene import ComponentScanScene
+from PythonFiles.Scenes.EconScanScene import EconScanScene
 from PythonFiles.Scenes.InspectionScenes.Inspection1 import Inspection1
 from PythonFiles.update_config import update_config
 import logging
@@ -101,10 +102,13 @@ class GUIWindow():
         self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
         self.post_scan_frame.grid(row=0, column=0, sticky='nsew')
 
+        self.econ_scan_frame = EconScanScene(self, master_frame, self.data_holder)
+        self.econ_scan_frame.grid(row=0, column=0, sticky='nsew')
+
         # Near bottom so it can reference other frames with its code
         self.splash_frame = SplashScene(self, master_frame)
         self.splash_frame.grid(row=0, column=0, sticky='nsew') 
-
+        
         logger.info('All frames have been created.')
 
         #################################################
@@ -177,6 +181,17 @@ class GUIWindow():
         self.post_scan_frame.update_frame()
         self.set_frame(self.post_scan_frame)
 
+    #################################################
+
+    def set_frame_econ_scan_frame(self):
+        logger.info('Setting frame to econ_scan_frame')
+        
+        self.econ_scan_frame.update()
+        self.set_frame(self.econ_scan_frame)
+        self.econ_scan_frame.load_board()
+
+        self.econ_scan_frame.scan_QR_code(master_window)
+   
     #################################################
 
     def set_frame_splash_frame(self):

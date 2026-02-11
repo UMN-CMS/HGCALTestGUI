@@ -332,8 +332,10 @@ class ScanScene(ttk.Frame):
             self.label_sn.update()
             self.label_major.update()
             self.btn_submit["state"] = "disabled"
-
-        if self.data_holder.data_dict['prev_results'] != '':
+        
+        if str(self.data_holder.data_dict['current_full_ID'])[3:5] == 'WH':
+            _parent.set_frame_econ_scan_frame()
+        elif self.data_holder.data_dict['prev_results'] != '':
             _parent.set_frame_postscan()
             
         else:
