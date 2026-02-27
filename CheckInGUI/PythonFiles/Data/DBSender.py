@@ -267,7 +267,6 @@ class DBSender():
         datafile = open(datafile_name, "rb")        
 
         attach_data = {'attach1': datafile}
-
         r = requests.post('{}/add_test_json.py'.format(self.db_url), data = results, files = attach_data)
         lines = r.text.split('\n')
 
