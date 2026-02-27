@@ -8,15 +8,17 @@ from PIL import Image
 import PythonFiles
 from pathlib import Path
 import yaml
+import requests
+import json
 
 logger = logging.getLogger('HGCAL_VI.PythonFiles.Scenes.EconScanScene')
 
 
 class EconScanScene(ttk.Frame):
 
-    def __init__(self, parent, master_frame, data_holder, board_id=None):
+    def __init__(self, parent, master_frame, data_holder, gui_cfg, board_id=None):
         self.data_holder = data_holder
-
+        self.db_url = gui_cfg.getDBInfo("baseURL")
         # Load boards config
         with open(Path(__file__).parent.parent / "Data/hd_wagon_econ_configs.yaml", "r") as f:
             self.boards_config = yaml.safe_load(f)['boards']
@@ -26,8 +28,12 @@ class EconScanScene(ttk.Frame):
         self.component_config = []
         self.current_index = 0
         self.scanned_components = {}
-
+        self.comments = []
+        self.results = {}
+        self.passed_test = True
         self.EXIT_CODE = 0
+
+
 
         self.master_frame = master_frame
         self.parent = parent
@@ -172,7 +178,7 @@ class EconScanScene(ttk.Frame):
             f"{component['name']}"
         )
 
-        self.scanned_label_var.set("Not scanned")
+        self.scanned_label_var.set("")
 
         MAX_LOC_WIDTH = 200
         MAX_LOC_HEIGHT = 200
@@ -243,13 +249,40 @@ class EconScanScene(ttk.Frame):
     #################################################
 
     def on_all_components_scanned(self):
-        
+        self.check_grade() 
+        #print(self.passed_test)
+        #print(self.comments)
+        #print(self.results)
         output_str = "All components scanned.\n"
+        
         for name, label in self.scanned_components.items():
             #self.data_holder.add_component(name, label)
-            output_str += f'{name}: {label}\n' 
-        self.scanned_entry.grid_remove()
-        self.btn_next.grid_remove()
+            output_str += f'{name}: {label}\n'
+        output_str += self.comments
+        
+        self.info_dict = {
+            "full_id": self.full_board_id,
+            "tester": self.data_holder.data_dict['user_ID'], 
+            "test_type": "ECON Scan",
+            "successful": int(self.passed_test), 
+            "comments": self.comments}
+
+        #self.data = {
+        #        "test_data": self.data,
+        #        "test_criteria": self.test_criteria or False,
+        #}
+
+        #self.results = {
+        #        "name": self.name,
+        #        "board_sn": self.board_sn,
+        #        "tester": self.tester,
+        #        "pass": self.passed,
+        #        "data": self.data,
+        #        "comments": str(self.comments),
+        #}
+
+        #self.scanned_entry.grid_remove()
+        #self.btn_next.grid_remove()
 
         self.lbl_progress["text"] = output_str
         self.btn_submit["state"] = "active"
@@ -258,9 +291,13 @@ class EconScanScene(ttk.Frame):
 
     def btn_submit_action(self, _parent):
         self.EXIT_CODE = 1
+        r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
+
         if self.data_holder.data_dict['prev_results'] != '':
+            self.data_holder.check_if_new_board()
             _parent.set_frame_postscan()
         else:
+            self.data_holder.check_if_new_board()
             parent.set_frame_inspection_frame()
         self.EXIT_CODE = 0
 
@@ -283,11 +320,10 @@ class EconScanScene(ttk.Frame):
     #################################################
 
     def load_board(self):
-        self.board_id = str(self.data_holder.data_dict['current_full_ID'])[3:9]
-
+        self.full_board_id = str(self.data_holder.data_dict['current_full_ID'])
+        self.board_id = self.full_board_id[3:9]
         if self.board_id not in self.boards_config:
             raise ValueError(f"Board ID {board_id} not found in config")
-    
         board_data = self.boards_config[self.board_id]
         self.board_image_path = board_data['board_image']
         self.board_image_path = Path(__file__).parent.parent / f'Data/{self.board_image_path}'
@@ -343,7 +379,7 @@ class EconScanScene(ttk.Frame):
         if not value:
             # Optionally, warn the user they must type something
             self.scanned_label_var.set("Please enter a value")
-            time.sleep(5)
+            time.sleep(2)
             self.scanned_label_var.set("")
             return
     
@@ -357,3 +393,34 @@ class EconScanScene(ttk.Frame):
             self.update_component_prompt()  # reset component image & Entry
         else:
             self.on_all_components_scanned()
+
+    def check_grade(self):
+        econ_grade_map = {
+            2: {"BA": "BA", "DD": "DD", "FF": "FF"},
+            3: {"AA": "AAA", "BA": "BAA", "AB": "BAB", "BB": "BBB", "DB": "DBB", "42": "DDB", "DD": "DDD", "FD": "FDD", "FF": "FFF"},
+            4: {"AA": "AAAA", "BA": "BAAA", "DB": "DDBB", "DD": "DDDD", "64": "FDDD", "FD": "FFDD"},
+        }
+        num_modules = int(self.full_board_id[5])+int(self.full_board_id[6])
+        correct_grades = self.full_board_id[9:11] 
+        self.passed_test = True
+        for key, value in self.scanned_components.items():
+            self.results[key] = dict()
+            self.results[key]["full_id"] = value  
+            module_num = int(key[-1]) - 1
+            scanned_grade = value[8]
+            correct_grade = econ_grade_map[num_modules][correct_grades][module_num]
+            self.results[key]["Correct Grade"] = correct_grade 
+            self.results[key]["Scanned Grade"] = scanned_grade
+            if scanned_grade != correct_grade:
+                self.results[key]["Passed"] = False
+                self.comments.append(f"\n{key} should be grade {correct_grade},\nbut scanned as grade {scanned_grade}.")
+            else:
+                self.results[key]["Passed"] = True 
+        for key in self.results.keys():
+            self.passed_test = self.passed_test and self.results[key]["Passed"] 
+        if self.passed_test:
+            self.comments = "All grades correct."
+        else:
+            self.comments.append("\nPlease finish checking in and then\nplace in failed bin.")
+            self.comments = "\n".join(self.comments)
+

@@ -102,7 +102,7 @@ class GUIWindow():
         self.post_scan_frame = PostScanScene(self, master_frame, self.data_holder)
         self.post_scan_frame.grid(row=0, column=0, sticky='nsew')
 
-        self.econ_scan_frame = EconScanScene(self, master_frame, self.data_holder)
+        self.econ_scan_frame = EconScanScene(self, master_frame, self.data_holder, self.gui_cfg)
         self.econ_scan_frame.grid(row=0, column=0, sticky='nsew')
 
         # Near bottom so it can reference other frames with its code
