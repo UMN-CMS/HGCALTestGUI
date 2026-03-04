@@ -33,8 +33,6 @@ class EconScanScene(ttk.Frame):
         self.passed_test = True
         self.EXIT_CODE = 0
 
-
-
         self.master_frame = master_frame
         self.parent = parent
 
@@ -115,7 +113,7 @@ class EconScanScene(ttk.Frame):
         # Cancel button
         self.btn_cancel = ttk.Button(
             self.left_buttons_frame, text="Cancel",
-            command=lambda: self.btn_submit_action(parent)
+            command=lambda: self.btn_cancel_action(parent)
         )
         self.btn_cancel.grid(row=0, column=0, sticky="ew", padx=5)
     
@@ -170,7 +168,7 @@ class EconScanScene(ttk.Frame):
             self.location_img_label.configure(image=None)
             self.scanned_label_var.set("Not scanned")
             return
-    
+            
         component = self.component_config[self.current_index]
     
         self.lbl_progress["text"] = (
@@ -254,12 +252,15 @@ class EconScanScene(ttk.Frame):
         #print(self.comments)
         #print(self.results)
         output_str = "All components scanned.\n"
-        
+        self.scanned_label_var.set("")
+
         for name, label in self.scanned_components.items():
             #self.data_holder.add_component(name, label)
             output_str += f'{name}: {label}\n'
         output_str += self.comments
-        
+        if not self.passed_test:
+            output_str += "\nPlease finish checking in board.\nThen place in failed bin."
+         
         self.info_dict = {
             "full_id": self.full_board_id,
             "tester": self.data_holder.data_dict['user_ID'], 
@@ -267,22 +268,8 @@ class EconScanScene(ttk.Frame):
             "successful": int(self.passed_test), 
             "comments": self.comments}
 
-        #self.data = {
-        #        "test_data": self.data,
-        #        "test_criteria": self.test_criteria or False,
-        #}
-
-        #self.results = {
-        #        "name": self.name,
-        #        "board_sn": self.board_sn,
-        #        "tester": self.tester,
-        #        "pass": self.passed,
-        #        "data": self.data,
-        #        "comments": str(self.comments),
-        #}
-
-        #self.scanned_entry.grid_remove()
-        #self.btn_next.grid_remove()
+        self.scanned_entry.grid_remove() 
+        self.btn_next.grid_remove()
 
         self.lbl_progress["text"] = output_str
         self.btn_submit["state"] = "active"
@@ -290,8 +277,24 @@ class EconScanScene(ttk.Frame):
     #################################################
 
     def btn_submit_action(self, _parent):
+
+        if self.btn_submit["state"] == "disabled":
+            if set_label_var != '':
+                self.manual_next_component()
+                return
+            else:
+                return   
         self.EXIT_CODE = 1
-        r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
+        #r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
+         
+        self.btn_submit["state"] = "disabled"
+
+        self.component_config = []
+        self.current_index = 0
+        self.scanned_components = {}
+        self.comments = []
+        self.results = {}
+        self.passed_test = True
 
         if self.data_holder.data_dict['prev_results'] != '':
             self.data_holder.check_if_new_board()
@@ -299,18 +302,58 @@ class EconScanScene(ttk.Frame):
         else:
             self.data_holder.check_if_new_board()
             parent.set_frame_inspection_frame()
+
+        self.scanned_entry.grid() 
+        self.btn_next.grid()
+
         self.EXIT_CODE = 0
 
     #################################################
 
     def btn_logout_action(self, _parent):
         self.EXIT_CODE = 1
+
+        self.scanned_entry["state"] = "active"
+        self.btn_next["state"] = "active"
+
+        self.btn_submit["state"] = "disabled"
+
+        self.component_config = []
+        self.current_index = 0
+        self.scanned_components = {}
+        self.comments = []
+        self.results = {}
+        self.passed_test = True
+
         try:
             self.listener.terminate()
             self.scanner.terminate()
         except:
             pass
         _parent.set_frame_login_frame()
+
+    
+    def btn_cancel_action(self, _parent):
+
+        self.EXIT_CODE = 1
+
+        self.scanned_entry["state"] = "active"
+        self.btn_next["state"] = "active"
+        self.btn_submit["state"] = "disabled"
+
+        self.component_config = []
+        self.current_index = 0
+        self.scanned_components = {}
+        self.comments = []
+        self.results = {}
+        self.passed_test = True
+
+        try:
+            self.listener.terminate()
+            self.scanner.terminate()
+        except:
+            pass
+        _parent.set_frame_scan_frame()
 
     #################################################
 
@@ -421,6 +464,8 @@ class EconScanScene(ttk.Frame):
         if self.passed_test:
             self.comments = "All grades correct."
         else:
-            self.comments.append("\nPlease finish checking in and then\nplace in failed bin.")
+            #self.comments.append("\nPlease finish checking in and then\nplace in failed bin.")
             self.comments = "\n".join(self.comments)
 
+    def get_submit_action(self, _parent):
+        return self.btn_submit_action(_parent)
