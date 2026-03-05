@@ -69,6 +69,14 @@ Test:
   desc_short: "Mod4 Resistance"
   name: "Mod4 Resistance"
   required: 1
+- TestClass: Mod4Reset
+  TestPath: /home/HGCAL_dev/sw/WagonTesting
+  TestScript: run_mod4_tests.py
+  desc_long: "Mod4 Reset"
+  desc_short: "Mod4 Reset"
+  name: "Mod4 Reset"
+  required: 1
+
 
 UsingScanner: true
 InspectionTest:
