@@ -32,6 +32,15 @@ class EconScanScene(ttk.Frame):
         self.results = {}
         self.passed_test = True
         self.EXIT_CODE = 0
+        self.all_scanned = False 
+        self.warned = False
+        self.last_warnings = []
+
+        self.econ_grade_map = {
+            2: {"BA": "BA", "DD": "DD", "FF": "FF"},
+            3: {"AA": "AAA", "BA": "BAA", "AB": "BAB", "BB": "BBB", "DB": "DBB", "42": "DDB", "DD": "DDD", "FD": "FDD", "FF": "FFF"},
+            4: {"AA": "AAAA", "BA": "BAAA", "DB": "DDBB", "DD": "DDDD", "64": "FDDD", "FD": "FFDD"},
+        }
 
         self.master_frame = master_frame
         self.parent = parent
@@ -89,7 +98,7 @@ class EconScanScene(ttk.Frame):
         self.scanned_entry.grid(row=1, column=0, sticky="ew", pady=(0, 20))
     
         # Bind Enter key to submit typed value
-        self.scanned_entry.bind("<Return>", lambda event: self.manual_next_component())
+        # self.scanned_entry.bind("<Return>", lambda event: self.manual_next_component())
     
         # Trace changes to update dictionary in real time
         def _on_scanned_entry_change(*args):
@@ -170,7 +179,7 @@ class EconScanScene(ttk.Frame):
             return
             
         component = self.component_config[self.current_index]
-    
+
         self.lbl_progress["text"] = (
             f"Scan component {self.current_index + 1} of {len(self.component_config)}\n"
             f"{component['name']}"
@@ -180,19 +189,19 @@ class EconScanScene(ttk.Frame):
 
         MAX_LOC_WIDTH = 200
         MAX_LOC_HEIGHT = 200
-        comp_img_path = Path(__file__).parent.parent / f'Data/{component["image"]}'
-        img = Image.open(comp_img_path)
-        img.thumbnail((MAX_LOC_WIDTH, MAX_LOC_HEIGHT), Image.Resampling.LANCZOS)
-        photo = iTK.PhotoImage(img)
-        self.location_img_label.configure(image=photo)
-        self.location_img_label.image = photo
+        try:
+            comp_img_path = Path(__file__).parent.parent / f'Data/{component["image"]}'
+            img = Image.open(comp_img_path)
+            img.thumbnail((MAX_LOC_WIDTH, MAX_LOC_HEIGHT), Image.Resampling.LANCZOS)
+            photo = iTK.PhotoImage(img)
+            self.location_img_label.configure(image=photo)
+            self.location_img_label.image = photo
+        except:
+            print(f'No image {component["image"]}.')
 
     ################################################
 
-    def scan_QR_code(self, master_window):
-
-        if not hasattr(self, 'master_window'):
-            self.master_window = master_window
+    def scan_QR_code(self):
 
         sys.path.insert(1, '/home/hgcal/WagonTest/Scanner/python')
         from ..Scanner.python.get_barcodes import scan, listen, parse_xml
@@ -200,6 +209,15 @@ class EconScanScene(ttk.Frame):
         manager = mp.Manager()
         self.full_id = manager.list()
 
+        self.scanned_entry["state"] = 'active'
+        self.btn_next["state"] = 'active'
+
+        try:
+            self.listener.terminate()
+            self.scanner.terminate()
+        except:
+            pass
+        
         self.scanner = scan(self.parent.main_path)
         self.listener = mp.Process(target=listen, args=(self.full_id, self.scanner))
         self.listener.start()
@@ -214,26 +232,14 @@ class EconScanScene(ttk.Frame):
 
         if len(self.full_id) > 0:
             label = parse_xml(self.full_id[0])
-
-            # Stop scanner processes
             try:
                 self.listener.terminate()
                 self.scanner.terminate()
             except:
                 pass
-
-            # Store scanned component
-            component_name = self.component_config[self.current_index]["name"]
-            self.scanned_components[component_name] = label
             self.scanned_label_var.set(label)
-            # Move to next component
-            self.current_index += 1
-            if self.current_index < len(self.component_config):
-                self.update_component_prompt()
-                # Start scanning next component
-                self.scan_QR_code(self.master_window)
-            else:
-                self.on_all_components_scanned()
+            self.advance_component(label)
+
         elif self.EXIT_CODE:
             try:
                 self.listener.terminate()
@@ -241,15 +247,12 @@ class EconScanScene(ttk.Frame):
             except:
                 pass
         else:
-            # Poll again in 10 ms
             self.after(10, self._poll_scanner)
 
     #################################################
 
     def on_all_components_scanned(self):
         self.check_grade() 
-        #print(self.passed_test)
-        #print(self.comments)
         #print(self.results)
         output_str = "All components scanned.\n"
         self.scanned_label_var.set("")
@@ -259,7 +262,7 @@ class EconScanScene(ttk.Frame):
             output_str += f'{name}: {label}\n'
         output_str += self.comments
         if not self.passed_test:
-            output_str += "\nPlease finish checking in board.\nThen place in failed bin."
+            output_str += "\nPlease finish checking in board.\nThen, place in failed bin and notify an expert."
          
         self.info_dict = {
             "full_id": self.full_board_id,
@@ -273,18 +276,17 @@ class EconScanScene(ttk.Frame):
 
         self.lbl_progress["text"] = output_str
         self.btn_submit["state"] = "active"
+        self.all_scanned = True
 
     #################################################
 
     def btn_submit_action(self, _parent):
-
-        if self.btn_submit["state"] == "disabled":
-            if set_label_var != '':
-                self.manual_next_component()
-                return
-            else:
-                return   
+        if not self.all_scanned:
+            self.manual_next_component()
+            return
         self.EXIT_CODE = 1
+        print(self.info_dict)
+        print(self.results)
         #r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
          
         self.btn_submit["state"] = "disabled"
@@ -295,6 +297,8 @@ class EconScanScene(ttk.Frame):
         self.comments = []
         self.results = {}
         self.passed_test = True
+        self.all_scanned = False 
+        self.warned = False
 
         if self.data_holder.data_dict['prev_results'] != '':
             self.data_holder.check_if_new_board()
@@ -312,7 +316,6 @@ class EconScanScene(ttk.Frame):
 
     def btn_logout_action(self, _parent):
         self.EXIT_CODE = 1
-
         self.scanned_entry["state"] = "active"
         self.btn_next["state"] = "active"
 
@@ -324,19 +327,19 @@ class EconScanScene(ttk.Frame):
         self.comments = []
         self.results = {}
         self.passed_test = True
+        self.all_scanned = False
+        self.warned = False
 
-        try:
-            self.listener.terminate()
-            self.scanner.terminate()
-        except:
-            pass
+        self.scanned_entry.grid() 
+        self.btn_next.grid()
+
         _parent.set_frame_login_frame()
+        self.EXIT_CODE = 0
 
     
     def btn_cancel_action(self, _parent):
 
         self.EXIT_CODE = 1
-
         self.scanned_entry["state"] = "active"
         self.btn_next["state"] = "active"
         self.btn_submit["state"] = "disabled"
@@ -347,13 +350,14 @@ class EconScanScene(ttk.Frame):
         self.comments = []
         self.results = {}
         self.passed_test = True
+        self.all_scanned = False
+        self.warned = False
 
-        try:
-            self.listener.terminate()
-            self.scanner.terminate()
-        except:
-            pass
+        self.scanned_entry.grid() 
+        self.btn_next.grid()
+
         _parent.set_frame_scan_frame()
+        self.EXIT_CODE = 0
 
     #################################################
 
@@ -369,15 +373,18 @@ class EconScanScene(ttk.Frame):
             raise ValueError(f"Board ID {board_id} not found in config")
         board_data = self.boards_config[self.board_id]
         self.board_image_path = board_data['board_image']
-        self.board_image_path = Path(__file__).parent.parent / f'Data/{self.board_image_path}'
+        try:
+            self.board_image_path = Path(__file__).parent.parent / f'Data/{self.board_image_path}'
+            if hasattr(self, 'lbl_board'):
+                self.load_and_scale_board_image(self.board_image_path) 
+        except:
+            print(f"No image {self.board_image_path}")
+            pass
         self.component_config = board_data['components']
     
         self.current_index = 0
         self.scanned_components = {}
     
-        # Load board image
-        if hasattr(self, 'lbl_board'):
-            self.load_and_scale_board_image(self.board_image_path) 
         self.update_component_prompt()
 
     def load_and_scale_board_image(self, image_path):
@@ -414,58 +421,126 @@ class EconScanScene(ttk.Frame):
         self.lbl_board.image = photo
 
     def manual_next_component(self):
-        if self.current_index >= len(self.component_config):
-            return
-    
-        # Get value from Entry
         value = self.scanned_label_var.get().strip()
         if not value:
-            # Optionally, warn the user they must type something
             self.scanned_label_var.set("Please enter a value")
+            self.scanned_entry.update()
             time.sleep(2)
             self.scanned_label_var.set("")
             return
-    
-        # Store value
+
+        self.advance_component(value, scanned=False)
+
+    def advance_component(self, value, scanned = True):
+        self.EXIT_CODE = 0
         component_name = self.component_config[self.current_index]["name"]
         self.scanned_components[component_name] = value
+
+        if scanned:
+            self.scanned_entry["state"] = "disabled"
+            self.btn_next["state"] = "disabled"
+
+        pass_id_check, warnings = self.check_id(value, component_name)  
+        if (not pass_id_check) and (warnings != self.last_warnings):
+            self.last_warnings = warnings 
+            self.warned = True
+            self.lbl_progress["text"] = (f"{warnings}\n" 
+                f"Please double-check and rescan.\n"
+                f"If you are sure you have scanned\nthe correct ECON, hit next."
+            )
+
+            self.scanned_entry["state"] = "normal"
+            self.btn_next["state"] = "normal"
+            return
+        
+        self.warned = False
+        if scanned:
+            self.lbl_progress["text"] = "Good scan"
+            self.lbl_progress.update()
+            time.sleep(2)
     
-        # Move to next component
         self.current_index += 1
         if self.current_index < len(self.component_config):
-            self.update_component_prompt()  # reset component image & Entry
+            self.update_component_prompt()
+            self.scan_QR_code()
         else:
             self.on_all_components_scanned()
 
     def check_grade(self):
-        econ_grade_map = {
-            2: {"BA": "BA", "DD": "DD", "FF": "FF"},
-            3: {"AA": "AAA", "BA": "BAA", "AB": "BAB", "BB": "BBB", "DB": "DBB", "42": "DDB", "DD": "DDD", "FD": "FDD", "FF": "FFF"},
-            4: {"AA": "AAAA", "BA": "BAAA", "DB": "DDBB", "DD": "DDDD", "64": "FDDD", "FD": "FFDD"},
-        }
         num_modules = int(self.full_board_id[5])+int(self.full_board_id[6])
         correct_grades = self.full_board_id[9:11] 
         self.passed_test = True
-        for key, value in self.scanned_components.items():
-            self.results[key] = dict()
-            self.results[key]["full_id"] = value  
-            module_num = int(key[-1]) - 1
-            scanned_grade = value[8]
-            correct_grade = econ_grade_map[num_modules][correct_grades][module_num]
-            self.results[key]["Correct Grade"] = correct_grade 
-            self.results[key]["Scanned Grade"] = scanned_grade
-            if scanned_grade != correct_grade:
-                self.results[key]["Passed"] = False
-                self.comments.append(f"\n{key} should be grade {correct_grade},\nbut scanned as grade {scanned_grade}.")
-            else:
-                self.results[key]["Passed"] = True 
-        for key in self.results.keys():
-            self.passed_test = self.passed_test and self.results[key]["Passed"] 
-        if self.passed_test:
-            self.comments = "All grades correct."
-        else:
-            #self.comments.append("\nPlease finish checking in and then\nplace in failed bin.")
-            self.comments = "\n".join(self.comments)
 
-    def get_submit_action(self, _parent):
-        return self.btn_submit_action(_parent)
+        for key, value in self.scanned_components.items():
+            self.results[key] = {"full_id": value, "Passed": True}
+            pass_id_check, warnings = self.check_id(value, key)
+            if not pass_id_check:
+                self.results[key]["Passed"] = False
+            
+            if len(value) > 7:
+                d_or_t = value[7]
+            else:
+                d_or_t = None
+
+            if (d_or_t is not None) and (d_or_t == 'D'):
+                module_num = int(key[-1]) - 1
+                scanned_grade = value[8]
+                correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
+                self.results[key]["Correct Grade"] = correct_grade
+                self.results[key]["Scanned Grade"] = scanned_grade
+
+                if scanned_grade != correct_grade:
+                    self.results[key]["Passed"] = False
+            self.results[key]["Comments"] = warnings
+            if warnings is not None:
+                self.comments.append(warnings)
+
+        print(self.comments)
+        self.passed_test = all(r["Passed"] for r in self.results.values())
+        self.comments = "All grades correct." if self.passed_test else "\n".join(self.comments)
+
+    def get_submit_action(self):
+        return self.btn_submit_action
+
+    def get_parent(self):
+        return self.parent
+
+    def check_id(self, value, site_name):
+        warnings = []
+
+        if len(value) < 9:
+            return False, f"'{value}' is not a valid ECON ID (too short)."
+
+        if value[:3] != "320":
+            warnings.append(f"Unexpected prefix '{value[:3]}' (expected '320').")
+
+        d_or_t = value[7]
+        expected = site_name[4]
+
+        if d_or_t not in ('D', 'T'):
+            return False, f"Non-existent ECON type '{d_or_t}' scanned for site {site_name}."
+
+        if d_or_t != expected:
+            warnings.append(f"ECON{d_or_t} scanned for site {site_name}.")
+
+        if d_or_t == 'D':
+            grade_check_passed, grade_check_warning = self.check_individual_grade(value, site_name)
+            if not grade_check_passed:
+                warnings.append(grade_check_warning)
+        if warnings:
+            return False, "\n".join(warnings)
+        return True, None
+
+    def check_individual_grade(self, value, site_name):
+        num_modules = int(self.full_board_id[5])+int(self.full_board_id[6])
+        correct_grades = self.full_board_id[9:11] 
+        d_or_t = value[7]
+        module_num = int(site_name[-1])-1
+        if d_or_t == 'D':
+            scanned_grade = value[8]
+            correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
+
+            if scanned_grade != correct_grade:
+                return False, f"{site_name} should be grade {correct_grade}, but grade {scanned_grade} was scanned."
+
+        return True, None

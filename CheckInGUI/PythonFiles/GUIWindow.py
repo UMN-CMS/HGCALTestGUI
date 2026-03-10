@@ -189,8 +189,7 @@ class GUIWindow():
         self.econ_scan_frame.update()
         self.set_frame(self.econ_scan_frame)
         self.econ_scan_frame.load_board()
-
-        self.econ_scan_frame.scan_QR_code(master_window)
+        self.econ_scan_frame.scan_QR_code()
    
     #################################################
 
