@@ -292,7 +292,7 @@ class EconScanScene(ttk.Frame):
         self.EXIT_CODE = 1
         print(self.info_dict)
         print(self.results)
-        #r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
+        r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
          
         self.btn_submit["state"] = "disabled"
 
@@ -397,8 +397,10 @@ class EconScanScene(ttk.Frame):
             if hasattr(self, 'lbl_board'):
                 self.load_and_scale_board_image(self.board_image_path) 
         except:
-            print(f"No image {self.board_image_path}")
-            pass
+            print(f"No image {self.board_image_path}. Using default.")
+            self.board_image_path = Path(__file__).parent.parent / f'Data/boards/missing.jpg'
+            if hasattr(self, 'lbl_board'):
+                self.load_and_scale_board_image(self.board_image_path) 
 
     def load_and_scale_board_image(self, image_path):
         img = Image.open(image_path)
