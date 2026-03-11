@@ -35,6 +35,7 @@ class EconScanScene(ttk.Frame):
         self.all_scanned = False 
         self.warned = False
         self.last_warnings = []
+        self.is_rescanning = False
 
         self.econ_grade_map = {
             2: {"BA": "BA", "DD": "DD", "FF": "FF"},
@@ -71,7 +72,7 @@ class EconScanScene(ttk.Frame):
     
         # === Grid layout ===
         self.grid_columnconfigure(0, weight=1)  # left panel
-        self.grid_columnconfigure(1, weight=3)  # right panel
+        self.grid_columnconfigure(1, weight=2)  # right panel
         self.grid_rowconfigure(0, weight=1)
     
         # --- Left panel ---
@@ -97,16 +98,6 @@ class EconScanScene(ttk.Frame):
         )
         self.scanned_entry.grid(row=1, column=0, sticky="ew", pady=(0, 20))
     
-        # Bind Enter key to submit typed value
-        # self.scanned_entry.bind("<Return>", lambda event: self.manual_next_component())
-    
-        # Trace changes to update dictionary in real time
-        def _on_scanned_entry_change(*args):
-            if self.current_index < len(self.component_config):
-                component_name = self.component_config[self.current_index]["name"]
-                self.scanned_components[component_name] = self.scanned_label_var.get()
-        self.scanned_label_var.trace_add("write", _on_scanned_entry_change)
-    
         # Next button (manual input)
         self.btn_next = ttk.Button(
             self.left_panel, text="Next", command=self.manual_next_component
@@ -131,6 +122,23 @@ class EconScanScene(ttk.Frame):
             self.left_buttons_frame, text="Submit", command=lambda: self.btn_submit_action(parent), state="disabled"
         )
         self.btn_submit.grid(row=0, column=1, sticky="ew", padx=5)
+   
+        #Rescan dropbox/button
+        self.rescan_frame = ttk.Frame(self.left_panel)
+        self.rescan_frame.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        self.rescan_frame.grid_columnconfigure(0, weight=1)
+        self.rescan_frame.grid_remove()
+        
+        self.btn_rescan = ttk.Button(
+            self.rescan_frame, text="Rescan Selected", command=self.rescan_component
+        )
+        self.btn_rescan.grid(row=0, column=0, sticky="ew", pady=(0, 5))
+        
+        self.rescan_var = tk.StringVar()
+        self.rescan_dropdown = ttk.Combobox(
+            self.rescan_frame, textvariable=self.rescan_var, state="readonly", font=("Arial", 14)
+        )
+        self.rescan_dropdown.grid(row=1, column=0, sticky="ew")
     
         # Logout button
         self.btn_logout = ttk.Button(
@@ -145,59 +153,34 @@ class EconScanScene(ttk.Frame):
             command=lambda: self.help_action(parent)
         )
         self.btn_help.grid(row=0, column=3, sticky="ew", padx=5)
-    
-        # --- Right panel ---
+       
+
+        # Right panel
         self.right_panel = ttk.Frame(self)
         self.right_panel.grid(column=1, row=0, sticky="nsew", padx=10, pady=10)
-        self.right_panel.grid_rowconfigure(0, weight=3)  # board image
-        self.right_panel.grid_rowconfigure(1, weight=1)  # component image
-        self.right_panel.grid_columnconfigure(0, weight=1)
-    
-        # Board image (top)
+        
         self.board_frame = ttk.Frame(self.right_panel)
-        self.board_frame.grid(row=0, column=0, sticky="nsew")
-        self.board_frame.grid_rowconfigure(0, weight=1)
-        self.board_frame.grid_columnconfigure(0, weight=1)
+        self.board_frame.pack(expand=True, fill="both")
+        
         self.lbl_board = ttk.Label(self.board_frame)
-        self.lbl_board.grid(row=0, column=0, sticky="nsew")
-    
-        # Component image (bottom)
-        self.location_img_label = ttk.Label(self.right_panel)
-        self.location_img_label.grid(row=1, column=0, sticky="nsew", pady=10)
-    
-        # Prevent grid from shrinking widgets
-        self.grid_propagate(False)
-
-    ################################################
+        self.lbl_board.pack(expand=True)
 
     def update_component_prompt(self):
         if not self.component_config:
             # No board loaded yet
             self.lbl_progress["text"] = "No board selected"
-            self.location_img_label.configure(image=None)
             self.scanned_label_var.set("Not scanned")
             return
             
         component = self.component_config[self.current_index]
-
+        
         self.lbl_progress["text"] = (
             f"Scan component {self.current_index + 1} of {len(self.component_config)}\n"
             f"{component['name']}"
         )
 
         self.scanned_label_var.set("")
-
-        MAX_LOC_WIDTH = 200
-        MAX_LOC_HEIGHT = 200
-        try:
-            comp_img_path = Path(__file__).parent.parent / f'Data/{component["image"]}'
-            img = Image.open(comp_img_path)
-            img.thumbnail((MAX_LOC_WIDTH, MAX_LOC_HEIGHT), Image.Resampling.LANCZOS)
-            photo = iTK.PhotoImage(img)
-            self.location_img_label.configure(image=photo)
-            self.location_img_label.image = photo
-        except:
-            print(f'No image {component["image"]}.')
+        self.get_component_image()
 
     ################################################
 
@@ -253,7 +236,6 @@ class EconScanScene(ttk.Frame):
 
     def on_all_components_scanned(self):
         self.check_grade() 
-        #print(self.results)
         output_str = "All components scanned.\n"
         self.scanned_label_var.set("")
 
@@ -263,7 +245,7 @@ class EconScanScene(ttk.Frame):
         output_str += self.comments
         if not self.passed_test:
             output_str += "\nPlease finish checking in board.\nThen, place in failed bin and notify an expert."
-         
+        
         self.info_dict = {
             "full_id": self.full_board_id,
             "tester": self.data_holder.data_dict['user_ID'], 
@@ -273,10 +255,33 @@ class EconScanScene(ttk.Frame):
 
         self.scanned_entry.grid_remove() 
         self.btn_next.grid_remove()
+        
+        component_names = [c["name"] for c in self.component_config]
+        self.rescan_dropdown["values"] = component_names
+        self.rescan_var.set(component_names[0])
+        self.rescan_frame.grid()
 
         self.lbl_progress["text"] = output_str
         self.btn_submit["state"] = "active"
         self.all_scanned = True
+
+    def rescan_component(self):
+        selected = self.rescan_var.get()
+        if not selected:
+            return
+    
+        component_names = [c["name"] for c in self.component_config]
+        self.current_index = component_names.index(selected)
+        self.is_rescanning = True
+    
+        self.rescan_frame.grid_remove()
+        self.btn_submit["state"] = "disabled"
+        self.all_scanned = False
+        self.scanned_entry.grid()
+        self.btn_next.grid()
+    
+        self.update_component_prompt()
+        self.scan_QR_code()
 
     #################################################
 
@@ -299,6 +304,8 @@ class EconScanScene(ttk.Frame):
         self.passed_test = True
         self.all_scanned = False 
         self.warned = False
+        self.last_warnings = []
+        self.is_rescanning = False
 
         if self.data_holder.data_dict['prev_results'] != '':
             self.data_holder.check_if_new_board()
@@ -309,6 +316,7 @@ class EconScanScene(ttk.Frame):
 
         self.scanned_entry.grid() 
         self.btn_next.grid()
+        self.rescan_frame.grid_remove()
 
         self.EXIT_CODE = 0
 
@@ -329,9 +337,12 @@ class EconScanScene(ttk.Frame):
         self.passed_test = True
         self.all_scanned = False
         self.warned = False
+        self.last_warnings = []
+        self.is_rescanning = False
 
         self.scanned_entry.grid() 
         self.btn_next.grid()
+        self.rescan_frame.grid_remove()
 
         _parent.set_frame_login_frame()
         self.EXIT_CODE = 0
@@ -352,9 +363,12 @@ class EconScanScene(ttk.Frame):
         self.passed_test = True
         self.all_scanned = False
         self.warned = False
+        self.last_warnings = []
+        self.is_rescanning = False
 
         self.scanned_entry.grid() 
         self.btn_next.grid()
+        self.rescan_frame.grid_remove()
 
         _parent.set_frame_scan_frame()
         self.EXIT_CODE = 0
@@ -371,8 +385,13 @@ class EconScanScene(ttk.Frame):
         self.board_id = self.full_board_id[3:9]
         if self.board_id not in self.boards_config:
             raise ValueError(f"Board ID {board_id} not found in config")
-        board_data = self.boards_config[self.board_id]
-        self.board_image_path = board_data['board_image']
+        self.component_config = self.boards_config[self.board_id]['components']
+        self.current_index = 0
+        self.scanned_components = {}
+        self.update_component_prompt()
+    
+    def get_component_image(self):
+        self.board_image_path = self.boards_config[self.board_id]['components'][self.current_index]['image']
         try:
             self.board_image_path = Path(__file__).parent.parent / f'Data/{self.board_image_path}'
             if hasattr(self, 'lbl_board'):
@@ -380,45 +399,27 @@ class EconScanScene(ttk.Frame):
         except:
             print(f"No image {self.board_image_path}")
             pass
-        self.component_config = board_data['components']
-    
-        self.current_index = 0
-        self.scanned_components = {}
-    
-        self.update_component_prompt()
 
     def load_and_scale_board_image(self, image_path):
-        self.board_frame.update_idletasks() 
-        frame_width = self.board_frame.winfo_width()
-        frame_height = self.board_frame.winfo_height()
-    
-        # If not ready yet, try again shortly
-        if frame_width <= 1 or frame_height <= 1:
-            self.after(50, lambda: self.load_and_scale_board_image(image_path))
-            return
-    
         img = Image.open(image_path)
-    
-        # Calculate scale factor to fit inside frame while keeping aspect ratio
-        img_ratio = img.width / img.height
-        frame_ratio = frame_width / frame_height
-    
-        if img_ratio > frame_ratio:
-            new_width = frame_width
-            new_height = int(frame_width / img_ratio)
-        else:
-            new_height = frame_height
-            new_width = int(frame_height * img_ratio)
         
-        new_width = max(100, new_width)
-        new_height = max(100, new_height)
-
+        target_width, target_height = 650, 879
+        img_ratio = img.width / img.height
+        target_ratio = target_width / target_height
+        
+        if img_ratio > target_ratio:
+            new_width = target_width
+            new_height = int(target_width / img_ratio)
+        else:
+            new_height = target_height
+            new_width = int(target_height * img_ratio)
+        
         img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
         photo = iTK.PhotoImage(img)
-    
-        # Update label
-        self.lbl_board.configure(image=photo)
+
+        self.lbl_board.config(image=photo)
         self.lbl_board.image = photo
+        self.board_frame.update()
 
     def manual_next_component(self):
         value = self.scanned_label_var.get().strip()
@@ -460,7 +461,10 @@ class EconScanScene(ttk.Frame):
             time.sleep(2)
     
         self.current_index += 1
-        if self.current_index < len(self.component_config):
+        if self.is_rescanning:
+            self.is_rescanning = False
+            self.on_all_components_scanned()
+        elif self.current_index < len(self.component_config):
             self.update_component_prompt()
             self.scan_QR_code()
         else:
@@ -470,6 +474,7 @@ class EconScanScene(ttk.Frame):
         num_modules = int(self.full_board_id[5])+int(self.full_board_id[6])
         correct_grades = self.full_board_id[9:11] 
         self.passed_test = True
+        self.comments = []
 
         for key, value in self.scanned_components.items():
             self.results[key] = {"full_id": value, "Passed": True}
@@ -495,7 +500,6 @@ class EconScanScene(ttk.Frame):
             if warnings is not None:
                 self.comments.append(warnings)
 
-        print(self.comments)
         self.passed_test = all(r["Passed"] for r in self.results.values())
         self.comments = "All grades correct." if self.passed_test else "\n".join(self.comments)
 
