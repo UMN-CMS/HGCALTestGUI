@@ -223,6 +223,10 @@ class DataHolder():
             got_code = self.check_for_ldo()
             if got_code is None or got_code == "None":
                 self.data_dict['inspection_pass'] = 0
+                if self.data_dict['comments'] == "_":
+                    self.data_dict['comments'] = ""
+                self.data_dict['comments'] = self.data_dict['comments'] + " no LDO scanned."
+                
 
         #self.add_inspection_to_comments()
         self.data_dict['data'] = self.inspection_data
