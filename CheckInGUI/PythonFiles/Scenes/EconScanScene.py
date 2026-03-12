@@ -215,6 +215,7 @@ class EconScanScene(ttk.Frame):
 
         if len(self.full_id) > 0:
             label = parse_xml(self.full_id[0])
+            del self.full_id[:] 
             try:
                 self.listener.terminate()
                 self.scanner.terminate()
@@ -437,16 +438,27 @@ class EconScanScene(ttk.Frame):
     def advance_component(self, value, scanned = True):
         self.EXIT_CODE = 0
         component_name = self.component_config[self.current_index]["name"]
-        self.scanned_components[component_name] = value
+
+        if self.is_rescanning:
+            self.scanned_components[component_name] = None 
+        current_values = list(self.scanned_components.values())
 
         if scanned:
             self.scanned_entry["state"] = "disabled"
             self.btn_next["state"] = "disabled"
 
+        if value in current_values:
+            self.lbl_progress["text"] = (f"ID already scanned\n" 
+                f"Please double-check and rescan.")
+
+            self.scanned_entry["state"] = "normal"
+            self.btn_next["state"] = "normal"
+            self.scan_QR_code()
+            return
+
         pass_id_check, warnings = self.check_id(value, component_name)  
         if (not pass_id_check) and (warnings != self.last_warnings):
             self.last_warnings = warnings 
-            self.warned = True
             self.lbl_progress["text"] = (f"{warnings}\n" 
                 f"Please double-check and rescan.\n"
                 f"If you are sure you have scanned\nthe correct ECON, hit next."
@@ -454,14 +466,15 @@ class EconScanScene(ttk.Frame):
 
             self.scanned_entry["state"] = "normal"
             self.btn_next["state"] = "normal"
+            self.scan_QR_code()
             return
         
-        self.warned = False
         if scanned:
             self.lbl_progress["text"] = "Good scan"
             self.lbl_progress.update()
-            time.sleep(2)
-    
+            time.sleep(1)
+
+        self.scanned_components[component_name] = value
         self.current_index += 1
         if self.is_rescanning:
             self.is_rescanning = False
@@ -469,7 +482,7 @@ class EconScanScene(ttk.Frame):
         elif self.current_index < len(self.component_config):
             self.update_component_prompt()
             self.scan_QR_code()
-        else:
+        elif self.current_index >= len(self.component_config):
             self.on_all_components_scanned()
 
     def check_grade(self):
@@ -528,11 +541,11 @@ class EconScanScene(ttk.Frame):
 
         if d_or_t != expected:
             warnings.append(f"ECON{d_or_t} scanned for site {site_name}.")
-
-        if d_or_t == 'D':
+        elif d_or_t == 'D': 
             grade_check_passed, grade_check_warning = self.check_individual_grade(value, site_name)
             if not grade_check_passed:
                 warnings.append(grade_check_warning)
+
         if warnings:
             return False, "\n".join(warnings)
         return True, None
