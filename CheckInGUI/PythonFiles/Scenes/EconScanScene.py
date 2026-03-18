@@ -313,7 +313,7 @@ class EconScanScene(ttk.Frame):
             _parent.set_frame_postscan()
         else:
             self.data_holder.check_if_new_board()
-            parent.set_frame_inspection_frame()
+            _parent.set_frame_inspection_frame()
 
         self.scanned_entry.grid() 
         self.btn_next.grid()
