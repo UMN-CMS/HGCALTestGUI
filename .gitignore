@@ -14,4 +14,4 @@ __pycache__/
 *.log
 *.json
 GUILogs/*
-CheckInGui/PythonFiles/Data/boards/*
+CheckInGui/PythonFiles/Data/boards/
