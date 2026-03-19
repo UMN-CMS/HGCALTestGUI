@@ -1,0 +1,71 @@
+GUIType: Engine
+
+People: [Sam, HGCAL_dev]
+
+Board_type:
+  - name: LPGBT Mezzanine
+    requiredTests: [0, 1, 2, 3, 4]
+    type_sn: '100300'
+
+DBInfo:
+  admin: FactoryInserter
+  baseURL: http://cmslab1.spa.umn.edu/Factory/EngineDB
+  inserter: FactoryInserter
+  name: EngineDB_PRO
+  reader: FactoryReadUser
+  use_database: true
+
+
+SerialCheckSafe: true
+UsingScanner: true
+
+# TestHandler: {name: Local, remoteip: localhost}
+# TestHandler: {name: SSH, username: HGCAL_dev, hostname: cmstester5, remoteip: <remoteip>}
+TestHandler: {name: ZMQ, localip: "localhost", remoteip: "TEST_SERVER_IP_ADDRESS", username: "test_server", serverpath: <serverpath>, serverscript: <serverscript>}
+
+
+PhysicalTest: []
+Test:
+  - TestClass: lpGBT Mezz Setup
+    TestPath: /home/test_server/test_code/mezz_tests
+    TestScript: setup_test_sam.py
+    desc_long: Perform Read, Write operations on Tester and Mezzanine. Check that the lpGBT can be setup and read back correctly.
+    desc_short: Check Mezz and Tester Setup.
+    name: lpGBT Mezz Setup
+    required: 1
+
+  - TestClass: lpGBT Mezz ID
+    TestPath: /home/test_server/test_code/mezz_tests
+    TestScript: id_test_sam.py
+    desc_long: Read lpgbt id
+    desc_short: Check id
+    name: lpGBT Mezz ID
+    required: 1
+    
+  - TestClass: lpGBT Mezz Power
+    TestPath: /home/test_server/test_code/mezz_tests
+    TestScript: power_test_sam.py
+    desc_long: Measure the power drawn on the Mezzanine.
+    desc_short: Measure the power drawn on the Mezzanine. 
+    name: lpGBT Mezz Power
+    required: 1
+
+  - TestClass: lpGBT Mezz GPIO
+    TestPath: /home/test_server/test_code/mezz_tests
+    TestScript: gpio_test_sam.py
+    desc_long: Read and write to all GPIO channels and verify levels. Write nominal
+      configuration and then toggle each line one-by-one and verify change in both
+      lpGBT status and voltage level
+    desc_short: Check the quality of the GPIOs
+    name: lpGBT Mezz GPIO
+    required: 1
+
+  - TestClass: lpGBT Mezz ADC
+    TestPath: /home/test_server/test_code/mezz_tests
+    TestScript: adc_test_sam.py
+    desc_long: Measure known voltages/resistances. Check measured values for all 8
+      gains within tolerances, (only need to do all 8 gains for one measurement).
+    desc_short: Check quality of the ADCs
+    name: lpGBT Mezz ADC
+    required: 1
+
