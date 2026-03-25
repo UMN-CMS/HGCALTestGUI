@@ -382,7 +382,7 @@ class ScanScene(ttk.Frame):
             elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
                 self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
             elif major == 'Zipper Board' or major == 'Scintillator Cables':
-                if barcode[3:9] == "ZPLMEZ":
+                if barcode[3:9] in ("ZPLMEZ", "ZPLMZ2"):
                     self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[1], barcode[3:9]))
                 else:
                     self.manuf_selected.set("PCBWay-PCBWay")
