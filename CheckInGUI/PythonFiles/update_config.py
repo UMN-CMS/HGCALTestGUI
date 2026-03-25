@@ -16,7 +16,7 @@ def update_config(full_id):
         masterCfg = import_yaml(open(Path(__file__).parent.parent / "Configs/Engine_cfg.yaml"))
         board_cfg = masterCfg
 
-    elif full_id[3:9] == 'ZPLMEZ':
+    elif full_id[3:9] in ('ZPLMEZ','ZPLMZ2'):
         masterCfg = import_yaml(open(Path(__file__).parent.parent / "Configs/Engine_cfg.yaml"))
         board_cfg = masterCfg
 
