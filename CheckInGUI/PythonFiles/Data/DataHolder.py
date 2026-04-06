@@ -193,14 +193,16 @@ class DataHolder():
         logger.info('Uploading visual inspection results...')
         info_dict = {"full_id":self.get_full_ID(),"tester": self.data_dict['user_ID'], "test_type": test_name, "successful": self.data_dict["inspection_pass"], "comments": self.data_dict['comments']}
         logger.debug(info_dict)
-
-        with open("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "w") as outfile:
+        json_dir = Path.home()/ "JSONFiles"
+        json_dir.mkdir(exist_ok=True, parents=True)
+        json_dir = str(json_dir.parent.absolute())
+        with open("{}/JSONFiles/storage.json".format(json_dir), "w") as outfile:
             json.dump(info_dict, outfile)
 
-        with open("{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), "w") as outfile:
+        with open("{}/JSONFiles/data.json".format(json_dir), "w") as outfile:
             json.dump(self.inspection_data, outfile)
 
-        test_id = self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(PythonFiles.__path__[0]), "{}/JSONFiles/data.json".format(PythonFiles.__path__[0]), self.get_full_ID())
+        test_id = self.data_sender.add_test_json("{}/JSONFiles/storage.json".format(json_dir), "{}/JSONFiles/data.json".format(json_dir), self.get_full_ID())
 
         logging.info("Test results sent to database.")
 
