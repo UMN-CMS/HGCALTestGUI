@@ -417,9 +417,12 @@ class EconScanScene(ttk.Frame):
             new_height = target_height
             new_width = int(target_height * img_ratio)
         
-        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        photo = iTK.PhotoImage(img)
+        try:
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        except:
+            img = img.resize((new_width, new_height), Image.LANCZOS)
 
+        photo = iTK.PhotoImage(img)
         self.lbl_board.config(image=photo)
         self.lbl_board.image = photo
         self.board_frame.update()
