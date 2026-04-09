@@ -5,6 +5,7 @@ shopt -s globstar
 : ${BUILDDIR:=BUILD}
 : ${GUI_VERSION:=0.0.3}
 : ${GUI_RELEASE:=NORELEASE}
+: ${GUI_NAME:=HGCAL Test GUI}
 
 CWD=$PWD
 BNAME=$(basename $CWD)
@@ -46,7 +47,7 @@ cat <<EOF > hgcal_checkin_gui.desktop
 [Desktop Entry]
 Type=Application
 Terminal=True
-Name=HGCAL Checkin GUI
+Name=$GUI_NAME
 Icon=/usr/share/HGCALCheckinGUI/application_icon.png
 Exec=/usr/bin/hgcal_checkin_gui 
 EOF
