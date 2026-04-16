@@ -7,7 +7,8 @@ DBInfo:
   reader: FactoryReadUser
   use_database: true
 GUIType: Wagon
-SerialCheckSafe: true
+SerialCheckSafe: false
+UsingScanner: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
@@ -51,9 +52,9 @@ Test:
 - TestClass: Mod4LMezzComm
   TestPath: /home/HGCAL_dev/sw/WagonTesting
   TestScript: run_mod4_tests.py
-  desc_long: "LMezz LPGBT Comm"
-  desc_short: "LMezz LPGBT Comm"
-  name: "Mod4 LMezz Comm"
+  desc_long: LMezz LPGBT Comm
+  desc_short: LMezz LPGBT Comm
+  name: Mod4 LMezz Comm
   required: 1
 - TestClass: Mod4LMezzId
   TestPath: /home/HGCAL_dev/sw/WagonTesting
