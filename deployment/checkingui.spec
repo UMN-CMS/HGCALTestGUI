@@ -31,8 +31,8 @@ mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/HGCALCheckinGUI
 cp -r HGCALCheckinGUI $RPM_BUILD_ROOT/opt
-cp hgcal_checkin_gui $RPM_BUILD_ROOT/%{_bindir}
-cp hgcal_checkin_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
+cp %{getenv:GUI_PREFIX}_checkin_gui $RPM_BUILD_ROOT/%{_bindir}
+cp %{getenv:GUI_PREFIX}_checkin_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
 cp application_icon.png $RPM_BUILD_ROOT/%{_datadir}/HGCALCheckinGUI
 cd $RPM_BUILD_ROOT/opt/HGCALCheckinGUI
 
@@ -41,6 +41,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 /opt/HGCALCheckinGUI
-%{_bindir}/hgcal_checkin_gui
-%{_datadir}/applications/hgcal_checkin_gui.desktop
+%{_bindir}/%{getenv:GUI_PREFIX}_checkin_gui
+%{_datadir}/applications/%{getenv:GUI_PREFIX}_checkin_gui.desktop
 %{_datadir}/HGCALCheckinGUI/

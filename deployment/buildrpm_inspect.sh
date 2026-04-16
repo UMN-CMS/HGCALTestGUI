@@ -6,6 +6,9 @@ shopt -s globstar
 : ${GUI_VERSION:=0.0.3}
 : ${GUI_RELEASE:=NORELEASE}
 : ${GUI_NAME:=HGCAL Test GUI}
+: ${GUI_PREFIX:=hgcal}
+
+export GUI_PREFIX
 
 CWD=$PWD
 BNAME=$(basename $CWD)
@@ -37,27 +40,27 @@ tar cf \
 tmp=$(mktemp -d)
 pushd $PWD
 cd $tmp
-cat <<EOF > hgcal_checkin_gui
+cat <<EOF > ${GUI_PREFIX}_checkin_gui
 #!/usr/bin/env bash
 
 python3 /opt/HGCALCheckinGUI/MainFunctionVI.py
 EOF
 
-cat <<EOF > hgcal_checkin_gui.desktop
+cat <<EOF > ${GUI_PREFIX}_checkin_gui.desktop
 [Desktop Entry]
 Type=Application
 Terminal=True
 Name=$GUI_NAME
 Icon=/usr/share/HGCALCheckinGUI/application_icon.png
-Exec=/usr/bin/hgcal_checkin_gui 
+Exec=/usr/bin/${GUI_PREFIX}_checkin_gui 
 EOF
 
 echo $PWD
 ls
 
 chmod a+x hgcal_checkin_gui
-tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar hgcal_checkin_gui
-tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar hgcal_checkin_gui.desktop
+tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui
+tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui.desktop
 popd
 
 pushd $PWD
