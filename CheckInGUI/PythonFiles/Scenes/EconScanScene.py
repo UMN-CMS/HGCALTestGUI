@@ -385,6 +385,9 @@ class EconScanScene(ttk.Frame):
     def load_board(self):
         self.full_board_id = str(self.data_holder.data_dict['current_full_ID'])
         self.board_id = self.full_board_id[3:9]
+        if self.board_id[-1] == '0':
+            self.board_id = self.board_id[:-1]+'T'
+            print('Pre-series board, changing 0 to T ', self.board_id)
         if self.board_id not in self.boards_config:
             raise ValueError(f"Board ID {board_id} not found in config")
         self.component_config = self.boards_config[self.board_id]['components']
@@ -394,15 +397,32 @@ class EconScanScene(ttk.Frame):
     
     def get_component_image(self):
         self.board_image_path = self.boards_config[self.board_id]['components'][self.current_index]['image']
-        try:
-            self.board_image_path = Path(__file__).parent.parent / f'Data/{self.board_image_path}'
-            if hasattr(self, 'lbl_board'):
-                self.load_and_scale_board_image(self.board_image_path) 
-        except:
+        failed_to_load = False
+        print(self.board_image_path)
+        for index, prefix in enumerate(["/usr/local/share/EconImages", str(Path(__file__).parent.parent / 'Data') ]):
+            print(prefix)
+            real_image_path = prefix + self.board_image_path
+            print(real_image_path)
+            try:
+                if hasattr(self, 'lbl_board'):
+                    self.load_and_scale_board_image(real_image_path)
+                    print("Loaded board image.")
+            except:
+                print("Failed to load board image.")
+                if index==1:
+                    failed_to_load = True
+                continue
+        if failed_to_load:
             print(f"No image {self.board_image_path}. Using default.")
-            self.board_image_path = Path(__file__).parent.parent / f'Data/boards/missing.jpg'
-            if hasattr(self, 'lbl_board'):
-                self.load_and_scale_board_image(self.board_image_path) 
+            for index, prefix in enumerate(["/usr/local/share/EconImages", str(Path(__file__).parent.parent / 'Data') ]):
+                real_image_path = prefix + '/boards/missing.jpg'
+                try:
+                    if hasattr(self, 'lbl_board'):
+                        self.load_and_scale_board_image(real_image_path)
+                        print("Loaded default missing board image.")
+                except:
+                    print("Failed to load default missing board image.")
+                    continue
 
     def load_and_scale_board_image(self, image_path):
         img = Image.open(image_path)
