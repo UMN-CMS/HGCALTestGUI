@@ -308,12 +308,13 @@ class EconScanScene(ttk.Frame):
         self.last_warnings = []
         self.is_rescanning = False
 
-        if self.data_holder.data_dict['prev_results'] != '':
-            self.data_holder.check_if_new_board()
-            _parent.set_frame_postscan()
-        else:
-            self.data_holder.check_if_new_board()
-            _parent.set_frame_inspection_frame()
+        #if self.data_holder.data_dict['prev_results'] != '':
+        #    self.data_holder.check_if_new_board()
+        #    _parent.set_frame_postscan()
+        #else:
+        #    self.data_holder.check_if_new_board()
+        #    _parent.set_frame_inspection_frame()
+        _parent.set_frame_scan_frame()
 
         self.scanned_entry.grid() 
         self.btn_next.grid()
