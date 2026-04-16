@@ -8,6 +8,7 @@ shopt -s globstar
 : ${GUI_NAME:=HGCAL Test GUI}
 : ${GUI_PREFIX:=hgcal}
 
+export GUI_PREFIX
 
 CWD=$PWD
 BNAME=$(basename $CWD)
