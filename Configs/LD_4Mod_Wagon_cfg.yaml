@@ -7,7 +7,8 @@ DBInfo:
   reader: FactoryReadUser
   use_database: true
 GUIType: Wagon
-SerialCheckSafe: true
+SerialCheckSafe: false
+UsingScanner: true
 #TestHandler: {name: Local, remoteip: localhost}
 #TestHandler: {name: SSH, username: HGCAL_dev, hostname: "TEST_SERVER_IP_ADDRESS", remoteip: <remoteip>}
 TestHandler: {name: ZMQ, localip: <localip>, remoteip: "TEST_SERVER_IP_ADDRESS", username: <username>, serverpath: <serverpath>, serverscript: <serverscript>}
