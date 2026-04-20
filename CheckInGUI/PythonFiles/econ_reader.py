@@ -1,6 +1,5 @@
 import numpy as np
 import cv2 as cv
-from pylibdmtx.pylibdmtx import decode
 
 cap = cv.VideoCapture(0)
 frame_count = 0
@@ -42,8 +41,6 @@ while True:
         break
     frame_count+=1
 
-print(type(frame))
- 
 # When everything done, release the capture
 cap.release()
 cv.destroyAllWindows()

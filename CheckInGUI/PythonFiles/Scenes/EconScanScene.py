@@ -407,6 +407,7 @@ class EconScanScene(ttk.Frame):
                 if hasattr(self, 'lbl_board'):
                     self.load_and_scale_board_image(real_image_path)
                     print("Loaded board image.")
+                    break
             except:
                 print("Failed to load board image.")
                 if index==1:
@@ -414,8 +415,8 @@ class EconScanScene(ttk.Frame):
                 continue
         if failed_to_load:
             print(f"No image {self.board_image_path}. Using default.")
-            for index, prefix in enumerate(["/usr/local/share/EconImages", str(Path(__file__).parent.parent / 'Data') ]):
-                real_image_path = prefix + '/boards/missing.jpg'
+            for index, prefix in enumerate(["/usr/local/share/EconImages", str(Path(__file__).parent.parent / 'Data/boards') ]):
+                real_image_path = prefix + '/missing.jpg'
                 try:
                     if hasattr(self, 'lbl_board'):
                         self.load_and_scale_board_image(real_image_path)
