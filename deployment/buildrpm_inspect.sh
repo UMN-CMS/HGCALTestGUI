@@ -58,7 +58,7 @@ EOF
 echo $PWD
 ls
 
-chmod a+x hgcal_checkin_gui
+chmod a+x ${GUI_PREFIX}_checkin_gui
 tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui
 tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui.desktop
 popd
