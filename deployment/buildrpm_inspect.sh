@@ -5,10 +5,11 @@ shopt -s globstar
 : ${BUILDDIR:=BUILD}
 : ${GUI_VERSION:=0.0.3}
 : ${GUI_RELEASE:=NORELEASE}
-: ${GUI_NAME:=HGCAL Test GUI}
+: ${GUI_NAME:=HGCALCheckinGUI}
 : ${GUI_PREFIX:=hgcal}
 
 export GUI_PREFIX
+export GUI_NAME
 
 CWD=$PWD
 BNAME=$(basename $CWD)
@@ -16,25 +17,25 @@ BNAME=$(basename $CWD)
 rm -fr "$BUILDDIR"
 mkdir -p "${BUILDDIR}"/{RPMS,SOURCES,SPECS,SRPMS,BUILD}
 
-rm -rf HGCALCheckinGUI
-mkdir HGCALCheckinGUI
-cp CheckInGUI/MainFunctionVI.py HGCALCheckinGUI
-cp -r CheckInGUI/PythonFiles HGCALCheckinGUI 
-cp -r CheckInGUI/Configs HGCALCheckinGUI 
-cp -r awthemes-10.4.0 HGCALCheckinGUI 
+rm -rf $GUI_NAME
+mkdir $GUI_NAME
+cp CheckInGUI/MainFunctionVI.py $GUI_NAME
+cp -r CheckInGUI/PythonFiles $GUI_NAME 
+cp -r CheckInGUI/Configs $GUI_NAME 
+cp -r awthemes-10.4.0 $GUI_NAME 
 
 
-for f in HGCALCheckinGUI/**/*.py; do
+for f in $GUI_NAME/**/*.py; do
     sed -i '1,1{/^#!/d}' "$f"
 done
 
 tar cf \
-    $BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar \
+    $BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar \
     -X $CWD/.gitignore \
-    HGCALCheckinGUI/PythonFiles \
-    HGCALCheckinGUI/MainFunctionVI.py \
-    HGCALCheckinGUI/awthemes-10.4.0 \
-    HGCALCheckinGUI/Configs
+    $GUI_NAME/PythonFiles \
+    $GUI_NAME/MainFunctionVI.py \
+    $GUI_NAME/awthemes-10.4.0 \
+    $GUI_NAME/Configs
 
 
 tmp=$(mktemp -d)
@@ -43,7 +44,7 @@ cd $tmp
 cat <<EOF > ${GUI_PREFIX}_checkin_gui
 #!/usr/bin/env bash
 
-python3 /opt/HGCALCheckinGUI/MainFunctionVI.py
+python3 /opt/$GUI_NAME/MainFunctionVI.py
 EOF
 
 cat <<EOF > ${GUI_PREFIX}_checkin_gui.desktop
@@ -51,7 +52,7 @@ cat <<EOF > ${GUI_PREFIX}_checkin_gui.desktop
 Type=Application
 Terminal=True
 Name=$GUI_NAME
-Icon=/usr/share/HGCALCheckinGUI/application_icon.png
+Icon=/usr/share/$GUI_NAME/application_icon.png
 Exec=/usr/bin/${GUI_PREFIX}_checkin_gui 
 EOF
 
@@ -59,17 +60,17 @@ echo $PWD
 ls
 
 chmod a+x ${GUI_PREFIX}_checkin_gui
-tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui
-tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui.desktop
+tar uf $CWD/$BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui
+tar uf $CWD/$BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar ${GUI_PREFIX}_checkin_gui.desktop
 popd
 
 pushd $PWD
 echo "$PWD"
 cd deployment
-tar uf $CWD/$BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar application_icon.png
+tar uf $CWD/$BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar application_icon.png
 popd
 
-gzip $BUILDDIR/SOURCES/HGCALCheckinGUI-${GUI_VERSION}-${GUI_RELEASE}.tar 
+gzip $BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar 
 
 cp deployment/checkingui.spec $BUILDDIR/SPECS
 
