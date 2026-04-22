@@ -41,7 +41,7 @@ class GUIWindow():
         self.master_window = master_window
         self.master_window.report_callback_exception = self.log_callback_exception
 
-        master_window.title("Board Check In and Inspection")
+        master_window.title("HD Wagon ECON Scanning.")
 
         # Creates the size of the window and disables resizing
         master_window.geometry("1350x850+25+100")

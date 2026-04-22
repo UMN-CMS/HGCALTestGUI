@@ -137,7 +137,7 @@ class ScanScene(ttk.Frame):
         # creates a Label Variable, different customization options
         self.lbl_check = ttk.Label(
             master = Scan_Board_Prompt_Frame,
-            text = 'Check In',
+            text = 'HD WAGON\nECON SCANNING',
             font = ('Arial', 40)
         )
         self.lbl_check.pack(padx = 50, pady = 50)
@@ -171,24 +171,6 @@ class ScanScene(ttk.Frame):
             )
         self.ent_full.pack(padx = 50, pady = 25)
 
-        manufacturers_list = ['None'] + self.data_holder.get_manufacturers()
-        self.manuf_selected = tk.StringVar(self)
-
-        lbl_full = ttk.Label(
-            Scan_Board_Prompt_Frame,
-            text = "Select Manufacturer:",
-            font = ('Arial', 24)
-        )
-        lbl_full.pack(padx = 20)
-
-        self.manufacturer_dropdown = ttk.OptionMenu(
-            Scan_Board_Prompt_Frame,
-            self.manuf_selected,
-            self.data_holder.data_dict['manufacturer'],
-            *manufacturers_list # Tells the dropdown menu to use every index in the manufacturers_list list
-            ) 
-        self.manufacturer_dropdown.pack(pady=15)
-
         # Create a label to label the comments box
         lbl_com = ttk.Label(
             Scan_Board_Prompt_Frame,
@@ -215,14 +197,6 @@ class ScanScene(ttk.Frame):
             mode, 
             sv=self.user_text: self.show_submit_button()
             )
-
-        self.manuf_selected.trace(
-            "w",
-            lambda name, 
-            index, 
-            mode,
-            sv=self.manuf_selected: self.show_submit_button_manu()
-        )
 
         # Rescan button creation
         self.btn_rescan = ttk.Button(
@@ -320,8 +294,6 @@ class ScanScene(ttk.Frame):
         self.data_holder.set_full_ID(self.ent_full.get())
         self.data_holder.set_comments(self.ent_com.get(1.0, 'end-1c'))
 
-        self.data_holder.set_manufacturer_id(self.manuf_selected.get())
-
         in_id = self.data_holder.check_if_new_board()
 
         if in_id == None:
@@ -335,17 +307,15 @@ class ScanScene(ttk.Frame):
         
         if str(self.data_holder.data_dict['current_full_ID'])[3:5] == 'WH':
             _parent.set_frame_econ_scan_frame()
-        elif self.data_holder.data_dict['prev_results'] != '':
-            _parent.set_frame_postscan()
-            
         else:
-            if self.ent_full.get()[3] in ('W', 'Z', 'S'):
-                _parent.set_frame_inspection_frame()
-            elif self.ent_full.get()[3] == 'E':
-                _parent.set_frame_component_frame()
-            else: 
-                # TODO make this a popup
-                logger.warning('Error: Please scan a Wagon, Zipper, Engine, or Flex Cable.')
+            self.label_major['text'] = 'Please Scan HD Wagon'
+            self.label_sub['text'] = 'Have an expert check the logs'
+            self.label_sn['text'] = ''
+            self.label_sub.update()
+            self.label_sn.update()
+            self.label_major.update()
+            self.btn_submit["state"] = "disabled"
+            logger.warning('Error: Please scan an HD Wagon.')
 
 
         
@@ -376,28 +346,14 @@ class ScanScene(ttk.Frame):
         self.data_holder.decode_label(barcode)
         major = self.data_holder.label_info['Major Type']
         sn = self.data_holder.label_info['SN']
-        if major:
-            if major == 'LD-Engine' or major == 'HD-Engine':
-                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:8]))
-            elif major == 'HD-Wagon':
-                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:9]))
-            elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
-                self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
-            elif major == 'Zipper Board' or major == 'Scintillator Cables':
-                if barcode[3:9] in ("ZPLMEZ", "ZPLMZ2"):
-                    self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[1], barcode[3:9]))
-                else:
-                    self.manuf_selected.set("PCBWay-PCBWay")
-
-        if self.manuf_selected.get() == 'None':
-            self.label_major['text'] = 'Please select manufacturer to continue'
+        if major != 'HD-Wagon':
+            self.btn_submit['state'] = 'disabled'
+            self.label_major['text'] = 'Please scan HD Wagon to continue'
             self.label_sub['text'] = ''
             self.label_sn['text'] = ''
             self.label_sub.update()
             self.label_sn.update()
             self.label_major.update()
-            self.btn_submit["state"] = "disabled"
-            return
         elif self.user_text.get() == '':
             self.btn_submit['state'] = 'disabled'
             self.label_major['text'] = 'Please scan barcode to continue'
@@ -426,45 +382,45 @@ class ScanScene(ttk.Frame):
             self.label_sub.update()
             self.label_sn.update()
     
-    def show_submit_button_manu(self):
-        self.data_holder.decode_label(self.ent_full.get())
+    #def show_submit_button_manu(self):
+    #    self.data_holder.decode_label(self.ent_full.get())
 
-        if self.manuf_selected.get() == 'None':
-            self.label_major['text'] = 'Please select manufacturer to continue'
-            self.label_sub['text'] = ''
-            self.label_sn['text'] = ''
-            self.label_sub.update()
-            self.label_sn.update()
-            self.label_major.update()
-            self.btn_submit["state"] = "disabled"
-            return
+    #    if self.manuf_selected.get() == 'None':
+    #        self.label_major['text'] = 'Please select manufacturer to continue'
+    #        self.label_sub['text'] = ''
+    #        self.label_sn['text'] = ''
+    #        self.label_sub.update()
+    #        self.label_sn.update()
+    #        self.label_major.update()
+    #        self.btn_submit["state"] = "disabled"
+    #        return
 
-        elif self.user_text.get() == '':
-            self.btn_submit['state'] = 'disabled'
-            self.label_major['text'] = 'Please scan barcode to continue'
-            self.label_sub['text'] = ''
-            self.label_sn['text'] = ''
-            self.label_sub.update()
-            self.label_sn.update()
-            self.label_major.update()
-            return
-        else:
-            self.btn_submit["state"] = "active"
-        
-        try:
-            self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
-            self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
-            self.label_sn['text'] = 'Serial Number: ' + self.data_holder.label_info['SN']
-            self.label_major.update()
-            self.label_sub.update()
-            self.label_sn.update()
-        except TypeError:
-            self.label_major['text'] = ''
-            self.label_sub['text'] = ''
-            self.label_sn['text'] = ''
-            self.label_major.update()
-            self.label_sub.update()
-            self.label_sn.update()
+    #    elif self.user_text.get() == '':
+    #        self.btn_submit['state'] = 'disabled'
+    #        self.label_major['text'] = 'Please scan barcode to continue'
+    #        self.label_sub['text'] = ''
+    #        self.label_sn['text'] = ''
+    #        self.label_sub.update()
+    #        self.label_sn.update()
+    #        self.label_major.update()
+    #        return
+    #    else:
+    #        self.btn_submit["state"] = "active"
+    #    
+    #    try:
+    #        self.label_major['text'] = 'Major Type: ' + self.data_holder.label_info['Major Type']
+    #        self.label_sub['text'] = 'Subtype: ' + self.data_holder.label_info['Subtype']
+    #        self.label_sn['text'] = 'Serial Number: ' + self.data_holder.label_info['SN']
+    #        self.label_major.update()
+    #        self.label_sub.update()
+    #        self.label_sn.update()
+    #    except TypeError:
+    #        self.label_major['text'] = ''
+    #        self.label_sub['text'] = ''
+    #        self.label_sn['text'] = ''
+    #        self.label_major.update()
+    #        self.label_sub.update()
+    #        self.label_sn.update()
 
     #################################################
 
