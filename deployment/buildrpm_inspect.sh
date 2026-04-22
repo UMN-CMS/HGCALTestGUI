@@ -6,10 +6,12 @@ shopt -s globstar
 : ${GUI_VERSION:=0.0.3}
 : ${GUI_RELEASE:=NORELEASE}
 : ${GUI_NAME:=HGCALCheckinGUI}
+: ${GUI_IMAGE:=application_icon.png}
 : ${GUI_PREFIX:=hgcal}
 
 export GUI_PREFIX
 export GUI_NAME
+export GUI_IMAGE
 
 CWD=$PWD
 BNAME=$(basename $CWD)
@@ -52,7 +54,7 @@ cat <<EOF > ${GUI_PREFIX}_checkin_gui.desktop
 Type=Application
 Terminal=True
 Name=$GUI_NAME
-Icon=/usr/share/$GUI_NAME/application_icon.png
+Icon=/usr/share/$GUI_NAME/$GUI_IMAGE
 Exec=/usr/bin/${GUI_PREFIX}_checkin_gui 
 EOF
 
@@ -67,7 +69,7 @@ popd
 pushd $PWD
 echo "$PWD"
 cd deployment
-tar uf $CWD/$BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar application_icon.png
+tar uf $CWD/$BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar $GUI_IMAGE
 popd
 
 gzip $BUILDDIR/SOURCES/$GUI_NAME-${GUI_VERSION}-${GUI_RELEASE}.tar 
