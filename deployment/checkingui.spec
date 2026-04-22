@@ -33,7 +33,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_datadir}/%{getenv:GUI_NAME}
 cp -r %{getenv:GUI_NAME} $RPM_BUILD_ROOT/opt
 cp %{getenv:GUI_PREFIX}_checkin_gui $RPM_BUILD_ROOT/%{_bindir}
 cp %{getenv:GUI_PREFIX}_checkin_gui.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
-cp application_icon.png $RPM_BUILD_ROOT/%{_datadir}/%{getenv:GUI_NAME}
+cp %{getenv:GUI_IMAGE} $RPM_BUILD_ROOT/%{_datadir}/%{getenv:GUI_NAME}
 cd $RPM_BUILD_ROOT/opt/%{getenv:GUI_NAME}
 
 %clean
