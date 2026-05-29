@@ -65,10 +65,13 @@ class LoginScene(ttk.Frame):
         self.user_selected.set("") # default value is empty
 
         # Creating the dropdown menu itself
-        self.opt_user_dropdown = tk.OptionMenu(
+        self.opt_user_dropdown = ttk.Combobox(
             self, 
-            self.user_selected, # Tells option menu to use the created initial value
-            *User_List # Tells the dropdown menu to use every index in the User_List list
+            textvariable=self.user_selected,
+            #User_List[0],
+
+            values=User_List,
+            state="readonly"
             ) 
         self.opt_user_dropdown.pack(pady=15)
         self.opt_user_dropdown.config(width = 20)

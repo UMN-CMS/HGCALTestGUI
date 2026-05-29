@@ -63,12 +63,13 @@ class LoginScene(ttk.Frame):
         self.user_selected = tk.StringVar(self)
 
         # Creating the dropdown menu itself
-        self.opt_user_dropdown = ttk.OptionMenu(
+        self.opt_user_dropdown = ttk.Combobox(
             self, 
-            self.user_selected,
-            User_List[0],
+            textvariable=self.user_selected,
+            #User_List[0],
 
-            *User_List # Tells the dropdown menu to use every index in the User_List list
+            values=User_List,
+            state="readonly"
             ) 
         self.opt_user_dropdown.pack(pady=15)
         #self.opt_user_dropdown.config(width = 20, font = ('Arial', 13))
