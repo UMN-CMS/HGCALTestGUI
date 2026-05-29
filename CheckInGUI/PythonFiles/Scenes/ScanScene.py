@@ -386,6 +386,8 @@ class ScanScene(ttk.Frame):
                     self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[1], barcode[3:9]))
                 else:
                     self.manuf_selected.set("PCBWay-PCBWay")
+            elif barcode[3:5] == 'CI':
+                self.manuf_selected.set("PCBWay-PCBWay")
 
         if self.manuf_selected.get() == 'None':
             self.label_major['text'] = 'Please select manufacturer to continue'
