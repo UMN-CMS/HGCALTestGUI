@@ -51,7 +51,7 @@ Type=Application
 Terminal=True
 Name=HGCAL Photo GUI
 Icon=/usr/share/HGCALPhotoGUI/application_icon.png
-Exec=/usr/bin/hgcal_photo_gui 
+Exec=gnome-terminal -- /usr/bin/hgcal_photo_gui 
 EOF
 
 chmod a+x hgcal_photo_gui
