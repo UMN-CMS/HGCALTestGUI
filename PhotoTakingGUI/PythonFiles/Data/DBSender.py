@@ -142,7 +142,10 @@ class DBSender():
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
         encodedImage = base64.b64encode(buffered.getvalue())
-        r = requests.post('{}/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
+        if full_id[3] == 'E' or full_id[3:7] == 'ZPLM':
+            r = requests.post('http://cmslab1.spa.umn.edu/Factory/EngineDB/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
+        else:
+            r = requests.post('http://cmslab1.spa.umn.edu/Factory/WagonDB/add_board_image~.py'.format(self.db_url), data={"full_id": full_id, "image": encodedImage, "view": view})
 
         lines = r.text.split('\n')
 
