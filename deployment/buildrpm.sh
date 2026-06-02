@@ -51,7 +51,7 @@ Type=Application
 Terminal=True
 Name=HGCAL Test GUI
 Icon=/usr/share/HGCALTestGUI/application_icon.png
-Exec=/usr/bin/hgcal_test_gui 
+Exec=gnome-terminal -- /usr/bin/hgcal_test_gui 
 EOF
 
 chmod a+x hgcal_test_gui

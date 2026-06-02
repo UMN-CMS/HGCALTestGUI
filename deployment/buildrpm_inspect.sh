@@ -55,7 +55,7 @@ Type=Application
 Terminal=True
 Name=$GUI_NAME
 Icon=/usr/share/$GUI_NAME/$GUI_IMAGE
-Exec=/usr/bin/${GUI_PREFIX}_checkin_gui 
+Exec=gnome-terminal -- /usr/bin/${GUI_PREFIX}_checkin_gui 
 EOF
 
 echo $PWD

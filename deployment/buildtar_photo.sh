@@ -27,7 +27,7 @@ Type=Application
 Terminal=True
 Name=HGCAL Visual Inspection GUI
 Icon=USERHOME/.local/HGCAL-Photo/application_icon.png
-Exec=USERHOME/.local/HGCAL-Photo/hgcal_photo_gui
+Exec=gnome-terminal -- USERHOME/.local/HGCAL-Photo/hgcal_photo_gui
 EOF
 
 chmod a+x HGCAL-Photo/hgcal_photo_gui
