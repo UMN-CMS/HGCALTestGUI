@@ -68,7 +68,7 @@ class LocalUploadScene(ttk.Frame):
         for self.dirpath, dirnames, filenames in os.walk("{}/PythonFiles/Images".format(parent.main_path)):
             for f in filenames:
                 fp = os.path.join(self.dirpath, f)
-                name = fp[59:]
+                name = fp.split('/')[-1]
                 if "320" in name:
                     sn, view = name.split('_')
                     self.local_boards_list.append([fp, sn, os.path.splitext(view)[0]])
@@ -182,8 +182,8 @@ class LocalUploadScene(ttk.Frame):
     #################################################
 
     def btn_save_to_db_action(self, _parent):
-        self.data_holder.add_local_boards_to_db(self.local_boards.list)
         logger.info("Adding locally saved images uploaded to database.")
+        self.data_holder.upload_local_boards(self.local_boards.list)
 
     #################################################
 
