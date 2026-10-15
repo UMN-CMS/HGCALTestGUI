@@ -378,7 +378,7 @@ class ScanScene(ttk.Frame):
             if major == 'LD-Engine' or major == 'HD-Engine':
                 self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:8]))
             elif major == 'HD-Wagon':
-                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:9]))
+                self.manuf_selected.set(self.data_holder.get_manufacturer_from_batch(major, sn[2], barcode[3:11]))
             elif major == 'LD-Wagon-West' or major == 'LD-Wagon-East':
                 self.manuf_selected.set(self.data_holder.get_manufacturer_from_code(sn[0]))
             elif major == 'Zipper Board' or major == 'Scintillator Cables':
