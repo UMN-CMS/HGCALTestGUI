@@ -14,23 +14,40 @@ WH30D0:
 WH31A0:
   1: JLCPCB-Evotronics
 WH31B0:
-  1: JLCPCB-Evotronics  
-WH21AT:
+  1: JLCPCB-Evotronics
+WH20ATBB:
+  4: Sunshine-Caltronics
+WH21ATAA:
   2: Sunshine-Evotronics
-WH21AD:
+WH21ATBA:
+  4: Sunshine-Caltronics
+WH21ADAA:
   2: Sunshine-Evotronics
-WH31AT:
+WH21ADBA:
+  4: Sunshine-Caltronics
+WH31ATAA:
   2: Sunshine-Evotronics
   3: Sunshine-Caltronics
-WH31AD:
+WH31ATBA:
+  4: Sunshine-Caltronics
+WH31ADAA:
   2: Sunshine-Evotronics
   3: Sunshine-DESY
-WH30BT:
+WH31ADBA:
+  4: Sunshine-Caltronics
+WH30BTAA:
   2: Sunshine-Evotronics
-WH30BD:
+WH30BTBB:
+  5: Sunshine-Evotronics
+WH30BTBA:
+  5: Sunshine-Evotronics
+WH30BDAA:
   2: Sunshine-Evotronics
-WH30DT:
+WH30DTAA:
   2: Sunshine-Evotronics
-WH30DD:
+WH30DTBB:
+  5: Sunshine-Evotronics
+WH30DDAA:
   2: Sunshine-Evotronics
-
+WH31BTBA:
+  4: Sunshine-Caltronics
