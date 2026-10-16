@@ -37,10 +37,18 @@ class EconScanScene(ttk.Frame):
         self.last_warnings = []
         self.is_rescanning = False
 
+        #Old map
+        #self.econ_grade_map = {
+        #    2: {"BA": "BA", "DD": "DD", "FF": "FF"},
+        #    3: {"AA": "AAA", "BA": "BAA", "AB": "BAB", "BB": "BBB", "DB": "DBB", "42": "DDB", "DD": "DDD", "FD": "FDD", "FF": "FFF"},
+        #    4: {"AA": "AAAA", "BA": "BAAA", "DB": "DDBB", "DD": "DDDD", "64": "FDDD", "FD": "FFDD"},
+        #}
+
+        #New map
         self.econ_grade_map = {
-            2: {"BA": "BA", "DD": "DD", "FF": "FF"},
-            3: {"AA": "AAA", "BA": "BAA", "AB": "BAB", "BB": "BBB", "DB": "DBB", "42": "DDB", "DD": "DDD", "FD": "FDD", "FF": "FFF"},
-            4: {"AA": "AAAA", "BA": "BAAA", "DB": "DDBB", "DD": "DDDD", "64": "FDDD", "FD": "FFDD"},
+            2: {"BB": "BB"},
+            3: {"AA": "AAA", "BA": "BBA", "BB": "BBB"},
+            4: {"WH31A": {"AA": "AAAA", "BA": "BBAA"}, "WH31B": {"BA": "BBBA"}}
         }
 
         self.master_frame = master_frame
@@ -530,7 +538,10 @@ class EconScanScene(ttk.Frame):
             if (d_or_t is not None) and (d_or_t == 'D'):
                 module_num = int(key[-1]) - 1
                 scanned_grade = value[8]
-                correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
+                if num_modules == 4:
+                    correct_grade = self.econ_grade_map[num_modules][self.board_id[:-1]][correct_grades][module_num]
+                else:
+                    correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
                 self.results[key]["Correct Grade"] = correct_grade
                 self.results[key]["Scanned Grade"] = scanned_grade
 
@@ -582,7 +593,10 @@ class EconScanScene(ttk.Frame):
         module_num = int(site_name[-1])-1
         if d_or_t == 'D':
             scanned_grade = value[8]
-            correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
+            if num_modules == 4:
+                correct_grade = self.econ_grade_map[num_modules][self.board_id[:-1]][correct_grades][module_num]
+            else:
+                correct_grade = self.econ_grade_map[num_modules][correct_grades][module_num]
 
             if scanned_grade != correct_grade:
                 return False, f"{site_name} should be grade {correct_grade}, but grade {scanned_grade} was scanned."
