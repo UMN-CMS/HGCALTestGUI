@@ -2,6 +2,7 @@ import multiprocessing as mp
 import logging, time, sys, os
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.font as tkfont
 from tkinter import *
 from PIL import ImageTk as iTK
 from PIL import Image
@@ -10,8 +11,14 @@ from pathlib import Path
 import yaml
 import requests
 import json
+from PythonFiles import econ_link
 
 logger = logging.getLogger('HGCAL_VI.PythonFiles.Scenes.EconScanScene')
+
+# Window size the base font sizes were designed for; fonts scale relative to this.
+BASE_W, BASE_H = 1350, 850
+MIN_SCALE, MAX_SCALE = 0.6, 2.0
+CAMERA_POLL_MS = 200   # how often to check for codes sent by econ_reader.py
 
 
 class EconScanScene(ttk.Frame):
@@ -36,6 +43,12 @@ class EconScanScene(ttk.Frame):
         self.warned = False
         self.last_warnings = []
         self.is_rescanning = False
+        self._poll_job = None       # pending _poll_scanner callback
+        self._advancing = False     # inside advance_component (which pumps the Tk loop)
+        self._resize_job = None     # pending (debounced) resize
+        self._font_scale = None
+        self._board_img_src = None  # full-resolution board image, rescaled on resize
+        self._board_img_size = None
 
         #Old map
         #self.econ_grade_map = {
@@ -59,6 +72,14 @@ class EconScanScene(ttk.Frame):
 
         self.initialize_GUI(parent, master_frame)
 
+        # Codes sent from the camera reader (econ_reader.py, "Send to GUI" button)
+        try:
+            self.camera_link = econ_link.Receiver()
+        except OSError as e:
+            logger.warning(f"Camera link unavailable (port {econ_link.PORT}): {e}")
+            self.camera_link = None
+        self.after(CAMERA_POLL_MS, self._poll_camera)
+
     #################################################
 
     def create_style(self, _parent):
@@ -73,14 +94,25 @@ class EconScanScene(ttk.Frame):
     def initialize_GUI(self, parent, master_frame):
         """Set up the scanning GUI with left panel (progress + scanned Entry + buttons)
         and right panel (board + component images)."""
+
+        # Named fonts so everything can be rescaled when the window is resized
+        default_size = abs(tkfont.nametofont("TkDefaultFont").actual()["size"]) or 10
+        self.fonts = {
+            "progress": (tkfont.Font(family="Arial", size=24), 24),
+            "entry": (tkfont.Font(family="Arial", size=20), 20),
+            "combo": (tkfont.Font(family="Arial", size=14), 14),
+            "button": (tkfont.Font(family="Arial", size=default_size), default_size),
+        }
+        self.s.configure("Econ.TButton", font=self.fonts["button"][0])
     
         self.grid(column=0, row=0, sticky="nsew")
         master_frame.grid_rowconfigure(0, weight=1)
         master_frame.grid_columnconfigure(0, weight=1)
     
         # === Grid layout ===
-        self.grid_columnconfigure(0, weight=1)  # left panel
-        self.grid_columnconfigure(1, weight=2)  # right panel
+        # uniform keeps the 1:2 split exact at any window size
+        self.grid_columnconfigure(0, weight=1, uniform="econ_cols")  # left panel
+        self.grid_columnconfigure(1, weight=2, uniform="econ_cols")  # right panel
         self.grid_rowconfigure(0, weight=1)
     
         # --- Left panel ---
@@ -91,7 +123,8 @@ class EconScanScene(ttk.Frame):
     
         # Progress label
         self.lbl_progress = ttk.Label(
-            self.left_panel, font=("Arial", 24), anchor="center"
+            self.left_panel, font=self.fonts["progress"][0], anchor="center",
+            justify="center"
         )
         self.lbl_progress.grid(row=0, column=0, sticky="ew", pady=(0, 20))
     
@@ -100,7 +133,7 @@ class EconScanScene(ttk.Frame):
         self.scanned_entry = ttk.Entry(
             self.left_panel,
             textvariable=self.scanned_label_var,
-            font=("Arial", 20),
+            font=self.fonts["entry"][0],
             justify="center",
             state="normal"
         )
@@ -108,7 +141,7 @@ class EconScanScene(ttk.Frame):
     
         # Next button (manual input)
         self.btn_next = ttk.Button(
-            self.left_panel, text="Next", command=self.manual_next_component
+            self.left_panel, style="Econ.TButton", text="Next", command=self.manual_next_component
         )
         self.btn_next.grid(row=2, column=0, sticky="ew", pady=(0, 20))
     
@@ -120,14 +153,14 @@ class EconScanScene(ttk.Frame):
     
         # Cancel button
         self.btn_cancel = ttk.Button(
-            self.left_buttons_frame, text="Cancel",
+            self.left_buttons_frame, style="Econ.TButton", text="Cancel",
             command=lambda: self.btn_cancel_action(parent)
         )
         self.btn_cancel.grid(row=0, column=0, sticky="ew", padx=5)
     
         # Submit button
         self.btn_submit = ttk.Button(
-            self.left_buttons_frame, text="Submit", command=lambda: self.btn_submit_action(parent), state="disabled"
+            self.left_buttons_frame, style="Econ.TButton", text="Submit", command=lambda: self.btn_submit_action(parent), state="disabled"
         )
         self.btn_submit.grid(row=0, column=1, sticky="ew", padx=5)
    
@@ -138,26 +171,27 @@ class EconScanScene(ttk.Frame):
         self.rescan_frame.grid_remove()
         
         self.btn_rescan = ttk.Button(
-            self.rescan_frame, text="Rescan Selected", command=self.rescan_component
+            self.rescan_frame, style="Econ.TButton", text="Rescan Selected", command=self.rescan_component
         )
         self.btn_rescan.grid(row=0, column=0, sticky="ew", pady=(0, 5))
         
         self.rescan_var = tk.StringVar()
         self.rescan_dropdown = ttk.Combobox(
-            self.rescan_frame, textvariable=self.rescan_var, state="readonly", font=("Arial", 14)
+            self.rescan_frame, textvariable=self.rescan_var, state="readonly",
+            font=self.fonts["combo"][0]
         )
         self.rescan_dropdown.grid(row=1, column=0, sticky="ew")
     
         # Logout button
         self.btn_logout = ttk.Button(
-            self.left_buttons_frame, text="Logout",
+            self.left_buttons_frame, style="Econ.TButton", text="Logout",
             command=lambda: self.btn_logout_action(parent)
         )
         self.btn_logout.grid(row=0, column=2, sticky="ew", padx=5)
     
         # Help button
         self.btn_help = ttk.Button(
-            self.left_buttons_frame, text="Help",
+            self.left_buttons_frame, style="Econ.TButton", text="Help",
             command=lambda: self.help_action(parent)
         )
         self.btn_help.grid(row=0, column=3, sticky="ew", padx=5)
@@ -169,9 +203,35 @@ class EconScanScene(ttk.Frame):
         
         self.board_frame = ttk.Frame(self.right_panel)
         self.board_frame.pack(expand=True, fill="both")
-        
-        self.lbl_board = ttk.Label(self.board_frame)
-        self.lbl_board.pack(expand=True)
+        # The image is fitted to the frame, so the frame must not grow to fit the image
+        self.board_frame.pack_propagate(False)
+
+        self.lbl_board = ttk.Label(self.board_frame, anchor="center")
+        self.lbl_board.pack(expand=True, fill="both")
+
+        self.bind("<Configure>", self._on_resize)
+        self.board_frame.bind("<Configure>", self._on_resize)
+
+    #################################################
+
+    def _on_resize(self, event=None):
+        # Debounce: a window drag fires many Configure events
+        if self._resize_job is not None:
+            self.after_cancel(self._resize_job)
+        self._resize_job = self.after(50, self._apply_resize)
+
+    def _apply_resize(self):
+        self._resize_job = None
+        w, h = self.winfo_width(), self.winfo_height()
+        if w < 10 or h < 10:
+            return
+        scale = max(MIN_SCALE, min(MAX_SCALE, min(w / BASE_W, h / BASE_H)))
+        if self._font_scale is None or abs(scale - self._font_scale) > 0.02:
+            self._font_scale = scale
+            for font, base in self.fonts.values():
+                font.configure(size=max(6, int(round(base * scale))))
+        self.lbl_progress.configure(wraplength=max(100, self.left_panel.winfo_width() - 20))
+        self._render_board_image()
 
     def update_component_prompt(self):
         if not self.component_config:
@@ -213,15 +273,20 @@ class EconScanScene(ttk.Frame):
         self.listener = mp.Process(target=listen, args=(self.full_id, self.scanner))
         self.listener.start()
 
-        # Start non-blocking polling
-        self.after(10, self._poll_scanner)
+        # Start non-blocking polling (only one polling loop at a time)
+        if self._poll_job is not None:
+            self.after_cancel(self._poll_job)
+        self._poll_job = self.after(10, self._poll_scanner)
 
     #################################################
 
     def _poll_scanner(self):
         from ..Scanner.python.get_barcodes import parse_xml
+        self._poll_job = None
 
-        if len(self.full_id) > 0:
+        if self._advancing:  # called re-entrantly from update(); try again afterwards
+            self._poll_job = self.after(10, self._poll_scanner)
+        elif len(self.full_id) > 0:
             label = parse_xml(self.full_id[0])
             del self.full_id[:] 
             try:
@@ -239,7 +304,40 @@ class EconScanScene(ttk.Frame):
             except:
                 pass
         else:
-            self.after(10, self._poll_scanner)
+            self._poll_job = self.after(10, self._poll_scanner)
+
+    #################################################
+
+    def _stop_scanner(self):
+        if self._poll_job is not None:
+            self.after_cancel(self._poll_job)
+            self._poll_job = None
+        try:
+            self.listener.terminate()
+            self.scanner.terminate()
+        except:
+            pass
+
+    def _poll_camera(self):
+        """Take a code sent by the camera reader as if the barcode scanner had read it."""
+        try:
+            # While an advance is running (it pumps the Tk loop with update()), leave the
+            # datagram queued; taking it now would advance the same component twice.
+            code = None
+            if self.camera_link is not None and not self._advancing:
+                code = self.camera_link.poll()
+            if code is not None:
+                waiting = (self.component_config and not self.all_scanned
+                           and self.current_index < len(self.component_config))
+                if waiting:
+                    logger.info(f"Code received from camera: {code}")
+                    self._stop_scanner()
+                    self.scanned_label_var.set(code)
+                    self.advance_component(code)
+                else:
+                    logger.info(f"Ignoring camera code {code}: not waiting for a component")
+        finally:
+            self.after(CAMERA_POLL_MS, self._poll_camera)
 
     #################################################
 
@@ -299,6 +397,7 @@ class EconScanScene(ttk.Frame):
             self.manual_next_component()
             return
         self.EXIT_CODE = 1
+        self._stop_scanner()
         print(self.info_dict)
         print(self.results)
         r = requests.post('{}/add_test_json.py'.format(self.db_url), data = self.info_dict, files = {'attach1': json.dumps(self.results)})
@@ -334,6 +433,7 @@ class EconScanScene(ttk.Frame):
 
     def btn_logout_action(self, _parent):
         self.EXIT_CODE = 1
+        self._stop_scanner()
         self.scanned_entry["state"] = "active"
         self.btn_next["state"] = "active"
 
@@ -361,6 +461,7 @@ class EconScanScene(ttk.Frame):
     def btn_cancel_action(self, _parent):
 
         self.EXIT_CODE = 1
+        self._stop_scanner()
         self.scanned_entry["state"] = "active"
         self.btn_next["state"] = "active"
         self.btn_submit["state"] = "disabled"
@@ -401,6 +502,8 @@ class EconScanScene(ttk.Frame):
         self.component_config = self.boards_config[self.board_id]['components']
         self.current_index = 0
         self.scanned_components = {}
+        if self.camera_link is not None:
+            self.camera_link.poll()  # discard codes sent before this board was loaded
         self.update_component_prompt()
     
     def get_component_image(self):
@@ -435,8 +538,20 @@ class EconScanScene(ttk.Frame):
 
     def load_and_scale_board_image(self, image_path):
         img = Image.open(image_path)
-        
-        target_width, target_height = 650, 879
+        img.load()  # raise now (not later) if the file is unreadable
+        self._board_img_src = img
+        self._board_img_size = None
+        self._render_board_image()
+        self.board_frame.update_idletasks()
+
+    def _render_board_image(self):
+        """Fit the current board image to the space the right panel has right now."""
+        img = self._board_img_src
+        if img is None:
+            return
+        target_width, target_height = self.board_frame.winfo_width(), self.board_frame.winfo_height()
+        if target_width < 10 or target_height < 10:  # not laid out yet
+            target_width, target_height = 650, 800
         img_ratio = img.width / img.height
         target_ratio = target_width / target_height
         
@@ -446,7 +561,11 @@ class EconScanScene(ttk.Frame):
         else:
             new_height = target_height
             new_width = int(target_height * img_ratio)
-        
+        new_width, new_height = max(1, new_width), max(1, new_height)
+        if self._board_img_size == (new_width, new_height):
+            return
+        self._board_img_size = (new_width, new_height)
+
         try:
             img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
         except:
@@ -455,7 +574,6 @@ class EconScanScene(ttk.Frame):
         photo = iTK.PhotoImage(img)
         self.lbl_board.config(image=photo)
         self.lbl_board.image = photo
-        self.board_frame.update()
 
     def manual_next_component(self):
         value = self.scanned_label_var.get().strip()
@@ -469,6 +587,18 @@ class EconScanScene(ttk.Frame):
         self.advance_component(value, scanned=False)
 
     def advance_component(self, value, scanned = True):
+        # _advance_component pumps the Tk loop (update() + sleep), so another scanner or
+        # camera code could otherwise start a second, nested advance for the same slot.
+        if self._advancing:
+            logger.warning(f"Ignoring {value}: still processing the previous ID")
+            return
+        self._advancing = True
+        try:
+            self._advance_component(value, scanned)
+        finally:
+            self._advancing = False
+
+    def _advance_component(self, value, scanned = True):
         self.EXIT_CODE = 0
         component_name = self.component_config[self.current_index]["name"]
 

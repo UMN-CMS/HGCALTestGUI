@@ -7,12 +7,18 @@
 
 	Scene: Scan Scene
 
-	Date Updated: 2/11/26
+	Date Updated: 11/11/26
 
 
 ----------------------------------------------------------------------------------------
 
 	Econ scan scene.
+
+	IDs can come from the barcode scanner, from typing in the box
+	and pressing Next, or from the camera window ("Econ Reader"):
+	hold the ECON still under the camera until the rebuilt code
+	shows "OK", then click "Send to GUI" (or press Enter in that
+	window). A sent ID is handled just like a scanner read.
 
 
 

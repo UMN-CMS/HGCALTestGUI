@@ -17,6 +17,8 @@ from PythonFiles.Scenes.ComponentScanScene import ComponentScanScene
 from PythonFiles.Scenes.EconScanScene import EconScanScene
 from PythonFiles.Scenes.InspectionScenes.Inspection1 import Inspection1
 from PythonFiles.update_config import update_config
+from PythonFiles.camera_process import CameraProcess
+import threading
 import logging
 import os
 import PythonFiles
@@ -44,7 +46,8 @@ class GUIWindow():
         master_window.title("HD Wagon ECON Scanning.")
 
         # Creates the size of the window and disables resizing
-        master_window.geometry("1350x850+25+100")
+        # 850 for the scenes + ~35 for the camera bar at the bottom
+        master_window.geometry("1350x885+25+100")
         master_window.pack_propagate(1) 
 
         #resizing master_frame, keeping sidebar same width
@@ -67,6 +70,12 @@ class GUIWindow():
         # Creates and packs a frame that exists on top of the master_frame
         master_frame = tk.Frame(master_window, width = 1350, height = 850)
         master_frame.grid(column = 0, row = 0, columnspan = 4, sticky="nsew")
+
+        # Camera reader (econ_reader.py) runs as its own process; the bar below the
+        # scenes lets the user restart it from any scene after replugging the camera.
+        self.camera = CameraProcess()
+        self.camera.start()
+        self.create_camera_bar(master_window)
 
         # Object for taking care of instantiation of different test types
         # don't need the update config for this GUI
@@ -124,6 +133,50 @@ class GUIWindow():
         master_frame.after(500, self.set_frame_login_frame)
 
         master_window.mainloop()
+
+    def create_camera_bar(self, window):
+        bar = ttk.Frame(window, padding=(8, 3))
+        bar.grid(column=0, row=1, columnspan=4, sticky="ew")
+        window.grid_rowconfigure(1, weight=0)
+        bar.grid_columnconfigure(1, weight=1)
+
+        self._camera_thread = None
+        self.btn_camera = ttk.Button(bar, text="Reconnect Camera", command=self.reconnect_camera)
+        self.btn_camera.grid(column=0, row=0, sticky="w")
+
+        self.camera_status = tk.StringVar()
+        ttk.Label(bar, textvariable=self.camera_status).grid(column=1, row=0, sticky="w", padx=10)
+        self.update_camera_status()
+
+    def update_camera_status(self):
+        restarting = self._camera_thread is not None and self._camera_thread.is_alive()
+        if restarting:
+            self.camera_status.set("Camera: restarting...")
+        elif self.camera.is_running():
+            self.camera_status.set("Camera: running")
+        else:
+            self.camera_status.set("Camera: not running - check the USB cable, then press Reconnect Camera")
+        self.master_window.after(1000, self.update_camera_status)
+
+    def reconnect_camera(self):
+        if self._camera_thread is not None and self._camera_thread.is_alive():
+            return  # a restart is already running
+        logger.info("User pressed Reconnect Camera")
+        self.btn_camera["state"] = "disabled"
+        self.camera_status.set("Camera: restarting...")
+        # Stopping a reader stuck on a vanished device can take seconds; don't freeze the GUI
+        self._camera_thread = threading.Thread(target=self.camera.restart, daemon=True)
+        self._camera_thread.start()
+        self.master_window.after(200, self._reconnect_done)
+
+    def _reconnect_done(self):
+        if self._camera_thread.is_alive():
+            self.master_window.after(200, self._reconnect_done)
+        else:
+            # small delay so clicks queued during the restart don't trigger another one
+            self.master_window.after(500, lambda: self.btn_camera.configure(state="normal"))
+
+    #################################################
 
     def log_callback_exception(self, exc_type, exc_value, exc_traceback):
         logger.error("Exception in Tkinter callback", exc_info=(exc_type, exc_value, exc_traceback))
@@ -420,6 +473,7 @@ class GUIWindow():
     def destroy_function(self, event=None):
         try:
             logging.info("GUIWindow: Exiting the GUI.")
+            self.camera.stop()
 
             master_window.update()
             self.popup.update()

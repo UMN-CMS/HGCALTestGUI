@@ -87,15 +87,8 @@ def main():
 
     masterCfg = import_yaml(config_path)
 
-    def run_command(command):
-        process = subprocess.Popen([sys.executable, command])
-        print(f"Camera started with PID: {process.pid}")
-        return p.communicate()
-    try:
-        out = run_command(str(Path(__file__).parent.resolve() /'PythonFiles/econ_reader.py'))
-    except:
-        print("error running subprocess")
-
+    # The camera reader (PythonFiles/econ_reader.py) is started by GUIWindow, which
+    # also restarts it from the "Reconnect Camera" button.
     main_window = GUIWindow(masterCfg, filepath)
     
 
