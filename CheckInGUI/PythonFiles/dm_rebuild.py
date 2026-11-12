@@ -519,7 +519,8 @@ def render(bits, module_px=10, quiet=2):
 
 
 class Fit:
-    def __init__(self, bits, quad, score, verified, n_fixed=0, text=None, method=None, gap=None):
+    def __init__(self, bits, quad, score, verified, n_fixed=0, text=None, method=None, gap=None,
+                 runner_ups=None):
         self.bits = bits          # 16x16 bool matrix, True = ink, upright (finder L bottom-left)
         self.quad = quad          # tl,tr,br,bl of the fitted grid in snapshot coordinates
         self.score = score        # finder correlation + separation, roughly 0..2
@@ -528,6 +529,7 @@ class Fit:
         self.text = text          # decoded text (best guess if not verified), None if undecodable
         self.method = method      # 'rs' (error correction) or 'search' (format search)
         self.gap = gap            # search only: how far ahead of the runner-up (bigger = surer)
+        self.runner_ups = runner_ups or []  # search only: [(text, cost above the best)]
 
 
 def rebuild(snapshot):
@@ -575,7 +577,13 @@ def rebuild(snapshot):
         if c0 <= SEARCH_MAX_COST and gap >= SEARCH_MIN_GAP:
             fixed = min(sum(x != y for x, y in zip(read_codewords(v, otsu_split(v)[0])[0], cw0))
                         for v in views)
-            return Fit(write_symbol(cw0), quad, s, True, fixed, text, 'search', gap)
+            runner_ups = []  # next distinct texts (both views can yield the same candidate)
+            for c, t, _ in cands[1:]:
+                if t != text and all(t != r[0] for r in runner_ups):
+                    runner_ups.append((t, c - c0))
+                    if len(runner_ups) == 2:
+                        break
+            return Fit(write_symbol(cw0), quad, s, True, fixed, text, 'search', gap, runner_ups)
 
     t, _ = otsu_split(cells)
     bits = cells > t

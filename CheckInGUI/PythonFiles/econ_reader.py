@@ -220,9 +220,15 @@ def rebuilt_view(fit, status=None):
             text = f'guess: {fit.text}' if fit.text else ''
             msg, color = 'UNVERIFIED - adjust controls', (0, 0, 200)
     w = img.shape[1]
-    return np.vstack([img,
-                      _text_bar(w, text, 0.9, (0, 0, 0) if fit and fit.verified else color, 2, 44),
-                      _text_bar(w, msg, 0.5, color, 1, 30)])
+    bars = [img,
+            _text_bar(w, text, 0.9, (0, 0, 0) if fit and fit.verified else color, 2, 44),
+            _text_bar(w, msg, 0.5, color, 1, 30)]
+    if status is None and fit is not None and fit.method == 'search' and fit.runner_ups:
+        grey = (110, 110, 110)
+        bars.append(_text_bar(w, 'Runner-ups (NOT sent):', 0.45, grey, 1, 24))
+        for place, (t, dc) in zip(('2nd', '3rd'), fit.runner_ups):
+            bars.append(_text_bar(w, f'{place}: {t}  (cost +{dc:.0f})', 0.45, grey, 1, 22))
+    return np.vstack(bars)
 
 
 def _fit(img, w, h, interp):
