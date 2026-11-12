@@ -214,11 +214,11 @@ def rebuilt_view(fit, status=None):
             if fit.method == 'search':
                 msg = f'OK by format search, fixed {fit.n_fixed} codewords, margin {fit.gap:.0f}'
             else:
-                msg = f'OK {fit.shape[0]}x{fit.shape[1]}, fixed {fit.n_fixed} codewords'
+                msg = f'OK, fixed {fit.n_fixed} codewords'
             color = (0, 150, 0)
         else:
             text = f'guess: {fit.text}' if fit.text else ''
-            msg, color = f'UNVERIFIED {fit.shape[0]}x{fit.shape[1]} - adjust controls', (0, 0, 200)
+            msg, color = 'UNVERIFIED - adjust controls', (0, 0, 200)
     w = img.shape[1]
     return np.vstack([img,
                       _text_bar(w, text, 0.9, (0, 0, 0) if fit and fit.verified else color, 2, 44),
